@@ -1,5 +1,9 @@
 name: Update market data
 on:
+  push:
+    paths:
+      - 'scripts/update_market_data.py'
+      - '.github/workflows/update-market-data.yml'
   workflow_dispatch:
   schedule:
     - cron: "30 22 * * 1-5"
