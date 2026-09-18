@@ -59,7 +59,7 @@ for(const token of [
   assert(s.includes(token),'M2 model history hook missing: '+token);
 }
 assert(s.includes("active.entityId,'broken',i"),'Field broken transition hook missing');
-assert(s.includes('finalizeEvidenceTimeline();\n  rebuildEvidence();'),'timeline must finalize before latest snapshot rebuild');
+assert(s.includes('finalizeEvidenceTimeline();\n  rebuildEvaluation();\n  rebuildEvidence();'),'timeline must finalize before M3 evaluation and latest snapshot rebuild');
 
 assert(s.includes('window.__SL_EVALUATION__'),'M3 evaluation export missing');
 assert(s.includes('const EVAL_HORIZONS=[3,5,10,20]'),'M3 standard horizons missing');
