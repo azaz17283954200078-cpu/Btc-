@@ -27,7 +27,7 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .model-row{padding:7px 8px;background:linear-gradient(180deg,#0f192b,#0b1322);border:1px solid #223552;border-radius:9px;min-height:66px}
 .model-row:hover{border-color:#45658f}.model-name{font-weight:750;display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:11px}
 .model-name label{display:flex;align-items:center;gap:5px;min-width:0}.model-name a{font-size:10px;color:#8db8ff;text-decoration:none;white-space:nowrap}
-.model-desc{color:#aebbd4;font-size:10px;line-height:1.3;margin-top:4px}.model-tag{display:inline-block;font-size:9px;color:#8195b7;border:1px solid #2c405f;border-radius:999px;padding:1px 5px;margin-top:5px}.model-actions{display:flex;gap:4px;align-items:center}.gear{padding:1px 5px;font-size:10px;line-height:1.4}.param-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(3,7,14,.72);backdrop-filter:blur(3px)}.param-modal.on{display:flex}.param-card{width:min(520px,92vw);max-height:82vh;overflow:auto;background:#111a2c;border:1px solid #496485;border-radius:14px;padding:14px;box-shadow:0 18px 60px rgba(0,0,0,.45)}.param-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.param-head b{font-size:16px}.param-close{padding:4px 9px}.param-grid{display:grid;grid-template-columns:1fr 120px;gap:8px 12px;align-items:center}.param-grid label{color:#c7d3e8}.param-grid input,.param-grid select{width:100%}.param-note{font-size:10px;color:#8fa1bf;margin-top:10px;border-top:1px solid #263653;padding-top:8px}
+.model-desc{color:#aebbd4;font-size:10px;line-height:1.3;margin-top:4px}.model-tag{display:inline-block;font-size:9px;color:#8195b7;border:1px solid #2c405f;border-radius:999px;padding:1px 5px;margin-top:5px}.model-actions{display:flex;gap:4px;align-items:center}.gear{padding:1px 5px;font-size:10px;line-height:1.4}.param-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(3,7,14,.72);backdrop-filter:blur(3px)}.param-modal.on{display:flex}.param-card{width:min(520px,92vw);max-height:82vh;overflow:auto;background:#111a2c;border:1px solid #496485;border-radius:14px;padding:14px;box-shadow:0 18px 60px rgba(0,0,0,.45)}.param-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.param-head b{font-size:16px}.param-close{padding:4px 9px}.param-intro{padding:10px 12px;margin-bottom:10px;background:#0b1322;border:1px solid #263653;border-radius:10px;color:#c8d5ea;font-size:12px;line-height:1.55}.param-grid{display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:7px 12px;align-items:center}.param-label{color:#e6edfa;font-weight:700;font-size:12px}.param-help{grid-column:1/-1;color:#8fa1bf;font-size:10px;line-height:1.45;margin-top:-4px;padding-bottom:5px;border-bottom:1px dashed #21314a}.param-grid input,.param-grid select{width:100%}.param-note{font-size:10px;color:#8fa1bf;margin-top:10px;border-top:1px solid #263653;padding-top:8px}.param-direction{display:flex;gap:6px;margin-top:3px;flex-wrap:wrap}.param-direction span{display:inline-block;padding:1px 5px;border-radius:999px;background:#101b2d;border:1px solid #253a59;font-size:9px;color:#9eb1cf}
 .model-status{margin-top:6px;padding-top:5px;border-top:1px solid #263653;font-size:9px;line-height:1.35}.model-status summary{cursor:pointer}.model-list{overflow:auto;min-height:0;padding-right:2px}
 #scriptPane{grid-template-rows:auto auto minmax(0,1fr) minmax(100px,.55fr);gap:7px}
 .script-tools{display:flex;gap:5px;flex-wrap:wrap;align-items:center}.editor{width:100%;height:100%;min-height:0;resize:none;font:11px ui-monospace,SFMono-Regular,Menlo,monospace;tab-size:2}
@@ -105,7 +105,7 @@ state.prevSlow = slow;</textarea>
 </div>
 <div id="paramModal" class="param-modal" onclick="if(event.target===this)closeParams()"><div class="param-card"><div class="param-head"><b id="paramTitle">模型參數</b><button class="param-close" onclick="closeParams()">×</button></div><div id="paramBody" class="param-grid"></div><div class="param-note">模型層與市場圖表核心分離。模型參數或繪圖發生錯誤時，不應影響 K 線、成交量、縮放與拖曳。</div></div></div></main><script>
 window.addEventListener('error',function(e){var st=document.getElementById('status'),msg=document.getElementById('msg');if(st)st.textContent='程式錯誤';if(msg)msg.textContent='JS：'+e.message+' @ '+e.lineno;});
-const q=id=>document.getElementById(id);function openParams(k){let sc=PARAM_SCHEMA[k];if(!sc)return;q('paramTitle').textContent=sc.title;q('paramBody').innerHTML=sc.fields.map(f=>{let v=EXP[k][f.k];if(f.type==='select')return '<label>'+f.n+'</label><select onchange="setParam(\''+k+'\',\''+f.k+'\',this.value,true)">'+f.options.map(o=>'<option value="'+o[0]+'" '+(String(v)===String(o[0])?'selected':'')+'>'+o[1]+'</option>').join('')+'</select>';return '<label>'+f.n+'</label><input type="number" value="'+v+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" onchange="setParam(\''+k+'\',\''+f.k+'\',this.value,false)">'}).join('');q('paramModal').classList.add('on')}function closeParams(){q('paramModal').classList.remove('on')}function setParam(k,p,v,isText){EXP[k][p]=isText?v:+v;if(D.length)researchCalc()}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],mousePos=null;const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
+const q=id=>document.getElementById(id);function openParams(k){let sc=PARAM_SCHEMA[k];if(!sc)return;q('paramTitle').textContent=sc.title;let rows=sc.fields.map(f=>{let v=EXP[k][f.k],control;if(f.type==='select'){control='<select onchange="setParam(\''+k+'\',\''+f.k+'\',this.value,true)">'+f.options.map(o=>'<option value="'+o[0]+'" '+(String(v)===String(o[0])?'selected':'')+'>'+o[1]+'</option>').join('')+'</select>'}else{control='<input type="number" value="'+v+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" onchange="setParam(\''+k+'\',\''+f.k+'\',this.value,false)">'}let dirs=(f.low||f.high)?'<div class="param-direction">'+(f.low?'<span>← '+f.low+'</span>':'')+(f.high?'<span>'+f.high+' →</span>':'')+'</div>':'';return '<div class="param-label">'+f.n+'</div><div>'+control+'</div><div class="param-help">'+(f.help||'')+dirs+'</div>'}).join('');q('paramBody').innerHTML='<div class="param-intro">'+sc.intro+'</div>'+rows;q('paramModal').classList.add('on')}function closeParams(){q('paramModal').classList.remove('on')}function setParam(k,p,v,isText){EXP[k][p]=isText?v:+v;if(D.length)researchCalc()}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],mousePos=null;const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
 const EXP={
  basin:{p1:3,p2:8,p3:21,look:120,width:1.2,minScales:2},
  spring:{seg:12,ratio:.78,floor:1.0,breakout:.10},
@@ -115,18 +115,45 @@ const EXP={
  astro:{modulus:17,hits:2,offset:3,ddLook:50,minDD:.08}
 };
 const PARAM_SCHEMA={
- basin:{title:'Fractal Basin｜分形盆地',fields:[
-  {k:'p1',n:'短尺度 Pivot',min:2,max:8,step:1},{k:'p2',n:'中尺度 Pivot',min:4,max:16,step:1},{k:'p3',n:'長尺度 Pivot',min:10,max:40,step:1},{k:'look',n:'低點有效期（K棒）',min:30,max:300,step:5},{k:'width',n:'盆地寬度（ATR）',min:.4,max:3,step:.1},{k:'minScales',n:'至少重疊尺度',min:2,max:3,step:1}]},
- spring:{title:'Compression Spring｜壓縮彈簧',fields:[
-  {k:'seg',n:'每段長度（K棒）',min:5,max:40,step:1},{k:'ratio',n:'每段最大收縮比',min:.45,max:.98,step:.01},{k:'floor',n:'底部漂移容許（ATR）',min:.1,max:3,step:.1},{k:'breakout',n:'突破緩衝（ATR）',min:0,max:1,step:.05}]},
- echo:{title:'Echo Bottom｜歷史回聲',fields:[
-  {k:'pattern',n:'比對形狀長度',min:12,max:80,step:2},{k:'candidateLook',n:'候選新低觀察窗',min:8,max:80,step:2},{k:'history',n:'回看歷史 K棒',min:200,max:3000,step:100},{k:'stride',n:'歷史抽樣步長',min:1,max:12,step:1},{k:'topK',n:'採用相似樣本數',min:3,max:20,step:1},{k:'maxDist',n:'最大形狀距離',min:.2,max:1.5,step:.05},{k:'horizon',n:'歷史後續觀察 K棒',min:5,max:80,step:5},{k:'minMedian',n:'歷史中位報酬門檻',min:-.15,max:.25,step:.01}]},
- phase:{title:'Phase Transition｜市場相變',fields:[
-  {k:'trendLook',n:'下降狀態觀察窗',min:10,max:100,step:5},{k:'compLook',n:'壓縮觀察窗',min:5,max:40,step:1},{k:'atrRatio',n:'短/長 ATR 比例',min:.4,max:1.05,step:.05},{k:'breakLook',n:'向上突破觀察窗',min:4,max:30,step:1},{k:'recentDown',n:'下降狀態記憶 K棒',min:10,max:120,step:5},{k:'slopeATR',n:'下降幅度（ATR）',min:.5,max:6,step:.25}]},
- lunar:{title:'Lunar Bottom｜月相底部',fields:[
-  {k:'phase',n:'觀察月相',type:'select',options:[['both','新月＋滿月'],['new','只看新月'],['full','只看滿月']]},{k:'window',n:'月相前後容許（天）',min:.25,max:5,step:.25},{k:'ddLook',n:'回撤觀察窗（K棒）',min:10,max:200,step:5},{k:'minDD',n:'最低回撤比例',min:0,max:.6,step:.01}]},
- astro:{title:'Astrology Placebo｜占星安慰劑',fields:[
-  {k:'modulus',n:'規則週期模數',min:5,max:50,step:1},{k:'hits',n:'每週期命中格數',min:1,max:10,step:1},{k:'offset',n:'規則偏移量',min:0,max:30,step:1},{k:'ddLook',n:'回撤觀察窗（K棒）',min:10,max:200,step:5},{k:'minDD',n:'最低回撤比例',min:0,max:.6,step:.01}]}
+ basin:{title:'🔭 Fractal Basin｜分形盆地',intro:'把市場想成一座山谷。三副不同倍率的望遠鏡，各自找低谷；當它們都指向差不多的位置，就把那裡視為一個「盆地」。',fields:[
+  {k:'p1',n:'近景望遠鏡',min:2,max:8,step:1,help:'看很近的小凹谷。數字小＝更敏感、更多小低點；數字大＝忽略小雜訊。',low:'小：細節多',high:'大：只看明顯凹谷'},
+  {k:'p2',n:'中景望遠鏡',min:4,max:16,step:1,help:'抓中等規模的谷底，負責把短線雜訊和大結構接起來。',low:'小：偏短線',high:'大：偏大結構'},
+  {k:'p3',n:'遠景望遠鏡',min:10,max:40,step:1,help:'只認很大的山谷。越大，越不容易把普通回檔當成長期低谷。',low:'小：較容易認定',high:'大：只看大谷底'},
+  {k:'look',n:'盆地記憶',min:30,max:300,step:5,help:'一個舊低點可以留在地圖上多久。越久，模型越願意把很久以前的低谷算進同一個盆地。',low:'短：只記近期',high:'長：記很久'},
+  {k:'width',n:'盆地有多寬',min:.4,max:3,step:.1,help:'三副望遠鏡看到的低點可以差多遠，還算同一座盆地。',low:'窄：要求很接近',high:'寬：容許較分散'},
+  {k:'minScales',n:'幾副望遠鏡要同意',min:2,max:3,step:1,help:'2 表示兩種尺度同意就成立；3 表示三種尺度都要指向同一區。',low:'2：比較容易出現',high:'3：共識更強'}]},
+ spring:{title:'🌀 Compression Spring｜壓縮彈簧',intro:'把盤整想成一支被壓縮的彈簧。每一圈震盪都比上一圈小，底部又沒有明顯下沉，就代表彈簧正在被壓緊。',fields:[
+  {k:'seg',n:'每一圈有多長',min:5,max:40,step:1,help:'模型把價格切成三圈來比較。這裡決定每一圈包含多少根 K 棒。',low:'短：反應快',high:'長：看更大壓縮'},
+  {k:'ratio',n:'要壓得多明顯',min:.45,max:.98,step:.01,help:'下一圈必須比上一圈縮小多少才算「真的被壓縮」。數值越小，要求收縮越強。',low:'小：必須明顯縮小',high:'大：輕微縮小也算'},
+  {k:'floor',n:'彈簧底座可晃多遠',min:.1,max:3,step:.1,help:'壓縮過程中，底部可以稍微下移。數值越大，越容許底座往下滑。',low:'小：底部要很穩',high:'大：可有較大下沉'},
+  {k:'breakout',n:'彈出去多遠才算釋放',min:0,max:1,step:.05,help:'突破最後壓縮區上緣後，還要再多走一些才正式標記「彈簧釋放」。',low:'小：一碰就算',high:'大：要明顯彈出'}]},
+ echo:{title:'📻 Echo Bottom｜歷史回聲',intro:'把現在這段行情錄成一段「聲紋」，丟進歷史資料庫找最像的舊錄音，再看看那些舊故事後來怎麼發展。',fields:[
+  {k:'pattern',n:'這段回聲有多長',min:12,max:80,step:2,help:'拿最近多少根 K 棒當成一段完整故事。',low:'短：只比最近片段',high:'長：比整段故事'},
+  {k:'candidateLook',n:'多靠近低谷才開啟搜尋',min:8,max:80,step:2,help:'只有價格正在接近這段期間的新低時，才啟動「找歷史回聲」。',low:'短：容易啟動',high:'長：要更接近大低谷'},
+  {k:'history',n:'歷史圖書館有多深',min:200,max:3000,step:100,help:'往回翻多少根 K 棒找相似故事。',low:'淺：只看近代',high:'深：翻更久歷史'},
+  {k:'stride',n:'翻書速度',min:1,max:12,step:1,help:'每隔幾根 K 棒抽一個歷史片段。數字小＝找得細但較慢；數字大＝找得快但較粗。',low:'小：仔細翻',high:'大：快速掃描'},
+  {k:'topK',n:'要聽幾個最像的回聲',min:3,max:20,step:1,help:'挑最相似的幾段歷史一起參考，而不是只相信單一案例。',low:'少：聚焦最像案例',high:'多：看群體共識'},
+  {k:'maxDist',n:'不像到什麼程度就淘汰',min:.2,max:1.5,step:.05,help:'這是「形狀差異容忍度」。越小越挑剔，只有非常像的歷史才留下。',low:'小：很挑剔',high:'大：較寬鬆'},
+  {k:'horizon',n:'翻到故事後面多遠',min:5,max:80,step:5,help:'找到歷史回聲後，要往後看多少根 K 棒，觀察那個故事後來怎麼走。',low:'短：看後續不遠',high:'長：看更遠結果'},
+  {k:'minMedian',n:'回聲結局最低門檻',min:-.15,max:.25,step:.01,help:'多個相似歷史的「典型結局」至少要好到什麼程度，才在圖上亮起。0 代表不要求正報酬。',low:'低：更多回聲',high:'高：只留較強結果'}]},
+ phase:{title:'🌡️ Phase Transition｜市場相變',intro:'把市場想成物質變化：先進入寒冷下墜期，接著動能安靜下來，最後重新膨脹。重點是「狀態切換」，不是猜某根 K 棒。',fields:[
+  {k:'trendLook',n:'寒冬要看多長',min:10,max:100,step:5,help:'用多長一段歷史判斷市場是否真的處於下降狀態。',low:'短：很快判定寒冬',high:'長：要長期下降才算'},
+  {k:'compLook',n:'安靜期要看多長',min:5,max:40,step:1,help:'觀察多久的波動收縮，才認為市場開始「冷卻」。',low:'短：快速認定冷卻',high:'長：要持續安靜'},
+  {k:'atrRatio',n:'要安靜到什麼程度',min:.4,max:1.05,step:.05,help:'比較短期波動和長期波動。數字越小，表示必須真的安靜很多才算壓縮。',low:'小：非常安靜',high:'大：稍微降溫也算'},
+  {k:'breakLook',n:'破冰要突破多大的殼',min:4,max:30,step:1,help:'重新向上時，要突破多長一段近期高點，才算真正從壓縮狀態離開。',low:'短：容易破冰',high:'長：要突破更大結構'},
+  {k:'recentDown',n:'寒冬記憶會保留多久',min:10,max:120,step:5,help:'下降狀態結束後，過多久還把它視為這次相變的前一個階段。',low:'短：很快忘記',high:'長：保留前因較久'},
+  {k:'slopeATR',n:'要冷到多深才算寒冬',min:.5,max:6,step:.25,help:'價格下降必須相對近期波動深到什麼程度，才把市場標成「下降相」。',low:'小：小跌也算',high:'大：要明顯大跌'}]},
+ lunar:{title:'🌙 Lunar Bottom｜月相底部',intro:'把月相當成一個外部時鐘，不先假設它有沒有用。你可以決定看哪種月相、時間窗口多寬，以及市場必須先跌多深才讓月亮「上場」。',fields:[
+  {k:'phase',n:'讓哪種月亮上場',type:'select',options:[['both','🌑 新月＋🌕 滿月'],['new','🌑 只看新月'],['full','🌕 只看滿月']],help:'選擇要測試的月相事件。'},
+  {k:'window',n:'月光影響窗口',min:.25,max:5,step:.25,help:'距離新月或滿月前後多少天，都算同一次月相事件。',low:'窄：非常貼近月相',high:'寬：前後多天都算'},
+  {k:'ddLook',n:'月亮要看多長的市場記憶',min:10,max:200,step:5,help:'判斷「最近是否真的跌很多」時，要往回看多長。',low:'短：只看近期跌幅',high:'長：看更長週期'},
+  {k:'minDD',n:'市場跌多深才召喚月亮',min:0,max:.6,step:.01,help:'如果市場沒跌到這個程度，月相就不產生標記。設為 0 = 完全不管價格，只測純月相。',low:'低：月亮常出現',high:'高：只在深跌時出現'}]},
+ astro:{title:'✨ Astrology Placebo｜占星安慰劑',intro:'這不是「預測星象」，而是一台故意製造神秘規則的安慰劑機器。目的是看看：亂七八糟的曆法規則，是不是也能被回測包裝得很漂亮。',fields:[
+  {k:'modulus',n:'星盤有幾格',min:5,max:50,step:1,help:'把日期規則切成多少個循環格子。這個數字沒有金融意義，就是 Placebo 規則的齒輪大小。',low:'少：規則較粗',high:'多：規則較碎'},
+  {k:'hits',n:'幾格算「命中神秘力量」',min:1,max:10,step:1,help:'每個循環裡有幾格會亮起。越多，神秘訊號越常出現。',low:'少：稀有神諭',high:'多：神諭滿天飛'},
+  {k:'offset',n:'把星盤轉幾格',min:0,max:30,step:1,help:'把同一套規則往前或往後平移。這個參數特別適合用來測「換個起點是不是就能得到完全不同的漂亮結果」。',low:'小：接近原規則',high:'大：大幅旋轉'},
+  {k:'ddLook',n:'現實濾鏡看多遠',min:10,max:200,step:5,help:'即使是 Placebo，也可以加一層「市場最近跌多少」的現實濾鏡。',low:'短：看近期',high:'長：看更久'},
+  {k:'minDD',n:'現實濾鏡要多嚴格',min:0,max:.6,step:.01,help:'市場至少跌多少，神秘訊號才准出現。設為 0 = 純曆法 Placebo。',low:'低：幾乎不過濾',high:'高：只在深跌時測'}]}
 };
 const BTC_D='https://raw.githubusercontent.com/alessiostomeo/btc-cycle-data/main/bitstamp/1day/BTCUSD_bitstamp_daily_2012-2026.csv';
 const LOCAL={IXIC:'data/nasdaq_daily.csv',TWII:'data/taiex_daily.csv'};
