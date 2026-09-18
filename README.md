@@ -99,8 +99,6 @@ GitHub Actions 會自動檢查：
 
 ## Direction
 
-M1「可信任的地基」、M2「市場記憶」與 M3「自我驗證」已完成。
-
 M1「可信任的地基」、M2「市場記憶」、M3「自我驗證」與 M3.5「Research Runner」已完成。
 
 下一階段是 **M4「一眼懂，點下去很深」**：把同一份 Evidence 與 Evaluation 透過嚴格 UI 入場條件做成漸進式理解路徑，不建立新手／專業模式。
