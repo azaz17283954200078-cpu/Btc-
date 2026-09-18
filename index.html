@@ -174,7 +174,7 @@ td:first-child,th:first-child{text-align:left}
 }
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v0.6</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v0.7 · Research Kernel</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -244,7 +244,7 @@ state.prevSlow = slow;</textarea>
     <div class="param-note">先調整旋鈕，再按「執行」套用。模型只畫在自己的圖層，不會改動底層 K 線。</div>
     <div class="param-actions"><span id="paramRunStatus" class="param-run-status">尚未修改</span><div class="right"><button onclick="restoreParams()">↺ 復原</button><button onclick="applyParams()">▶ 執行</button></div></div>
   </div>
-</div></main><script>
+</div></main><script src="src/research-kernel.js"></script><script>
 window.addEventListener('error',function(e){var st=document.getElementById('status'),msg=document.getElementById('msg');if(st)st.textContent='程式錯誤';if(msg)msg.textContent='JS：'+e.message+' @ '+e.lineno;});
 const q=id=>document.getElementById(id);
 function setInfo(id,t){let e=q(id);if(e)e.textContent=t}
@@ -284,7 +284,7 @@ function moveParamDrag(e){
   let y=Math.max(8,Math.min(window.innerHeight-r.height-8,e.clientY-paramDrag.dy));
   card.style.left=x+'px';card.style.top=y+'px';
 }
-function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[];const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
+function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[];const RK=window.StrategyLabKernel||null;window.__SL_EVIDENCE__=EVIDENCE;window.__SL_KERNEL__=RK;const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
 const DEFAULT_EXP={
   basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:68},
   spring:{minCycles:2,maxCoreShiftPct:65,maxShapeChangePct:60,minFitPct:82,breakConfirmBars:2},
@@ -323,7 +323,7 @@ function parseCSV(t){let l=t.trim().split(/\r?\n/),h=l.shift().split(',').map(x=
 function setTFs(){let m=q('market').value,arr=m==='BTC'?['1h','4h','1d','1w']:['1d','1w','1m'];if(!arr.includes(tf))tf=m==='BTC'?'1w':'1d';q('tfs').innerHTML=arr.map(x=>'<button data-tf="'+x+'" class="'+(x===tf?'active':'')+'">'+x.toUpperCase()+'</button>').join('')}
 function aggregate(a,kind){let out=[],u,key;for(let x of a){let d=new Date(x.t*1000),k;if(kind==='4h')k=Math.floor(x.t/14400)*14400;else if(kind==='1d')k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())/1000;else if(kind==='1w'){k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-((d.getUTCDay()+6)%7))/1000}else{k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1)/1000}if(!u||key!==k){u={...x,t:k};key=k;out.push(u)}else{u.h=Math.max(u.h,x.h);u.l=Math.min(u.l,x.l);u.c=x.c;u.v+=x.v}}return out}
 async function binance(interval){let all=[],end=Date.now(),loops=tf==='1h'||tf==='4h'?20:8;for(let n=0;n<loops;n++){let url='https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval='+interval+'&limit=1000&endTime='+end;let a=await fetch(url).then(r=>{if(!r.ok)throw Error('Binance '+r.status);return r.json()});if(!a.length)break;let b=a.map(x=>({t:x[0]/1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[7]}));all=b.concat(all);end=a[0][0]-1;if(a.length<1000)break}let m=new Map(all.map(x=>[x.t,x]));return [...m.values()].sort((a,b)=>a.t-b.t)}
-async function load(){q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。市場圖表是底層；模型與 Script 使用彼此獨立的疊加圖層。'}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
+async function load(){q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];EVIDENCE.length=0;window.__SL_EVIDENCE__=EVIDENCE;draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。市場圖表是底層；模型與 Script 使用彼此獨立的疊加圖層。'}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
 function atrArr(a,n){let z=a.map((x,i)=>i?Math.max(x.h-x.l,Math.abs(x.h-a[i-1].c),Math.abs(x.l-a[i-1].c)):x.h-x.l),r=Array(a.length).fill(NaN),s=0;for(let i=0;i<z.length;i++){if(i<n){s+=z[i];if(i===n-1)r[i]=s/n}else r[i]=(r[i-1]*(n-1)+z[i])/n}return r}
 function zoneCalc(){
   if(!D.length)return;
@@ -370,7 +370,7 @@ function zoneCalc(){
 
         if(x.c<z.bot-tol){
           z.state='broken';
-          R[i].zones.push({top:z.top,bot:z.bot,state:'broken'});
+          R[i].zones.push({top:z.top,bot:z.bot,state:'broken',detectedAt:z.born});
           z.dead=true;
           broken++;
           continue;
@@ -392,7 +392,7 @@ function zoneCalc(){
           }
         }
 
-        R[i].zones.push({top:z.top,bot:z.bot,state:z.state});
+        R[i].zones.push({top:z.top,bot:z.bot,state:z.state,detectedAt:z.born});
       }
     }
   }
@@ -405,7 +405,7 @@ function zoneCalc(){
   );
   macroCalc()
 }
-function macroCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].macro=[];let on=q('modMacro').checked;if(!on){setInfo('macroInfo','Macro Bottom v0.2 已關閉');bottomLabCalc();return}let p=MACRO.p[tf]||MACRO.p['1d'],A=atrArr(D,MACRO.atr),ap=A.map((x,i)=>isFinite(x)&&D[i].c?x/D[i].c:NaN),zones=[],formed=0,confirmed=0,failed=0;for(let i=0;i<D.length;i++){if(i>=Math.max(p.hi,p.low,p.atrAvg)){let hi=Math.max(...D.slice(i-p.hi+1,i+1).map(x=>x.h)),ll=Math.min(...D.slice(i-p.low+1,i+1).map(x=>x.l)),dd=hi?1-D[i].c/hi:0,av=0,c=0;for(let j=i-p.atrAvg+1;j<=i;j++)if(isFinite(ap[j])){av+=ap[j];c++}av=c?av/c:NaN;let fresh=D[i].l<=ll,expanded=isFinite(ap[i])&&isFinite(av)&&ap[i]>=av*p.atrX,near=false;for(let z of zones)if(!z.dead&&Math.abs(D[i].l-z.low)<=A[i]*1.5)near=true;if(fresh&&dd>=p.dd&&expanded&&!near&&isFinite(A[i])){zones.push({top:D[i].l+A[i]*MACRO.zoneUp,bot:D[i].l-A[i]*MACRO.zoneDn,low:D[i].l,trigger:D[i].h,born:i,expires:i+p.confirm,state:'candidate',dead:false});formed++}}for(let z of zones){if(z.dead)continue;let tol=isFinite(A[i])?A[i]*MACRO.breakAtr:0;if(i>z.born&&D[i].c<z.bot-tol){z.dead=true;failed++;continue}if(z.state==='candidate'){if(i>z.born&&i<=z.expires&&D[i].c>z.trigger){z.state='confirmed';confirmed++}else if(i>z.expires){z.dead=true;failed++;continue}}R[i].macro.push({top:z.top,bot:z.bot,state:z.state})}}setInfo('macroInfo','Macro Bottom v0.2｜'+tf.toUpperCase()+'｜Candidate '+formed+' · Confirmed '+confirmed+' · Failed/Expired '+failed+'｜自動依時間框架調整觀察窗；不限制市場與週期');bottomLabCalc()}
+function macroCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].macro=[];let on=q('modMacro').checked;if(!on){setInfo('macroInfo','Macro Bottom v0.2 已關閉');bottomLabCalc();return}let p=MACRO.p[tf]||MACRO.p['1d'],A=atrArr(D,MACRO.atr),ap=A.map((x,i)=>isFinite(x)&&D[i].c?x/D[i].c:NaN),zones=[],formed=0,confirmed=0,failed=0;for(let i=0;i<D.length;i++){if(i>=Math.max(p.hi,p.low,p.atrAvg)){let hi=Math.max(...D.slice(i-p.hi+1,i+1).map(x=>x.h)),ll=Math.min(...D.slice(i-p.low+1,i+1).map(x=>x.l)),dd=hi?1-D[i].c/hi:0,av=0,c=0;for(let j=i-p.atrAvg+1;j<=i;j++)if(isFinite(ap[j])){av+=ap[j];c++}av=c?av/c:NaN;let fresh=D[i].l<=ll,expanded=isFinite(ap[i])&&isFinite(av)&&ap[i]>=av*p.atrX,near=false;for(let z of zones)if(!z.dead&&Math.abs(D[i].l-z.low)<=A[i]*1.5)near=true;if(fresh&&dd>=p.dd&&expanded&&!near&&isFinite(A[i])){zones.push({top:D[i].l+A[i]*MACRO.zoneUp,bot:D[i].l-A[i]*MACRO.zoneDn,low:D[i].l,trigger:D[i].h,born:i,expires:i+p.confirm,state:'candidate',dead:false});formed++}}for(let z of zones){if(z.dead)continue;let tol=isFinite(A[i])?A[i]*MACRO.breakAtr:0;if(i>z.born&&D[i].c<z.bot-tol){z.dead=true;failed++;continue}if(z.state==='candidate'){if(i>z.born&&i<=z.expires&&D[i].c>z.trigger){z.state='confirmed';confirmed++}else if(i>z.expires){z.dead=true;failed++;continue}}R[i].macro.push({top:z.top,bot:z.bot,state:z.state,detectedAt:z.born})}}setInfo('macroInfo','Macro Bottom v0.2｜'+tf.toUpperCase()+'｜Candidate '+formed+' · Confirmed '+confirmed+' · Failed/Expired '+failed+'｜自動依時間框架調整觀察窗；不限制市場與週期');bottomLabCalc()}
 function bottomLabCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].bottomSigs=[];let on=q('modSweep').checked,cnt=0,A=atrArr(D,14),look=tf==='1h'?48:tf==='4h'?42:tf==='1d'?30:tf==='1w'?20:12;if(on){for(let i=Math.max(20,look);i<D.length;i++){let x=D[i],range=Math.max(x.h-x.l,1e-9),pos=(x.c-x.l)/range,priorLow=Math.min(...D.slice(i-look,i).map(z=>z.l));if(x.l<priorLow&&x.c>priorLow&&pos>=.55){R[i].bottomSigs.push({k:'sweep',label:'Liquidity Sweep',slot:0});cnt++}}}setInfo('bottomInfo',on?'Liquidity Sweep｜'+cnt+' 個訊號｜原始跌破收回邏輯':'Liquidity Sweep 已關閉');researchCalc()}
 function mean(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN}
 function stdev(a){if(a.length<2)return 0;let m=mean(a);return Math.sqrt(mean(a.map(x=>(x-m)*(x-m))))}
@@ -790,6 +790,95 @@ function basinLiveStage(end,p){
   return null
 }
 
+function rebuildEvidence(){
+  EVIDENCE.length=0;
+  window.__SL_EVIDENCE__=EVIDENCE;
+  if(!RK||!D.length||!R.length)return EVIDENCE;
+
+  const i=D.length-1,row=R[i],
+        meta={market:q('market').value,timeframe:tf,source:sourceNote},
+        push=x=>{let e=RK.makeEvidence(x),v=RK.validateEvidence(e);if(v.ok)EVIDENCE.push(e)};
+
+  (row.zones||[]).forEach((z,k)=>push({
+    id:'support:'+i+':'+k+':'+z.state,
+    model:'support',family:'structure',index:i,timestamp:D[i].t,state:z.state,
+    detectedAt:z.detectedAt??i,
+    evidence:{top:z.top,bot:z.bot},
+    invalidation:{kind:'close_below_zone',level:z.bot},
+    meta
+  }));
+
+  (row.macro||[]).forEach((z,k)=>push({
+    id:'macro:'+i+':'+k+':'+z.state,
+    model:'macro',family:'structure',index:i,timestamp:D[i].t,state:z.state,
+    detectedAt:z.detectedAt??i,
+    evidence:{top:z.top,bot:z.bot},
+    invalidation:{kind:'close_below_zone',level:z.bot},
+    meta
+  }));
+
+  (row.bottomSigs||[]).forEach((z,k)=>push({
+    id:'sweep:'+i+':'+k,
+    model:'sweep',family:'event',index:i,timestamp:D[i].t,state:'event',
+    detectedAt:i,evidence:{label:z.label||'Liquidity Sweep'},meta
+  }));
+
+  BASIN_EPISODES.filter(z=>z.end===i).forEach((z,k)=>push({
+    id:'basin:'+i+':'+k+':'+z.state,
+    model:'basin',family:'structure',index:i,timestamp:D[i].t,state:z.state||'active',
+    confidence:z.score,detectedAt:z.detectedAt??i,
+    evidence:{top:z.top,bot:z.bot,peakI:z.peakI,features:z.features||{},raw:z.raw||{}},
+    meta
+  }));
+
+  OSC_FIELDS.filter(z=>z.end===i).forEach((z,k)=>push({
+    id:'field:'+i+':'+k+':'+z.state,
+    model:'field',family:'structure',index:i,timestamp:D[i].t,state:z.state||'active',
+    confidence:z.score,detectedAt:z.detectedAt??i,
+    evidence:{
+      upper0:z.upper0,lower0:z.lower0,upper1:z.upper1,lower1:z.lower1,
+      cycles:z.cycles,drift:z.drift,shapeChange:z.shapeChange,
+      compression:z.compression,bias:z.bias
+    },
+    invalidation:{kind:'confirmed_body_break',bars:EXP.spring.breakConfirmBars},
+    meta
+  }));
+
+  (row.researchSigs||[]).forEach((z,k)=>{
+    if(z.k==='echo'&&z.echo){
+      push({
+        id:'echo:'+i+':'+k,
+        model:'echo',family:'analogy',index:i,timestamp:D[i].t,
+        state:(z.echo.strength||'weak').toLowerCase(),
+        confidence:(z.echo.bestSim||0)*100,detectedAt:i,
+        evidence:{
+          length:z.echo.length,threshold:z.echo.threshold,
+          strongCount:z.echo.strongCount,bestSim:z.echo.bestSim
+        },
+        projection:z.echo.backtest?{
+          kind:'historical_distribution',
+          horizon:z.echo.backtest.horizon,
+          sampleMode:z.echo.backtestMode,
+          n:z.echo.backtest.n
+        }:null,
+        metrics:{backtest:z.echo.backtest||null},
+        meta
+      });
+    }else if(z.k==='astro'){
+      let upcoming=String(z.label||'').includes('Upcoming');
+      push({
+        id:'astro:'+i+':'+k,
+        model:'astro',family:'external_time',index:i,timestamp:D[i].t,
+        state:upcoming?'upcoming':'active',detectedAt:i,
+        evidence:{label:z.label||'',detail:z.detail||''},meta
+      });
+    }
+  });
+
+  window.__SL_EVIDENCE__=EVIDENCE;
+  return EVIDENCE
+}
+
 function researchCalc(){
   if(!D.length)return;
   BASIN_EPISODES=[];
@@ -1081,6 +1170,7 @@ function researchCalc(){
       }
     }
   }
+  rebuildEvidence();
   safeDrawModels();
 }
 function smaAt(i,n){if(i<n-1)return NaN;let s=0;for(let k=i-n+1;k<=i;k++)s+=D[k].c;return s/n}function emaSeries(n){let a=Array(D.length).fill(NaN),k=2/(n+1),s=0;for(let i=0;i<D.length;i++){if(i<n){s+=D[i].c;if(i===n-1)a[i]=s/n}else a[i]=D[i].c*k+a[i-1]*(1-k)}return a}
