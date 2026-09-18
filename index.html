@@ -181,7 +181,7 @@ td:first-child,th:first-child{text-align:left}
         <div class="model-row"><div class="model-name"><label><input id="modSweep" type="checkbox" onchange="bottomLabCalc()"> Liquidity Sweep｜流動性掃單</label><span class="model-actions"><a href="model-guide.html#sweep" target="_blank">說明 ↗</a></span></div><div class="model-desc">先跌破大家看得到的舊低點，再快速收回，找可能的假跌破。</div><span class="model-tag">跌破收回</span></div>
 
         <div class="model-group-title">Experimental Lab｜實驗模型</div>
-        <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Basin Floor｜盆底震盪</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">先快速下山，接著在低位進入平盤震盪；模型找的是「下跌後開始走平」這個狀態。</div><span class="model-tag">下跌 → 平盤</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Basin Mapper｜盆地辨識</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">不再用四個硬條件判定。模型會從多種時間尺度描述「下山後走平」的整體形狀，再給出盆地分數。</div><span class="model-tag">形態分數</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Spring System｜彈簧系統</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">把價格當成彈簧：找平衡位置，再估計彈力、位移、震盪節奏與阻尼。</div><span class="model-tag">市場力學</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">把現在這段價格形狀當成一段聲音，往歷史裡喊，看看能聽到幾次相似回聲。</div><span class="model-tag">形狀搜尋</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Engine｜占星盤</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接採用西洋占星常見的行星、相位、逆行與入座，把天體事件疊到市場時間軸上。</div><span class="model-tag">外部時間系統</span></div>
@@ -255,18 +255,18 @@ function moveParamDrag(e){
 }
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true;const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
 const DEFAULT_EXP={
-  basin:{cliffBars:20,minDropPct:.08,floorBars:14,floorRatio:.25},
+  basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:72},
   spring:{minK:.08,minDx:1.25,minCycles:2,maxDamping:.55,periodTol:.38},
   echo:{length:32,history:1000,similarity:.88},
   astro:{planetSet:'classic',aspectSet:'major',orb:4,retro:'off',ingress:'off'}
 };
 const EXP=cloneObj(DEFAULT_EXP);
 const PARAM_SCHEMA={
-  basin:{title:'🏞️ Basin Floor｜盆底震盪',intro:'把市場想成先從山坡快速下到低處，接著開始走一段平路。這裡的「盆底」不是預測右牆，而是辨識下跌後出現的低位平盤震盪。',fields:[
-    {k:'cliffBars',n:'下山最多花多久',min:4,max:80,step:1,help:'前面的下跌必須在這段時間內完成。時間越短，同樣跌幅看起來就越像懸崖。',low:'短：要很陡',high:'長：可慢慢下山'},
-    {k:'minDropPct',n:'下山至少多深',min:.02,max:.5,step:.01,help:'從下山前高處到平盤中心，至少要跌多少比例。例如 0.08 代表至少下跌 8%。',low:'低：小跌也算',high:'高：要明顯深跌'},
-    {k:'floorBars',n:'平盤至少走多久',min:5,max:80,step:1,help:'下山後至少要橫向震盪多少根 K 棒，才算真的開始走平。',low:'短：很快認定',high:'長：要盤更久'},
-    {k:'floorRatio',n:'平盤起伏最多佔跌幅多少',min:.05,max:.8,step:.05,help:'直接比較平盤區的最高－最低，和前面整段下跌的高度。例如 0.25 表示平盤起伏最多只能是前面跌幅的四分之一。',low:'小：很平',high:'大：容許較寬震盪'}]},
+  basin:{title:'🏞️ Basin Mapper｜盆地辨識',intro:'現在不再問「四個條件有沒有全部通過」，而是把一段行情拆成多個幾何特徵：下山、平坦、方向、波動、中心穩定與持續時間，再綜合成 0–100 的盆地分數。之後你提供人工標註樣本時，就能用那些樣本重新學習權重。',fields:[
+    {k:'floorMin',n:'最短平盤尺度',min:5,max:60,step:1,help:'模型會自動試很多種平盤長度，這裡只決定最短要從幾根 K 棒開始找。',low:'小：可找短盆',high:'大：忽略短暫盤整'},
+    {k:'floorMax',n:'最長平盤尺度',min:20,max:240,step:5,help:'自動尺度搜尋的上限。像週線的大型盆地，可以把這個值拉長。',low:'短：看小結構',high:'長：看大結構'},
+    {k:'cliffMax',n:'下山最多回看多久',min:10,max:180,step:5,help:'平盤前最多往回找多長的下降段。模型會在範圍內自己選最像「下山」的尺度。',low:'近：只看急跌',high:'遠：也看長下跌'},
+    {k:'threshold',n:'幾分才標成盆地',min:50,max:95,step:1,help:'Basin Score 達到這個分數才畫在圖上。分數來自多個特徵，不是單一條件。',low:'低：較寬鬆',high:'高：較挑剔'}]},
   spring:{title:'🌀 Spring System｜彈簧系統',intro:'把價格當成圍繞平衡位置震盪的彈簧。模型會估計有效彈力係數 k、向下位移 Δx、震盪週期與阻尼。',fields:[
     {k:'minK',n:'彈簧至少多硬',min:.01,max:.5,step:.01,help:'價格偏離平衡點後，要有多明顯的「拉回去」傾向。',low:'軟：拉回弱',high:'硬：拉回強'},
     {k:'minDx',n:'至少壓多深',min:.3,max:4,step:.1,help:'現在價格要低於平衡位置多遠，才算真的把彈簧往下壓。',low:'淺壓也算',high:'要壓很深'},
@@ -330,56 +330,154 @@ const ASTRO_NAME={Sun:'太陽',Moon:'月亮',Mercury:'水星',Venus:'金星',Mar
 const ASPECT_NAME={0:'合相 ☌',60:'六合 ⚹',90:'刑 □',120:'拱 △',180:'沖 ☍'};
 function aspectAngles(set){return set==='hard'?[0,90,180]:set==='harmony'?[60,120]:[0,60,90,120,180]}
 
+const BASIN_FEATURE_KEYS=['dropDepth','dropEfficiency','floorRelief','floorSlope','volShift','centerStability','duration'];
+const BASIN_HEURISTIC_WEIGHTS={dropDepth:.18,dropEfficiency:.12,floorRelief:.22,floorSlope:.16,volShift:.10,centerStability:.14,duration:.08};
+
+function regressionSlope(a){
+  let n=a.length;if(n<2)return 0,sx=(n-1)*n/2,sy=a.reduce((x,y)=>x+y,0),
+      sxx=(n-1)*n*(2*n-1)/6,sxy=0;
+  for(let i=0;i<n;i++)sxy+=i*a[i];
+  let den=n*sxx-sx*sx;return den?(n*sxy-sx*sy)/den:0
+}
+function returnVol(a){
+  if(a.length<3)return 0;let r=[];
+  for(let i=1;i<a.length;i++)if(a[i-1]>0&&a[i]>0)r.push(Math.log(a[i]/a[i-1]));
+  return stdev(r)
+}
+function basinScaleList(min,max){
+  min=Math.max(4,Math.round(min));max=Math.max(min,Math.round(max));
+  let out=[],x=min;
+  while(x<max){out.push(Math.round(x));x=Math.max(x+1,x*1.42)}
+  out.push(max);
+  return [...new Set(out)].sort((a,b)=>a-b)
+}
+function basinCandidate(end,floorLen,cliffLen){
+  let fs=end-floorLen+1,ce=fs-1,cs=ce-cliffLen+1;
+  if(cs<0||fs<1)return null;
+
+  let floor=D.slice(fs,end+1),floorC=floor.map(x=>x.c),
+      floorHi=Math.max(...floor.map(x=>x.h)),floorLo=Math.min(...floor.map(x=>x.l)),
+      floorRange=floorHi-floorLo,floorMid=median(floorC);
+
+  let peakI=cs;
+  for(let j=cs+1;j<=ce;j++)if(D[j].h>D[peakI].h)peakI=j;
+  if(peakI>=ce)return null;
+
+  let cliffTop=D[peakI].h,cliffHeight=cliffTop-floorMid;
+  if(!(cliffHeight>0))return null;
+
+  let cliffC=D.slice(peakI,ce+1).map(x=>x.c);
+  let path=0;
+  for(let j=1;j<cliffC.length;j++)path+=Math.abs(cliffC[j]-cliffC[j-1]);
+  path+=Math.abs((cliffC[cliffC.length-1]||floorMid)-floorMid);
+
+  let dropPct=cliffTop>0?cliffHeight/cliffTop:0,
+      efficiency=path>0?clamp(cliffHeight/path,0,1):0,
+      reliefRatio=floorRange/cliffHeight,
+      floorDrift=Math.abs(regressionSlope(floorC)*(floorC.length-1)),
+      slopeRatio=floorDrift/cliffHeight,
+      cliffVol=returnVol(cliffC),
+      floorVol=returnVol(floorC),
+      volRatio=cliffVol>1e-9?floorVol/cliffVol:(floorVol<1e-9?0:1.5);
+
+  let thirds=[],part=Math.max(1,Math.floor(floorC.length/3));
+  for(let k=0;k<3;k++){
+    let a=k*part,b=k===2?floorC.length:Math.min(floorC.length,(k+1)*part);
+    if(a<b)thirds.push(median(floorC.slice(a,b)));
+  }
+  let centerSpread=thirds.length?Math.max(...thirds)-Math.min(...thirds):floorRange,
+      centerRatio=centerSpread/cliffHeight,
+      durationRatio=floorLen/Math.max(1,cliffLen);
+
+  // Soft features: no single one can reject a basin by itself.
+  let f={
+    dropDepth:clamp(dropPct/.30,0,1),
+    dropEfficiency:efficiency,
+    floorRelief:1-clamp(reliefRatio/.70,0,1),
+    floorSlope:1-clamp(slopeRatio/.35,0,1),
+    volShift:1-clamp(volRatio/1.6,0,1),
+    centerStability:1-clamp(centerRatio/.30,0,1),
+    duration:clamp(durationRatio/1.25,0,1)
+  };
+  let score=0;
+  for(let k of BASIN_FEATURE_KEYS)score+=(BASIN_HEURISTIC_WEIGHTS[k]||0)*f[k];
+  score*=100;
+
+  return{
+    score,features:f,raw:{dropPct,efficiency,reliefRatio,slopeRatio,volRatio,centerRatio,durationRatio},
+    cs,ce,fs,fe:end,peakI,cliffTop,floorHi,floorLo,floorMid,floorLen,cliffLen
+  }
+}
+function basinBestCandidate(end,p){
+  let floors=basinScaleList(p.floorMin,p.floorMax),
+      cliffs=basinScaleList(Math.max(6,Math.round(p.floorMin*.6)),p.cliffMax),
+      best=null;
+  for(let F of floors){
+    if(end-F<1)continue;
+    for(let C of cliffs){
+      let c=basinCandidate(end,F,C);
+      if(c&&(!best||c.score>best.score))best=c;
+    }
+  }
+  return best
+}
+
 function researchCalc(){
   if(!D.length)return;
   for(let i=0;i<R.length;i++){R[i].researchSigs=[];R[i].researchZones=[]}
   let use={basin:q('modBasin').checked,spring:q('modSpring').checked,echo:q('modEcho').checked,astro:q('modAstro').checked},A=atrArr(D,14);
 
-  // Basin Floor: a meaningful drop followed by low-level sideways consolidation.
-  // No right wall, no symmetry, no ATR-based flatness. The floor is judged relative to the preceding drop.
+  // Basin Mapper: multi-scale shape score. No single hard geometric condition decides the result.
   if(use.basin){
-    let p=EXP.basin,C=Math.max(4,Math.round(p.cliffBars)),F=Math.max(5,Math.round(p.floorBars)),last=-9999;
-    for(let i=C+F-1;i<D.length;i++){
-      let fs=i-F+1,fe=i,cs=fs-C,ce=fs-1;
-      if(cs<0)continue;
+    let p=EXP.basin,evalStep=D.length>6000?4:D.length>2500?2:1,
+        active=null,gap=0,gapLimit=Math.max(2,Math.round(p.floorMin/3));
 
-      let floorBars=D.slice(fs,fe+1),
-          floorHi=Math.max(...floorBars.map(x=>x.h)),
-          floorLo=Math.min(...floorBars.map(x=>x.l)),
-          floorRange=floorHi-floorLo,
-          floorCloses=floorBars.map(x=>x.c),
-          floorMid=median(floorCloses);
+    function finishBasin(a){
+      if(!a)return;
+      let host=Math.min(R.length-1,a.end);
+      R[host].researchZones.push({
+        k:'basin',shape:'basinScore',
+        start:a.start,end:a.end,peakI:a.peakI,cliffTop:a.cliffTop,
+        top:a.top,bot:a.bot,score:a.best.score,
+        features:a.best.features,raw:a.best.raw,
+        detectedAt:a.detectedAt,
+        label:'Basin Mapper｜盆地辨識',
+        detail:a.detail
+      });
+    }
 
-      let peakI=cs;
-      for(let j=cs+1;j<=ce;j++)if(D[j].h>D[peakI].h)peakI=j;
-      // The "mountain top" should belong to the earlier part of the descent window.
-      if(peakI>cs+Math.floor(C*.65))continue;
+    for(let i=Math.max(20,p.floorMin+8);i<D.length;i+=evalStep){
+      let best=basinBestCandidate(i,p),pass=best&&best.score>=p.threshold;
 
-      let cliffTop=D[peakI].h,
-          cliffHeight=cliffTop-floorMid,
-          dropPct=cliffTop>0?cliffHeight/cliffTop:0,
-          floorToDrop=cliffHeight>0?floorRange/cliffHeight:Infinity;
+      if(pass){
+        let detail='Basin '+best.score.toFixed(0)+'｜下山 '+(best.features.dropDepth*100).toFixed(0)+
+          '｜平坦 '+(best.features.floorRelief*100).toFixed(0)+
+          '｜走平 '+(best.features.floorSlope*100).toFixed(0)+
+          '｜中心 '+(best.features.centerStability*100).toFixed(0)+
+          '｜尺度 '+best.cliffLen+'→'+best.floorLen;
 
-      // Internal flatness check: the floor may oscillate, but its center should not keep trending strongly.
-      let n=floorCloses.length,sx=(n-1)*n/2,sy=floorCloses.reduce((a,b)=>a+b,0),
-          sxx=(n-1)*n*(2*n-1)/6,sxy=0;
-      for(let j=0;j<n;j++)sxy+=j*floorCloses[j];
-      let den=n*sxx-sx*sx,slope=den?(n*sxy-sx*sy)/den:0,
-          drift=Math.abs(slope*(n-1)),
-          sideways=drift<=Math.max(floorRange*.35,cliffHeight*.04);
-
-      if(dropPct>=p.minDropPct&&floorToDrop<=p.floorRatio&&sideways&&i-last>Math.max(3,Math.round(F/2))){
-        let detail='前段下跌 '+(dropPct*100).toFixed(1)+'%｜平盤起伏/跌幅 '+(floorToDrop*100).toFixed(0)+'%｜平盤 '+F+' bars';
-        R[i].researchZones.push({
-          k:'basin',shape:'basinFloor',
-          cs,ce,fs,fe,peakI,
-          top:floorHi,bot:floorLo,cliffTop,floorMid,
-          label:'Basin Floor｜盆底震盪',detail
-        });
-        R[i].researchSigs.push({k:'basin',label:'Basin Floor｜盆底震盪',detail});
-        last=i;
+        let overlaps=active&&best.fs<=active.end+Math.max(evalStep,p.floorMin)&&best.fs>=active.start-Math.max(p.floorMin,evalStep*2);
+        if(!active||!overlaps){
+          finishBasin(active);
+          active={
+            start:best.fs,end:i,peakI:best.peakI,cliffTop:best.cliffTop,
+            top:best.floorHi,bot:best.floorLo,best,detectedAt:i,detail
+          };
+          R[i].researchSigs.push({k:'basin',label:'Basin '+best.score.toFixed(0)+'｜盆地辨識',detail});
+        }else{
+          active.end=i;active.start=Math.min(active.start,best.fs);
+          active.top=Math.max(active.top,best.floorHi);active.bot=Math.min(active.bot,best.floorLo);
+          if(best.score>active.best.score){
+            active.best=best;active.peakI=best.peakI;active.cliffTop=best.cliffTop;active.detail=detail;
+          }
+        }
+        gap=0;
+      }else if(active){
+        gap+=evalStep;
+        if(gap>gapLimit){finishBasin(active);active=null;gap=0}
       }
     }
+    finishBasin(active);
   }
 
   // Spring System: estimate restoring force, displacement, cycles, damping and rhythm.
@@ -458,35 +556,35 @@ function drawModelsOverlay(){let c=q('modelCanvas'),base=q('c');if(!c||!base)ret
 for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
 for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){g.fillStyle=z.state==='validated'?'rgba(55,120,255,.20)':'rgba(150,160,180,.12)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})}}
 for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
-  if(z.shape==='basinFloor'){
-    let xPeak=X(Math.max(s,z.peakI)),xFS=X(Math.max(s,z.fs)),xFE=X(Math.min(e,z.fe)),
-        yPeak=Y(z.cliffTop),yMid=Y(z.floorMid),yTop=Y(z.top),yBot=Y(z.bot);
+  if(z.shape==='basinScore'){
+    let xPeak=X(Math.max(s,z.peakI)),xS=X(Math.max(s,z.start)),xE=X(Math.min(e,z.end)),
+        yPeak=Y(z.cliffTop),yTop=Y(z.top),yBot=Y(z.bot),
+        opacity=.10+.22*clamp((z.score-50)/50,0,1);
     g.save();
 
-    // The completed descent.
-    g.strokeStyle='rgba(190,150,255,.95)';
-    g.lineWidth=2.6;
-    g.beginPath();g.moveTo(xPeak,yPeak);g.lineTo(xFS,yMid);g.stroke();
+    // Descent is context; the scored basin itself is the horizontal band.
+    g.strokeStyle='rgba(190,150,255,.78)';
+    g.lineWidth=2;
+    g.setLineDash([6,4]);
+    g.beginPath();g.moveTo(xPeak,yPeak);g.lineTo(xS,(yTop+yBot)/2);g.stroke();
+    g.setLineDash([]);
 
-    // The low-level sideways range.
-    g.fillStyle='rgba(176,132,255,.22)';
-    g.strokeStyle='rgba(205,180,255,.98)';
+    g.fillStyle='rgba(176,132,255,'+opacity.toFixed(3)+')';
+    g.strokeStyle='rgba(205,180,255,.95)';
     g.lineWidth=2.2;
-    g.fillRect(xFS,yTop,Math.max(3,xFE-xFS),Math.max(4,yBot-yTop));
-    g.strokeRect(xFS,yTop,Math.max(3,xFE-xFS),Math.max(4,yBot-yTop));
+    g.fillRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
+    g.strokeRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
 
-    // Labels explain the model directly on the chart.
-    g.fillStyle='#e2d3ff';
+    let label='Basin '+Math.round(z.score);
     g.font='700 11px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
-    g.textAlign='center';g.textBaseline='bottom';
-    g.fillText('下山',Math.max(xPeak+20,(xPeak+xFS)/2),Math.max(14,(yPeak+yMid)/2-5));
-    g.textBaseline='top';
-    g.fillText('低位平盤震盪',Math.max(xFS+38,Math.min(xFE-38,(xFS+xFE)/2)),Math.min(r.height-18,yBot+5));
-
-    g.beginPath();g.arc(xPeak,yPeak,4.5,0,Math.PI*2);g.fill();
+    let tw=g.measureText(label).width+12,lx=Math.max(xS+tw/2,Math.min(xE-tw/2,(xS+xE)/2)),ly=Math.max(14,yTop-18);
+    g.fillStyle='rgba(18,24,39,.90)';
+    g.fillRect(lx-tw/2,ly-12,tw,17);
+    g.fillStyle='#e6d9ff';g.textAlign='center';g.textBaseline='middle';
+    g.fillText(label,lx,ly-3);
     g.restore();
 
-    let hx1=Math.min(xPeak,xFS),hx2=Math.max(xFS,xFE),hy1=Math.min(yPeak,yTop),hy2=Math.max(yBot,yMid);
+    let hx1=Math.min(xPeak,xS),hx2=Math.max(xS,xE),hy1=Math.min(yPeak,yTop),hy2=yBot;
     MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
   }else{
     g.fillStyle='rgba(176,132,255,.15)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);
