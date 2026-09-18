@@ -81,15 +81,13 @@ table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}th,td{bo
 </section>
 
 <section class="box" id="cap">
-<h2>3. Capitulation v0.2</h2>
-<p><b>目的：</b>找出急跌、放量與明顯收回同時出現後，市場是否真的在接下來幾根 K 棒完成向上確認。</p>
-<div class="visual"><div class="visual-title">流程｜急跌放量 → 形成候選 → 後續收盤突破候選 K 高點</div><div class="flow"><span class="step">刷新近期低點</span><span class="arrow">+</span><span class="step">量能放大</span><span class="arrow">+</span><span class="step">長下影 / 收回</span><span class="arrow">→</span><span class="step">後續突破高點才確認</span></div></div>
+<h2>3. Capitulation v0.3</h2>
+<p><b>目的：</b>保留較多「急跌、放量、低位收回」候選，再用較寬鬆的後續收復條件過濾完全沒有反應的情況。</p>
 <h3>候選條件</h3>
-<p>候選 K 棒必須同時符合：刷新近期低點；相對近期高點已有一定回撤；成交量至少是近期平均量的 <code>1.6 倍</code>；整根 K 棒振幅至少達 <code>1.35 ATR</code>；下影至少佔整根 K 棒的 25%；收盤位於整根 K 棒的 55% 以上。</p>
+<p>目前 K 棒需刷新近期低點；相對近期高點已有最低回撤；成交量至少約為近期平均的 <code>1.3 倍</code>；K 棒振幅至少約 <code>1.05 ATR</code>；下影至少佔整根 K 棒 15%；收盤位置至少在整根 K 棒的 48%。不同時間框架的最低回撤門檻約為 3%～15%。</p>
 <h3>確認條件</h3>
-<p>候選出現後，不會立刻畫出訊號。模型會等待接下來數根 K 棒，只有收盤價突破候選 K 棒的 High 才正式標記。若超過期限仍未突破，或價格先跌破候選低點再多 <code>0.6 ATR</code>，候選取消。</p>
-<h3>為什麼改成兩階段</h3>
-<p>單純「爆量 + 長下影」在持續下跌過程中也可能反覆出現。加入後續收復條件後，模型不再把所有恐慌 K 棒都當成完成訊號。</p>
+<p>候選出現後，後續數根 K 棒只要收盤高於候選 K 棒的收盤價即可確認。確認期限也比 v0.2 更長，因此訊號數量會增加。</p>
+<div class="note">v0.3 的設計方向是提高覆蓋率，而不是追求非常稀少的訊號。</div>
 </section>
 
 <section class="box" id="reclaim">
@@ -105,27 +103,22 @@ table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}th,td{bo
 </section>
 
 <section class="box" id="rsi">
-<h2>5. RSI Divergence v0.2</h2>
-<p><b>目的：</b>只比較兩個已確認的價格低點，找出價格破低但 RSI 相對墊高的情況，再等待價格本身出現收復。</p>
-<div class="visual"><div class="visual-title">流程｜確認低點 A → 確認低點 B → 價格更低 / RSI 更高 → 價格收復才標記</div><div class="flow"><span class="step">Pivot Low A</span><span class="arrow">→</span><span class="step">Pivot Low B 更低</span><span class="arrow">+</span><span class="step">RSI B 更高</span><span class="arrow">→</span><span class="step">突破 B 的高點</span></div></div>
-<h3>使用指標</h3>
-<p>使用 Wilder 算法的 <code>RSI(14)</code>，並以確認後的 Pivot Low 作為比較點。1H～1W 主要使用左右各 3 根 K 棒確認 Pivot；1M 使用 2 根。</p>
-<h3>背離條件</h3>
-<p>後一個 Pivot Low 至少比前一個低 <code>0.15 ATR</code>；後一個 RSI 至少比前一個高 <code>6</code>；兩個 RSI 中至少一個低於 <code>42</code>。</p>
+<h2>5. RSI Divergence v0.3</h2>
+<p><b>目的：</b>找出價格創出較低低點，但 RSI 相對較高的底背離；此版本刻意放寬低點與確認標準。</p>
+<h3>低點與 RSI</h3>
+<p>使用 <code>RSI(14)</code>。局部低點主要以左右各 2 根 K 棒確認；月線使用 1 根。後一個低點只需比前一個低約 <code>0.05 ATR</code>，RSI 高出至少 <code>3</code>，且兩次 RSI 至少一個低於 <code>48</code>。</p>
 <h3>確認條件</h3>
-<p>背離成立後仍只算候選。後續收盤必須突破第二個 Pivot Low 所在 K 棒的 High 才正式畫出訊號；若時間到仍未突破，或價格再明顯跌破該低點，候選取消。</p>
-<div class="note">這個版本不再拿「目前 K 棒」去和任意一個區間最低點相比，而是比較兩個真正被確認的局部低點，目的是減少連續下跌中大量重複背離。</div>
+<p>背離形成後，後續收盤只需重新站上第二個低點 K 棒的「高低價中點」，不再要求突破整根 K 棒高點；等待期限也比 v0.2 長。</p>
+<div class="note">這樣會產生較多背離標記，也會包含較早期、尚未完全反轉的情況。</div>
 </section>
 
 <section class="box" id="sweep">
-<h2>6. Liquidity Sweep v0.2</h2>
-<p><b>目的：</b>觀察價格是否短暫跌破一個已確認的局部低點、收盤重新站回，並在後續出現進一步向上確認。</p>
-<div class="visual"><div class="visual-title">流程｜確認前低 → 盤中跌破 → 收盤站回 → 後續突破 Sweep K 高點</div><div class="flow"><span class="step">已確認 Pivot Low</span><span class="arrow">→</span><span class="step">Low 跌破</span><span class="arrow">→</span><span class="step">Close 站回</span><span class="arrow">→</span><span class="step">後續確認</span></div></div>
-<h3>第一階段：Sweep</h3>
-<p>參考線改用已確認的 Pivot Low，而不是每根 K 棒都重新計算的區間最低價。盤中 Low 必須跌破該 Pivot Low，但跌破深度不可超過 <code>0.8 ATR</code>；收盤必須重新站回 Pivot Low 上方；下影至少佔 K 棒 25%，且收盤位於整根 K 棒的 60% 以上。</p>
-<h3>第二階段：Follow-through</h3>
-<p>Sweep 本身不立刻產生訊號。後續數根 K 棒的收盤必須突破 Sweep K 棒的 High 才正式標記；若先跌破 Sweep Low 再多 <code>0.35 ATR</code>，候選失效。</p>
-<div class="note">模型仍只使用 K 棒價格資料，沒有直接讀取 order book 或逐筆委託，因此「Liquidity Sweep」是價格型態名稱，不代表能確認實際的流動性來源。</div>
+<h2>6. Liquidity Sweep</h2>
+<p><b>目的：</b>標記價格盤中跌破近期最低價，但同一根 K 棒收盤重新站回該價位上方的情況。</p>
+<h3>條件</h3>
+<p>模型先計算「不包含目前 K 棒」的近期最低價。若目前 Low 跌破該低點、Close 又站回該低點之上，而且收盤位置至少位於整根 K 棒的 55%，就直接產生訊號。</p>
+<div class="formula">Low &lt; 近期最低價<br>Close &gt; 近期最低價<br>(Close − Low) ÷ (High − Low) ≥ 0.55</div>
+<div class="note">這是原始版本邏輯：不要求 Pivot Low，也不等待下一根 K 棒確認。</div>
 </section>
 
 <section class="box" id="exhaust">
