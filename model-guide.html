@@ -1,83 +1,25 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Strategy Lab｜模型詳細說明</title><style>
-:root{--bg:#080d18;--text:#edf3ff;--muted:#a7b5ca;--line:#263853;--link:#9bc2ff;--panel:#101827}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font:17px/1.82 ui-sans-serif,system-ui,-apple-system,"Segoe UI","Microsoft JhengHei","PingFang TC",sans-serif;
-  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased
-}
-main{max-width:900px;margin:auto;padding:28px 26px 56px}
-.box{
-  background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;
-  padding:28px 4px;margin:0
-}
-.box:first-child{
-  background:var(--panel);border:1px solid var(--line);border-radius:16px;
-  padding:24px 26px;margin-bottom:12px
-}
-h1,h2,h3{line-height:1.28;letter-spacing:.1px}
-h1{font-size:31px;margin:0 0 10px}
-h2{font-size:24px;margin:0 0 14px;scroll-margin-top:22px}
-h3{font-size:18px;margin:24px 0 8px;color:#dce7f8}
-p{max-width:72ch;margin:0 0 1em;color:#d3ddea}
-b,strong{color:#f4f7ff}
-a{color:var(--link);text-decoration:none}
-a:hover{text-decoration:underline}
-.muted{color:var(--muted);font-size:15.5px;line-height:1.7}
-.toc{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
-.toc a,.back{
-  display:inline-block;background:#17243a;border:1px solid #3b567e;border-radius:9px;
-  padding:8px 11px;font-size:14px
-}
-.note{
-  max-width:72ch;padding:12px 14px;margin:12px 0 18px;background:#0d1727;
-  border-left:4px solid #5878a6;border-radius:8px;color:#cbd7e8;font-size:15.5px;line-height:1.72
-}
-.formula{
-  max-width:72ch;font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;
-  background:#0b1322;border:1px solid #22344f;padding:11px 13px;border-radius:9px;overflow:auto;margin:12px 0 18px
-}
-.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 20px}
-.step{padding:8px 10px;background:#142139;border:1px solid #365174;border-radius:9px;font-size:13.5px;line-height:1.4}
-.arrow{color:#7891b5;font-weight:800}
-table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:15px;line-height:1.6}
-th,td{border-bottom:1px solid #2a3d59;padding:10px 9px;text-align:left;vertical-align:top}
-th{color:#c7d5ea;font-size:14px}
-.pill{display:inline-block;border:1px solid #3b567e;border-radius:999px;padding:3px 9px;font-size:12px;color:#a9bedb;margin-right:6px;margin-bottom:8px}
-code{font-size:.92em;background:#111d30;border:1px solid #243854;border-radius:5px;padding:1px 5px;color:#dce8fb}
-@media(max-width:700px){
- body{font-size:16.5px;line-height:1.78}
- main{padding:14px 15px 40px}
- .box{padding:24px 0}
- .box:first-child{padding:20px 18px}
- h1{font-size:27px}h2{font-size:22px}h3{font-size:17px}
- .muted{font-size:15px}
- table{font-size:14px}
- .toc a,.back{font-size:13.5px}
-}
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Strategy Lab v0.6｜模型說明</title><style>
+:root{--bg:#080d18;--text:#eef4ff;--muted:#aab8cc;--line:#293b57;--link:#9fc6ff;--panel:#101927}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:18px/1.86 ui-sans-serif,system-ui,-apple-system,"Segoe UI","Microsoft JhengHei","PingFang TC",sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+main{max-width:920px;margin:auto;padding:30px 26px 64px}.hero{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:26px;margin-bottom:8px}.section{padding:30px 4px;border-bottom:1px solid var(--line)}
+h1,h2,h3{line-height:1.3}h1{font-size:32px;margin:12px 0 10px}h2{font-size:25px;margin:0 0 13px;scroll-margin-top:20px}h3{font-size:18.5px;margin:23px 0 7px}.muted{color:var(--muted);font-size:16px;line-height:1.75}p{max-width:72ch;margin:0 0 1em;color:#d8e1ee}a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}.back,.toc a{display:inline-block;background:#17243a;border:1px solid #3d5981;border-radius:9px;padding:8px 11px;font-size:14px}.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}.pill{display:inline-block;border:1px solid #3b567e;border-radius:999px;padding:3px 9px;font-size:12.5px;color:#aec3df;margin:0 5px 7px 0}.story{max-width:72ch;background:#0d1727;border:1px solid #243853;border-radius:11px;padding:13px 15px;margin:12px 0 18px;color:#d2ddeb}.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:13px 0 18px}.step{padding:8px 10px;background:#142139;border:1px solid #365174;border-radius:9px;font-size:14px}.arrow{color:#7f97ba;font-weight:800}table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:15.5px;line-height:1.65}th,td{border-bottom:1px solid #2b3f5c;padding:10px 9px;text-align:left;vertical-align:top}th{color:#cbd8eb}.note{max-width:72ch;border-left:4px solid #5b7caa;background:#0d1727;border-radius:8px;padding:11px 14px;color:#cbd7e7;font-size:15px}
+@media(max-width:700px){body{font-size:17px}main{padding:14px 15px 44px}.hero{padding:20px 18px}.section{padding:25px 0}h1{font-size:28px}h2{font-size:23px}table{font-size:14.5px}}
 </style></head><body><main>
-<section class="box"><a class="back" href="./">← 返回 Strategy Lab</a><h1 style="margin-top:16px">模型詳細說明</h1><div class="muted">目前保留 3 個既有模型，並新增 6 個 Experimental Lab 模型。六個新模型都有可調參數；參數改動只改變模型如何定義現象，不代表存在「最佳」固定值。</div><div class="toc"><a href="#support">Support Zone</a><a href="#macro">Macro Bottom</a><a href="#sweep">Liquidity Sweep</a><a href="#basin">Fractal Basin</a><a href="#spring">Compression Spring</a><a href="#echo">Echo Bottom</a><a href="#phase">Phase Transition</a><a href="#lunar">Lunar Bottom</a><a href="#astro">Astrology Placebo</a></div></section>
+<section class="hero"><a class="back" href="./">← 返回 Strategy Lab</a><h1>Strategy Lab v0.6｜模型說明</h1><p class="muted">主圖是最底層，模型與 Script 都只是透明疊加層。v0.6 保留三個核心模型，實驗室則收斂成四種完全不同的「看市場方式」。所有模型預設關閉。</p><div class="toc"><a href="#support">Support Zone</a><a href="#macro">Macro Bottom</a><a href="#sweep">Liquidity Sweep</a><a href="#basin">雙牆盆地</a><a href="#spring">彈簧系統</a><a href="#echo">歷史回聲</a><a href="#astro">占星盤</a></div></section>
 
-<section class="box"><h2>共用觀念</h2><p><b>ATR(14)</b> 用來量化近期平均波動幅度，讓「距離」可以隨市場波動調整。<b>Pivot Low</b> 是需要左右 K 棒確認的局部低點，因此會有延遲。所有模型標記都只是「條件成立」，不是底部保證。</p></section>
+<section class="section"><h2>核心模型</h2><p>這三個模型沿用原本邏輯，不在 v0.6 改演算法，只把名稱補上中文，方便閱讀。</p></section>
+<section class="section" id="support"><span class="pill">Core</span><h2>Support Zone｜支撐區</h2><div class="story">想像價格一直回到同一塊地板。第一次只是碰到，第二次、第三次還撐得住，這塊區域才慢慢變成值得觀察的支撐。</div><p>模型用多個局部低點形成一個區域，之後等待價格離開再回測。守住會變成 Validated；明顯跌破則失效。</p></section>
+<section class="section" id="macro"><span class="pill">Core</span><h2>Macro Bottom｜宏觀底部</h2><div class="story">不是抓最低那一根，而是等市場已經跌得夠深、波動也放大後，再看它有沒有開始收復。</div><p>模型同時看長期回撤、新低與波動擴張，最後再等待價格站回候選 K 棒的高點。</p></section>
+<section class="section" id="sweep"><span class="pill">Core</span><h2>Liquidity Sweep｜流動性掃單</h2><div class="story">市場先把舊低點跌破，像把停損掃掉，結果收盤又站回去。這種「跌破又收回」就是它在找的現象。</div><p>邏輯保持原版：盤中跌破近期最低價，收盤重新站回，且收盤位置不能太弱。</p></section>
 
-<section class="box" id="support"><h2>Support Zone</h2><p>以兩個接近的 Pivot Low 形成支撐區，後續價格先離開、再回測守住時轉為 Validated；跌破區域下緣再多 0.5 ATR 時失效。</p><div class="flow"><span class="step">Pivot Low A</span><span class="arrow">→</span><span class="step">Pivot Low B 接近</span><span class="arrow">→</span><span class="step">形成 Zone</span><span class="arrow">→</span><span class="step">回測 / 失效</span></div></section>
+<section class="section"><h2>Experimental Lab｜實驗模型</h2><p>這四個模型不共用世界觀。雙牆盆地看地形、彈簧系統看力學、歷史回聲只找形狀、占星盤則使用完全外部的傳統占星時間系統。</p></section>
+<section class="section" id="basin"><span class="pill">Experimental</span><h2>Walled Basin｜雙牆盆地</h2><div class="story">盆地不是「很多低點」。真正的盆地要先有兩側高牆，中間才有資格被叫做低平地。</div><div class="flow"><span class="step">左高牆</span><span class="arrow">→</span><span class="step">低而平的盆底</span><span class="arrow">→</span><span class="step">右高牆</span></div><p>模型把一段行情拆成左牆、盆底、右牆三塊。兩面牆都必須明顯高過盆底；盆底本身要夠平；兩面牆不能差得離譜。右牆完成後，才正式認定盆地。</p><h3>你能調什麼？</h3><table><tr><th>旋鈕</th><th>直覺</th></tr><tr><td>平地要多寬</td><td>盆底需要延伸多久。</td></tr><tr><td>每面牆找多寬</td><td>左右要到多大的範圍去找牆頂。</td></tr><tr><td>牆至少要多高</td><td>高牆必須高出盆底多少。</td></tr><tr><td>地面要多平</td><td>盆底允許有多少起伏。</td></tr><tr><td>兩面牆可差多少</td><td>控制左右牆的不對稱程度。</td></tr></table></section>
 
-<section class="box" id="macro"><h2>Macro Bottom</h2><p>同時檢查近期新低、從較長期高點的回撤幅度與 ATR 擴張，再等待收盤突破候選 K 棒高點。不同時間框架有不同觀察窗。</p></section>
+<section class="section" id="spring"><span class="pill">Experimental</span><h2>Spring System｜彈簧系統</h2><div class="story">如果價格真的像彈簧，偏離平衡位置後應該出現「想被拉回去」的恢復力，而且會圍繞平衡點來回震盪。</div><p>模型先找一段時間的平衡位置，再從價格加速度與位移的關係估計有效彈力係數 <b>k*</b>。同時量出目前向下壓了多深 <b>Δx</b>、已經震了幾圈、每圈多久，以及振幅衰減速度。</p><div class="flow"><span class="step">平衡位置</span><span class="arrow">→</span><span class="step">k* 恢復力</span><span class="arrow">+</span><span class="step">Δx 位移</span><span class="arrow">+</span><span class="step">週期 / 阻尼</span></div><p>這次不是把「波動變小」硬叫彈簧，而是真的讓名稱對應到彈簧的物理元素。</p></section>
 
-<section class="box" id="sweep"><h2>Liquidity Sweep</h2><p>先計算不含目前 K 棒的近期最低價；若盤中跌破，但收盤重新站回，而且收盤位於整根 K 棒較高位置，就直接標記。</p><div class="formula">Low &lt; 近期最低價<br>Close &gt; 近期最低價<br>(Close − Low) / (High − Low) ≥ 0.55</div></section>
+<section class="section" id="echo"><span class="pill">Experimental</span><h2>Echo｜歷史回聲</h2><div class="story">拿現在這段價格形狀當成一段聲音，往歷史裡喊。以前如果出現過很像的形狀，就算聽到一次回聲。</div><p>它刻意保持單純：不看 RSI、不看 ATR，也不先問回聲之後有沒有漲。模型只做形狀標準化與相似度比較，最後回報「找到幾次」。</p><h3>只有三個旋鈕</h3><table><tr><td>聲音有多長</td><td>現在拿多少根 K 棒當成一個完整形狀。</td></tr><tr><td>往多久以前喊</td><td>歷史搜尋深度。</td></tr><tr><td>多像才算回聲</td><td>相似度門檻。</td></tr></table></section>
 
-<section class="box" id="basin"><span class="pill">Experimental</span><span class="pill">可調參數</span><h2>Fractal Basin｜分形盆地</h2><p>核心不是找一個精確低點，而是問：不同尺度看出去，局部低點是否都聚集在同一價格帶？</p><div class="flow"><span class="step">短尺度 Pivot</span><span class="arrow">+</span><span class="step">中尺度 Pivot</span><span class="arrow">+</span><span class="step">長尺度 Pivot</span><span class="arrow">→</span><span class="step">低點密度盆地</span></div><h3>邏輯</h3><p>同時計算三組 Pivot Low。只保留在「低點有效期」內的最近低點；當至少指定數量的尺度彼此距離落在 <code>盆地寬度 × ATR</code> 內，就形成 Basin Zone。</p><h3>可調參數</h3><table><tr><th>參數</th><th>用途</th></tr><tr><td>短 / 中 / 長尺度 Pivot</td><td>控制三種解析度。</td></tr><tr><td>低點有效期</td><td>舊低點多久後不再參與盆地判斷。</td></tr><tr><td>盆地寬度（ATR）</td><td>不同尺度低點最多可相差多少。</td></tr><tr><td>至少重疊尺度</td><td>2 表示二種尺度即可，3 表示三種都要一致。</td></tr></table></section>
+<section class="section" id="astro"><span class="pill">Experimental</span><h2>Astrology Engine｜占星盤</h2><div class="story">這一版不再自創「神秘日期規則」，而是直接拿既有西洋占星術的語彙來做實驗。</div><p>使用地心黃經的簡化天文近似，套用常見主要相位：合相 0°、六合 60°、刑 90°、拱 120°、沖 180°。也可以選擇加入逆行開始與行星入座事件。</p><p>你可以使用傳統七曜，或再加入天王星、海王星與冥王星。Orb 則決定距離精確相位幾度內仍算成立。</p><div class="note">v0.6 的天體位置採離線簡化近似，目的是先驗證「占星事件作為外部時間標記」的研究架構，不把它當成精密天文曆。後續若值得研究，可再換成高精度 ephemeris。</div></section>
 
-<section class="box" id="spring"><span class="pill">Experimental</span><span class="pill">可調參數</span><h2>Compression Spring｜壓縮彈簧</h2><p>把最近價格拆成三段，觀察每一段的 High-Low 振幅是否逐步縮小，同時底部沒有持續大幅下移。</p><div class="flow"><span class="step">Range 1</span><span class="arrow">↓</span><span class="step">Range 2</span><span class="arrow">↓</span><span class="step">Range 3</span><span class="arrow">→</span><span class="step">突破壓縮區</span></div><p>當三段振幅依指定收縮比遞減，且最後一段低點沒有超過容許的 ATR 漂移，就視為壓縮。收盤突破最後一段高點加上突破緩衝時標記 Release。</p><h3>可調參數</h3><p>每段 K 棒數、最大收縮比、底部漂移容許 ATR、突破緩衝 ATR。</p></section>
-
-<section class="box" id="echo"><span class="pill">Experimental</span><span class="pill">可調參數</span><h2>Echo Bottom｜歷史回聲</h2><p>先把最近一段價格路徑正規化，不比較絕對價格，只比較形狀。當目前位於近期新低附近時，才去歷史搜尋相似路徑。</p><div class="flow"><span class="step">目前價格形狀</span><span class="arrow">→</span><span class="step">Z-score 正規化</span><span class="arrow">→</span><span class="step">歷史 Top K 相似</span><span class="arrow">→</span><span class="step">看歷史後續分布</span></div><h3>避免偷看未來</h3><p>對每個歷史樣本，只使用在目前時間點以前已經完整發生的後續區間。相似度以正規化價格路徑的 RMS 距離衡量。</p><h3>產生標記</h3><p>Top K 平均形狀距離必須低於最大距離，而且這些歷史樣本在指定 Horizon 後的報酬中位數需高於門檻。</p><h3>可調參數</h3><p>回聲長度、歷史圖書館深度、相似樣本數、形狀容忍度、故事後續觀察長度。候選新低範圍、抽樣步長與最低結果門檻由模型自動推導。</p></section>
-
-<section class="box" id="phase"><span class="pill">Experimental</span><span class="pill">可調參數</span><h2>Phase Transition｜市場相變</h2><p>模型不直接問「是不是底」，而是追蹤市場是否從下降狀態進入低波動壓縮，再出現向上擴張。</p><div class="flow"><span class="step">下降</span><span class="arrow">→</span><span class="step">壓縮</span><span class="arrow">→</span><span class="step">向上突破</span></div><p>下降狀態以一段時間的價格變化相對 ATR 衡量；壓縮以短期 ATR / 長期 ATR 比例判定；之後收盤突破最近區間高點才標記相變。</p><h3>可調參數</h3><p>寒冬長度、寒冬深度、安靜程度、破冰結構大小。壓縮長度與狀態記憶由模型自動推導。</p></section>
-
-<section class="box" id="lunar"><span class="pill">Mystery</span><span class="pill">可調參數</span><h2>Lunar Bottom｜月相底部</h2><p>把月相當成純時間特徵。模型使用約 29.5306 天的朔望月週期估算新月與滿月，並只在價格已達指定回撤時標記。</p><div class="flow"><span class="step">新月 / 滿月時間窗</span><span class="arrow">+</span><span class="step">價格回撤條件</span><span class="arrow">→</span><span class="step">實驗標記</span></div><h3>可調參數</h3><p>觀察哪種月相、月相前後時間窗口、最低回撤比例。回撤觀察長度固定由模型內部處理。</p><div class="note">這是可檢驗的時間假說，不代表月相對市場存在因果作用。週線與月線因 K 棒時間粒度較粗，月相對齊也會較粗略。</div></section>
-
-<section class="box" id="astro"><span class="pill">Placebo</span><span class="pill">可調參數</span><h2>Astrology Placebo Engine｜占星安慰劑引擎</h2><p>這個模型故意使用人為的曆法規則：日期、星期、近似「星座區段」與可調模數組成一個 Calendar Score。目的不是主張占星有效，而是建立一個可重複的安慰劑規則。</p><div class="flow"><span class="step">日期特徵</span><span class="arrow">→</span><span class="step">Calendar Score</span><span class="arrow">+</span><span class="step">可選回撤濾網</span><span class="arrow">→</span><span class="step">Placebo 訊號</span></div><h3>怎麼用</h3><p>如果一套正規模型在回測中看起來很好，但一個沒有市場機制基礎的 Placebo 規則也能得到類似結果，就表示評估流程可能存在過度擬合、樣本太少或資料選擇偏誤。</p><h3>可調參數</h3><p>星盤格數、命中格數、星盤旋轉量、現實濾鏡嚴格度。最低回撤設為 0 時更接近純曆法 placebo。</p></section>
-
-<section class="box"><h2>閱讀方式</h2><p>這六個新模型刻意使用不同世界觀：Fractal Basin 看多尺度幾何；Compression Spring 看波動收斂；Echo Bottom 看歷史形狀；Phase Transition 看 regime；Lunar Bottom 看外部時間特徵；Astrology Placebo 則是用來挑戰回測可信度。它們不應因為名稱新奇就被視為更有效，價值在於能被比較、反駁與回測。</p><a class="back" href="./">← 返回 Strategy Lab</a></section>
+<section class="section"><h2>如何看待這些實驗？</h2><p>模型只回答「我看到了符合自己世界觀的現象」，不等於買點，也不保證後面會上漲。真正的有效性要另外交給統一的評估系統比較。</p><a class="back" href="./">← 返回 Strategy Lab</a></section>
 </main></body></html>
