@@ -181,7 +181,7 @@ td:first-child,th:first-child{text-align:left}
         <div class="model-row"><div class="model-name"><label><input id="modSweep" type="checkbox" onchange="bottomLabCalc()"> Liquidity Sweep｜流動性掃單</label><span class="model-actions"><a href="model-guide.html#sweep" target="_blank">說明 ↗</a></span></div><div class="model-desc">先跌破大家看得到的舊低點，再快速收回，找可能的假跌破。</div><span class="model-tag">跌破收回</span></div>
 
         <div class="model-group-title">Experimental Lab｜實驗模型</div>
-        <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Walled Basin｜雙牆盆地</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">先有左高牆，中間走出一片低平地，最後右側再築起高牆，完整地形才叫盆地。</div><span class="model-tag">地形幾何</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Basin Floor｜盆底震盪</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">先快速下山，接著在低位進入平盤震盪；模型找的是「下跌後開始走平」這個狀態。</div><span class="model-tag">下跌 → 平盤</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Spring System｜彈簧系統</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">把價格當成彈簧：找平衡位置，再估計彈力、位移、震盪節奏與阻尼。</div><span class="model-tag">市場力學</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">把現在這段價格形狀當成一段聲音，往歷史裡喊，看看能聽到幾次相似回聲。</div><span class="model-tag">形狀搜尋</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Engine｜占星盤</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接採用西洋占星常見的行星、相位、逆行與入座，把天體事件疊到市場時間軸上。</div><span class="model-tag">外部時間系統</span></div>
@@ -255,19 +255,18 @@ function moveParamDrag(e){
 }
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true;const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
 const DEFAULT_EXP={
-  basin:{floorBars:18,wallLook:16,wallHeight:1.8,floorRatio:.25,symmetry:.45},
+  basin:{cliffBars:20,minDropPct:.08,floorBars:14,floorRatio:.25},
   spring:{minK:.08,minDx:1.25,minCycles:2,maxDamping:.55,periodTol:.38},
   echo:{length:32,history:1000,similarity:.88},
   astro:{planetSet:'classic',aspectSet:'major',orb:4,retro:'off',ingress:'off'}
 };
 const EXP=cloneObj(DEFAULT_EXP);
 const PARAM_SCHEMA={
-  basin:{title:'🏞️ Walled Basin｜雙牆盆地',intro:'盆地先看兩側的牆，再看中間是不是平地。核心定義很直接：盆底自身的高低差，必須遠小於兩側牆壁的高度。少一面牆，或中間太崎嶇，都不算盆地。',fields:[
-    {k:'floorBars',n:'平地要多寬',min:6,max:60,step:1,help:'兩面牆中間至少要留出多少根 K 棒，才像一片真正的盆底。',low:'短：小盆地',high:'長：大盆地'},
-    {k:'wallLook',n:'每面牆找多寬',min:5,max:40,step:1,help:'左右各用多寬的範圍去找最高的牆。',low:'窄：找近牆',high:'寬：找大牆'},
-    {k:'wallHeight',n:'牆至少要多高',min:.5,max:5,step:.1,help:'牆頂必須明顯高過盆底，才算真的把低地包起來。',low:'低：容易成盆',high:'高：牆要很明顯'},
-    {k:'floorRatio',n:'盆底起伏最多佔牆高多少',min:.05,max:.6,step:.05,help:'直接比較「盆底最高到最低的高低差」與「較矮那面牆的高度」。例如 0.25 表示盆底起伏最多只能是牆高的四分之一。',low:'小：真正平地',high:'大：容許較崎嶇'},
-    {k:'symmetry',n:'兩面牆可差多少',min:.05,max:.9,step:.05,help:'左右牆高度差太多，就比較不像被兩側高牆包住的盆地。',low:'小：兩牆接近',high:'大：容許不對稱'}]},
+  basin:{title:'🏞️ Basin Floor｜盆底震盪',intro:'把市場想成先從山坡快速下到低處，接著開始走一段平路。這裡的「盆底」不是預測右牆，而是辨識下跌後出現的低位平盤震盪。',fields:[
+    {k:'cliffBars',n:'下山最多花多久',min:4,max:80,step:1,help:'前面的下跌必須在這段時間內完成。時間越短，同樣跌幅看起來就越像懸崖。',low:'短：要很陡',high:'長：可慢慢下山'},
+    {k:'minDropPct',n:'下山至少多深',min:.02,max:.5,step:.01,help:'從下山前高處到平盤中心，至少要跌多少比例。例如 0.08 代表至少下跌 8%。',low:'低：小跌也算',high:'高：要明顯深跌'},
+    {k:'floorBars',n:'平盤至少走多久',min:5,max:80,step:1,help:'下山後至少要橫向震盪多少根 K 棒，才算真的開始走平。',low:'短：很快認定',high:'長：要盤更久'},
+    {k:'floorRatio',n:'平盤起伏最多佔跌幅多少',min:.05,max:.8,step:.05,help:'直接比較平盤區的最高－最低，和前面整段下跌的高度。例如 0.25 表示平盤起伏最多只能是前面跌幅的四分之一。',low:'小：很平',high:'大：容許較寬震盪'}]},
   spring:{title:'🌀 Spring System｜彈簧系統',intro:'把價格當成圍繞平衡位置震盪的彈簧。模型會估計有效彈力係數 k、向下位移 Δx、震盪週期與阻尼。',fields:[
     {k:'minK',n:'彈簧至少多硬',min:.01,max:.5,step:.01,help:'價格偏離平衡點後，要有多明顯的「拉回去」傾向。',low:'軟：拉回弱',high:'硬：拉回強'},
     {k:'minDx',n:'至少壓多深',min:.3,max:4,step:.1,help:'現在價格要低於平衡位置多遠，才算真的把彈簧往下壓。',low:'淺壓也算',high:'要壓很深'},
@@ -336,42 +335,48 @@ function researchCalc(){
   for(let i=0;i<R.length;i++){R[i].researchSigs=[];R[i].researchZones=[]}
   let use={basin:q('modBasin').checked,spring:q('modSpring').checked,echo:q('modEcho').checked,astro:q('modAstro').checked},A=atrArr(D,14);
 
-  // Walled Basin: two high walls surrounding a floor whose vertical relief is much smaller than wall height.
+  // Basin Floor: a meaningful drop followed by low-level sideways consolidation.
+  // No right wall, no symmetry, no ATR-based flatness. The floor is judged relative to the preceding drop.
   if(use.basin){
-    let p=EXP.basin,F=Math.max(4,Math.round(p.floorBars)),W=Math.max(3,Math.round(p.wallLook)),last=-9999;
-    for(let i=2*W+F-1;i<D.length;i++){
-      let ls=i-(2*W+F)+1,le=ls+W-1,fs=le+1,fe=fs+F-1,rs=fe+1,re=i,atr=A[fe];
-      if(!isFinite(atr)||atr<=0)continue;
+    let p=EXP.basin,C=Math.max(4,Math.round(p.cliffBars)),F=Math.max(5,Math.round(p.floorBars)),last=-9999;
+    for(let i=C+F-1;i<D.length;i++){
+      let fs=i-F+1,fe=i,cs=fs-C,ce=fs-1;
+      if(cs<0)continue;
 
       let floorBars=D.slice(fs,fe+1),
           floorHi=Math.max(...floorBars.map(x=>x.h)),
           floorLo=Math.min(...floorBars.map(x=>x.l)),
-          floorRange=floorHi-floorLo;
+          floorRange=floorHi-floorLo,
+          floorCloses=floorBars.map(x=>x.c),
+          floorMid=median(floorCloses);
 
-      let leftI=ls,rightI=rs;
-      for(let j=ls+1;j<=le;j++)if(D[j].h>D[leftI].h)leftI=j;
-      for(let j=rs+1;j<=re;j++)if(D[j].h>D[rightI].h)rightI=j;
+      let peakI=cs;
+      for(let j=cs+1;j<=ce;j++)if(D[j].h>D[peakI].h)peakI=j;
+      // The "mountain top" should belong to the earlier part of the descent window.
+      if(peakI>cs+Math.floor(C*.65))continue;
 
-      let leftPeak=D[leftI].h,rightPeak=D[rightI].h,
-          leftWall=leftPeak-floorHi,rightWall=rightPeak-floorHi,
-          minWall=Math.min(leftWall,rightWall),
-          maxWall=Math.max(leftWall,rightWall),
-          floorToWall=minWall>0?floorRange/minWall:Infinity,
-          sym=maxWall>0?Math.abs(leftWall-rightWall)/maxWall:Infinity;
+      let cliffTop=D[peakI].h,
+          cliffHeight=cliffTop-floorMid,
+          dropPct=cliffTop>0?cliffHeight/cliffTop:0,
+          floorToDrop=cliffHeight>0?floorRange/cliffHeight:Infinity;
 
-      let wallsTall=leftWall>=atr*p.wallHeight&&rightWall>=atr*p.wallHeight,
-          floorFlat=floorToWall<=p.floorRatio,
-          wallsBalanced=sym<=p.symmetry;
+      // Internal flatness check: the floor may oscillate, but its center should not keep trending strongly.
+      let n=floorCloses.length,sx=(n-1)*n/2,sy=floorCloses.reduce((a,b)=>a+b,0),
+          sxx=(n-1)*n*(2*n-1)/6,sxy=0;
+      for(let j=0;j<n;j++)sxy+=j*floorCloses[j];
+      let den=n*sxx-sx*sx,slope=den?(n*sxy-sx*sy)/den:0,
+          drift=Math.abs(slope*(n-1)),
+          sideways=drift<=Math.max(floorRange*.35,cliffHeight*.04);
 
-      if(wallsTall&&floorFlat&&wallsBalanced&&i-last>Math.max(3,Math.round(F/2))){
-        let detail='盆底高低差 '+fmt(floorRange)+'｜較矮牆 '+fmt(minWall)+'｜底/牆 '+(floorToWall*100).toFixed(0)+'%｜左右牆差 '+(sym*100).toFixed(0)+'%';
+      if(dropPct>=p.minDropPct&&floorToDrop<=p.floorRatio&&sideways&&i-last>Math.max(3,Math.round(F/2))){
+        let detail='前段下跌 '+(dropPct*100).toFixed(1)+'%｜平盤起伏/跌幅 '+(floorToDrop*100).toFixed(0)+'%｜平盤 '+F+' bars';
         R[i].researchZones.push({
-          k:'basin',shape:'basin',
-          ls,le,fs,fe,rs,re,leftI,rightI,
-          top:floorHi,bot:floorLo,leftPeak,rightPeak,
-          label:'Walled Basin｜雙牆盆地',detail
+          k:'basin',shape:'basinFloor',
+          cs,ce,fs,fe,peakI,
+          top:floorHi,bot:floorLo,cliffTop,floorMid,
+          label:'Basin Floor｜盆底震盪',detail
         });
-        R[i].researchSigs.push({k:'basin',label:'Walled Basin｜雙牆盆地',detail});
+        R[i].researchSigs.push({k:'basin',label:'Basin Floor｜盆底震盪',detail});
         last=i;
       }
     }
@@ -453,33 +458,35 @@ function drawModelsOverlay(){let c=q('modelCanvas'),base=q('c');if(!c||!base)ret
 for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
 for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){g.fillStyle=z.state==='validated'?'rgba(55,120,255,.20)':'rgba(150,160,180,.12)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})}}
 for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
-  if(z.shape==='basin'){
-    let xL=X(Math.max(s,z.leftI)),xFS=X(Math.max(s,z.fs)),xFE=X(Math.min(e,z.fe)),xR=X(Math.min(e,z.rightI)),
-        yLP=Y(z.leftPeak),yRP=Y(z.rightPeak),yTop=Y(z.top),yBot=Y(z.bot);
+  if(z.shape==='basinFloor'){
+    let xPeak=X(Math.max(s,z.peakI)),xFS=X(Math.max(s,z.fs)),xFE=X(Math.min(e,z.fe)),
+        yPeak=Y(z.cliffTop),yMid=Y(z.floorMid),yTop=Y(z.top),yBot=Y(z.bot);
     g.save();
-    g.fillStyle='rgba(176,132,255,.20)';
+
+    // The completed descent.
     g.strokeStyle='rgba(190,150,255,.95)';
-    g.lineWidth=2.4;
-    g.fillRect(xFS,yTop,Math.max(2,xFE-xFS),Math.max(3,yBot-yTop));
-    g.strokeRect(xFS,yTop,Math.max(2,xFE-xFS),Math.max(3,yBot-yTop));
+    g.lineWidth=2.6;
+    g.beginPath();g.moveTo(xPeak,yPeak);g.lineTo(xFS,yMid);g.stroke();
 
-    g.setLineDash([6,4]);
-    g.beginPath();g.moveTo(xL,yLP);g.lineTo(xFS,yTop);g.moveTo(xFE,yTop);g.lineTo(xR,yRP);g.stroke();
-    g.setLineDash([]);
+    // The low-level sideways range.
+    g.fillStyle='rgba(176,132,255,.22)';
+    g.strokeStyle='rgba(205,180,255,.98)';
+    g.lineWidth=2.2;
+    g.fillRect(xFS,yTop,Math.max(3,xFE-xFS),Math.max(4,yBot-yTop));
+    g.strokeRect(xFS,yTop,Math.max(3,xFE-xFS),Math.max(4,yBot-yTop));
 
-    g.fillStyle='#d9c5ff';
-    g.beginPath();g.arc(xL,yLP,4.5,0,Math.PI*2);g.fill();
-    g.beginPath();g.arc(xR,yRP,4.5,0,Math.PI*2);g.fill();
-
+    // Labels explain the model directly on the chart.
+    g.fillStyle='#e2d3ff';
     g.font='700 11px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
     g.textAlign='center';g.textBaseline='bottom';
-    g.fillText('左牆',xL,Math.max(12,yLP-5));
-    g.fillText('右牆',xR,Math.max(12,yRP-5));
+    g.fillText('下山',Math.max(xPeak+20,(xPeak+xFS)/2),Math.max(14,(yPeak+yMid)/2-5));
     g.textBaseline='top';
-    g.fillText('盆底',Math.max(xFS+18,Math.min(xFE-18,(xFS+xFE)/2)),Math.min(r.height-18,yBot+5));
+    g.fillText('低位平盤震盪',Math.max(xFS+38,Math.min(xFE-38,(xFS+xFE)/2)),Math.min(r.height-18,yBot+5));
+
+    g.beginPath();g.arc(xPeak,yPeak,4.5,0,Math.PI*2);g.fill();
     g.restore();
 
-    let hx1=Math.min(xL,xFS),hx2=Math.max(xR,xFE),hy1=Math.min(yLP,yRP,yTop),hy2=Math.max(yBot,yLP,yRP);
+    let hx1=Math.min(xPeak,xFS),hx2=Math.max(xFS,xFE),hy1=Math.min(yPeak,yTop),hy2=Math.max(yBot,yMid);
     MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
   }else{
     g.fillStyle='rgba(176,132,255,.15)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);
