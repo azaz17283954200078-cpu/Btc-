@@ -1,141 +1,27 @@
-<!doctype html>
-<html lang="zh-Hant">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Strategy Lab｜模型詳細說明</title>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#080d18;color:#eaf0ff;font:15px/1.75 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-main{max-width:980px;margin:auto;padding:18px}.box{background:#111a2c;border:1px solid #263653;border-radius:14px;padding:18px;margin-bottom:14px}
-h1{font-size:26px;margin:0 0 6px}h2{font-size:21px;margin:0 0 10px}h3{font-size:16px;margin:18px 0 6px;color:#dce7ff}
-a{color:#8db8ff;text-decoration:none}.muted{color:#9aa9c4}.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.toc a,.back{background:#18243a;border:1px solid #385075;border-radius:8px;padding:7px 10px}
-code{background:#0b1322;border:1px solid #263653;border-radius:5px;padding:1px 5px;color:#d8e8ff}
-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}th,td{border-bottom:1px solid #263653;padding:8px;text-align:left;vertical-align:top}th{color:#b9c8e4}
-.note{padding:10px 12px;background:#0c1424;border-left:3px solid #516b95;border-radius:6px}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0b1322;padding:8px 10px;border-radius:7px;overflow:auto}.visual{margin:12px 0 16px;padding:13px;background:#0b1322;border:1px solid #263653;border-radius:10px}.visual-title{font-size:12px;color:#91a5c7;margin-bottom:9px}.flow{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.step{padding:7px 9px;background:#15233a;border:1px solid #365174;border-radius:8px;font-size:12px}.arrow{color:#6682aa;font-weight:800}.mini-chart{height:112px;position:relative;border-radius:8px;background:linear-gradient(to bottom,transparent 24%,#162136 25%,transparent 26%,transparent 49%,#162136 50%,transparent 51%,transparent 74%,#162136 75%,transparent 76%);overflow:hidden;margin-top:8px}.line{position:absolute;height:3px;background:#8db8ff;transform-origin:left center;border-radius:3px}.line.alt{background:#ffd166}.zone-band{position:absolute;left:9%;right:8%;height:22px;bottom:18px;background:rgba(80,125,255,.18);border:1px solid rgba(100,150,255,.5);border-radius:5px}.dot{position:absolute;width:9px;height:9px;border-radius:50%;background:#8db8ff}.barv{position:absolute;bottom:6px;width:9px;background:#667b9d;border-radius:2px 2px 0 0}.barv.hot{background:#ff9b73}.label-mini{position:absolute;font-size:10px;color:#b9c8e4}.rsi-band{position:absolute;left:0;right:0;bottom:8px;height:34px;border-top:1px solid #2c405f}.candles{display:flex;align-items:flex-end;gap:8px;height:96px;padding:8px 10px}.candle{width:10px;background:#7b8da9;position:relative;border-radius:2px}.candle.up{background:#5ed6aa}.candle.down{background:#ef6b73}.candle:before{content:'';position:absolute;width:2px;background:inherit;left:4px;top:-10px;bottom:-10px}
-@media(max-width:700px){main{padding:10px}.box{padding:14px}table{font-size:12px}}
-</style>
-</head>
-<body><main>
-<section class="box">
-<a class="back" href="./">← 返回 Strategy Lab</a>
-<h1 style="margin-top:16px">七個模型的詳細說明</h1>
-<div class="muted">本頁只說明模型的計算方式、使用的指標與訊號條件。模型產生的標記代表條件成立，不等同於價格一定形成底部，也不是報酬或風險的保證。</div>
-<div class="toc">
-<a href="#support">Support Zone</a><a href="#macro">Macro Bottom</a><a href="#cap">Capitulation</a><a href="#reclaim">Deep Reclaim</a><a href="#rsi">RSI Divergence</a><a href="#sweep">Liquidity Sweep</a><a href="#exhaust">Exhaustion Reversal</a>
-</div>
-</section>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Strategy Lab｜模型詳細說明</title><style>
+*{box-sizing:border-box}body{margin:0;background:#080d18;color:#eaf0ff;font:15px/1.72 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:980px;margin:auto;padding:18px}.box{background:#111a2c;border:1px solid #263653;border-radius:14px;padding:18px;margin-bottom:14px}h1{font-size:26px;margin:0 0 6px}h2{font-size:21px;margin:0 0 10px}h3{font-size:16px;margin:18px 0 6px;color:#dce7ff}a{color:#8db8ff;text-decoration:none}.muted{color:#9aa9c4}.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.toc a,.back{background:#18243a;border:1px solid #385075;border-radius:8px;padding:7px 10px}.note{padding:10px 12px;background:#0c1424;border-left:3px solid #516b95;border-radius:6px}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0b1322;padding:8px 10px;border-radius:7px;overflow:auto}.flow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}.step{padding:7px 9px;background:#15233a;border:1px solid #365174;border-radius:8px;font-size:12px}.arrow{color:#6682aa;font-weight:800}table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}th,td{border-bottom:1px solid #263653;padding:8px;text-align:left;vertical-align:top}th{color:#b9c8e4}.pill{display:inline-block;border:1px solid #365174;border-radius:999px;padding:2px 8px;font-size:11px;color:#9fb5d5;margin-right:5px}@media(max-width:700px){main{padding:10px}.box{padding:14px}table{font-size:12px}}
+</style></head><body><main>
+<section class="box"><a class="back" href="./">← 返回 Strategy Lab</a><h1 style="margin-top:16px">模型詳細說明</h1><div class="muted">目前保留 3 個既有模型，並新增 6 個 Experimental Lab 模型。六個新模型都有可調參數；參數改動只改變模型如何定義現象，不代表存在「最佳」固定值。</div><div class="toc"><a href="#support">Support Zone</a><a href="#macro">Macro Bottom</a><a href="#sweep">Liquidity Sweep</a><a href="#basin">Fractal Basin</a><a href="#spring">Compression Spring</a><a href="#echo">Echo Bottom</a><a href="#phase">Phase Transition</a><a href="#lunar">Lunar Bottom</a><a href="#astro">Astrology Placebo</a></div></section>
 
-<section class="box">
-<h2>先認識幾個會反覆出現的指標</h2>
-<h3>ATR（Average True Range）</h3>
-<p>ATR 用來衡量一段時間內的平均價格波動幅度。它不是方向指標，不判斷漲跌，只回答「最近通常一次會動多大」。Strategy Lab 主要使用 <code>ATR(14)</code>，讓不同價格與不同市場可以用相對波動尺度設定距離。</p>
-<h3>RSI（Relative Strength Index）</h3>
-<p>RSI 把近期上漲與下跌幅度轉成 0～100 的數值。本專案使用 14 期 RSI，主要拿來比較兩個低點之間的動能差異，而不是單純把某個 RSI 數值當成買進條件。</p>
-<h3>移動平均線</h3>
-<p>移動平均線是最近 N 根 K 棒收盤價的平均值，用來提供「近期一般價格水準」的參考。Deep Reclaim 會比較價格和均線之間的距離。</p>
-<h3>成交量</h3>
-<p>成交量代表該根 K 棒期間的交易量。BTC 在 Strategy Lab 中目前使用美元計價成交額；其他市場依資料來源提供的 Volume 欄位。Capitulation 使用「目前成交量相對近期平均量」來判斷是否明顯放大。</p>
-<h3>Pivot Low</h3>
-<p>Pivot Low 是局部低點。以 Pivot 5 為例，某根 K 棒的低點必須低於前 5 根和後 5 根 K 棒的低點，才會被確認為 Pivot Low，因此它本身具有確認延遲。</p>
-</section>
+<section class="box"><h2>共用觀念</h2><p><b>ATR(14)</b> 用來量化近期平均波動幅度，讓「距離」可以隨市場波動調整。<b>Pivot Low</b> 是需要左右 K 棒確認的局部低點，因此會有延遲。所有模型標記都只是「條件成立」，不是底部保證。</p></section>
 
-<section class="box" id="support">
-<h2>1. Support Zone v0.5b</h2>
-<p><b>目的：</b>找出多次在相近價格停止下跌的區域，並持續追蹤這個區域之後是否被市場再次測試。</p><div class="visual"><div class="visual-title">概念圖｜兩次接近相同價位 → 形成區域 → 回測</div><div class="flow"><span class="step">低點 A</span><span class="arrow">→</span><span class="step">低點 B 接近 A</span><span class="arrow">→</span><span class="step">建立 Zone</span><span class="arrow">→</span><span class="step">之後回測</span></div><div class="mini-chart"><div class="zone-band"></div><div class="line" style="left:5%;top:34px;width:29%;transform:rotate(18deg)"></div><div class="line" style="left:33%;top:68px;width:20%;transform:rotate(-15deg)"></div><div class="line" style="left:51%;top:45px;width:22%;transform:rotate(18deg)"></div><div class="line alt" style="left:72%;top:70px;width:16%;transform:rotate(-8deg)"></div><span class="label-mini" style="left:10%;bottom:10px">支撐區</span><span class="label-mini" style="right:8%;top:61px">回測</span></div></div>
-<h3>使用資料</h3>
-<p>低價（Low）、收盤價（Close）、Pivot Low、ATR(14)。</p>
-<h3>形成邏輯</h3>
-<p>模型先找 Pivot Low。第一個 Pivot Low 暫存為候選；之後若另一個 Pivot Low 與它的距離不超過 <code>ATR × 0.8</code>，兩個低點就會組成一個 Support Zone。</p>
-<div class="formula">若 |PivotLow₂ − PivotLow₁| ≤ ATR × 0.8 → 建立 Zone</div>
-<p>Zone 上下界不是只用兩個精確價位，而會再加入一小段 ATR 緩衝：</p>
-<div class="formula">Zone Top = max(兩個低點) + ATR × 0.8 × 0.3<br>Zone Bottom = min(兩個低點) − ATR × 0.8 × 0.3</div>
-<h3>狀態更新</h3>
-<p>新區域先是 Candidate。價格需要先離開區域上方，之後重新回到區域，才算真正的回測。若回測時收盤仍在區域下界之上，狀態轉成 Validated；若收盤跌到 <code>Zone Bottom − ATR × 0.5</code> 以下，該區域被淘汰。</p>
-<h3>固定參數</h3>
-<table><tr><th>參數</th><th>目前值</th><th>作用</th></tr>
-<tr><td>Pivot</td><td>5</td><td>決定局部低點需要左右各多少根 K 棒確認。</td></tr>
-<tr><td>ATR</td><td>14</td><td>提供波動尺度。</td></tr>
-<tr><td>Zone</td><td>0.8 ATR</td><td>決定兩個 Pivot Low 最遠可以相差多少。</td></tr>
-<tr><td>Break</td><td>0.5 ATR</td><td>決定跌破區域多少才視為失效。</td></tr></table>
-<div class="note">這個模型描述的是「重複出現的價格支撐結構」，不是單一 K 棒反轉模型。多個 Zone 可以同時存在。</div>
-</section>
+<section class="box" id="support"><h2>Support Zone</h2><p>以兩個接近的 Pivot Low 形成支撐區，後續價格先離開、再回測守住時轉為 Validated；跌破區域下緣再多 0.5 ATR 時失效。</p><div class="flow"><span class="step">Pivot Low A</span><span class="arrow">→</span><span class="step">Pivot Low B 接近</span><span class="arrow">→</span><span class="step">形成 Zone</span><span class="arrow">→</span><span class="step">回測 / 失效</span></div></section>
 
-<section class="box" id="macro">
-<h2>2. Macro Bottom v0.2</h2>
-<p><b>目的：</b>在較大幅度回撤中，找出同時具備「新低、深回撤、波動擴張」的區域，再等待價格出現收復確認。</p><div class="visual"><div class="visual-title">概念圖｜大幅回撤 + 新低 + 波動放大 → 等待收復</div><div class="flow"><span class="step">前高</span><span class="arrow">→</span><span class="step">深回撤</span><span class="arrow">→</span><span class="step">新低 / ATR 放大</span><span class="arrow">→</span><span class="step">站回候選 K 高點</span></div><div class="mini-chart"><div class="line" style="left:7%;top:18px;width:58%;transform:rotate(27deg)"></div><div class="line alt" style="left:62%;top:83px;width:22%;transform:rotate(-24deg)"></div><span class="label-mini" style="left:7%;top:4px">前高</span><span class="label-mini" style="left:58%;bottom:8px">候選低點</span><span class="label-mini" style="right:8%;top:42px">收復</span></div></div>
-<h3>使用資料</h3>
-<p>近期高點、近期低點、Close、ATR(14)、ATR/Close 的相對波動率。</p>
-<h3>候選條件</h3>
-<p>一根 K 棒要成為候選，需要同時符合三件事：它刷新指定觀察窗的新低；相對較長期高點已經有足夠回撤；目前 ATR 相對價格的比例高於近期平均，表示波動正在擴張。</p>
-<div class="formula">回撤 = 1 − Close ÷ 近期最高價<br>相對波動 = ATR(14) ÷ Close</div>
-<h3>確認與失效</h3>
-<p>候選區建立後，以候選 K 棒的 High 當作確認門檻。如果在限定根數內，後續收盤價高於這個 High，狀態改為 Confirmed。若價格先跌破候選區下緣再多 <code>0.6 ATR</code>，或超過確認期限仍未收復，候選會失效。</p>
-<h3>時間框架自動參數</h3>
-<table><tr><th>框架</th><th>高點窗</th><th>新低窗</th><th>最低回撤</th><th>波動放大</th><th>確認期限</th></tr>
-<tr><td>1H</td><td>240</td><td>40</td><td>10%</td><td>1.15×</td><td>24 根</td></tr>
-<tr><td>4H</td><td>180</td><td>30</td><td>14%</td><td>1.15×</td><td>18 根</td></tr>
-<tr><td>1D</td><td>120</td><td>20</td><td>20%</td><td>1.15×</td><td>12 根</td></tr>
-<tr><td>1W</td><td>52</td><td>8</td><td>30%</td><td>1.10×</td><td>6 根</td></tr>
-<tr><td>1M</td><td>36</td><td>6</td><td>30%</td><td>1.05×</td><td>4 根</td></tr></table>
-<p>不同時間框架使用不同觀察長度，是為了讓「近期」在 1 小時圖和月線圖上代表不同的實際時間跨度。</p>
-</section>
+<section class="box" id="macro"><h2>Macro Bottom</h2><p>同時檢查近期新低、從較長期高點的回撤幅度與 ATR 擴張，再等待收盤突破候選 K 棒高點。不同時間框架有不同觀察窗。</p></section>
 
-<section class="box" id="cap">
-<h2>3. Capitulation v0.3</h2>
-<p><b>目的：</b>保留較多「急跌、放量、低位收回」候選，再用較寬鬆的後續收復條件過濾完全沒有反應的情況。</p>
-<h3>候選條件</h3>
-<p>目前 K 棒需刷新近期低點；相對近期高點已有最低回撤；成交量至少約為近期平均的 <code>1.3 倍</code>；K 棒振幅至少約 <code>1.05 ATR</code>；下影至少佔整根 K 棒 15%；收盤位置至少在整根 K 棒的 48%。不同時間框架的最低回撤門檻約為 3%～15%。</p>
-<h3>確認條件</h3>
-<p>候選出現後，後續數根 K 棒只要收盤高於候選 K 棒的收盤價即可確認。確認期限也比 v0.2 更長，因此訊號數量會增加。</p>
-<div class="note">v0.3 的設計方向是提高覆蓋率，而不是追求非常稀少的訊號。</div>
-</section>
+<section class="box" id="sweep"><h2>Liquidity Sweep</h2><p>先計算不含目前 K 棒的近期最低價；若盤中跌破，但收盤重新站回，而且收盤位於整根 K 棒較高位置，就直接標記。</p><div class="formula">Low &lt; 近期最低價<br>Close &gt; 近期最低價<br>(Close − Low) / (High − Low) ≥ 0.55</div></section>
 
-<section class="box" id="reclaim">
-<h2>4. Deep Reclaim</h2>
-<p><b>目的：</b>找出價格先大幅偏離近期平均水準，之後開始向上收復的情況。</p><div class="visual"><div class="visual-title">概念圖｜價格先偏離均線，再往上收復</div><div class="flow"><span class="step">跌離平均價</span><span class="arrow">→</span><span class="step">偏離超過 ATR 門檻</span><span class="arrow">→</span><span class="step">突破前一根高點</span></div><div class="mini-chart"><div class="line alt" style="left:5%;top:40px;width:88%;transform:rotate(-2deg)"></div><div class="line" style="left:7%;top:24px;width:44%;transform:rotate(30deg)"></div><div class="line" style="left:49%;top:76px;width:34%;transform:rotate(-20deg)"></div><span class="label-mini" style="right:5%;top:25px">平均線</span><span class="label-mini" style="left:47%;bottom:9px">深度偏離</span></div></div>
-<h3>使用資料</h3>
-<p>簡單移動平均線、ATR(14)、前一根 Close、前一根 High、目前 Close。</p>
-<h3>條件</h3>
-<p>第一步要求前一根 K 棒收盤低於「移動平均線 − 2.2 ATR」，表示價格相對近期平均明顯偏低。第二步要求目前收盤同時高於前一根 High，並且高於「目前均線 − 1.8 ATR」，代表偏離程度正在縮小且短期結構向上收復。</p>
-<div class="formula">前一根 Close &lt; MA − 2.2 ATR<br>目前 Close &gt; 前一根 High<br>目前 Close &gt; MA − 1.8 ATR</div>
-<h3>均線週期</h3>
-<table><tr><th>1H</th><th>4H</th><th>1D</th><th>1W</th><th>1M</th></tr><tr><td>100</td><td>80</td><td>60</td><td>30</td><td>18</td></tr></table>
-</section>
+<section class="box" id="basin"><span class="pill">Experimental</span><span class="pill">可調參數</span><h2>Fractal Basin｜分形盆地</h2><p>核心不是找一個精確低點，而是問：不同尺度看出去，局部低點是否都聚集在同一價格帶？</p><div class="flow"><span class="step">短尺度 Pivot</span><span class="arrow">+</span><span class="step">中尺度 Pivot</span><span class="arrow">+</span><span class="step">長尺度 Pivot</span><span class="arrow">→</span><span class="step">低點密度盆地</span></div><h3>邏輯</h3><p>同時計算三組 Pivot Low。只保留在「低點有效期」內的最近低點；當至少指定數量的尺度彼此距離落在 <code>盆地寬度 × ATR</code> 內，就形成 Basin Zone。</p><h3>可調參數</h3><table><tr><th>參數</th><th>用途</th></tr><tr><td>短 / 中 / 長尺度 Pivot</td><td>控制三種解析度。</td></tr><tr><td>低點有效期</td><td>舊低點多久後不再參與盆地判斷。</td></tr><tr><td>盆地寬度（ATR）</td><td>不同尺度低點最多可相差多少。</td></tr><tr><td>至少重疊尺度</td><td>2 表示二種尺度即可，3 表示三種都要一致。</td></tr></table></section>
 
-<section class="box" id="rsi">
-<h2>5. RSI Divergence v0.3</h2>
-<p><b>目的：</b>找出價格創出較低低點，但 RSI 相對較高的底背離；此版本刻意放寬低點與確認標準。</p>
-<h3>低點與 RSI</h3>
-<p>使用 <code>RSI(14)</code>。局部低點主要以左右各 2 根 K 棒確認；月線使用 1 根。後一個低點只需比前一個低約 <code>0.05 ATR</code>，RSI 高出至少 <code>3</code>，且兩次 RSI 至少一個低於 <code>48</code>。</p>
-<h3>確認條件</h3>
-<p>背離形成後，後續收盤只需重新站上第二個低點 K 棒的「高低價中點」，不再要求突破整根 K 棒高點；等待期限也比 v0.2 長。</p>
-<div class="note">這樣會產生較多背離標記，也會包含較早期、尚未完全反轉的情況。</div>
-</section>
+<section class="box" id="spring"><span class="pill">Experimental</span><span class="pill">可調參數</span><h2>Compression Spring｜壓縮彈簧</h2><p>把最近價格拆成三段，觀察每一段的 High-Low 振幅是否逐步縮小，同時底部沒有持續大幅下移。</p><div class="flow"><span class="step">Range 1</span><span class="arrow">↓</span><span class="step">Range 2</span><span class="arrow">↓</span><span class="step">Range 3</span><span class="arrow">→</span><span class="step">突破壓縮區</span></div><p>當三段振幅依指定收縮比遞減，且最後一段低點沒有超過容許的 ATR 漂移，就視為壓縮。收盤突破最後一段高點加上突破緩衝時標記 Release。</p><h3>可調參數</h3><p>每段 K 棒數、最大收縮比、底部漂移容許 ATR、突破緩衝 ATR。</p></section>
 
-<section class="box" id="sweep">
-<h2>6. Liquidity Sweep</h2>
-<p><b>目的：</b>標記價格盤中跌破近期最低價，但同一根 K 棒收盤重新站回該價位上方的情況。</p>
-<h3>條件</h3>
-<p>模型先計算「不包含目前 K 棒」的近期最低價。若目前 Low 跌破該低點、Close 又站回該低點之上，而且收盤位置至少位於整根 K 棒的 55%，就直接產生訊號。</p>
-<div class="formula">Low &lt; 近期最低價<br>Close &gt; 近期最低價<br>(Close − Low) ÷ (High − Low) ≥ 0.55</div>
-<div class="note">這是原始版本邏輯：不要求 Pivot Low，也不等待下一根 K 棒確認。</div>
-</section>
+<section class="box" id="echo"><span class="pill">Experimental</span><span class="pill">可調參數</span><h2>Echo Bottom｜歷史回聲</h2><p>先把最近一段價格路徑正規化，不比較絕對價格，只比較形狀。當目前位於近期新低附近時，才去歷史搜尋相似路徑。</p><div class="flow"><span class="step">目前價格形狀</span><span class="arrow">→</span><span class="step">Z-score 正規化</span><span class="arrow">→</span><span class="step">歷史 Top K 相似</span><span class="arrow">→</span><span class="step">看歷史後續分布</span></div><h3>避免偷看未來</h3><p>對每個歷史樣本，只使用在目前時間點以前已經完整發生的後續區間。相似度以正規化價格路徑的 RMS 距離衡量。</p><h3>產生標記</h3><p>Top K 平均形狀距離必須低於最大距離，而且這些歷史樣本在指定 Horizon 後的報酬中位數需高於門檻。</p><h3>可調參數</h3><p>形狀長度、候選新低觀察窗、歷史搜尋範圍、抽樣步長、Top K、最大形狀距離、後續 Horizon、歷史中位報酬門檻。</p></section>
 
-<section class="box" id="exhaust">
-<h2>7. Exhaustion Reversal</h2>
-<p><b>目的：</b>找出短期連續下降、總跌幅相對近期波動偏大，之後出現向上反轉 K 棒的情況。</p><div class="visual"><div class="visual-title">概念圖｜連續下跌後出現較強的反轉 K 棒</div><div class="flow"><span class="step">連續下降</span><span class="arrow">+</span><span class="step">總跌幅 ≥ 2.4 ATR</span><span class="arrow">→</span><span class="step">反轉 K 突破前高</span></div><div class="candles"><div class="candle down" style="height:30px;margin-bottom:50px"></div><div class="candle down" style="height:36px;margin-bottom:35px"></div><div class="candle down" style="height:44px;margin-bottom:18px"></div><div class="candle up" style="height:62px;margin-bottom:22px"></div><span class="label-mini" style="left:62%;top:4px">反轉</span></div></div>
-<h3>使用資料</h3>
-<p>最近數根 Close、目前 Low、Open、High，以及 ATR(14)。</p>
-<h3>條件</h3>
-<p>前三個收盤價必須依序下降；從三根前的 Close 到目前 Low 的距離至少達 <code>2.4 ATR</code>；目前 K 棒需收紅，且 Close 高於前一根 K 棒的 High。</p>
-<div class="formula">Close[i−3] &gt; Close[i−2] &gt; Close[i−1]<br>Close[i−3] − Low[i] ≥ 2.4 ATR<br>Close[i] &gt; Open[i] 且 Close[i] &gt; High[i−1]</div>
-<p>這是一個短期價格行為模型，因此可能在較大的下降趨勢中多次出現。</p>
-</section>
+<section class="box" id="phase"><span class="pill">Experimental</span><span class="pill">可調參數</span><h2>Phase Transition｜市場相變</h2><p>模型不直接問「是不是底」，而是追蹤市場是否從下降狀態進入低波動壓縮，再出現向上擴張。</p><div class="flow"><span class="step">下降</span><span class="arrow">→</span><span class="step">壓縮</span><span class="arrow">→</span><span class="step">向上突破</span></div><p>下降狀態以一段時間的價格變化相對 ATR 衡量；壓縮以短期 ATR / 長期 ATR 比例判定；之後收盤突破最近區間高點才標記相變。</p><h3>可調參數</h3><p>下降觀察窗、壓縮觀察窗、ATR 比例、突破觀察窗、下降狀態記憶長度、下降幅度 ATR。</p></section>
 
-<section class="box">
-<h2>如何解讀七個模型同時出現的結果</h2>
-<p>七個模型衡量的資訊不同：Support Zone 偏向水平價格結構；Macro Bottom 使用回撤與波動；Capitulation 加入成交量；Deep Reclaim 比較均線偏離；RSI Divergence 比較價格與動能；Liquidity Sweep 觀察跌破後收回；Exhaustion Reversal 觀察短期連續下跌後的價格反轉。</p>
-<p>因此，同一根 K 棒同時觸發多個模型，只代表它同時符合多組條件；目前 Strategy Lab 並沒有把「觸發模型數量」轉換成機率、評分或買賣建議。</p>
-<a class="back" href="./">← 返回 Strategy Lab</a>
-</section>
+<section class="box" id="lunar"><span class="pill">Mystery</span><span class="pill">可調參數</span><h2>Lunar Bottom｜月相底部</h2><p>把月相當成純時間特徵。模型使用約 29.5306 天的朔望月週期估算新月與滿月，並只在價格已達指定回撤時標記。</p><div class="flow"><span class="step">新月 / 滿月時間窗</span><span class="arrow">+</span><span class="step">價格回撤條件</span><span class="arrow">→</span><span class="step">實驗標記</span></div><h3>可調參數</h3><p>新月 / 滿月 / 兩者、月相前後容許天數、回撤觀察窗、最低回撤比例。</p><div class="note">這是可檢驗的時間假說，不代表月相對市場存在因果作用。週線與月線因 K 棒時間粒度較粗，月相對齊也會較粗略。</div></section>
+
+<section class="box" id="astro"><span class="pill">Placebo</span><span class="pill">可調參數</span><h2>Astrology Placebo Engine｜占星安慰劑引擎</h2><p>這個模型故意使用人為的曆法規則：日期、星期、近似「星座區段」與可調模數組成一個 Calendar Score。目的不是主張占星有效，而是建立一個可重複的安慰劑規則。</p><div class="flow"><span class="step">日期特徵</span><span class="arrow">→</span><span class="step">Calendar Score</span><span class="arrow">+</span><span class="step">可選回撤濾網</span><span class="arrow">→</span><span class="step">Placebo 訊號</span></div><h3>怎麼用</h3><p>如果一套正規模型在回測中看起來很好，但一個沒有市場機制基礎的 Placebo 規則也能得到類似結果，就表示評估流程可能存在過度擬合、樣本太少或資料選擇偏誤。</p><h3>可調參數</h3><p>規則週期模數、每週期命中格數、規則偏移量、回撤觀察窗、最低回撤比例。把最低回撤設為 0，可以更接近純曆法 placebo。</p></section>
+
+<section class="box"><h2>閱讀方式</h2><p>這六個新模型刻意使用不同世界觀：Fractal Basin 看多尺度幾何；Compression Spring 看波動收斂；Echo Bottom 看歷史形狀；Phase Transition 看 regime；Lunar Bottom 看外部時間特徵；Astrology Placebo 則是用來挑戰回測可信度。它們不應因為名稱新奇就被視為更有效，價值在於能被比較、反駁與回測。</p><a class="back" href="./">← 返回 Strategy Lab</a></section>
 </main></body></html>
