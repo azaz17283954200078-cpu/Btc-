@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Strategy Lab｜模型詳細說明</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080d18;color:#eaf0ff;font:15px/1.75 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:980px;margin:auto;padding:18px}.box{background:#111a2c;border:1px solid #263653;border-radius:14px;padding:18px;margin-bottom:14px}
+h1{font-size:26px;margin:0 0 6px}h2{font-size:21px;margin:0 0 10px}h3{font-size:16px;margin:18px 0 6px;color:#dce7ff}
+a{color:#8db8ff;text-decoration:none}.muted{color:#9aa9c4}.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.toc a,.back{background:#18243a;border:1px solid #385075;border-radius:8px;padding:7px 10px}
+code{background:#0b1322;border:1px solid #263653;border-radius:5px;padding:1px 5px;color:#d8e8ff}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}th,td{border-bottom:1px solid #263653;padding:8px;text-align:left;vertical-align:top}th{color:#b9c8e4}
+.note{padding:10px 12px;background:#0c1424;border-left:3px solid #516b95;border-radius:6px}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0b1322;padding:8px 10px;border-radius:7px;overflow:auto}
+@media(max-width:700px){main{padding:10px}.box{padding:14px}table{font-size:12px}}
+</style>
+</head>
+<body><main>
+<section class="box">
+<a class="back" href="./">← 返回 Strategy Lab</a>
+<h1 style="margin-top:16px">七個模型的詳細說明</h1>
+<div class="muted">本頁只說明模型的計算方式、使用的指標與訊號條件。模型產生的標記代表條件成立，不等同於價格一定形成底部，也不是報酬或風險的保證。</div>
+<div class="toc">
+<a href="#support">Support Zone</a><a href="#macro">Macro Bottom</a><a href="#cap">Capitulation</a><a href="#reclaim">Deep Reclaim</a><a href="#rsi">RSI Divergence</a><a href="#sweep">Liquidity Sweep</a><a href="#exhaust">Exhaustion Reversal</a>
+</div>
+</section>
+
+<section class="box">
+<h2>先認識幾個會反覆出現的指標</h2>
+<h3>ATR（Average True Range）</h3>
+<p>ATR 用來衡量一段時間內的平均價格波動幅度。它不是方向指標，不判斷漲跌，只回答「最近通常一次會動多大」。Strategy Lab 主要使用 <code>ATR(14)</code>，讓不同價格與不同市場可以用相對波動尺度設定距離。</p>
+<h3>RSI（Relative Strength Index）</h3>
+<p>RSI 把近期上漲與下跌幅度轉成 0～100 的數值。本專案使用 14 期 RSI，主要拿來比較兩個低點之間的動能差異，而不是單純把某個 RSI 數值當成買進條件。</p>
+<h3>移動平均線</h3>
+<p>移動平均線是最近 N 根 K 棒收盤價的平均值，用來提供「近期一般價格水準」的參考。Deep Reclaim 會比較價格和均線之間的距離。</p>
+<h3>成交量</h3>
+<p>成交量代表該根 K 棒期間的交易量。BTC 在 Strategy Lab 中目前使用美元計價成交額；其他市場依資料來源提供的 Volume 欄位。Capitulation 使用「目前成交量相對近期平均量」來判斷是否明顯放大。</p>
+<h3>Pivot Low</h3>
+<p>Pivot Low 是局部低點。以 Pivot 5 為例，某根 K 棒的低點必須低於前 5 根和後 5 根 K 棒的低點，才會被確認為 Pivot Low，因此它本身具有確認延遲。</p>
+</section>
+
+<section class="box" id="support">
+<h2>1. Support Zone v0.5b</h2>
+<p><b>目的：</b>找出多次在相近價格停止下跌的區域，並持續追蹤這個區域之後是否被市場再次測試。</p>
+<h3>使用資料</h3>
+<p>低價（Low）、收盤價（Close）、Pivot Low、ATR(14)。</p>
+<h3>形成邏輯</h3>
+<p>模型先找 Pivot Low。第一個 Pivot Low 暫存為候選；之後若另一個 Pivot Low 與它的距離不超過 <code>ATR × 0.8</code>，兩個低點就會組成一個 Support Zone。</p>
+<div class="formula">若 |PivotLow₂ − PivotLow₁| ≤ ATR × 0.8 → 建立 Zone</div>
+<p>Zone 上下界不是只用兩個精確價位，而會再加入一小段 ATR 緩衝：</p>
+<div class="formula">Zone Top = max(兩個低點) + ATR × 0.8 × 0.3<br>Zone Bottom = min(兩個低點) − ATR × 0.8 × 0.3</div>
+<h3>狀態更新</h3>
+<p>新區域先是 Candidate。價格需要先離開區域上方，之後重新回到區域，才算真正的回測。若回測時收盤仍在區域下界之上，狀態轉成 Validated；若收盤跌到 <code>Zone Bottom − ATR × 0.5</code> 以下，該區域被淘汰。</p>
+<h3>固定參數</h3>
+<table><tr><th>參數</th><th>目前值</th><th>作用</th></tr>
+<tr><td>Pivot</td><td>5</td><td>決定局部低點需要左右各多少根 K 棒確認。</td></tr>
+<tr><td>ATR</td><td>14</td><td>提供波動尺度。</td></tr>
+<tr><td>Zone</td><td>0.8 ATR</td><td>決定兩個 Pivot Low 最遠可以相差多少。</td></tr>
+<tr><td>Break</td><td>0.5 ATR</td><td>決定跌破區域多少才視為失效。</td></tr></table>
+<div class="note">這個模型描述的是「重複出現的價格支撐結構」，不是單一 K 棒反轉模型。多個 Zone 可以同時存在。</div>
+</section>
+
+<section class="box" id="macro">
+<h2>2. Macro Bottom v0.2</h2>
+<p><b>目的：</b>在較大幅度回撤中，找出同時具備「新低、深回撤、波動擴張」的區域，再等待價格出現收復確認。</p>
+<h3>使用資料</h3>
+<p>近期高點、近期低點、Close、ATR(14)、ATR/Close 的相對波動率。</p>
+<h3>候選條件</h3>
+<p>一根 K 棒要成為候選，需要同時符合三件事：它刷新指定觀察窗的新低；相對較長期高點已經有足夠回撤；目前 ATR 相對價格的比例高於近期平均，表示波動正在擴張。</p>
+<div class="formula">回撤 = 1 − Close ÷ 近期最高價<br>相對波動 = ATR(14) ÷ Close</div>
+<h3>確認與失效</h3>
+<p>候選區建立後，以候選 K 棒的 High 當作確認門檻。如果在限定根數內，後續收盤價高於這個 High，狀態改為 Confirmed。若價格先跌破候選區下緣再多 <code>0.6 ATR</code>，或超過確認期限仍未收復，候選會失效。</p>
+<h3>時間框架自動參數</h3>
+<table><tr><th>框架</th><th>高點窗</th><th>新低窗</th><th>最低回撤</th><th>波動放大</th><th>確認期限</th></tr>
+<tr><td>1H</td><td>240</td><td>40</td><td>10%</td><td>1.15×</td><td>24 根</td></tr>
+<tr><td>4H</td><td>180</td><td>30</td><td>14%</td><td>1.15×</td><td>18 根</td></tr>
+<tr><td>1D</td><td>120</td><td>20</td><td>20%</td><td>1.15×</td><td>12 根</td></tr>
+<tr><td>1W</td><td>52</td><td>8</td><td>30%</td><td>1.10×</td><td>6 根</td></tr>
+<tr><td>1M</td><td>36</td><td>6</td><td>30%</td><td>1.05×</td><td>4 根</td></tr></table>
+<p>不同時間框架使用不同觀察長度，是為了讓「近期」在 1 小時圖和月線圖上代表不同的實際時間跨度。</p>
+</section>
+
+<section class="box" id="cap">
+<h2>3. Capitulation</h2>
+<p><b>目的：</b>標記同時出現「放大量、刷新低點、明顯下影、收盤回到 K 棒較高位置」的 K 棒。</p>
+<h3>使用資料</h3>
+<p>Volume、Low、Open、Close、High，以及依時間框架調整的近期觀察窗。</p>
+<h3>條件</h3>
+<p>目前成交量需至少是近期平均成交量的 <code>2 倍</code>；目前 Low 必須等於或低於觀察窗內最低價；下影長度需至少是較大者「實體長度」或「整根 K 棒的 12%」的 <code>1.4 倍</code>；收盤位置至少位於整根 K 棒從低到高的 58% 位置。</p>
+<div class="formula">收盤位置 = (Close − Low) ÷ (High − Low) ≥ 0.58</div>
+<h3>觀察窗</h3>
+<table><tr><th>框架</th><th>價格觀察窗 look</th><th>成交量平均窗</th></tr>
+<tr><td>1H</td><td>48</td><td>約 34</td></tr><tr><td>4H</td><td>42</td><td>約 29</td></tr><tr><td>1D</td><td>30</td><td>21</td></tr><tr><td>1W</td><td>20</td><td>14</td></tr><tr><td>1M</td><td>12</td><td>10</td></tr></table>
+<div class="note">模型本身只描述當下這根 K 棒是否符合條件，不要求後續一定上漲。</div>
+</section>
+
+<section class="box" id="reclaim">
+<h2>4. Deep Reclaim</h2>
+<p><b>目的：</b>找出價格先大幅偏離近期平均水準，之後開始向上收復的情況。</p>
+<h3>使用資料</h3>
+<p>簡單移動平均線、ATR(14)、前一根 Close、前一根 High、目前 Close。</p>
+<h3>條件</h3>
+<p>第一步要求前一根 K 棒收盤低於「移動平均線 − 2.2 ATR」，表示價格相對近期平均明顯偏低。第二步要求目前收盤同時高於前一根 High，並且高於「目前均線 − 1.8 ATR」，代表偏離程度正在縮小且短期結構向上收復。</p>
+<div class="formula">前一根 Close &lt; MA − 2.2 ATR<br>目前 Close &gt; 前一根 High<br>目前 Close &gt; MA − 1.8 ATR</div>
+<h3>均線週期</h3>
+<table><tr><th>1H</th><th>4H</th><th>1D</th><th>1W</th><th>1M</th></tr><tr><td>100</td><td>80</td><td>60</td><td>30</td><td>18</td></tr></table>
+</section>
+
+<section class="box" id="rsi">
+<h2>5. RSI Divergence</h2>
+<p><b>目的：</b>比較兩次價格低點與 RSI，找出價格更低、但動能指標沒有同步更弱的情況。</p>
+<h3>使用資料</h3>
+<p>Low、Close、14 期 RSI，以及依框架調整的回看區間。</p>
+<h3>參考低點怎麼找</h3>
+<p>模型會在目前 K 棒之前的觀察窗內找最低 Low，但刻意排除最近 5 根 K 棒，避免把太靠近現在的低點拿來比較。</p>
+<h3>訊號條件</h3>
+<p>目前 Low 要低於先前參考低點；目前 RSI 至少比參考低點當時的 RSI 高 <code>5</code>；兩次 RSI 中至少一個低於 <code>42</code>；目前收盤位置需高於整根 K 棒的 45% 位置。</p>
+<div class="formula">目前 Low &lt; 前一個 Low<br>目前 RSI ≥ 前一個 RSI + 5<br>min(兩次 RSI) &lt; 42</div>
+<p>這裡的 RSI 不是用「低於 30 就買」的方式，而是拿來比較兩個低點之間的相對動能。</p>
+</section>
+
+<section class="box" id="sweep">
+<h2>6. Liquidity Sweep</h2>
+<p><b>目的：</b>標記盤中曾跌破近期最低價，但收盤又回到該價位之上的 K 棒。</p>
+<h3>使用資料</h3>
+<p>近期最低 Low、目前 Low、Close、High。</p>
+<h3>條件</h3>
+<p>先計算「不包含目前 K 棒」的近期最低價。若目前 Low 跌到它下方，但 Close 又回到它上方，同時收盤位置至少位於整根 K 棒的 55%，就產生訊號。</p>
+<div class="formula">目前 Low &lt; 近期最低價<br>目前 Close &gt; 近期最低價<br>(Close − Low) ÷ (High − Low) ≥ 0.55</div>
+<p>模型只判斷「跌破後收回」這個價格行為，不分析造成跌破的訂單來源，因此名稱中的 Liquidity 是對價格型態的描述，不代表模型能直接看到市場深度或逐筆委託。</p>
+</section>
+
+<section class="box" id="exhaust">
+<h2>7. Exhaustion Reversal</h2>
+<p><b>目的：</b>找出短期連續下降、總跌幅相對近期波動偏大，之後出現向上反轉 K 棒的情況。</p>
+<h3>使用資料</h3>
+<p>最近數根 Close、目前 Low、Open、High，以及 ATR(14)。</p>
+<h3>條件</h3>
+<p>前三個收盤價必須依序下降；從三根前的 Close 到目前 Low 的距離至少達 <code>2.4 ATR</code>；目前 K 棒需收紅，且 Close 高於前一根 K 棒的 High。</p>
+<div class="formula">Close[i−3] &gt; Close[i−2] &gt; Close[i−1]<br>Close[i−3] − Low[i] ≥ 2.4 ATR<br>Close[i] &gt; Open[i] 且 Close[i] &gt; High[i−1]</div>
+<p>這是一個短期價格行為模型，因此可能在較大的下降趨勢中多次出現。</p>
+</section>
+
+<section class="box">
+<h2>如何解讀七個模型同時出現的結果</h2>
+<p>七個模型衡量的資訊不同：Support Zone 偏向水平價格結構；Macro Bottom 使用回撤與波動；Capitulation 加入成交量；Deep Reclaim 比較均線偏離；RSI Divergence 比較價格與動能；Liquidity Sweep 觀察跌破後收回；Exhaustion Reversal 觀察短期連續下跌後的價格反轉。</p>
+<p>因此，同一根 K 棒同時觸發多個模型，只代表它同時符合多組條件；目前 Strategy Lab 並沒有把「觸發模型數量」轉換成機率、評分或買賣建議。</p>
+<a class="back" href="./">← 返回 Strategy Lab</a>
+</section>
+</main></body></html>
