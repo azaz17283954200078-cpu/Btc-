@@ -195,7 +195,7 @@ td:first-child,th:first-child{text-align:left}
 
         <div class="model-group-title">Experimental Lab｜實驗模型</div>
         <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Basin Mapper｜盆地辨識</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">不再用四個硬條件判定。模型會從多種時間尺度描述「下山後走平」的整體形狀，再給出盆地分數。</div><span class="model-tag">形態分數</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Spring System｜彈簧系統</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">把價格當成彈簧：找平衡位置，再估計彈力、位移、震盪節奏與阻尼。</div><span class="model-tag">市場力學</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Spring Range｜彈簧震盪區</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">找價格圍繞穩定中心反覆上下震盪的平盤區；辨識後直接畫出有效上下緣、中心線與網格。</div><span class="model-tag">平盤震盪 / 網格</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接比較整段 K 線型態；Echo 區間會框在主圖上，游標移到標記時，最像的歷史 K 線會半透明疊到目前 K 線上。</div><span class="model-tag">形狀搜尋</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Engine｜占星盤</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接採用西洋占星常見的行星、相位、逆行與入座，把天體事件疊到市場時間軸上。</div><span class="model-tag">外部時間系統</span></div>
       </div>
@@ -266,10 +266,10 @@ function moveParamDrag(e){
   let y=Math.max(8,Math.min(window.innerHeight-r.height-8,e.clientY-paramDrag.dy));
   card.style.left=x+'px';card.style.top=y+'px';
 }
-function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[];const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
+function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],SPRING_RANGES=[];const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
 const DEFAULT_EXP={
   basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:68},
-  spring:{minK:.08,minDx:1.25,minCycles:2,maxDamping:.55,periodTol:.38},
+  spring:{lookback:60,minCycles:2,maxCenterDrift:.25,gridLevels:6},
   echo:{length:32,history:1000,similarity:.82},
   astro:{planetSet:'classic',aspectSet:'major',orb:4,retro:'off',ingress:'off'}
 };
@@ -280,12 +280,11 @@ const PARAM_SCHEMA={
     {k:'floorMax',n:'最長平盤尺度',min:20,max:240,step:5,help:'自動尺度搜尋的上限。像週線的大型盆地，可以把這個值拉長。',low:'短：看小結構',high:'長：看大結構'},
     {k:'cliffMax',n:'下山最多回看多久',min:10,max:180,step:5,help:'平盤前最多往回找多長的下降段。模型會在範圍內自己選最像「下山」的尺度。',low:'近：只看急跌',high:'遠：也看長下跌'},
     {k:'threshold',n:'幾分才標成盆地',min:50,max:95,step:1,help:'Basin Score 達到這個分數才畫在圖上。分數來自多個特徵，不是單一條件。',low:'低：較寬鬆',high:'高：較挑剔'}]},
-  spring:{title:'🌀 Spring System｜彈簧系統',intro:'把價格當成圍繞平衡位置震盪的彈簧。模型會估計有效彈力係數 k、向下位移 Δx、震盪週期與阻尼。',fields:[
-    {k:'minK',n:'彈簧至少多硬',min:.01,max:.5,step:.01,help:'價格偏離平衡點後，要有多明顯的「拉回去」傾向。',low:'軟：拉回弱',high:'硬：拉回強'},
-    {k:'minDx',n:'至少壓多深',min:.3,max:4,step:.1,help:'現在價格要低於平衡位置多遠，才算真的把彈簧往下壓。',low:'淺壓也算',high:'要壓很深'},
-    {k:'minCycles',n:'至少震幾圈',min:1,max:6,step:1,help:'要看到幾次完整來回，才相信這不是偶然晃動。',low:'少：較靈敏',high:'多：節奏更完整'},
-    {k:'maxDamping',n:'允許多少阻尼',min:.05,max:.9,step:.05,help:'震盪幅度可以衰減多快。太快消失，就不像持續運作的彈簧。',low:'阻尼小',high:'容許快速衰減'},
-    {k:'periodTol',n:'節奏可以多不整齊',min:.08,max:.8,step:.04,help:'每一圈需要多久可以有多少差異。',low:'小：節奏很整齊',high:'大：節奏可較亂'}]},
+  spring:{title:'🌀 Spring Range｜彈簧震盪區',intro:'把它當成高中物理的彈簧：先找一條穩定的平衡中心，再確認價格有沒有在中心上下反覆來回。成立後，模型直接把有效震盪範圍切成網格。',fields:[
+    {k:'lookback',n:'觀察多久',min:20,max:240,step:5,help:'用最近多少根 K 棒判斷這裡是不是一段平盤震盪。',low:'短：找小震盪',high:'長：找大區間'},
+    {k:'minCycles',n:'至少來回幾次',min:1,max:8,step:.5,help:'價格至少要在中心上下完成幾次來回，才算真的在震盪，不只是單方向移動。',low:'少：較敏感',high:'多：震盪更明確'},
+    {k:'maxCenterDrift',n:'中心可以漂多少',min:.05,max:.8,step:.05,help:'比較前半段與後半段的震盪中心。0.25 代表中心位移最多只能佔整個震盪高度的 25%。',low:'小：中心要很穩',high:'大：容許慢慢漂'},
+    {k:'gridLevels',n:'網格分幾層',min:3,max:12,step:1,help:'辨識到震盪區後，把有效上緣到下緣平均切成幾格。這只是圖表參考線，不會送出交易指令。',low:'少：格子較寬',high:'多：格子較密'}]},
   echo:{title:'📻 Echo｜歷史回聲',intro:'比較的是整段 K 線型態：每根 K 棒的開、高、低、收與相對位置。游標移到 Echo 時，歷史 K 線會直接疊到目前 K 線上。',fields:[
     {k:'length',n:'聲音有多長',min:12,max:100,step:2,help:'用最近多少根 K 棒組成這一次要搜尋的價格形狀。',low:'短：短句',high:'長：完整段落'},
     {k:'history',n:'往多久以前喊',min:200,max:5000,step:100,help:'往回搜尋多長的歷史資料。',low:'近：只聽近代',high:'遠：找更久以前'},
@@ -364,6 +363,58 @@ function astroPlanets(set){return set==='modern'?['Sun','Moon','Mercury','Venus'
 const ASTRO_NAME={Sun:'太陽',Moon:'月亮',Mercury:'水星',Venus:'金星',Mars:'火星',Jupiter:'木星',Saturn:'土星',Uranus:'天王星',Neptune:'海王星',Pluto:'冥王星'};
 const ASPECT_NAME={0:'合相 ☌',60:'六合 ⚹',90:'刑 □',120:'拱 △',180:'沖 ☍'};
 function aspectAngles(set){return set==='hard'?[0,90,180]:set==='harmony'?[60,120]:[0,60,90,120,180]}
+
+function quantile(a,qv){
+  if(!a.length)return NaN;
+  let b=a.slice().sort((x,y)=>x-y),
+      p=(b.length-1)*clamp(qv,0,1),
+      i=Math.floor(p),f=p-i;
+  return b[i]+(b[Math.min(b.length-1,i+1)]-b[i])*f
+}
+function springSwingCount(vals,center,halfRange){
+  if(!vals.length||!(halfRange>0))return 0;
+  let threshold=halfRange*.35,last=0,turns=0;
+  for(let v of vals){
+    let side=v>=center+threshold?1:v<=center-threshold?-1:0;
+    if(!side)continue;
+    if(last&&side!==last)turns++;
+    last=side;
+  }
+  return turns/2
+}
+function springRangeStats(seg){
+  if(!seg||seg.length<8)return null;
+  let closes=seg.map(x=>x.c),lows=seg.map(x=>x.l),highs=seg.map(x=>x.h),
+      lower=quantile(lows,.15),upper=quantile(highs,.85);
+  if(!(upper>lower))return null;
+  let height=upper-lower,center=(upper+lower)/2,half=height/2,
+      mid=Math.floor(seg.length/2),
+      firstC=closes.slice(0,mid),secondC=closes.slice(mid),
+      c1=median(firstC),c2=median(secondC),
+      centerDrift=Math.abs(c2-c1)/height,
+      cycles=springSwingCount(closes,center,half);
+
+  let first=seg.slice(0,mid),second=seg.slice(mid),
+      r1=quantile(first.map(x=>x.h),.85)-quantile(first.map(x=>x.l),.15),
+      r2=quantile(second.map(x=>x.h),.85)-quantile(second.map(x=>x.l),.15),
+      ampStability=(r1>0&&r2>0)?Math.min(r1,r2)/Math.max(r1,r2):0,
+      netMove=Math.abs(closes[closes.length-1]-closes[0])/height;
+
+  return{lower,upper,center,height,cycles,centerDrift,ampStability,netMove}
+}
+function springCandidate(end,p){
+  let look=Math.max(20,Math.round(p.lookback)),start=end-look+1;
+  if(start<0)return null;
+  let st=springRangeStats(D.slice(start,end+1));
+  if(!st)return null;
+  let cycleScore=clamp(st.cycles/Math.max(1,p.minCycles+1),0,1),
+      centerScore=1-clamp(st.centerDrift/Math.max(.01,p.maxCenterDrift),0,1),
+      ampScore=clamp((st.ampStability-.35)/.65,0,1),
+      directionScore=1-clamp(st.netMove/1.0,0,1),
+      score=100*(.32*cycleScore+.30*centerScore+.23*ampScore+.15*directionScore),
+      pass=st.cycles>=p.minCycles&&st.centerDrift<=p.maxCenterDrift&&st.ampStability>=.45&&st.netMove<=.9;
+  return{start,end,score,pass,...st}
+}
 
 const BASIN_FEATURE_KEYS=['dropDepth','dropEfficiency','floorRelief','floorSlope','volShift','centerStability','duration'];
 const BASIN_HEURISTIC_WEIGHTS={dropDepth:.18,dropEfficiency:.12,floorRelief:.22,floorSlope:.16,volShift:.10,centerStability:.14,duration:.08};
@@ -465,6 +516,7 @@ function basinBestCandidate(end,p){
 function researchCalc(){
   if(!D.length)return;
   BASIN_EPISODES=[];
+  SPRING_RANGES=[];
   for(let i=0;i<R.length;i++){R[i].researchSigs=[];R[i].researchZones=[]}
   let use={basin:q('modBasin').checked,spring:q('modSpring').checked,echo:q('modEcho').checked,astro:q('modAstro').checked},A=atrArr(D,14);
 
@@ -520,23 +572,57 @@ function researchCalc(){
     finishBasin(active);
   }
 
-  // Spring System: estimate restoring force, displacement, cycles, damping and rhythm.
+  // Spring Range: identify stable sideways oscillation and expose a visual grid.
   if(use.spring){
-    let p=EXP.spring,look=Math.max(60,Math.round(p.minCycles*26));
-    for(let i=look;i<D.length;i++){
-      let vals=D.slice(i-look+1,i+1).map(x=>x.c),eq=mean(vals),atr=A[i];if(!isFinite(atr)||atr<=0)continue;
-      let xs=vals.map(v=>(v-eq)/atr),num=0,den=0;
-      for(let t=2;t<vals.length;t++){let acc=(vals[t]-2*vals[t-1]+vals[t-2])/atr,x=xs[t-1];num+=x*acc;den+=x*x}
-      let k=den?Math.max(0,-num/den):0,dx=(eq-D[i].c)/atr;
-      let cross=[];for(let t=1;t<xs.length;t++)if((xs[t-1]<=0&&xs[t]>0)||(xs[t-1]>=0&&xs[t]<0))cross.push(t);
-      let cycles=cross.length/2,periods=[];for(let z=2;z<cross.length;z++)periods.push(cross[z]-cross[z-2]);
-      let T=periods.length?mean(periods):NaN,pcv=periods.length>1?stdev(periods)/Math.max(T,1e-9):0;
-      let amps=[];for(let z=1;z<cross.length;z++){let seg=xs.slice(cross[z-1],cross[z]+1);if(seg.length)amps.push(Math.max(...seg.map(Math.abs)))}
-      let damp=0;if(amps.length>=2){let first=mean(amps.slice(0,Math.ceil(amps.length/2))),last=mean(amps.slice(Math.floor(amps.length/2)));damp=clamp(1-last/Math.max(first,1e-9),0,1)}
-      if(k>=p.minK&&dx>=p.minDx&&cycles>=p.minCycles&&damp<=p.maxDamping&&pcv<=p.periodTol){
-        R[i].researchSigs.push({k:'spring',label:'Spring System｜彈簧系統',detail:'k* '+k.toFixed(2)+'｜Δx '+dx.toFixed(2)+' ATR｜'+cycles.toFixed(1)+' 圈｜阻尼 '+damp.toFixed(2)+'｜T '+(isFinite(T)?T.toFixed(1):'—')});
+    let p=EXP.spring,active=null,gap=0,
+        gapLimit=Math.max(2,Math.round(p.lookback*.12));
+
+    function finishSpring(a){
+      if(!a)return;
+      SPRING_RANGES.push({
+        k:'spring',shape:'springRange',
+        start:a.start,end:a.end,
+        lower:a.best.lower,upper:a.best.upper,center:a.best.center,
+        score:a.best.score,cycles:a.best.cycles,
+        centerDrift:a.best.centerDrift,ampStability:a.best.ampStability,
+        gridLevels:Math.max(3,Math.round(p.gridLevels)),
+        detectedAt:a.detectedAt,
+        label:'Spring Range｜彈簧震盪區',
+        detail:a.detail
+      });
+    }
+
+    for(let i=Math.max(19,Math.round(p.lookback)-1);i<D.length;i++){
+      let c=springCandidate(i,p),pass=c&&c.pass;
+
+      if(pass){
+        let detail='Spring '+c.score.toFixed(0)+
+          '｜來回 '+c.cycles.toFixed(1)+' 次'+
+          '｜中心漂移 '+(c.centerDrift*100).toFixed(0)+'%'+
+          '｜振幅穩定 '+(c.ampStability*100).toFixed(0)+'%'+
+          '｜網格 '+Math.round(p.gridLevels)+' 層';
+
+        let overlaps=active&&c.start<=active.end+2;
+        if(!active||!overlaps){
+          finishSpring(active);
+          active={start:c.start,end:i,best:c,detectedAt:i,detail};
+          R[i].researchSigs.push({
+            k:'spring',
+            label:'Spring Range '+c.score.toFixed(0)+'｜彈簧震盪區',
+            detail
+          });
+        }else{
+          active.end=i;
+          active.start=Math.min(active.start,c.start);
+          if(c.score>active.best.score){active.best=c;active.detail=detail}
+        }
+        gap=0;
+      }else if(active){
+        gap++;
+        if(gap>gapLimit){finishSpring(active);active=null;gap=0}
       }
     }
+    finishSpring(active);
   }
 
   // Echo: compare full candlestick geometry (O/H/L/C), not a trend line.
@@ -754,6 +840,50 @@ for(let z of BASIN_EPISODES){
   let hx1=Math.min(xPeak,xS),hx2=Math.max(xS,xE),hy1=Math.min(yPeak,yTop),hy2=yBot,
       hi=Math.min(e,Math.max(s,z.detectedAt||z.start));
   MODEL_HIT.push({kind:'zone',zone:true,i:hi,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
+}
+for(let z of SPRING_RANGES){
+  if(z.end<s||z.start>e)continue;
+  let xS=X(Math.max(s,z.start)),xE=X(Math.min(e,z.end)),
+      yTop=Y(z.upper),yBot=Y(z.lower),yCenter=Y(z.center),
+      levels=Math.max(3,Math.round(z.gridLevels||6));
+  g.save();
+
+  g.fillStyle='rgba(77,215,255,.075)';
+  g.strokeStyle='rgba(77,215,255,.82)';
+  g.lineWidth=1.8;
+  g.fillRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
+  g.strokeRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
+
+  for(let k=1;k<levels;k++){
+    let price=z.lower+(z.upper-z.lower)*k/levels,y=Y(price);
+    g.strokeStyle='rgba(77,215,255,.34)';
+    g.lineWidth=1;
+    g.beginPath();g.moveTo(xS,y);g.lineTo(xE,y);g.stroke();
+  }
+
+  g.strokeStyle='rgba(190,241,255,.95)';
+  g.lineWidth=2.2;
+  g.setLineDash([6,4]);
+  g.beginPath();g.moveTo(xS,yCenter);g.lineTo(xE,yCenter);g.stroke();
+  g.setLineDash([]);
+
+  let label='Spring '+Math.round(z.score)+' · '+z.cycles.toFixed(1)+' 次';
+  g.font='700 11px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
+  let tw=g.measureText(label).width+12,lx=Math.max(xS+tw/2,Math.min(xE-tw/2,(xS+xE)/2)),ly=Math.max(14,yTop-18);
+  g.fillStyle='rgba(18,24,39,.90)';g.fillRect(lx-tw/2,ly-12,tw,17);
+  g.fillStyle='#c8f5ff';g.textAlign='center';g.textBaseline='middle';g.fillText(label,lx,ly-3);
+
+  g.font='700 10px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
+  g.textAlign='left';g.textBaseline='bottom';g.fillStyle='#b9efff';
+  g.fillText('平衡中心',xS+4,Math.max(12,yCenter-4));
+  g.restore();
+
+  let hi=Math.min(e,Math.max(s,z.detectedAt||z.start));
+  MODEL_HIT.push({
+    kind:'zone',zone:true,i:hi,rect:true,
+    x1:Math.min(xS,xE),x2:Math.max(xS,xE),y1:yTop,y2:yBot,
+    label:z.label,detail:z.detail,top:z.upper,bot:z.lower
+  });
 }
 for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
 for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){g.fillStyle=z.state==='validated'?'rgba(55,120,255,.20)':'rgba(150,160,180,.12)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})}}
