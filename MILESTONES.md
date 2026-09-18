@@ -116,13 +116,31 @@ M3.5 把模型從 `index.html` 大幅搬到 Shared Model Engine 後，進 M4 前
 
 本次 audit 也發現市場資料更新曾留下未完成的最新 K；Updater 已改為先驗證並 drop incomplete OHLC，再原子替換資料檔，避免壞資料覆蓋既有歷史。
 
-## M4｜一眼懂，點下去很深 — Next
+## M4｜一眼懂，點下去很深 — ✅ Completed
 
-將同一份 Evidence 與 Evaluation 做成漸進式資訊深度；不建立新手／專業模式。
+同一份 M2 Evidence Timeline 與 M3 Evaluation 現在有漸進式研究介面，不建立新手／專業模式，也不另外重算 UI 統計。
 
-M4 的介面設計必須遵守憲法的 UI 入場條件與重大介面共同決策條款。
+資訊深度：
 
-## M5｜條件式市場推論
+1. 圖上模型結構本身仍是第一層。
+2. Desktop Hover 顯示一句人話與歷史同狀態樣本數。
+3. Click / Mobile Tap 固定 Evidence Research。
+4. 展開後顯示 3 / 5 / 10 / 20 bars 的 N、incomplete、Median Return、MFE、MAE、Up/Down。
+5. Lifecycle 狀態顯示 progression / failure / time-to-progression。
+6. 可直接跳到 Historical Cases 與進展前先失效的 Failure Examples。
+7. 最深層顯示 detectedAt、evidenceStart、confidence 與原始 Evidence 欄位。
+
+Desktop / Mobile interaction contract：
+
+- Desktop：Hover quick preview → Click pin + deep research；Drag pan；Wheel zoom。
+- Mobile：不依賴 Hover；Tap pin preview → 展開研究；One-finger pan；Pinch zoom。
+- 手機 Evidence Research 使用 bottom sheet；點背景或 × 關閉。
+- 手機參數設定改為 bottom sheet / near-full-screen，不沿用桌面的 draggable modal。
+- Desktop 仍保留 draggable parameter modal。
+
+M4 UI 只讀 `EVIDENCE_LOG` / `EVALUATION`；不呼叫 `evaluateTimeline()` 建立另一套答案。
+
+## M5｜條件式市場推論 — Next
 
 組合多個 Evidence，研究條件分布與情境，而不是輸出不可追溯的單一買賣答案。
 

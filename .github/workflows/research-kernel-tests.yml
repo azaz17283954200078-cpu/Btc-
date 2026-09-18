@@ -42,3 +42,5 @@ jobs:
         run: node tests/regression-audit.test.js
       - name: Strategy Lab architecture contract
         run: node tests/index-contract.test.js
+      - name: M4 desktop/mobile research UI contract
+        run: node tests/m4-ui-contract.test.js

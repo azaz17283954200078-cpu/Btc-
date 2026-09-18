@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v1.0 · M3.5 Shared Research Engine**
+**v1.1 · M4 Progressive Research UI**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -17,6 +17,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 - 7 個內建模型：Support Zone、Macro Bottom、Liquidity Sweep、Basin Mapper、Oscillation Field、Echo、Astrology Engine
 - Script Lab 自訂策略圖層
 - Echo 歷史相似型態搜尋、後續 MFE / MAE / 報酬回測與歷史 K 線跳轉
+- M4 Evidence Research：Desktop Hover / Click、Mobile Tap / Bottom Sheet、3/5/10/20 bars Evaluation、Lifecycle、Historical Cases、Failure Examples
 
 ## Architecture
 
@@ -103,8 +104,8 @@ GitHub Actions 會自動檢查：
 
 ## Direction
 
-M1「可信任的地基」、M2「市場記憶」、M3「自我驗證」與 M3.5「Research Runner」已完成。
+M1「可信任的地基」、M2「市場記憶」、M3「自我驗證」、M3.5「Research Runner」與 M4「一眼懂，點下去很深」已完成。
 
-下一階段是 **M4「一眼懂，點下去很深」**：把同一份 Evidence 與 Evaluation 透過嚴格 UI 入場條件做成漸進式理解路徑，不建立新手／專業模式。
+下一階段是 **M5「條件式市場推論」**：研究多個 causal Evidence 同時成立時的歷史條件分布與不確定性，而不是輸出不可追溯的單一買賣答案。
 
 持久化 Research Database 不是當前前置條件；等批次研究量真的使重算成本過高時再評估。

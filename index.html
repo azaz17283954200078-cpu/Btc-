@@ -82,6 +82,32 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .echo-note{margin-top:6px;font-size:10.5px;color:#8fa4c0;line-height:1.45}
 
 
+/* M4 progressive research surface */
+.research-quick{margin-top:8px;padding-top:8px;border-top:1px solid #2b405f;color:#d9e5f6}
+.research-quick b{font-size:11.5px;color:#fff}.research-quick .rq-meta{margin-top:2px;color:#93a8c5;font-size:10.5px}
+.evidence-dock{display:none;margin-top:8px;max-height:46%;overflow:auto;padding:11px;background:#0b1423;border:1px solid #345174;border-radius:12px}
+.evidence-dock.on{display:block}
+.evidence-dock-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;position:sticky;top:-11px;z-index:4;background:#0b1423;padding:10px 0 8px;border-bottom:1px solid #263b59}
+.evidence-title b{display:block;font-size:14px;line-height:1.35}.evidence-state{display:block;color:#94aac8;font-size:10.5px;margin-top:2px}
+.evidence-close{min-width:34px;padding:4px 8px}
+.research-plain{margin-top:10px;padding:10px 11px;border-radius:10px;background:#111e31;border:1px solid #2c4667;color:#e5edf8;font-size:12px;line-height:1.6}
+.research-sample{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.research-chip{padding:3px 7px;border-radius:999px;background:#101d30;border:1px solid #304a6b;color:#aebfd7;font-size:10.5px}
+.research-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.research-actions button{font-size:11.5px}
+.research-section{margin-top:12px;padding-top:10px;border-top:1px solid #263b59}
+.research-section h4{margin:0 0 7px;font-size:11px;letter-spacing:.35px;color:#afc2dc;text-transform:uppercase}
+.horizon-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.horizon-card{padding:8px;border-radius:9px;background:#0f1b2d;border:1px solid #263e5d}
+.horizon-card .hz{font-size:10px;color:#8fa5c1}.horizon-card b{display:block;font-size:14px;margin:2px 0 4px}
+.horizon-meta{font-size:9.8px;line-height:1.5;color:#93a7c2}
+.life-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.life-cell{padding:7px 8px;background:#0f1b2d;border-radius:8px}.life-cell span{display:block;color:#8fa4c0;font-size:9.5px}.life-cell b{display:block;margin-top:2px;font-size:12px}
+.case-list{display:grid;gap:5px}.case-link{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:7px 8px;text-align:left;background:#0f1b2d;border:1px solid #263d5b;border-radius:8px;color:#dce7f6}
+.case-link span{font-size:10.5px}.case-link small{font-size:9.5px;color:#8fa4c0}
+.evidence-fields{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 9px;font-size:10.5px}.evidence-fields dt{color:#8fa4c0}.evidence-fields dd{margin:0;color:#d7e2f1;overflow-wrap:anywhere}
+.research-empty{color:#859ab6;font-size:10.5px;line-height:1.55}
+.evidence-backdrop{display:none}
+
 /* Sidebar */
 .side{min-height:0;padding:10px;display:grid;grid-template-rows:auto 1fr}
 .tabs{display:flex;gap:7px;margin-bottom:10px}
@@ -172,9 +198,26 @@ td:first-child,th:first-child{text-align:left}
  .param-grid{grid-template-columns:1fr}
  .param-help{grid-column:1}
 }
+
+@media(max-width:650px){
+  button,.tabbtn,.controls button{min-height:44px}
+  .gear{min-height:40px;min-width:40px}
+  .evidence-backdrop.on{display:block;position:fixed;inset:0;z-index:58;background:rgba(2,6,12,.64)}
+  .evidence-dock{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;margin:0;max-height:min(76dvh,720px);padding:14px 14px calc(14px + env(safe-area-inset-bottom));border-radius:18px 18px 0 0;border-left:0;border-right:0;border-bottom:0;box-shadow:0 -18px 50px rgba(0,0,0,.45)}
+  .evidence-dock.on{display:block}
+  .evidence-dock-head{top:-14px;padding-top:11px}
+  .horizon-grid{grid-template-columns:1fr 1fr}
+  .case-link{min-height:44px}
+  .research-actions button{min-height:42px}
+  .param-modal{align-items:flex-end;justify-content:stretch;padding:0}
+  .param-card{width:100%;max-width:none;max-height:88dvh;border-radius:18px 18px 0 0;border-left:0;border-right:0;border-bottom:0;padding:16px 15px calc(16px + env(safe-area-inset-bottom))}
+  .param-head{cursor:default;position:sticky;top:-16px;z-index:4;background:#101a2b;padding:12px 0 9px}
+  .param-close{min-width:44px;min-height:44px}
+  .param-grid input,.param-grid select{min-height:44px;font-size:16px}
+}
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.0 · M3.5 Shared Research Engine</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.1 · M4 Progressive Research UI</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -195,7 +238,7 @@ td:first-child,th:first-child{text-align:left}
   <section class="box chartbox">
     <div id="ohlc" class="muted">移動游標或點選 K 棒查看：日期 · OHLC · 漲跌幅 · Volume</div>
     <div class="chart-stage"><canvas id="c"></canvas><canvas id="modelCanvas" class="model-overlay"></canvas><canvas id="scriptCanvas" class="script-overlay"></canvas></div><div id="chartTip" class="chart-tip"></div>
-    <div id="msg" class="muted">滾輪／雙指縮放 · 拖曳移動 · 雙擊或「視野」復位。</div>
+    <div id="msg" class="muted">桌面：移到模型看摘要、點擊固定研究；手機：點模型固定資訊、再展開研究。滾輪／雙指縮放 · 拖曳移動。</div>
   </section>
 
   <aside class="box side">
@@ -217,6 +260,14 @@ td:first-child,th:first-child{text-align:left}
         <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">比較整段 K 線型態，統計相似歷史後續的報酬 / MFE / MAE；每個 Echo 都能直接跳回歷史 K 線查看。</div><span class="model-tag">形狀搜尋</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Engine｜占星盤</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接採用西洋占星常見的行星、相位、逆行與入座，把天體事件疊到市場時間軸上。</div><span class="model-tag">外部時間系統</span></div>
       </div>
+      <div id="evidenceBackdrop" class="evidence-backdrop" onclick="closeEvidenceDock()"></div>
+      <section id="evidenceDock" class="evidence-dock" aria-live="polite" aria-label="Evidence research">
+        <div class="evidence-dock-head">
+          <div class="evidence-title"><b id="evidenceDockTitle">Evidence Research</b><span id="evidenceDockState" class="evidence-state">—</span></div>
+          <button class="evidence-close" onclick="closeEvidenceDock()" aria-label="關閉研究">×</button>
+        </div>
+        <div id="evidenceDockBody"></div>
+      </section>
     </div>
 
     <div id="scriptPane" class="tabpane">
@@ -274,7 +325,7 @@ function setParamDraft(k,v,isText){if(!PARAM_DRAFT)return;PARAM_DRAFT[k]=isText?
 function restoreParams(){if(!ACTIVE_PARAM_MODEL)return;PARAM_DRAFT=cloneObj(DEFAULT_EXP[ACTIVE_PARAM_MODEL]);renderParamBody();q('paramRunStatus').textContent='已回到預設值，按執行套用'}
 function applyParams(){if(!ACTIVE_PARAM_MODEL||!PARAM_DRAFT)return;EXP[ACTIVE_PARAM_MODEL]=cloneObj(PARAM_DRAFT);if(D.length)researchCalc();q('paramRunStatus').textContent='已執行'}
 function startParamDrag(e){
-  if(e.target.closest('button'))return;let card=q('paramCard'),r=card.getBoundingClientRect();
+  if(isMobileUI()||e.target.closest('button'))return;let card=q('paramCard'),r=card.getBoundingClientRect();
   card.style.transform='none';card.style.position='fixed';card.style.left=r.left+'px';card.style.top=r.top+'px';
   paramDrag={dx:e.clientX-r.left,dy:e.clientY-r.top};e.currentTarget.setPointerCapture(e.pointerId);
 }
@@ -285,6 +336,7 @@ function moveParamDrag(e){
   card.style.left=x+'px';card.style.top=y+'px';
 }
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
+let PINNED_RESEARCH=null;
 const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null;
 if(!ME)throw new Error('Strategy Lab Model Engine failed to load');
 window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;
@@ -351,7 +403,7 @@ function parseCSV(t){let l=t.trim().split(/\r?\n/),h=l.shift().split(',').map(x=
 function setTFs(){let m=q('market').value,arr=m==='BTC'?['1h','4h','1d','1w']:['1d','1w','1m'];if(!arr.includes(tf))tf=m==='BTC'?'1w':'1d';q('tfs').innerHTML=arr.map(x=>'<button data-tf="'+x+'" class="'+(x===tf?'active':'')+'">'+x.toUpperCase()+'</button>').join('')}
 function aggregate(a,kind){let out=[],u,key;for(let x of a){let d=new Date(x.t*1000),k;if(kind==='4h')k=Math.floor(x.t/14400)*14400;else if(kind==='1d')k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())/1000;else if(kind==='1w'){k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-((d.getUTCDay()+6)%7))/1000}else{k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1)/1000}if(!u||key!==k){u={...x,t:k};key=k;out.push(u)}else{u.h=Math.max(u.h,x.h);u.l=Math.min(u.l,x.l);u.c=x.c;u.v+=x.v}}return out}
 async function binance(interval){let all=[],end=Date.now(),loops=tf==='1h'||tf==='4h'?20:8;for(let n=0;n<loops;n++){let url='https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval='+interval+'&limit=1000&endTime='+end;let a=await fetch(url).then(r=>{if(!r.ok)throw Error('Binance '+r.status);return r.json()});if(!a.length)break;let b=a.map(x=>({t:x[0]/1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[7]}));all=b.concat(all);end=a[0][0]-1;if(a.length<1000)break}let m=new Map(all.map(x=>[x.t,x]));return [...m.values()].sort((a,b)=>a.t-b.t)}
-async function load(){q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];EVIDENCE.length=0;window.__SL_EVIDENCE__=EVIDENCE;resetEvidenceTimeline();draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。市場圖表是底層；模型與 Script 使用彼此獨立的疊加圖層。'}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
+async function load(){closeEvidenceDock(false);q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];EVIDENCE.length=0;window.__SL_EVIDENCE__=EVIDENCE;resetEvidenceTimeline();draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。'+interactionHint()}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
 function atrArr(a,n){return ME.atrArr(a,n)}
 function clamp(x,a,b){return ME.clamp(x,a,b)}
 function fieldBoundaryAt(lock,i){return ME.fieldBoundaryAt(lock,i)}
@@ -446,6 +498,233 @@ function fieldPanelHTML(f){
   '</div>'
 }
 
+const MODEL_TITLES={
+  support:'Support Zone｜支撐區',macro:'Macro Bottom｜宏觀底部',sweep:'Liquidity Sweep｜流動性掃單',
+  basin:'Basin Mapper｜盆地辨識',field:'Oscillation Field｜震盪場',echo:'Echo｜歷史回聲',astro:'Astrology Engine｜占星盤'
+};
+const STATE_LABELS={
+  potential:'POTENTIAL｜可能形成',candidate:'CANDIDATE｜候選',validated:'VALIDATED｜已驗證',broken:'BROKEN｜失效',
+  active:'ACTIVE｜成立',event:'EVENT｜事件',landing:'LANDING｜下山後著陸',forming:'FORMING｜成形中',
+  exit:'EXIT｜離開',seed:'SEED｜萌芽',weak:'WEAK｜弱回聲',strong:'STRONG｜強回聲',
+  upcoming:'UPCOMING｜未來事件',passed:'PASSED｜已過'
+};
+const STATE_PLAIN={
+  'support|potential':'價格剛進入可能形成支撐的區域，證據仍很早。',
+  'support|candidate':'價格已離開支撐區，現在等待後續回踩是否守住。',
+  'support|validated':'這個支撐曾被回踩，當時仍能守住。',
+  'support|broken':'這個支撐結構後來被價格跌破。',
+  'macro|candidate':'市場曾出現深回撤與波動條件，但還沒有完成收復確認。',
+  'macro|active':'宏觀底部條件已完成確認。',
+  'macro|broken':'候選宏觀底部沒有完成確認或已失效。',
+  'sweep|event':'價格先跌破可見低點後收回；這是一個事件，不代表後續方向。',
+  'basin|landing':'明顯下降後開始減速，可能進入平盤區。',
+  'basin|forming':'下跌後的平盤形狀正在成形，但尚未達到完整盆地門檻。',
+  'basin|active':'下跌後的平盤結構已達到盆地門檻。',
+  'basin|exit':'先前的盆地證據已經離開或消退。',
+  'field|seed':'市場開始出現來回震盪，但證據仍很早。',
+  'field|forming':'震盪場正在形成，幾何與來回證據逐漸完整。',
+  'field|active':'震盪場已成立，之後主要觀察邊界是否被確認破壞。',
+  'field|broken':'先前成立的震盪場已出現確認破界。',
+  'echo|strong':'目前 K 線形狀與部分歷史片段高度相似，可查看那些樣本後來的分布。',
+  'echo|weak':'找到最接近的歷史形狀，但相似度尚未達到強回聲門檻。',
+  'astro|event':'這個時間點出現占星事件；它被當成外部時間條件做歷史檢驗。',
+  'astro|upcoming':'這是未來時間投影，尚未發生，因此不會混入已發生樣本統計。'
+};
+
+function isMobileUI(){return window.matchMedia&&window.matchMedia('(max-width:650px)').matches}
+function isCoarsePointer(){return window.matchMedia&&window.matchMedia('(pointer: coarse)').matches}
+function interactionHint(){return isMobileUI()?'點一下模型固定資訊，按「展開研究」看統計；單指拖曳、雙指縮放。':'移到模型看摘要，點擊固定完整研究；拖曳平移、滾輪縮放。'}
+function pct(v,d=1){return v==null||!Number.isFinite(v)?'—':(v*100).toFixed(d)+'%'}
+function conf(v){return v==null||!Number.isFinite(v)?'—':Math.round(v)+'%'}
+function normHitState(model,state){
+  if(!state)return null;
+  return RK&&RK.normalizeState?RK.normalizeState(model,state):state
+}
+function signalModel(z){return z.k==='spring'?'field':z.k==='basin'?'basin':z.k==='echo'?'echo':z.k==='astro'?'astro':null}
+function signalState(z){
+  if(!z)return null;
+  if(z.k==='echo')return String(z.echo&&z.echo.strength||'weak').toLowerCase();
+  if(z.k==='astro')return /Upcoming/i.test(z.label||'')?'upcoming':'event';
+  if(z.k==='spring'){
+    if(/SEED/i.test(z.label||''))return'seed';
+    if(/FORMING/i.test(z.label||''))return'forming';
+    if(/BROKEN/i.test(z.label||''))return'broken';
+    return'active'
+  }
+  if(z.k==='basin'){
+    if(/LANDING/i.test(z.label||''))return'landing';
+    if(/FORMING/i.test(z.label||''))return'forming';
+    if(/EXIT/i.test(z.label||''))return'exit';
+    return'active'
+  }
+  return null
+}
+function hitAtPoint(x,y){
+  let best=null,bd=1e9;
+  for(const h of HIT){
+    let d=1e9;
+    if(h.rect){
+      if(x>=h.x1&&x<=h.x2&&y>=h.y1&&y<=h.y2)d=0
+    }else if(Number.isFinite(h.x)&&Number.isFinite(h.y))d=Math.hypot(x-h.x,y-h.y);
+    if((h.rect&&d===0)||(d<=(h.r||0)&&d<bd)){best=h;bd=d}
+  }
+  return best
+}
+function hitAtClient(clientX,clientY){
+  let r=q('c').getBoundingClientRect();
+  return hitAtPoint(clientX-r.left,clientY-r.top)
+}
+function resolveResearchHit(hit){
+  if(!hit||!hit.model)return null;
+  let model=hit.model,state=normHitState(model,hit.state);
+  if(!state){
+    let candidates=EVIDENCE_LOG.filter(e=>e.model===model);
+    if(candidates.length){
+      candidates.sort((a,b)=>Math.abs((a.index??0)-hit.i)-Math.abs((b.index??0)-hit.i));
+      state=candidates[0].state
+    }
+  }
+  return{model,state,index:Math.max(0,Math.min(D.length-1,Math.round(hit.i||0))),label:hit.label||MODEL_TITLES[model]||model,detail:hit.detail||''}
+}
+function evalState(model,state){return EVALUATION&&EVALUATION.models&&EVALUATION.models[model]&&EVALUATION.models[model].states?EVALUATION.models[model].states[state]:null}
+function lifeState(model,state){return EVALUATION&&EVALUATION.lifecycle&&EVALUATION.lifecycle.models&&EVALUATION.lifecycle.models[model]&&EVALUATION.lifecycle.models[model].states?EVALUATION.lifecycle.models[model].states[state]:null}
+function plainResearch(model,state){return STATE_PLAIN[model+'|'+state]||((MODEL_TITLES[model]||model)+' 目前狀態為 '+(STATE_LABELS[state]||state)+'。')}
+function quickResearchHTML(hit){
+  let r=resolveResearchHit(hit);if(!r)return'';
+  let st=evalState(r.model,r.state),n=st?st.count:0,
+      sample=st?('歷史同狀態 '+n+' 次'):(r.state==='upcoming'?'未來投影，不納入歷史結果統計':'目前沒有可用的歷史結果統計');
+  return '<div class="research-quick"><b>'+esc(plainResearch(r.model,r.state))+'</b><div class="rq-meta">'+esc(sample)+' · 點擊查看完整研究</div></div>'
+}
+function nearestEvidence(model,state,index){
+  let best=null,dist=Infinity;
+  for(const e of EVIDENCE_LOG){
+    if(e.model!==model||(state&&e.state!==state))continue;
+    let d=Math.abs((e.index??0)-index);
+    if(d<dist){best=e;dist=d;if(d===0)break}
+  }
+  return best
+}
+function historyCases(model,state,limit=7){
+  let rows=EVIDENCE_LOG.filter(e=>e.model===model&&e.state===state&&['transition','event','observation'].includes(e.kind)).slice().reverse(),
+      out=[],seen=new Set();
+  for(const e of rows){
+    let key=e.entityId||e.id;
+    if(seen.has(key))continue;seen.add(key);out.push(e);
+    if(out.length>=limit)break
+  }
+  return out
+}
+function failureExamples(model,state,limit=5){
+  if(!RK||!RK.LIFECYCLE_RULES||!RK.buildEntitySequences)return[];
+  let rule=RK.LIFECYCLE_RULES[model],targets=rule&&rule.progress&&rule.progress[state];
+  if(!rule||!targets||!targets.length)return[];
+  let out=[];
+  for(const seq of RK.buildEntitySequences(EVIDENCE_LOG)){
+    if(seq.model!==model)continue;
+    for(let i=0;i<seq.events.length;i++){
+      let e=seq.events[i];if(e.state!==state)continue;
+      for(let j=i+1;j<seq.events.length;j++){
+        let later=seq.events[j];
+        if(targets.includes(later.state))break;
+        if((rule.failure||[]).includes(later.state)){
+          out.push({from:e,failed:later});break
+        }
+        if((rule.terminal||[]).includes(later.state))break
+      }
+      if(out.length>=limit)return out
+    }
+  }
+  return out
+}
+function evidenceFieldsHTML(e){
+  if(!e)return'<div class="research-empty">找不到對應的 Evidence 記錄。</div>';
+  let rows=[
+    ['detectedAt',Number.isInteger(e.detectedAt)&&D[e.detectedAt]?date(D[e.detectedAt].t):String(e.detectedAt??'—')],
+    ['evidenceStart',Number.isInteger(e.evidenceStart)&&D[e.evidenceStart]?date(D[e.evidenceStart].t):String(e.evidenceStart??'—')],
+    ['confidence',conf(e.confidence)],['kind',e.kind||'—']
+  ];
+  for(const [k,v] of Object.entries(e.evidence||{})){
+    if(v==null||typeof v==='object')continue;
+    rows.push([k,typeof v==='number'?(Number.isInteger(v)?String(v):String(Math.round(v*1000)/1000)):String(v)]);
+    if(rows.length>=9)break
+  }
+  return'<dl class="evidence-fields">'+rows.map(x=>'<dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd>').join('')+'</dl>'
+}
+function horizonsHTML(st){
+  if(!st||!st.horizons)return'<div class="research-empty">這個狀態目前沒有可完成的 forward evaluation。</div>';
+  return'<div class="horizon-grid">'+[3,5,10,20].map(h=>{
+    let x=st.horizons[h];if(!x)return'';
+    return'<div class="horizon-card"><span class="hz">'+h+' bars · N '+x.n+(x.incomplete?' · 未完成 '+x.incomplete:'')+'</span>'+
+      '<b>'+pct(x.medianReturn)+'</b><div class="horizon-meta">中位報酬<br>MFE '+pct(x.medianMFE)+' · MAE '+pct(x.medianMAE)+'<br>上 / 下 '+pct(x.upRate,0)+' / '+pct(x.downRate,0)+'</div></div>'
+  }).join('')+'</div>'
+}
+function lifecycleHTML(model,state){
+  let x=lifeState(model,state);if(!x)return'<div class="research-empty">這個模型／狀態不是 lifecycle progression 評估節點。</div>';
+  let cells=[];
+  if(x.progressionTargets&&x.progressionTargets.length){
+    cells.push(['進展率',pct(x.progressionRate)],['進展前失敗率',pct(x.failureRate)],['進展中位時間',x.medianBarsToProgression==null?'—':x.medianBarsToProgression+' bars']);
+  }
+  cells.push(['狀態出現',String(x.occurrences)],['下一步未解決',String(x.unresolvedNext)]);
+  return'<div class="life-grid">'+cells.map(c=>'<div class="life-cell"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b></div>').join('')+'</div>'
+}
+function casesHTML(model,state){
+  let rows=historyCases(model,state);
+  if(!rows.length)return'<div class="research-empty">目前沒有歷史案例。</div>';
+  return'<div class="case-list">'+rows.map(e=>'<button class="case-link" onclick="jumpToEvidence('+e.index+')"><span>'+esc(D[e.index]?date(D[e.index].t):('bar '+e.index))+' · '+esc(STATE_LABELS[e.state]||e.state)+'</span><small>'+conf(e.confidence)+' ↗</small></button>').join('')+'</div>'
+}
+function failuresHTML(model,state){
+  let rows=failureExamples(model,state);
+  if(!rows.length)return'<div class="research-empty">這個狀態目前沒有可列出的「進展前先失效」案例，或它不是 lifecycle 失敗節點。</div>';
+  return'<div class="case-list">'+rows.map(x=>'<button class="case-link" onclick="jumpToEvidence('+x.failed.index+')"><span>'+esc(D[x.from.index]?date(D[x.from.index].t):('bar '+x.from.index))+' → '+esc(STATE_LABELS[x.failed.state]||x.failed.state)+'</span><small>'+(x.failed.index-x.from.index)+' bars ↗</small></button>').join('')+'</div>'
+}
+function renderEvidenceDock(){
+  let dock=q('evidenceDock'),back=q('evidenceBackdrop');if(!dock)return;
+  if(!PINNED_RESEARCH){dock.classList.remove('on');if(back)back.classList.remove('on');return}
+  let r=PINNED_RESEARCH,st=evalState(r.model,r.state),ev=nearestEvidence(r.model,r.state,r.index),
+      stateLabel=STATE_LABELS[r.state]||String(r.state||'—'),n=st?st.count:0;
+  q('evidenceDockTitle').textContent=MODEL_TITLES[r.model]||r.label||r.model;
+  q('evidenceDockState').textContent=stateLabel+' · '+(D[r.index]?date(D[r.index].t):('bar '+r.index));
+  let html='<div class="research-plain">'+esc(plainResearch(r.model,r.state))+'</div>'+
+    '<div class="research-sample"><span class="research-chip">'+(st?'歷史樣本 '+n:'沒有已完成樣本統計')+'</span>'+
+    '<span class="research-chip">Evidence '+esc(r.state||'—')+'</span></div>';
+  if(!r.expanded){
+    html+='<div class="research-actions"><button onclick="toggleResearchDepth()">展開研究 ↓</button></div>'
+  }else{
+    html+='<div class="research-actions"><button onclick="toggleResearchDepth()">收起細節 ↑</button></div>'+
+      '<section class="research-section"><h4>3 / 5 / 10 / 20 bars</h4>'+horizonsHTML(st)+'</section>'+
+      '<section class="research-section"><h4>Lifecycle</h4>'+lifecycleHTML(r.model,r.state)+'</section>'+
+      '<section class="research-section"><h4>歷史案例</h4>'+casesHTML(r.model,r.state)+'</section>'+
+      '<section class="research-section"><h4>失敗案例</h4>'+failuresHTML(r.model,r.state)+'</section>'+
+      '<section class="research-section"><h4>Evidence</h4>'+evidenceFieldsHTML(ev)+'</section>'
+  }
+  q('evidenceDockBody').innerHTML=html;
+  dock.classList.add('on');
+  if(back)back.classList.toggle('on',isMobileUI());
+}
+function pinResearch(hit){
+  let r=resolveResearchHit(hit);if(!r)return false;
+  let same=PINNED_RESEARCH&&PINNED_RESEARCH.model===r.model&&PINNED_RESEARCH.state===r.state&&PINNED_RESEARCH.index===r.index;
+  r.expanded=isMobileUI()?(same?!PINNED_RESEARCH.expanded:false):true;
+  PINNED_RESEARCH=r;
+  switchLabTab('models');
+  renderEvidenceDock();
+  let tip=q('chartTip');if(tip)tip.style.display='none';
+  return true
+}
+function toggleResearchDepth(){if(!PINNED_RESEARCH)return;PINNED_RESEARCH.expanded=!PINNED_RESEARCH.expanded;renderEvidenceDock()}
+function closeEvidenceDock(redraw=true){
+  PINNED_RESEARCH=null;
+  let dock=q('evidenceDock'),back=q('evidenceBackdrop');
+  if(dock)dock.classList.remove('on');if(back)back.classList.remove('on');
+  if(redraw&&R.length)draw()
+}
+function jumpToEvidence(i){
+  if(!D.length)return;i=Math.max(0,Math.min(D.length-1,Math.round(i)));
+  let span=Math.max(40,Math.min(defaultBars(),120)),pad=Math.round(span*.35);
+  V=[Math.max(0,i-pad),Math.min(D.length-1,i+pad)];
+  hover=i;showBar(i);draw()
+}
+
 function jumpToEcho(start,end,futureEnd){
   if(!D.length)return;
   start=Math.max(0,Math.round(start));
@@ -459,7 +738,7 @@ function jumpToEcho(start,end,futureEnd){
 function showBar(i){if(i<0||i>=D.length)return;let x=D[i],p=i?D[i-1].c:x.o,pct=p?(x.c/p-1)*100:0;q('ohlc').innerHTML='<b>'+date(x.t)+'</b>　O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'　<span class="'+(pct>=0?'good':'err')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</span>　Volume USD '+fmt(x.v)}
 function updateChartTip(){
   let tip=q('chartTip');
-  if(!tip||!mousePos||drag){if(tip)tip.style.display='none';return}
+  if(!tip||isCoarsePointer()||!mousePos||drag){if(tip)tip.style.display='none';return}
   let best=null,bd=1e9;
   for(let h of HIT){
     let d=1e9;
@@ -482,6 +761,7 @@ function updateChartTip(){
 
   if(best.detail&&!best.field)html+='<div class="tmuted">'+esc(best.detail)+'</div>';
   if(best.echo)html+=echoCompareHTML(best.echo);
+  if(best.model)html+=quickResearchHTML(best);
 
   tip.classList.toggle('echo-tip',!!best.echo);
   tip.classList.toggle('field-tip',!!best.field);
@@ -501,6 +781,10 @@ function chartGeom(r){if(!R.length)return null;let s=Math.max(0,Math.floor(V[0])
 function drawBase(){let c=q('c'),d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);if(!R.length)return;let m=chartGeom(r);if(!m)return;let{s,e,vb,lo,hi,X,Y,YV,bw}=m;g.font='12px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';g.strokeStyle='#24324c';g.fillStyle='#a8b8cf';for(let k=0;k<5;k++){let v=lo+(hi-lo)*k/4,y=Y(v);g.beginPath();g.moveTo(52,y);g.lineTo(r.width-15,y);g.stroke();g.fillText(money(v),2,y+4)}for(let i=s;i<=e;i++){let x=R[i],xx=X(i),col=x.c>=x.o?'#43c59e':'#ef6b73';g.strokeStyle=g.fillStyle=col;g.beginPath();g.moveTo(xx,Y(x.h));g.lineTo(xx,Y(x.l));g.stroke();g.fillRect(xx-bw/2,Math.min(Y(x.o),Y(x.c)),bw,Math.max(1,Math.abs(Y(x.o)-Y(x.c))));if(x.v>0){g.globalAlpha=.5;g.fillRect(xx-bw/2,YV(x.v),bw,vb-YV(x.v));g.globalAlpha=1}}if(hover>=s&&hover<=e){let xx=X(hover);g.strokeStyle='#9badcc';g.setLineDash([4,4]);g.beginPath();g.moveTo(xx,8);g.lineTo(xx,vb);g.stroke();g.setLineDash([]);showBar(hover)}}
 
 function findHoveredEcho(hits){
+  if(PINNED_RESEARCH&&PINNED_RESEARCH.model==='echo'){
+    let pinned=hits.find(h=>h.echo&&h.i===PINNED_RESEARCH.index);
+    if(pinned)return pinned
+  }
   if(!mousePos)return null;
   let best=null,bd=1e9;
   for(let h of hits){
@@ -606,7 +890,7 @@ for(let z of BASIN_EPISODES){
   g.restore();
   let hx1=Math.min(xPeak,xS),hx2=Math.max(xS,xE),hy1=Math.min(yPeak,yTop),hy2=yBot,
       hi=Math.min(e,Math.max(s,z.detectedAt||z.start));
-  MODEL_HIT.push({kind:'zone',zone:true,i:hi,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
+  MODEL_HIT.push({kind:'zone',model:'basin',state:normHitState('basin',z.state),zone:true,i:hi,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
 }
 for(let z of OSC_FIELDS){
   if(z.end<s||z.start>e)continue;
@@ -643,19 +927,19 @@ for(let z of OSC_FIELDS){
              upper0:z.upper0,upper1:z.upper1,cycles:z.cycles,drift:z.drift,compression:z.compression,bias:z.bias,
              state:z.state,breakout:z.breakout,invalidatedAt:z.invalidatedAt};
   MODEL_HIT.push({
-    kind:'zone',zone:true,i:hi,rect:true,
+    kind:'zone',model:'field',state:normHitState('field',z.state),zone:true,i:hi,rect:true,
     x1:Math.min(xS,xE),x2:Math.max(xS,xE),
     y1:Math.min(yUS,yUE),y2:Math.max(yLS,yLE),
     label:'Oscillation Field｜震盪場',
     top:Math.max(uS,uE),bot:Math.min(lS,lE),field
   });
 }
-for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
+for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',model:'macro',state:normHitState('macro',z.state),zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
 for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){
   g.fillStyle=z.state==='validated'?'rgba(55,120,255,.22)':z.state==='candidate'?'rgba(90,165,255,.15)':z.state==='broken'?'rgba(239,107,115,.13)':'rgba(150,160,180,.10)';
   let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);
   g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);
-  MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})
+  MODEL_HIT.push({kind:'zone',model:'support',state:normHitState('support',z.state),zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})
 }}
 for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
   if(z.shape==='basinScore'){
@@ -687,19 +971,20 @@ for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
     g.restore();
 
     let hx1=Math.min(xPeak,xS),hx2=Math.max(xS,xE),hy1=Math.min(yPeak,yTop),hy2=yBot;
-    MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
+    MODEL_HIT.push({kind:'zone',model:'basin',state:normHitState('basin',z.state||'active'),zone:true,i,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
   }else{
     g.fillStyle='rgba(176,132,255,.15)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);
     g.fillRect(x1,y1,Math.max(1,x2-x1+1),Math.max(2,y2-y1));
-    MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
+    MODEL_HIT.push({kind:'zone',model:'basin',state:normHitState('basin',z.state||'active'),zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
   }
 }}
-for(let i=s;i<=e;i++){let bs=R[i].bottomSigs||[];for(let j=0;j<bs.length;j++){let z=bs[j],xx=X(i),yy=Y(R[i].l)-12-j*16;g.fillStyle='#ffd166';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,7,0,Math.PI*2);g.fill();g.stroke();MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:12,label:'Liquidity Sweep｜流動性掃單',detail:z.detail})}}
+for(let i=s;i<=e;i++){let bs=R[i].bottomSigs||[];for(let j=0;j<bs.length;j++){let z=bs[j],xx=X(i),yy=Y(R[i].l)-12-j*16;g.fillStyle='#ffd166';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,7,0,Math.PI*2);g.fill();g.stroke();MODEL_HIT.push({kind:'model',model:'sweep',state:'event',i,x:xx,y:yy,r:12,label:'Liquidity Sweep｜流動性掃單',detail:z.detail})}}
 for(let i=s;i<=e;i++){
   let rs=R[i].researchSigs||[],baseN=(R[i].bottomSigs||[]).length;
   for(let j=0;j<rs.length;j++){
     let z=rs[j],xx=X(i),yy=Y(R[i].l)-12-(baseN+j)*16,
-        col=z.k==='basin'?'#b084ff':z.k==='spring'?'#4dd7ff':z.k==='echo'?'#d8e8ff':'#ff79c6';
+        col=z.k==='basin'?'#b084ff':z.k==='spring'?'#4dd7ff':z.k==='echo'?'#d8e8ff':'#ff79c6',
+        model=signalModel(z),state=normHitState(model,signalState(z));
 
     if(z.k==='echo'&&z.echo){
       let a=Math.max(s,z.echo.current.start),b=Math.min(e,z.echo.current.end);
@@ -723,7 +1008,7 @@ for(let i=s;i<=e;i++){
     else if(z.k==='astro'){g.moveTo(xx,yy-8);g.lineTo(xx+7,yy+6);g.lineTo(xx-7,yy+6);g.closePath()}
     else{g.arc(xx,yy,7.5,0,Math.PI*2)}
     g.fill();g.stroke();
-    MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:13,label:z.label,detail:z.detail,echo:z.echo||null});
+    MODEL_HIT.push({kind:'model',model,state,i,x:xx,y:yy,r:13,label:z.label,detail:z.detail,echo:z.echo||null});
   }
 }
 let hoveredEcho=findHoveredEcho(MODEL_HIT);
@@ -744,11 +1029,46 @@ function zoomAt(clientX,f){if(!R.length)return;let r=q('c').getBoundingClientRec
 q('tfs').onclick=e=>{let b=e.target.closest('button');if(!b)return;tf=b.dataset.tf;setTFs();load()};
 q('market').onchange=()=>{setTFs();load()};
 let c=q('c'),touch0=null;
-c.onpointerdown=e=>{q('chartTip').style.display='none';drag=[e.clientX,V[0],V[1],false];c.setPointerCapture(e.pointerId)};
-c.onpointermove=e=>{let r=c.getBoundingClientRect();mousePos={x:e.clientX-r.left,y:e.clientY-r.top,clientX:e.clientX,clientY:e.clientY};if(drag){let sp=drag[2]-drag[1],dx=(e.clientX-drag[0])/c.clientWidth*sp;if(Math.abs(e.clientX-drag[0])>3)drag[3]=true;let a=drag[1]-dx,b=drag[2]-dx;if(a<0){b-=a;a=0}if(b>R.length-1){let z=b-R.length+1;a-=z;b=R.length-1}V=[Math.max(0,a),b]}else{let ss=Math.max(0,Math.floor(V[0])),ee=Math.min(R.length-1,Math.ceil(V[1]));hover=Math.max(ss,Math.min(ee,Math.round(ss+(e.clientX-r.left-52)/Math.max(1,r.width-68)*(ee-ss))))}draw()};
-c.onpointerup=e=>{if(drag&&!drag[3]){let r=c.getBoundingClientRect(),ss=Math.max(0,Math.floor(V[0])),ee=Math.min(R.length-1,Math.ceil(V[1]));hover=Math.max(ss,Math.min(ee,Math.round(ss+(e.clientX-r.left-52)/Math.max(1,r.width-68)*(ee-ss))));showBar(hover)}drag=null;draw()};
+c.onpointerdown=e=>{
+  if(e.pointerType==='touch'&&!e.isPrimary){drag=null;return}
+  q('chartTip').style.display='none';
+  if(e.pointerType==='touch'||isCoarsePointer())mousePos=null;
+  drag=[e.clientX,V[0],V[1],false,e.clientY,e.pointerType];
+  try{c.setPointerCapture(e.pointerId)}catch(_){}
+};
+c.onpointermove=e=>{
+  if(e.pointerType==='touch'&&!e.isPrimary)return;
+  let r=c.getBoundingClientRect(),coarse=e.pointerType==='touch'||isCoarsePointer();
+  if(!coarse)mousePos={x:e.clientX-r.left,y:e.clientY-r.top,clientX:e.clientX,clientY:e.clientY};
+  if(drag){
+    let sp=drag[2]-drag[1],dx=(e.clientX-drag[0])/c.clientWidth*sp,
+        moved=Math.hypot(e.clientX-drag[0],e.clientY-drag[4]);
+    if(moved>(coarse?8:3))drag[3]=true;
+    let a=drag[1]-dx,b=drag[2]-dx;
+    if(a<0){b-=a;a=0}
+    if(b>R.length-1){let z=b-R.length+1;a-=z;b=R.length-1}
+    V=[Math.max(0,a),b]
+  }else if(!coarse){
+    let ss=Math.max(0,Math.floor(V[0])),ee=Math.min(R.length-1,Math.ceil(V[1]));
+    hover=Math.max(ss,Math.min(ee,Math.round(ss+(e.clientX-r.left-52)/Math.max(1,r.width-68)*(ee-ss))))
+  }
+  draw()
+};
+c.onpointerup=e=>{
+  if(e.pointerType==='touch'&&!e.isPrimary)return;
+  let wasTap=drag&&!drag[3];
+  if(wasTap){
+    let hit=hitAtClient(e.clientX,e.clientY),r=c.getBoundingClientRect(),
+        ss=Math.max(0,Math.floor(V[0])),ee=Math.min(R.length-1,Math.ceil(V[1]));
+    hover=hit&&Number.isInteger(hit.i)?hit.i:Math.max(ss,Math.min(ee,Math.round(ss+(e.clientX-r.left-52)/Math.max(1,r.width-68)*(ee-ss))));
+    showBar(hover);
+    if(hit&&hit.model)pinResearch(hit)
+  }
+  drag=null;draw()
+};
 c.onwheel=e=>{e.preventDefault();zoomAt(e.clientX,e.deltaY>0?1.18:.84)};
 c.onpointerleave=e=>{
+  if(isCoarsePointer())return;
   let tip=q('chartTip');
   if(e.relatedTarget&&(e.relatedTarget===tip||tip.contains(e.relatedTarget)))return;
   mousePos=null;tip.style.display='none'
