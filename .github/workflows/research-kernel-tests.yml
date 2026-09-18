@@ -32,5 +32,7 @@ jobs:
         run: node tests/research-kernel.test.js
       - name: Shared Model Engine runtime
         run: node tests/model-engine.test.js
+      - name: Research Runner parity and batch tests
+        run: node tests/research-runner.test.js
       - name: Strategy Lab architecture contract
         run: node tests/index-contract.test.js

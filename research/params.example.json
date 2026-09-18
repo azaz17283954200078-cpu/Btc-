@@ -1,0 +1,15 @@
+[
+  {
+    "name": "baseline",
+    "note": "Shared Model Engine defaults"
+  },
+  {
+    "name": "echo-stricter",
+    "note": "Example parameter comparison: require a stronger historical echo",
+    "exp": {
+      "echo": {
+        "similarity": 0.9
+      }
+    }
+  }
+]

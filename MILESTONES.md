@@ -60,11 +60,11 @@ Evaluation 預設只使用 transition / event / observation；projection 不會�
 
 - `window.__SL_EVALUATION__`：目前市場、週期、參數與已啟用模型的完整 M3 評估結果
 
-## M3.5｜Research Runner｜批次研究引擎 — Planned
+## M3.5｜Research Runner｜批次研究引擎 — ✅ Completed
 
-把 Strategy Lab 的「互動研究」與「大量批次實驗」分開，但兩者必須共用同一套模型與 Research Kernel。
+Strategy Lab 的互動研究與大量批次實驗已分離，但兩者共用同一套 Model Engine 與 Research Kernel。
 
-目標架構：
+完成架構：
 
 ```text
 Strategy Lab UI
@@ -83,23 +83,21 @@ Research Runner
     └─ Research Dataset
 ```
 
-Runner 不得複製或重寫另一份 Support、Basin、Field、Echo 等模型邏輯。  
-如果 UI 與 Runner 不能由同一份模型程式碼產生相同 Evidence，M3.5 不算完成。
+完成內容：
 
-預計工作：
+- `src/model-engine.js` 成為 Lab 與 Runner 唯一的內建模型實作來源
+- `index.html` 只負責 UI、資料載入與視覺化，透過 `ModelEngine.run()` 取得模型結果
+- headless `scripts/research-runner.js` 可批次指定 market / timeframe / model / parameter set
+- Runner 直接產生與 Lab 完全相同 schema 的 Evidence Timeline 與 M3 Evaluation
+- 每個研究 run 保存 model version / kernel version / parameter fingerprint / market / timeframe / data source
+- 支援多個參數組合批次比較
+- `--compare` 可比較兩份不同模型版本或參數版本的研究資料集
+- 初期持久化格式使用可檢查 JSON，不預先引入大型資料庫
+- CI 直接驗證 Runner Evidence / Evaluation 與 shared Model Engine 完全一致
 
-- 將目前仍綁在 `index.html` 的模型運算逐步抽成可共用模組
-- 建立 headless `scripts/research-runner.js`
-- 可指定 market / timeframe / model / parameter set 批次執行
-- Runner 直接產生與 Lab 相同 schema 的 Evidence Timeline
-- 使用 M3 Evaluation Layer 產生統一研究結果
-- 研究輸出必須包含 model version / parameter fingerprint / market / timeframe / data source
-- 支援基礎模型版本或參數比較
-- 初期輸出使用可檢查的 JSON / CSV 類研究資料集，不因「未來可能需要」就先引入大型資料庫
+持久化 Research Database 仍是後續可選升級。只有當跨市場、跨參數、跨模型版本的研究量讓每次重算變得昂貴，才討論 SQLite 或其他資料庫。
 
-持久化 Research Database 是後續可選升級，而不是 M3.5 的必要條件。只有當跨市場、跨參數、跨模型版本的研究量已經讓每次重算變得昂貴，才討論 SQLite 或其他資料庫。
-
-M3.5 是研究基礎設施，不新增 Lab 的主要 UI。
+M3.5 是研究基礎設施，沒有新增 Lab 的主要 UI。
 
 ## M4｜一眼懂，點下去很深 — Next
 
