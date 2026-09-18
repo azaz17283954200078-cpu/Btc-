@@ -50,6 +50,19 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
   box-shadow:0 10px 30px rgba(0,0,0,.38);font-size:12px;line-height:1.58;color:#e4ecfa
 }
 .chart-tip b{font-size:13px;color:#fff}.chart-tip .tmuted{color:#a5b5cd}
+.chart-tip.echo-tip{width:min(520px,calc(100vw - 24px));max-width:520px;padding:12px 14px}
+.echo-compare{margin-top:9px;padding-top:9px;border-top:1px solid #2c4262}
+.echo-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;font-weight:750;color:#edf4ff}
+.echo-overlay{height:118px;border:1px solid #2d4363;border-radius:9px;background:#0b1422;padding:5px;overflow:hidden}
+.echo-overlay svg{display:block;width:100%;height:100%}
+.echo-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:10.5px;color:#aebdd2}
+.echo-key{display:inline-flex;align-items:center;gap:5px}
+.echo-swatch{width:16px;height:2px;border-radius:2px;display:inline-block}
+.echo-matches{display:grid;gap:5px;margin-top:8px}
+.echo-match{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center;padding:6px 8px;border:1px solid #263b59;border-radius:8px;background:#0d1727}
+.echo-match b{font-size:11.5px}.echo-match .sim{font-size:11px;color:#d8e7ff;font-variant-numeric:tabular-nums}
+.echo-note{margin-top:6px;font-size:10.5px;color:#8fa4c0;line-height:1.45}
+
 
 /* Sidebar */
 .side{min-height:0;padding:10px;display:grid;grid-template-rows:auto 1fr}
@@ -183,7 +196,7 @@ td:first-child,th:first-child{text-align:left}
         <div class="model-group-title">Experimental Lab｜實驗模型</div>
         <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Basin Mapper｜盆地辨識</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">不再用四個硬條件判定。模型會從多種時間尺度描述「下山後走平」的整體形狀，再給出盆地分數。</div><span class="model-tag">形態分數</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Spring System｜彈簧系統</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">把價格當成彈簧：找平衡位置，再估計彈力、位移、震盪節奏與阻尼。</div><span class="model-tag">市場力學</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">把現在這段價格形狀當成一段聲音，往歷史裡喊，看看能聽到幾次相似回聲。</div><span class="model-tag">形狀搜尋</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">把現在這段價格形狀往歷史裡搜尋；游標移到 Echo 標記時，可以直接把現在與最像的歷史形狀疊在一起比較。</div><span class="model-tag">形狀搜尋</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Engine｜占星盤</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接採用西洋占星常見的行星、相位、逆行與入座，把天體事件疊到市場時間軸上。</div><span class="model-tag">外部時間系統</span></div>
       </div>
     </div>
@@ -499,15 +512,32 @@ function researchCalc(){
     }
   }
 
-  // Echo: shape only. Count historical echoes; do not use future returns.
+  // Echo: shape only. Keep the strongest historical matches so hover can show the shapes together.
   if(use.echo){
     let p=EXP.echo,L=Math.max(8,Math.round(p.length)),hist=Math.max(L*3,Math.round(p.history)),sim=p.similarity;
     let evalStep=Math.max(1,Math.round(L/4)),histStep=Math.max(1,Math.round(L/3));
     for(let i=L-1;i<D.length;i++){
       if(i!==D.length-1&&i%evalStep!==0)continue;
-      let cur=shapeVector(i,L),count=0,best=0,start=Math.max(L-1,i-hist),end=i-L;
-      for(let j=start;j<=end;j+=histStep){let hs=shapeVector(j,L),ss=shapeSimilarity(cur,hs);if(ss>=sim){count++;if(ss>best)best=ss}}
-      if(count>0)R[i].researchSigs.push({k:'echo',label:'Echo｜歷史回聲',detail:'找到 '+count+' 次回聲｜最佳相似度 '+(best*100).toFixed(0)+'%｜聲音長度 '+L+' bars'});
+      let cur=shapeVector(i,L),matches=[],start=Math.max(L-1,i-hist),end=i-L;
+      if(!cur)continue;
+      for(let j=start;j<=end;j+=histStep){
+        let hs=shapeVector(j,L),ss=shapeSimilarity(cur,hs);
+        if(ss>=sim)matches.push({end:j,start:j-L+1,sim:ss,path:hs});
+      }
+      if(matches.length){
+        matches.sort((a,b)=>b.sim-a.sim);
+        let top=matches.slice(0,4),best=top[0].sim;
+        R[i].researchSigs.push({
+          k:'echo',
+          label:'Echo｜歷史回聲',
+          detail:'找到 '+matches.length+' 次回聲｜最佳相似度 '+(best*100).toFixed(0)+'%｜聲音長度 '+L+' bars',
+          echo:{
+            length:L,threshold:sim,count:matches.length,
+            current:{start:i-L+1,end:i,path:cur},
+            matches:top
+          }
+        });
+      }
     }
   }
 
@@ -541,8 +571,82 @@ function clearSignals(){SIG=[];q('events').innerHTML='';q('scriptStatus').textCo
 function toggleScriptLayer(){scriptVisible=!!q('scriptVisible').checked;safeDrawScript()}
 function fmt(x){return isFinite(x)?x.toLocaleString(undefined,{maximumFractionDigits:2}):'—'}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function echoPolyline(path,w,h,pad,minV,maxV){
+  if(!path||!path.length)return '';
+  let span=Math.max(1e-9,maxV-minV);
+  return path.map((v,i)=>{
+    let x=pad+(w-pad*2)*(i/Math.max(1,path.length-1)),
+        y=pad+(h-pad*2)*(1-(v-minV)/span);
+    return x.toFixed(1)+','+y.toFixed(1)
+  }).join(' ')
+}
+function echoCompareHTML(e){
+  if(!e||!e.current||!e.matches||!e.matches.length)return '';
+  let rows=[e.current.path,...e.matches.map(m=>m.path)].filter(Boolean),
+      vals=rows.flat(),mn=Math.min(...vals),mx=Math.max(...vals),
+      w=470,h=104,pad=7,
+      colors=['#f2f6ff','#67c7ff','#b084ff','#ffd166','#7fe0bd'];
+
+  let lines='<polyline points="'+echoPolyline(e.current.path,w,h,pad,mn,mx)+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+  for(let k=0;k<e.matches.length;k++){
+    let m=e.matches[k],col=colors[k+1]||'#9fb4cf';
+    lines+='<polyline points="'+echoPolyline(m.path,w,h,pad,mn,mx)+'" fill="none" stroke="'+col+'" stroke-width="1.8" opacity=".82" stroke-linecap="round" stroke-linejoin="round"/>';
+  }
+
+  let legend='<span class="echo-key"><span class="echo-swatch" style="background:'+colors[0]+'"></span>現在</span>';
+  let matches='';
+  for(let k=0;k<e.matches.length;k++){
+    let m=e.matches[k],col=colors[k+1]||'#9fb4cf',
+        range=date(D[m.start].t)+' → '+date(D[m.end].t);
+    legend+='<span class="echo-key"><span class="echo-swatch" style="background:'+col+'"></span>Echo '+(k+1)+'</span>';
+    matches+='<div class="echo-match"><div><b><span class="echo-swatch" style="background:'+col+';margin-right:6px"></span>Echo '+(k+1)+'</b><div class="tmuted">'+range+'</div></div><span class="sim">'+(m.sim*100).toFixed(1)+'%</span></div>';
+  }
+
+  return '<div class="echo-compare">'+
+    '<div class="echo-title"><span>形狀疊合比較</span><span class="tmuted">'+e.count+' 次符合門檻</span></div>'+
+    '<div class="echo-overlay"><svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none">'+lines+'</svg></div>'+
+    '<div class="echo-legend">'+legend+'</div>'+
+    '<div class="echo-matches">'+matches+'</div>'+
+    '<div class="echo-note">所有曲線都先移除價格高低與絕對尺度，只比較形狀；越重疊代表形狀越接近。</div>'+
+  '</div>'
+}
 function showBar(i){if(i<0||i>=D.length)return;let x=D[i],p=i?D[i-1].c:x.o,pct=p?(x.c/p-1)*100:0;q('ohlc').innerHTML='<b>'+date(x.t)+'</b>　O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'　<span class="'+(pct>=0?'good':'err')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</span>　Volume USD '+fmt(x.v)}
-function updateChartTip(){let tip=q('chartTip');if(!tip||!mousePos||drag){if(tip)tip.style.display='none';return}let best=null,bd=1e9;for(let h of HIT){let d=1e9;if(h.rect){if(mousePos.x>=h.x1&&mousePos.x<=h.x2&&mousePos.y>=h.y1&&mousePos.y<=h.y2)d=0}else d=Math.hypot(mousePos.x-h.x,mousePos.y-h.y);if((d<=(h.r||0)&&d<bd)||(h.rect&&d===0)){best=h;bd=d}}if(!best){tip.style.display='none';return}let x=D[best.i],html='<b>'+esc(best.label)+'</b><div class="tmuted">'+date(x.t)+' · '+tf.toUpperCase()+'</div><div>O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'</div><div>Volume USD '+fmt(x.v)+'</div>';if(best.zone)html+='<div>區間 '+fmt(best.bot)+' – '+fmt(best.top)+'</div>';else if(best.kind==='script')html+='<div>Script 價格 '+fmt(best.price)+'</div>';else html+='<div>標記價位 '+fmt(x.l)+'</div>';if(best.detail)html+='<div class="tmuted">'+esc(best.detail)+'</div>';tip.innerHTML=html;tip.style.display='block';let left=mousePos.clientX+14,top=mousePos.clientY+14;if(left+310>window.innerWidth)left=mousePos.clientX-300;if(top+145>window.innerHeight)top=mousePos.clientY-150;tip.style.left=Math.max(6,left)+'px';tip.style.top=Math.max(6,top)+'px'}
+function updateChartTip(){
+  let tip=q('chartTip');
+  if(!tip||!mousePos||drag){if(tip)tip.style.display='none';return}
+  let best=null,bd=1e9;
+  for(let h of HIT){
+    let d=1e9;
+    if(h.rect){
+      if(mousePos.x>=h.x1&&mousePos.x<=h.x2&&mousePos.y>=h.y1&&mousePos.y<=h.y2)d=0
+    }else d=Math.hypot(mousePos.x-h.x,mousePos.y-h.y);
+    if((d<=(h.r||0)&&d<bd)||(h.rect&&d===0)){best=h;bd=d}
+  }
+  if(!best){tip.style.display='none';tip.classList.remove('echo-tip');return}
+
+  let x=D[best.i],
+      html='<b>'+esc(best.label)+'</b><div class="tmuted">'+date(x.t)+' · '+tf.toUpperCase()+'</div>'+
+      '<div>O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'</div>'+
+      '<div>Volume USD '+fmt(x.v)+'</div>';
+
+  if(best.zone)html+='<div>區間 '+fmt(best.bot)+' – '+fmt(best.top)+'</div>';
+  else if(best.kind==='script')html+='<div>Script 價格 '+fmt(best.price)+'</div>';
+  else html+='<div>標記價位 '+fmt(x.l)+'</div>';
+
+  if(best.detail)html+='<div class="tmuted">'+esc(best.detail)+'</div>';
+  if(best.echo)html+=echoCompareHTML(best.echo);
+
+  tip.classList.toggle('echo-tip',!!best.echo);
+  tip.innerHTML=html;
+  tip.style.display='block';
+
+  let tw=tip.offsetWidth,th=tip.offsetHeight,
+      left=mousePos.clientX+14,top=mousePos.clientY+14;
+  if(left+tw+8>window.innerWidth)left=mousePos.clientX-tw-14;
+  if(top+th+8>window.innerHeight)top=mousePos.clientY-th-14;
+  tip.style.left=Math.max(6,Math.min(window.innerWidth-tw-6,left))+'px';
+  tip.style.top=Math.max(6,Math.min(window.innerHeight-th-6,top))+'px';
+}
 
 function chartGeom(r){if(!R.length)return null;let s=Math.max(0,Math.floor(V[0])),e=Math.min(R.length-1,Math.ceil(V[1]));if(e<=s)e=Math.min(R.length-1,s+1);let a=R.slice(s,e+1),pb=r.height*.76,vt=r.height*.81,vb=r.height-22,lo=Math.min(...a.map(x=>x.l)),hi=Math.max(...a.map(x=>x.h)),pad=(hi-lo||1)*.06;lo-=pad;hi+=pad;let X=i=>52+(i-s)/(e-s||1)*(r.width-68),Y=v=>12+(hi-v)/(hi-lo)*(pb-22),mv=Math.max(1,...a.map(x=>x.v||0)),YV=v=>vb-(v/mv)*(vb-vt),bw=Math.max(1,(r.width-68)/(e-s+1)*.58);return{s,e,a,pb,vt,vb,lo,hi,X,Y,YV,bw}}
 
@@ -593,7 +697,7 @@ for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
   }
 }}
 for(let i=s;i<=e;i++){let bs=R[i].bottomSigs||[];for(let j=0;j<bs.length;j++){let z=bs[j],xx=X(i),yy=Y(R[i].l)-12-j*16;g.fillStyle='#ffd166';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,7,0,Math.PI*2);g.fill();g.stroke();MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:12,label:'Liquidity Sweep｜流動性掃單',detail:z.detail})}}
-for(let i=s;i<=e;i++){let rs=R[i].researchSigs||[],baseN=(R[i].bottomSigs||[]).length;for(let j=0;j<rs.length;j++){let z=rs[j],xx=X(i),yy=Y(R[i].l)-12-(baseN+j)*16,col=z.k==='basin'?'#b084ff':z.k==='spring'?'#4dd7ff':z.k==='echo'?'#d8e8ff':'#ff79c6';g.fillStyle=col;g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();if(z.k==='spring'){g.rect(xx-7,yy-7,14,14)}else if(z.k==='astro'){g.moveTo(xx,yy-8);g.lineTo(xx+7,yy+6);g.lineTo(xx-7,yy+6);g.closePath()}else{g.arc(xx,yy,7.5,0,Math.PI*2)}g.fill();g.stroke();MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:13,label:z.label,detail:z.detail})}}
+for(let i=s;i<=e;i++){let rs=R[i].researchSigs||[],baseN=(R[i].bottomSigs||[]).length;for(let j=0;j<rs.length;j++){let z=rs[j],xx=X(i),yy=Y(R[i].l)-12-(baseN+j)*16,col=z.k==='basin'?'#b084ff':z.k==='spring'?'#4dd7ff':z.k==='echo'?'#d8e8ff':'#ff79c6';g.fillStyle=col;g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();if(z.k==='spring'){g.rect(xx-7,yy-7,14,14)}else if(z.k==='astro'){g.moveTo(xx,yy-8);g.lineTo(xx+7,yy+6);g.lineTo(xx-7,yy+6);g.closePath()}else{g.arc(xx,yy,7.5,0,Math.PI*2)}g.fill();g.stroke();MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:13,label:z.label,detail:z.detail,echo:z.echo||null})}}
 refreshHits()}
 
 function drawScriptOverlay(){let c=q('scriptCanvas'),base=q('c');if(!c||!base)return;let d=devicePixelRatio||1,r=base.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);SCRIPT_HIT=[];if(!scriptVisible||!R.length){refreshHits();return}let m=chartGeom(r);if(!m){refreshHits();return}let{s,e,X,Y}=m;
