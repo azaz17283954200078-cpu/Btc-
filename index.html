@@ -51,6 +51,14 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 }
 .chart-tip b{font-size:13px;color:#fff}.chart-tip .tmuted{color:#a5b5cd}
 .chart-tip.echo-tip{width:min(520px,calc(100vw - 24px));max-width:520px;padding:12px 14px}
+.chart-tip.field-tip{width:min(390px,calc(100vw - 24px));max-width:390px;padding:12px 14px}
+.field-panel{margin-top:9px;padding-top:9px;border-top:1px solid #2c4262}
+.field-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.field-head b{font-size:14px}.field-status{font-weight:800;white-space:nowrap}
+.field-grid{display:grid;grid-template-columns:88px minmax(0,1fr);gap:5px 10px;align-items:center}
+.field-k{color:#91a7c4}.field-v{color:#edf5ff;font-weight:650;font-variant-numeric:tabular-nums}
+.field-note{margin-top:8px;padding-top:7px;border-top:1px dashed #2b405f;color:#8499b7;font-size:10.5px;line-height:1.45}
+
 .echo-compare{margin-top:9px;padding-top:9px;border-top:1px solid #2c4262}
 .echo-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;font-weight:750;color:#edf4ff}
 .echo-overlay{height:118px;border:1px solid #2d4363;border-radius:9px;background:#0b1422;padding:5px;overflow:hidden}
@@ -698,6 +706,23 @@ function echoCompareHTML(e){
     '<div class="echo-note">游標留在 Echo 標記上時，前三個歷史 K 線型態會直接疊到主圖的目前 K 線區間。</div>'+
   '</div>'
 }
+function fieldPanelHTML(f){
+  if(!f)return '';
+  let core=(f.center0+f.center1)/2,lo=Math.min(f.lower0,f.lower1),hi=Math.max(f.upper0,f.upper1);
+  return '<div class="field-panel">'+
+    '<div class="field-head"><b>震盪場 FIELD '+Math.round(f.score)+'</b><span class="field-status">'+esc(fieldStatus(f.score))+'</span></div>'+
+    '<div class="field-grid">'+
+      '<div class="field-k">平衡核心</div><div class="field-v">'+fmt(core)+'</div>'+
+      '<div class="field-k">場域邊界</div><div class="field-v">'+fmt(lo)+' ～ '+fmt(hi)+'</div>'+
+      '<div class="field-k">震盪回合</div><div class="field-v">約 '+f.cycles.toFixed(1)+' 次</div>'+
+      '<div class="field-k">核心漂移</div><div class="field-v">'+esc(fieldDriftText(f.drift))+'</div>'+
+      '<div class="field-k">振幅收束</div><div class="field-v">'+esc(fieldCompressionText(f.compression))+'</div>'+
+      '<div class="field-k">價格偏壓</div><div class="field-v">'+esc(fieldBiasText(f.bias))+'</div>'+
+      '<div class="field-k">場域狀態</div><div class="field-v">'+esc(fieldStatus(f.score))+'</div>'+
+    '</div>'+
+    '<div class="field-note">只描述場域物理量，不替幾何型態命名，也不預測震盪會維持多久。</div>'+
+  '</div>'
+}
 function showBar(i){if(i<0||i>=D.length)return;let x=D[i],p=i?D[i-1].c:x.o,pct=p?(x.c/p-1)*100:0;q('ohlc').innerHTML='<b>'+date(x.t)+'</b>　O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'　<span class="'+(pct>=0?'good':'err')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</span>　Volume USD '+fmt(x.v)}
 function updateChartTip(){
   let tip=q('chartTip');
@@ -710,21 +735,23 @@ function updateChartTip(){
     }else d=Math.hypot(mousePos.x-h.x,mousePos.y-h.y);
     if((d<=(h.r||0)&&d<bd)||(h.rect&&d===0)){best=h;bd=d}
   }
-  if(!best){tip.style.display='none';tip.classList.remove('echo-tip');return}
+  if(!best){tip.style.display='none';tip.classList.remove('echo-tip','field-tip');return}
 
   let x=D[best.i],
       html='<b>'+esc(best.label)+'</b><div class="tmuted">'+date(x.t)+' · '+tf.toUpperCase()+'</div>'+
       '<div>O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'</div>'+
       '<div>Volume USD '+fmt(x.v)+'</div>';
 
-  if(best.zone)html+='<div>區間 '+fmt(best.bot)+' – '+fmt(best.top)+'</div>';
+  if(best.field)html+=fieldPanelHTML(best.field);
+  else if(best.zone)html+='<div>區間 '+fmt(best.bot)+' – '+fmt(best.top)+'</div>';
   else if(best.kind==='script')html+='<div>Script 價格 '+fmt(best.price)+'</div>';
   else html+='<div>標記價位 '+fmt(x.l)+'</div>';
 
-  if(best.detail)html+='<div class="tmuted">'+esc(best.detail)+'</div>';
+  if(best.detail&&!best.field)html+='<div class="tmuted">'+esc(best.detail)+'</div>';
   if(best.echo)html+=echoCompareHTML(best.echo);
 
   tip.classList.toggle('echo-tip',!!best.echo);
+  tip.classList.toggle('field-tip',!!best.field);
   tip.innerHTML=html;
   tip.style.display='block';
 
@@ -842,49 +869,48 @@ for(let z of BASIN_EPISODES){
       hi=Math.min(e,Math.max(s,z.detectedAt||z.start));
   MODEL_HIT.push({kind:'zone',zone:true,i:hi,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
 }
-for(let z of SPRING_RANGES){
+for(let z of OSC_FIELDS){
   if(z.end<s||z.start>e)continue;
-  let xS=X(Math.max(s,z.start)),xE=X(Math.min(e,z.end)),
-      yTop=Y(z.upper),yBot=Y(z.lower),yCenter=Y(z.center),
-      levels=Math.max(3,Math.round(z.gridLevels||6));
+  let zs=z.start,ze=z.end,visS=Math.max(s,zs),visE=Math.min(e,ze),span=Math.max(1,ze-zs),
+      tS=(visS-zs)/span,tE=(visE-zs)/span,interp=(a,b,t)=>a+(b-a)*t,
+      cS=interp(z.center0,z.center1,tS),cE=interp(z.center0,z.center1,tE),
+      aS=Math.max(1e-9,interp(z.amp0,z.amp1,tS)),aE=Math.max(1e-9,interp(z.amp0,z.amp1,tE)),
+      uS=cS+aS,uE=cE+aE,lS=cS-aS,lE=cE-aE,
+      xS=X(visS),xE=X(visE),yUS=Y(uS),yUE=Y(uE),yLS=Y(lS),yLE=Y(lE),
+      levels=Math.max(4,Math.round((z.gridLevels||6)/2)*2);
   g.save();
+  g.fillStyle='rgba(77,215,255,.070)';g.strokeStyle='rgba(77,215,255,.86)';g.lineWidth=1.8;
+  g.beginPath();g.moveTo(xS,yUS);g.lineTo(xE,yUE);g.lineTo(xE,yLE);g.lineTo(xS,yLS);g.closePath();g.fill();g.stroke();
 
-  g.fillStyle='rgba(77,215,255,.075)';
-  g.strokeStyle='rgba(77,215,255,.82)';
-  g.lineWidth=1.8;
-  g.fillRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
-  g.strokeRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
-
-  for(let k=1;k<levels;k++){
-    let price=z.lower+(z.upper-z.lower)*k/levels,y=Y(price);
-    g.strokeStyle='rgba(77,215,255,.34)';
-    g.lineWidth=1;
-    g.beginPath();g.moveTo(xS,y);g.lineTo(xE,y);g.stroke();
+  for(let k=0;k<=levels;k++){
+    let f=k/levels,pS=lS+(uS-lS)*f,pE=lE+(uE-lE)*f,yS=Y(pS),yE=Y(pE),rel=k-levels/2;
+    g.strokeStyle=rel===0?'rgba(190,241,255,.96)':'rgba(77,215,255,.32)';
+    g.lineWidth=rel===0?2.2:1;g.setLineDash(rel===0?[6,4]:[]);
+    g.beginPath();g.moveTo(xS,yS);g.lineTo(xE,yE);g.stroke();
+    if(xE-xS>90){
+      g.setLineDash([]);g.fillStyle=rel===0?'#d9f8ff':'rgba(185,239,255,.75)';
+      g.font='700 9px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
+      g.textAlign='right';g.textBaseline='bottom';g.fillText((rel>0?'+':'')+rel,xE-3,yE-2);
+    }
   }
-
-  g.strokeStyle='rgba(190,241,255,.95)';
-  g.lineWidth=2.2;
-  g.setLineDash([6,4]);
-  g.beginPath();g.moveTo(xS,yCenter);g.lineTo(xE,yCenter);g.stroke();
   g.setLineDash([]);
-
-  let label='Spring '+Math.round(z.score)+' · '+z.cycles.toFixed(1)+' 次';
+  let label='FIELD '+Math.round(z.score)+' · '+z.cycles.toFixed(1)+' 回合',yTop=Math.min(yUS,yUE);
   g.font='700 11px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
   let tw=g.measureText(label).width+12,lx=Math.max(xS+tw/2,Math.min(xE-tw/2,(xS+xE)/2)),ly=Math.max(14,yTop-18);
-  g.fillStyle='rgba(18,24,39,.90)';g.fillRect(lx-tw/2,ly-12,tw,17);
+  g.fillStyle='rgba(18,24,39,.92)';g.fillRect(lx-tw/2,ly-12,tw,17);
   g.fillStyle='#c8f5ff';g.textAlign='center';g.textBaseline='middle';g.fillText(label,lx,ly-3);
 
-  g.font='700 10px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
-  g.textAlign='left';g.textBaseline='bottom';g.fillStyle='#b9efff';
-  g.fillText('平衡中心',xS+4,Math.max(12,yCenter-4));
+  let midT=(tS+tE)/2,midC=interp(z.center0,z.center1,midT);
+  g.fillStyle='#b9efff';g.font='700 10px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
+  g.textAlign='left';g.textBaseline='bottom';g.fillText('平衡核心',(xS+xE)/2+4,Math.max(12,Y(midC)-4));
   g.restore();
 
-  let hi=Math.min(e,Math.max(s,z.detectedAt||z.start));
-  MODEL_HIT.push({
-    kind:'zone',zone:true,i:hi,rect:true,
-    x1:Math.min(xS,xE),x2:Math.max(xS,xE),y1:yTop,y2:yBot,
-    label:z.label,detail:z.detail,top:z.upper,bot:z.lower
-  });
+  let hi=Math.min(e,Math.max(s,z.detectedAt||z.start)),
+      field={score:z.score,center0:z.center0,center1:z.center1,lower0:z.lower0,lower1:z.lower1,
+             upper0:z.upper0,upper1:z.upper1,cycles:z.cycles,drift:z.drift,compression:z.compression,bias:z.bias};
+  MODEL_HIT.push({kind:'zone',zone:true,i:hi,rect:true,x1:Math.min(xS,xE),x2:Math.max(xS,xE),
+    y1:Math.min(yUS,yUE),y2:Math.max(yLS,yLE),label:'Oscillation Field｜震盪場',
+    top:Math.max(uS,uE),bot:Math.min(lS,lE),field});
 }
 for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
 for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){g.fillStyle=z.state==='validated'?'rgba(55,120,255,.20)':'rgba(150,160,180,.12)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})}}
