@@ -369,10 +369,15 @@ const BASIN_FEATURE_KEYS=['dropDepth','dropEfficiency','floorRelief','floorSlope
 const BASIN_HEURISTIC_WEIGHTS={dropDepth:.18,dropEfficiency:.12,floorRelief:.22,floorSlope:.16,volShift:.10,centerStability:.14,duration:.08};
 
 function regressionSlope(a){
-  let n=a.length;if(n<2)return 0,sx=(n-1)*n/2,sy=a.reduce((x,y)=>x+y,0),
-      sxx=(n-1)*n*(2*n-1)/6,sxy=0;
+  let n=a.length;
+  if(n<2)return 0;
+  let sx=(n-1)*n/2,
+      sy=a.reduce((x,y)=>x+y,0),
+      sxx=(n-1)*n*(2*n-1)/6,
+      sxy=0;
   for(let i=0;i<n;i++)sxy+=i*a[i];
-  let den=n*sxx-sx*sx;return den?(n*sxy-sx*sy)/den:0
+  let den=n*sxx-sx*sx;
+  return den?(n*sxy-sx*sy)/den:0
 }
 function returnVol(a){
   if(a.length<3)return 0;let r=[];
