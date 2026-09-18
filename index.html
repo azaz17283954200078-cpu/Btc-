@@ -41,5 +41,16 @@ function defaultBars(){return tf==='1h'?240:tf==='4h'?240:tf==='1d'?260:tf==='1w
 function resetView(redraw=true){let n=defaultBars(),e=Math.max(1,D.length-1);V=[Math.max(0,e-n+1),e];hover=-1;if(redraw)draw()}
 function allView(){V=[0,Math.max(1,D.length-1)];hover=-1;draw()}
 function zoomAt(clientX,f){if(!R.length)return;let r=q('c').getBoundingClientRect(),span=V[1]-V[0],ratio=Math.max(0,Math.min(1,(clientX-r.left)/r.width)),anchor=V[0]+ratio*span,ns=Math.max(20,Math.min(R.length-1,span*f));V=[anchor-ratio*ns,anchor+(1-ratio)*ns];if(V[0]<0){V[1]-=V[0];V[0]=0}if(V[1]>R.length-1){let x=V[1]-R.length+1;V[0]-=x;V[1]=R.length-1}V[0]=Math.max(0,V[0]);draw()}
-q('tfs').onclick=e=>{let b=e.target.closest('button');if(!b)return;tf=b.dataset.tf;[...q('tfs').children].forEach(x=>x.classList.toggle('active',x===b));load()};q('market').onchange=()=>{setTFs();load()};let c=q('c');c.onpointerdown=e=>{drag=[e.clientX,...V];c.setPointerCapture(e.pointerId)};c.onpointermove=e=>{if(!drag)return;let sp=drag[2]-drag[1],dx=(e.clientX-drag[0])/c.clientWidth*sp;V=[Math.max(0,drag[1]-dx),Math.min(R.length-1,drag[2]-dx)];draw()};c.onpointerup=()=>drag=null;c.onwheel=e=>{e.preventDefault();let sp=V[1]-V[0],m=V[0]+e.offsetX/c.clientWidth*sp,n=Math.max(30,Math.min(R.length,sp*(e.deltaY>0?1.2:.8)));V=[Math.max(0,m-n/2),Math.min(R.length-1,m+n/2)];draw()};window.onresize=draw;try{setTFs();load()}catch(e){q('status').textContent='啟動錯誤';q('msg').textContent=e.message}
+q('tfs').onclick=e=>{let b=e.target.closest('button');if(!b)return;tf=b.dataset.tf;setTFs();load()};
+q('market').onchange=()=>{setTFs();load()};
+let c=q('c'),touch0=null;
+c.onpointerdown=e=>{drag=[e.clientX,V[0],V[1],false];c.setPointerCapture(e.pointerId)};
+c.onpointermove=e=>{let r=c.getBoundingClientRect();if(drag){let sp=drag[2]-drag[1],dx=(e.clientX-drag[0])/c.clientWidth*sp;if(Math.abs(e.clientX-drag[0])>3)drag[3]=true;let a=drag[1]-dx,b=drag[2]-dx;if(a<0){b-=a;a=0}if(b>R.length-1){let z=b-R.length+1;a-=z;b=R.length-1}V=[Math.max(0,a),b]}else{let ss=Math.max(0,Math.floor(V[0])),ee=Math.min(R.length-1,Math.ceil(V[1]));hover=Math.max(ss,Math.min(ee,Math.round(ss+(e.clientX-r.left-52)/Math.max(1,r.width-68)*(ee-ss))))}draw()};
+c.onpointerup=e=>{if(drag&&!drag[3]){let r=c.getBoundingClientRect(),ss=Math.max(0,Math.floor(V[0])),ee=Math.min(R.length-1,Math.ceil(V[1]));hover=Math.max(ss,Math.min(ee,Math.round(ss+(e.clientX-r.left-52)/Math.max(1,r.width-68)*(ee-ss))));showBar(hover)}drag=null;draw()};
+c.onwheel=e=>{e.preventDefault();zoomAt(e.clientX,e.deltaY>0?1.18:.84)};
+c.ondblclick=()=>resetView();
+c.ontouchstart=e=>{if(e.touches.length===2)touch0={d:Math.abs(e.touches[0].clientX-e.touches[1].clientX),span:V[1]-V[0],mid:(V[0]+V[1])/2}};
+c.ontouchmove=e=>{if(e.touches.length===2&&touch0){e.preventDefault();let d=Math.abs(e.touches[0].clientX-e.touches[1].clientX)||1,ns=Math.max(20,Math.min(R.length-1,touch0.span*touch0.d/d));V=[touch0.mid-ns/2,touch0.mid+ns/2];if(V[0]<0){V[1]-=V[0];V[0]=0}if(V[1]>R.length-1){let z=V[1]-R.length+1;V[0]-=z;V[1]=R.length-1}draw()}};
+c.ontouchend=()=>touch0=null;
+window.onresize=draw;try{setTFs();load()}catch(e){q('status').textContent='啟動錯誤';q('msg').textContent=e.message}
 </script></body></html>
