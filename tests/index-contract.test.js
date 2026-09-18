@@ -67,4 +67,14 @@ assert(s.includes('function rebuildEvaluation()'),'M3 evaluation rebuild hook mi
 assert(s.includes('RK.evaluateTimeline(D,EVIDENCE_LOG'),'M3 must evaluate directly from M2 timeline');
 assert(s.includes('finalizeEvidenceTimeline();\n  rebuildEvaluation();\n  rebuildEvidence();'),'M3 evaluation must run after timeline finalization');
 
+assert(s.includes('<script src="src/model-engine.js"></script>'),'shared Model Engine script not loaded');
+assert(s.includes('window.__SL_MODEL_ENGINE__'),'shared Model Engine export missing');
+assert(s.includes('ME.run(D,{'),'Strategy Lab UI must execute shared Model Engine');
+for(const forbidden of [
+  'function basinCandidate(','function fieldBestCandidate(','function candleShapeSimilarity(',
+  'function astroPos(','function rememberEvidence(','function rebuildEvaluation('
+]){
+  assert(!s.includes(forbidden),'duplicated model/research implementation remains in index: '+forbidden);
+}
+
 console.log('index-contract.test.js: OK');

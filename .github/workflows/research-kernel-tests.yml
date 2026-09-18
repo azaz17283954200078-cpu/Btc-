@@ -6,12 +6,14 @@ on:
       - "index.html"
       - "src/**"
       - "tests/**"
+      - "scripts/**"
       - ".github/workflows/research-kernel-tests.yml"
   pull_request:
     paths:
       - "index.html"
       - "src/**"
       - "tests/**"
+      - "scripts/**"
       - ".github/workflows/research-kernel-tests.yml"
   workflow_dispatch:
 
@@ -28,5 +30,7 @@ jobs:
           node-version: "22"
       - name: Research Kernel unit tests
         run: node tests/research-kernel.test.js
+      - name: Shared Model Engine runtime
+        run: node tests/model-engine.test.js
       - name: Strategy Lab architecture contract
         run: node tests/index-contract.test.js
