@@ -196,7 +196,7 @@ td:first-child,th:first-child{text-align:left}
         <div class="model-group-title">Experimental Lab｜實驗模型</div>
         <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Basin Mapper｜盆地辨識</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">不再用四個硬條件判定。模型會從多種時間尺度描述「下山後走平」的整體形狀，再給出盆地分數。</div><span class="model-tag">形態分數</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Spring System｜彈簧系統</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">把價格當成彈簧：找平衡位置，再估計彈力、位移、震盪節奏與阻尼。</div><span class="model-tag">市場力學</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">把現在這段價格形狀往歷史裡搜尋；游標移到 Echo 標記時，可以直接把現在與最像的歷史形狀疊在一起比較。</div><span class="model-tag">形狀搜尋</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接比較整段 K 線型態；Echo 區間會框在主圖上，游標移到標記時，最像的歷史 K 線會半透明疊到目前 K 線上。</div><span class="model-tag">形狀搜尋</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Engine｜占星盤</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接採用西洋占星常見的行星、相位、逆行與入座，把天體事件疊到市場時間軸上。</div><span class="model-tag">外部時間系統</span></div>
       </div>
     </div>
@@ -266,11 +266,11 @@ function moveParamDrag(e){
   let y=Math.max(8,Math.min(window.innerHeight-r.height-8,e.clientY-paramDrag.dy));
   card.style.left=x+'px';card.style.top=y+'px';
 }
-function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true;const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
+function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[];const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
 const DEFAULT_EXP={
-  basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:72},
+  basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:68},
   spring:{minK:.08,minDx:1.25,minCycles:2,maxDamping:.55,periodTol:.38},
-  echo:{length:32,history:1000,similarity:.88},
+  echo:{length:32,history:1000,similarity:.82},
   astro:{planetSet:'classic',aspectSet:'major',orb:4,retro:'off',ingress:'off'}
 };
 const EXP=cloneObj(DEFAULT_EXP);
@@ -286,10 +286,10 @@ const PARAM_SCHEMA={
     {k:'minCycles',n:'至少震幾圈',min:1,max:6,step:1,help:'要看到幾次完整來回，才相信這不是偶然晃動。',low:'少：較靈敏',high:'多：節奏更完整'},
     {k:'maxDamping',n:'允許多少阻尼',min:.05,max:.9,step:.05,help:'震盪幅度可以衰減多快。太快消失，就不像持續運作的彈簧。',low:'阻尼小',high:'容許快速衰減'},
     {k:'periodTol',n:'節奏可以多不整齊',min:.08,max:.8,step:.04,help:'每一圈需要多久可以有多少差異。',low:'小：節奏很整齊',high:'大：節奏可較亂'}]},
-  echo:{title:'📻 Echo｜歷史回聲',intro:'只做一件事：拿現在這段價格形狀去歷史裡找相似形狀。它不先判斷後來漲不漲，只告訴你找到了幾次回聲。',fields:[
+  echo:{title:'📻 Echo｜歷史回聲',intro:'比較的是整段 K 線型態：每根 K 棒的開、高、低、收與相對位置。游標移到 Echo 時，歷史 K 線會直接疊到目前 K 線上。',fields:[
     {k:'length',n:'聲音有多長',min:12,max:100,step:2,help:'用最近多少根 K 棒組成這一次要搜尋的價格形狀。',low:'短：短句',high:'長：完整段落'},
     {k:'history',n:'往多久以前喊',min:200,max:5000,step:100,help:'往回搜尋多長的歷史資料。',low:'近：只聽近代',high:'遠：找更久以前'},
-    {k:'similarity',n:'多像才算回聲',min:.65,max:.99,step:.01,help:'形狀相似度至少要多高，才計入一次回聲。',low:'低：容易聽到',high:'高：幾乎要一樣'}]},
+    {k:'similarity',n:'多像才算回聲',min:.55,max:.98,step:.01,help:'比較整段 K 線幾何後的相似度門檻，包含實體、上下影線與每根 K 棒的相對位置。',low:'低：較寬鬆',high:'高：K線要非常像'}]},
   astro:{title:'🔮 Astrology Engine｜占星盤',intro:'採用西洋占星常見的行星與主要相位：合相、六合、刑、拱、沖。這裡把它當外部時間系統來做市場實驗。',fields:[
     {k:'planetSet',n:'使用哪些星體',type:'select',options:[['classic','傳統七曜'],['modern','七曜＋天王／海王／冥王']],help:'傳統七曜包含日、月、水、金、火、木、土；Modern 再加入三王星。'},
     {k:'aspectSet',n:'觀察哪些相位',type:'select',options:[['major','主要相位：合／六合／刑／拱／沖'],['hard','緊張相位：合／刑／沖'],['harmony','和諧相位：六合／拱']],help:'直接使用西洋占星常見相位角度，不自創日期規則。'},
@@ -316,12 +316,34 @@ function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
 function angleNorm(x){x%=360;if(x<0)x+=360;return x}
 function angleDiff(a,b){let d=angleNorm(a-b);return d>180?d-360:d}
 function minAngle(a,b){return Math.abs(angleDiff(a,b))}
-function shapeVector(end,len,points=16){
-  let start=end-len+1;if(start<0)return null;let a=[];
-  for(let p=0;p<points;p++){let pos=start+(len-1)*p/(points-1),i=Math.floor(pos),f=pos-i,v=i+1<=end?D[i].c*(1-f)+D[i+1].c*f:D[i].c;a.push(Math.log(Math.max(v,1e-9)))}
-  let m=mean(a),sd=stdev(a)||1e-9;return a.map(x=>(x-m)/sd)
+function candleShape(end,len){
+  let start=end-len+1;
+  if(start<0)return null;
+  let seg=D.slice(start,end+1),
+      lo=Math.min(...seg.map(x=>x.l)),
+      hi=Math.max(...seg.map(x=>x.h)),
+      span=hi-lo;
+  if(!(span>0))return null;
+  return seg.map(x=>({
+    o:(x.o-lo)/span,
+    h:(x.h-lo)/span,
+    l:(x.l-lo)/span,
+    c:(x.c-lo)/span
+  }))
 }
-function shapeSimilarity(a,b){if(!a||!b||a.length!==b.length)return 0;let d=Math.sqrt(mean(a.map((x,i)=>(x-b[i])*(x-b[i]))));return clamp(1-d/2.2,0,1)}
+function candleShapeSimilarity(a,b){
+  if(!a||!b||a.length!==b.length)return 0;
+  let sum=0;
+  for(let i=0;i<a.length;i++){
+    let A=a[i],B=b[i];
+    sum+=.30*(A.o-B.o)*(A.o-B.o)+
+         .30*(A.c-B.c)*(A.c-B.c)+
+         .20*(A.h-B.h)*(A.h-B.h)+
+         .20*(A.l-B.l)*(A.l-B.l);
+  }
+  let rms=Math.sqrt(sum/Math.max(1,a.length));
+  return clamp(1-rms/.45,0,1)
+}
 
 // Simplified astronomical positions for the astrology experiment.
 // Circular-orbit geocentric approximation: enough to preserve real orbital periods,
@@ -437,6 +459,7 @@ function basinBestCandidate(end,p){
 
 function researchCalc(){
   if(!D.length)return;
+  BASIN_EPISODES=[];
   for(let i=0;i<R.length;i++){R[i].researchSigs=[];R[i].researchZones=[]}
   let use={basin:q('modBasin').checked,spring:q('modSpring').checked,echo:q('modEcho').checked,astro:q('modAstro').checked},A=atrArr(D,14);
 
@@ -447,8 +470,7 @@ function researchCalc(){
 
     function finishBasin(a){
       if(!a)return;
-      let host=Math.min(R.length-1,a.end);
-      R[host].researchZones.push({
+      BASIN_EPISODES.push({
         k:'basin',shape:'basinScore',
         start:a.start,end:a.end,peakI:a.peakI,cliffTop:a.cliffTop,
         top:a.top,bot:a.bot,score:a.best.score,
@@ -512,17 +534,17 @@ function researchCalc(){
     }
   }
 
-  // Echo: shape only. Keep the strongest historical matches so hover can show the shapes together.
+  // Echo: compare full candlestick geometry (O/H/L/C), not a trend line.
   if(use.echo){
     let p=EXP.echo,L=Math.max(8,Math.round(p.length)),hist=Math.max(L*3,Math.round(p.history)),sim=p.similarity;
-    let evalStep=Math.max(1,Math.round(L/4)),histStep=Math.max(1,Math.round(L/3));
+    let evalStep=Math.max(1,Math.round(L/4)),histStep=Math.max(1,Math.round(L/5));
     for(let i=L-1;i<D.length;i++){
       if(i!==D.length-1&&i%evalStep!==0)continue;
-      let cur=shapeVector(i,L),matches=[],start=Math.max(L-1,i-hist),end=i-L;
+      let cur=candleShape(i,L),matches=[],start=Math.max(L-1,i-hist),end=i-L;
       if(!cur)continue;
       for(let j=start;j<=end;j+=histStep){
-        let hs=shapeVector(j,L),ss=shapeSimilarity(cur,hs);
-        if(ss>=sim)matches.push({end:j,start:j-L+1,sim:ss,path:hs});
+        let hs=candleShape(j,L),ss=candleShapeSimilarity(cur,hs);
+        if(ss>=sim)matches.push({end:j,start:j-L+1,sim:ss,shape:hs});
       }
       if(matches.length){
         matches.sort((a,b)=>b.sim-a.sim);
@@ -530,10 +552,10 @@ function researchCalc(){
         R[i].researchSigs.push({
           k:'echo',
           label:'Echo｜歷史回聲',
-          detail:'找到 '+matches.length+' 次回聲｜最佳相似度 '+(best*100).toFixed(0)+'%｜聲音長度 '+L+' bars',
+          detail:'找到 '+matches.length+' 次 K線回聲｜最佳 '+(best*100).toFixed(0)+'%｜'+L+' bars',
           echo:{
             length:L,threshold:sim,count:matches.length,
-            current:{start:i-L+1,end:i,path:cur},
+            current:{start:i-L+1,end:i,shape:cur},
             matches:top
           }
         });
@@ -571,43 +593,17 @@ function clearSignals(){SIG=[];q('events').innerHTML='';q('scriptStatus').textCo
 function toggleScriptLayer(){scriptVisible=!!q('scriptVisible').checked;safeDrawScript()}
 function fmt(x){return isFinite(x)?x.toLocaleString(undefined,{maximumFractionDigits:2}):'—'}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function echoPolyline(path,w,h,pad,minV,maxV){
-  if(!path||!path.length)return '';
-  let span=Math.max(1e-9,maxV-minV);
-  return path.map((v,i)=>{
-    let x=pad+(w-pad*2)*(i/Math.max(1,path.length-1)),
-        y=pad+(h-pad*2)*(1-(v-minV)/span);
-    return x.toFixed(1)+','+y.toFixed(1)
-  }).join(' ')
-}
 function echoCompareHTML(e){
-  if(!e||!e.current||!e.matches||!e.matches.length)return '';
-  let rows=[e.current.path,...e.matches.map(m=>m.path)].filter(Boolean),
-      vals=rows.flat(),mn=Math.min(...vals),mx=Math.max(...vals),
-      w=470,h=104,pad=7,
-      colors=['#f2f6ff','#67c7ff','#b084ff','#ffd166','#7fe0bd'];
-
-  let lines='<polyline points="'+echoPolyline(e.current.path,w,h,pad,mn,mx)+'" fill="none" stroke="'+colors[0]+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
-  for(let k=0;k<e.matches.length;k++){
-    let m=e.matches[k],col=colors[k+1]||'#9fb4cf';
-    lines+='<polyline points="'+echoPolyline(m.path,w,h,pad,mn,mx)+'" fill="none" stroke="'+col+'" stroke-width="1.8" opacity=".82" stroke-linecap="round" stroke-linejoin="round"/>';
-  }
-
-  let legend='<span class="echo-key"><span class="echo-swatch" style="background:'+colors[0]+'"></span>現在</span>';
+  if(!e||!e.matches||!e.matches.length)return '';
   let matches='';
   for(let k=0;k<e.matches.length;k++){
-    let m=e.matches[k],col=colors[k+1]||'#9fb4cf',
-        range=date(D[m.start].t)+' → '+date(D[m.end].t);
-    legend+='<span class="echo-key"><span class="echo-swatch" style="background:'+col+'"></span>Echo '+(k+1)+'</span>';
-    matches+='<div class="echo-match"><div><b><span class="echo-swatch" style="background:'+col+';margin-right:6px"></span>Echo '+(k+1)+'</b><div class="tmuted">'+range+'</div></div><span class="sim">'+(m.sim*100).toFixed(1)+'%</span></div>';
+    let m=e.matches[k],range=date(D[m.start].t)+' → '+date(D[m.end].t);
+    matches+='<div class="echo-match"><div><b>Echo '+(k+1)+'</b><div class="tmuted">'+range+'</div></div><span class="sim">'+(m.sim*100).toFixed(1)+'%</span></div>';
   }
-
   return '<div class="echo-compare">'+
-    '<div class="echo-title"><span>形狀疊合比較</span><span class="tmuted">'+e.count+' 次符合門檻</span></div>'+
-    '<div class="echo-overlay"><svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none">'+lines+'</svg></div>'+
-    '<div class="echo-legend">'+legend+'</div>'+
+    '<div class="echo-title"><span>K線回聲</span><span class="tmuted">'+e.count+' 次符合門檻</span></div>'+
     '<div class="echo-matches">'+matches+'</div>'+
-    '<div class="echo-note">所有曲線都先移除價格高低與絕對尺度，只比較形狀；越重疊代表形狀越接近。</div>'+
+    '<div class="echo-note">游標留在 Echo 標記上時，前三個歷史 K 線型態會直接疊到主圖的目前 K 線區間。</div>'+
   '</div>'
 }
 function showBar(i){if(i<0||i>=D.length)return;let x=D[i],p=i?D[i-1].c:x.o,pct=p?(x.c/p-1)*100:0;q('ohlc').innerHTML='<b>'+date(x.t)+'</b>　O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'　<span class="'+(pct>=0?'good':'err')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</span>　Volume USD '+fmt(x.v)}
@@ -652,11 +648,108 @@ function chartGeom(r){if(!R.length)return null;let s=Math.max(0,Math.floor(V[0])
 
 function drawBase(){let c=q('c'),d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);if(!R.length)return;let m=chartGeom(r);if(!m)return;let{s,e,vb,lo,hi,X,Y,YV,bw}=m;g.font='12px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';g.strokeStyle='#24324c';g.fillStyle='#a8b8cf';for(let k=0;k<5;k++){let v=lo+(hi-lo)*k/4,y=Y(v);g.beginPath();g.moveTo(52,y);g.lineTo(r.width-15,y);g.stroke();g.fillText(money(v),2,y+4)}for(let i=s;i<=e;i++){let x=R[i],xx=X(i),col=x.c>=x.o?'#43c59e':'#ef6b73';g.strokeStyle=g.fillStyle=col;g.beginPath();g.moveTo(xx,Y(x.h));g.lineTo(xx,Y(x.l));g.stroke();g.fillRect(xx-bw/2,Math.min(Y(x.o),Y(x.c)),bw,Math.max(1,Math.abs(Y(x.o)-Y(x.c))));if(x.v>0){g.globalAlpha=.5;g.fillRect(xx-bw/2,YV(x.v),bw,vb-YV(x.v));g.globalAlpha=1}}if(hover>=s&&hover<=e){let xx=X(hover);g.strokeStyle='#9badcc';g.setLineDash([4,4]);g.beginPath();g.moveTo(xx,8);g.lineTo(xx,vb);g.stroke();g.setLineDash([]);showBar(hover)}}
 
+function findHoveredEcho(hits){
+  if(!mousePos)return null;
+  let best=null,bd=1e9;
+  for(let h of hits){
+    if(!h.echo||h.rect)continue;
+    let d=Math.hypot(mousePos.x-h.x,mousePos.y-h.y);
+    if(d<=(h.r||13)&&d<bd){best=h;bd=d}
+  }
+  return best
+}
+function drawGhostCandle(g,x,bw,yo,yh,yl,yc,color,alpha){
+  g.save();
+  g.globalAlpha=alpha;
+  g.strokeStyle=color;
+  g.lineWidth=1.4;
+  g.beginPath();g.moveTo(x,yh);g.lineTo(x,yl);g.stroke();
+  let top=Math.min(yo,yc),bot=Math.max(yo,yc);
+  g.strokeRect(x-bw/2,top,bw,Math.max(1.5,bot-top));
+  g.restore()
+}
+function drawEchoOnChart(g,m,hit){
+  if(!hit||!hit.echo)return;
+  let e=hit.echo,s=m.s,vew=m.e,X=m.X,Y=m.Y,
+      cs=e.current.start,ce=e.current.end;
+  if(ce<s||cs>vew)return;
+
+  let seg=D.slice(cs,ce+1),
+      curLo=Math.min(...seg.map(x=>x.l)),
+      curHi=Math.max(...seg.map(x=>x.h)),
+      span=Math.max(1e-9,curHi-curLo),
+      vs=Math.max(s,cs),ve=Math.min(vew,ce),
+      x1=X(vs),x2=X(ve),
+      step=Math.abs(X(Math.min(vew,vs+1))-X(vs))||5,
+      bw=Math.max(1.5,step*.34);
+
+  g.save();
+  g.strokeStyle='rgba(225,238,255,.96)';
+  g.lineWidth=1.9;
+  g.setLineDash([5,4]);
+  let y1=Y(curHi),y2=Y(curLo);
+  g.strokeRect(Math.min(x1,x2)-step*.35,y1,Math.abs(x2-x1)+step*.7,Math.max(3,y2-y1));
+  g.setLineDash([]);
+  g.fillStyle='#e6f0ff';
+  g.font='700 11px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
+  g.textAlign='left';g.textBaseline='bottom';
+  g.fillText('目前 K線型態',Math.min(x1,x2),Math.max(13,y1-5));
+  g.restore();
+
+  const cols=['#67c7ff','#b084ff','#ffd166'];
+  for(let k=0;k<Math.min(3,e.matches.length);k++){
+    let mt=e.matches[k],shape=mt.shape,col=cols[k];
+    for(let j=0;j<shape.length;j++){
+      let idx=cs+j;
+      if(idx<s||idx>vew)continue;
+      let q=shape[j],x=X(idx),
+          po=curLo+q.o*span,ph=curLo+q.h*span,pl=curLo+q.l*span,pc=curLo+q.c*span;
+      drawGhostCandle(g,x,bw,Y(po),Y(ph),Y(pl),Y(pc),col,.80-k*.14);
+    }
+  }
+
+  for(let k=0;k<Math.min(3,e.matches.length);k++){
+    let mt=e.matches[k];
+    if(mt.end<s||mt.start>vew)continue;
+    let a=Math.max(s,mt.start),b=Math.min(vew,mt.end),
+        hist=D.slice(mt.start,mt.end+1),
+        hi=Math.max(...hist.map(x=>x.h)),lo=Math.min(...hist.map(x=>x.l)),
+        xa=X(a),xb=X(b),yt=Y(hi),yb=Y(lo),col=cols[k];
+    g.save();g.strokeStyle=col;g.lineWidth=1.8;g.setLineDash([4,3]);
+    g.strokeRect(Math.min(xa,xb)-step*.28,yt,Math.abs(xb-xa)+step*.56,Math.max(3,yb-yt));
+    g.setLineDash([]);
+    g.fillStyle=col;g.font='700 10px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
+    g.textAlign='left';g.textBaseline='bottom';
+    g.fillText('Echo '+(k+1)+' '+(mt.sim*100).toFixed(0)+'%',Math.min(xa,xb),Math.max(12,yt-4));
+    g.restore();
+  }
+}
 function refreshHits(){HIT=MODEL_HIT.concat(SCRIPT_HIT)}
 function clearModelCanvas(){let c=q('modelCanvas');if(!c)return;let d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);MODEL_HIT=[];refreshHits()}
 function clearScriptCanvas(){let c=q('scriptCanvas');if(!c)return;let d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);SCRIPT_HIT=[];refreshHits()}
 
 function drawModelsOverlay(){let c=q('modelCanvas'),base=q('c');if(!c||!base)return;let d=devicePixelRatio||1,r=base.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);MODEL_HIT=[];if(!R.length){refreshHits();return}let m=chartGeom(r);if(!m){refreshHits();return}let{s,e,X,Y}=m;
+for(let z of BASIN_EPISODES){
+  if(z.end<s||z.start>e)continue;
+  let xPeak=X(Math.max(s,z.peakI)),xS=X(Math.max(s,z.start)),xE=X(Math.min(e,z.end)),
+      yPeak=Y(z.cliffTop),yTop=Y(z.top),yBot=Y(z.bot),
+      opacity=.10+.22*clamp((z.score-50)/50,0,1);
+  g.save();
+  g.strokeStyle='rgba(190,150,255,.78)';g.lineWidth=2;g.setLineDash([6,4]);
+  g.beginPath();g.moveTo(xPeak,yPeak);g.lineTo(xS,(yTop+yBot)/2);g.stroke();g.setLineDash([]);
+  g.fillStyle='rgba(176,132,255,'+opacity.toFixed(3)+')';g.strokeStyle='rgba(205,180,255,.95)';g.lineWidth=2.2;
+  g.fillRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
+  g.strokeRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
+  let label='Basin '+Math.round(z.score);
+  g.font='700 11px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
+  let tw=g.measureText(label).width+12,lx=Math.max(xS+tw/2,Math.min(xE-tw/2,(xS+xE)/2)),ly=Math.max(14,yTop-18);
+  g.fillStyle='rgba(18,24,39,.90)';g.fillRect(lx-tw/2,ly-12,tw,17);
+  g.fillStyle='#e6d9ff';g.textAlign='center';g.textBaseline='middle';g.fillText(label,lx,ly-3);
+  g.restore();
+  let hx1=Math.min(xPeak,xS),hx2=Math.max(xS,xE),hy1=Math.min(yPeak,yTop),hy2=yBot,
+      hi=Math.min(e,Math.max(s,z.detectedAt||z.start));
+  MODEL_HIT.push({kind:'zone',zone:true,i:hi,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
+}
 for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
 for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){g.fillStyle=z.state==='validated'?'rgba(55,120,255,.20)':'rgba(150,160,180,.12)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})}}
 for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
@@ -697,7 +790,39 @@ for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
   }
 }}
 for(let i=s;i<=e;i++){let bs=R[i].bottomSigs||[];for(let j=0;j<bs.length;j++){let z=bs[j],xx=X(i),yy=Y(R[i].l)-12-j*16;g.fillStyle='#ffd166';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,7,0,Math.PI*2);g.fill();g.stroke();MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:12,label:'Liquidity Sweep｜流動性掃單',detail:z.detail})}}
-for(let i=s;i<=e;i++){let rs=R[i].researchSigs||[],baseN=(R[i].bottomSigs||[]).length;for(let j=0;j<rs.length;j++){let z=rs[j],xx=X(i),yy=Y(R[i].l)-12-(baseN+j)*16,col=z.k==='basin'?'#b084ff':z.k==='spring'?'#4dd7ff':z.k==='echo'?'#d8e8ff':'#ff79c6';g.fillStyle=col;g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();if(z.k==='spring'){g.rect(xx-7,yy-7,14,14)}else if(z.k==='astro'){g.moveTo(xx,yy-8);g.lineTo(xx+7,yy+6);g.lineTo(xx-7,yy+6);g.closePath()}else{g.arc(xx,yy,7.5,0,Math.PI*2)}g.fill();g.stroke();MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:13,label:z.label,detail:z.detail,echo:z.echo||null})}}
+for(let i=s;i<=e;i++){
+  let rs=R[i].researchSigs||[],baseN=(R[i].bottomSigs||[]).length;
+  for(let j=0;j<rs.length;j++){
+    let z=rs[j],xx=X(i),yy=Y(R[i].l)-12-(baseN+j)*16,
+        col=z.k==='basin'?'#b084ff':z.k==='spring'?'#4dd7ff':z.k==='echo'?'#d8e8ff':'#ff79c6';
+
+    if(z.k==='echo'&&z.echo){
+      let a=Math.max(s,z.echo.current.start),b=Math.min(e,z.echo.current.end);
+      if(a<=b){
+        let seg=D.slice(z.echo.current.start,z.echo.current.end+1),
+            hi=Math.max(...seg.map(x=>x.h)),lo=Math.min(...seg.map(x=>x.l)),
+            x1=X(a),x2=X(b),y1=Y(hi),y2=Y(lo),step=Math.abs(X(Math.min(e,a+1))-X(a))||4;
+        g.save();
+        g.strokeStyle='rgba(216,232,255,.60)';g.lineWidth=1.4;g.setLineDash([3,3]);
+        g.strokeRect(Math.min(x1,x2)-step*.25,y1,Math.abs(x2-x1)+step*.5,Math.max(3,y2-y1));
+        g.setLineDash([]);
+        g.fillStyle='#d8e8ff';g.font='700 10px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
+        g.textAlign='right';g.textBaseline='bottom';
+        g.fillText('Echo ×'+z.echo.count,x2,Math.max(12,y1-3));
+        g.restore();
+      }
+    }
+
+    g.fillStyle=col;g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();
+    if(z.k==='spring'){g.rect(xx-7,yy-7,14,14)}
+    else if(z.k==='astro'){g.moveTo(xx,yy-8);g.lineTo(xx+7,yy+6);g.lineTo(xx-7,yy+6);g.closePath()}
+    else{g.arc(xx,yy,7.5,0,Math.PI*2)}
+    g.fill();g.stroke();
+    MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:13,label:z.label,detail:z.detail,echo:z.echo||null});
+  }
+}
+let hoveredEcho=findHoveredEcho(MODEL_HIT);
+if(hoveredEcho)drawEchoOnChart(g,m,hoveredEcho);
 refreshHits()}
 
 function drawScriptOverlay(){let c=q('scriptCanvas'),base=q('c');if(!c||!base)return;let d=devicePixelRatio||1,r=base.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);SCRIPT_HIT=[];if(!scriptVisible||!R.length){refreshHits();return}let m=chartGeom(r);if(!m){refreshHits();return}let{s,e,X,Y}=m;
