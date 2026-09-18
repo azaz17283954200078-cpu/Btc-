@@ -115,45 +115,37 @@ const EXP={
  astro:{modulus:17,hits:2,offset:3,ddLook:50,minDD:.08}
 };
 const PARAM_SCHEMA={
- basin:{title:'🔭 Fractal Basin｜分形盆地',intro:'把市場想成一座山谷。三副不同倍率的望遠鏡，各自找低谷；當它們都指向差不多的位置，就把那裡視為一個「盆地」。',fields:[
-  {k:'p1',n:'近景望遠鏡',min:2,max:8,step:1,help:'看很近的小凹谷。數字小＝更敏感、更多小低點；數字大＝忽略小雜訊。',low:'小：細節多',high:'大：只看明顯凹谷'},
-  {k:'p2',n:'中景望遠鏡',min:4,max:16,step:1,help:'抓中等規模的谷底，負責把短線雜訊和大結構接起來。',low:'小：偏短線',high:'大：偏大結構'},
-  {k:'p3',n:'遠景望遠鏡',min:10,max:40,step:1,help:'只認很大的山谷。越大，越不容易把普通回檔當成長期低谷。',low:'小：較容易認定',high:'大：只看大谷底'},
-  {k:'look',n:'盆地記憶',min:30,max:300,step:5,help:'一個舊低點可以留在地圖上多久。越久，模型越願意把很久以前的低谷算進同一個盆地。',low:'短：只記近期',high:'長：記很久'},
-  {k:'width',n:'盆地有多寬',min:.4,max:3,step:.1,help:'三副望遠鏡看到的低點可以差多遠，還算同一座盆地。',low:'窄：要求很接近',high:'寬：容許較分散'},
-  {k:'minScales',n:'幾副望遠鏡要同意',min:2,max:3,step:1,help:'2 表示兩種尺度同意就成立；3 表示三種尺度都要指向同一區。',low:'2：比較容易出現',high:'3：共識更強'}]},
- spring:{title:'🌀 Compression Spring｜壓縮彈簧',intro:'把盤整想成一支被壓縮的彈簧。每一圈震盪都比上一圈小，底部又沒有明顯下沉，就代表彈簧正在被壓緊。',fields:[
-  {k:'seg',n:'每一圈有多長',min:5,max:40,step:1,help:'模型把價格切成三圈來比較。這裡決定每一圈包含多少根 K 棒。',low:'短：反應快',high:'長：看更大壓縮'},
-  {k:'ratio',n:'要壓得多明顯',min:.45,max:.98,step:.01,help:'下一圈必須比上一圈縮小多少才算「真的被壓縮」。數值越小，要求收縮越強。',low:'小：必須明顯縮小',high:'大：輕微縮小也算'},
-  {k:'floor',n:'彈簧底座可晃多遠',min:.1,max:3,step:.1,help:'壓縮過程中，底部可以稍微下移。數值越大，越容許底座往下滑。',low:'小：底部要很穩',high:'大：可有較大下沉'},
-  {k:'breakout',n:'彈出去多遠才算釋放',min:0,max:1,step:.05,help:'突破最後壓縮區上緣後，還要再多走一些才正式標記「彈簧釋放」。',low:'小：一碰就算',high:'大：要明顯彈出'}]},
- echo:{title:'📻 Echo Bottom｜歷史回聲',intro:'把現在這段行情錄成一段「聲紋」，丟進歷史資料庫找最像的舊錄音，再看看那些舊故事後來怎麼發展。',fields:[
-  {k:'pattern',n:'這段回聲有多長',min:12,max:80,step:2,help:'拿最近多少根 K 棒當成一段完整故事。',low:'短：只比最近片段',high:'長：比整段故事'},
-  {k:'candidateLook',n:'多靠近低谷才開啟搜尋',min:8,max:80,step:2,help:'只有價格正在接近這段期間的新低時，才啟動「找歷史回聲」。',low:'短：容易啟動',high:'長：要更接近大低谷'},
-  {k:'history',n:'歷史圖書館有多深',min:200,max:3000,step:100,help:'往回翻多少根 K 棒找相似故事。',low:'淺：只看近代',high:'深：翻更久歷史'},
-  {k:'stride',n:'翻書速度',min:1,max:12,step:1,help:'每隔幾根 K 棒抽一個歷史片段。數字小＝找得細但較慢；數字大＝找得快但較粗。',low:'小：仔細翻',high:'大：快速掃描'},
-  {k:'topK',n:'要聽幾個最像的回聲',min:3,max:20,step:1,help:'挑最相似的幾段歷史一起參考，而不是只相信單一案例。',low:'少：聚焦最像案例',high:'多：看群體共識'},
-  {k:'maxDist',n:'不像到什麼程度就淘汰',min:.2,max:1.5,step:.05,help:'這是「形狀差異容忍度」。越小越挑剔，只有非常像的歷史才留下。',low:'小：很挑剔',high:'大：較寬鬆'},
-  {k:'horizon',n:'翻到故事後面多遠',min:5,max:80,step:5,help:'找到歷史回聲後，要往後看多少根 K 棒，觀察那個故事後來怎麼走。',low:'短：看後續不遠',high:'長：看更遠結果'},
-  {k:'minMedian',n:'回聲結局最低門檻',min:-.15,max:.25,step:.01,help:'多個相似歷史的「典型結局」至少要好到什麼程度，才在圖上亮起。0 代表不要求正報酬。',low:'低：更多回聲',high:'高：只留較強結果'}]},
- phase:{title:'🌡️ Phase Transition｜市場相變',intro:'把市場想成物質變化：先進入寒冷下墜期，接著動能安靜下來，最後重新膨脹。重點是「狀態切換」，不是猜某根 K 棒。',fields:[
-  {k:'trendLook',n:'寒冬要看多長',min:10,max:100,step:5,help:'用多長一段歷史判斷市場是否真的處於下降狀態。',low:'短：很快判定寒冬',high:'長：要長期下降才算'},
-  {k:'compLook',n:'安靜期要看多長',min:5,max:40,step:1,help:'觀察多久的波動收縮，才認為市場開始「冷卻」。',low:'短：快速認定冷卻',high:'長：要持續安靜'},
-  {k:'atrRatio',n:'要安靜到什麼程度',min:.4,max:1.05,step:.05,help:'比較短期波動和長期波動。數字越小，表示必須真的安靜很多才算壓縮。',low:'小：非常安靜',high:'大：稍微降溫也算'},
-  {k:'breakLook',n:'破冰要突破多大的殼',min:4,max:30,step:1,help:'重新向上時，要突破多長一段近期高點，才算真正從壓縮狀態離開。',low:'短：容易破冰',high:'長：要突破更大結構'},
-  {k:'recentDown',n:'寒冬記憶會保留多久',min:10,max:120,step:5,help:'下降狀態結束後，過多久還把它視為這次相變的前一個階段。',low:'短：很快忘記',high:'長：保留前因較久'},
-  {k:'slopeATR',n:'要冷到多深才算寒冬',min:.5,max:6,step:.25,help:'價格下降必須相對近期波動深到什麼程度，才把市場標成「下降相」。',low:'小：小跌也算',high:'大：要明顯大跌'}]},
- lunar:{title:'🌙 Lunar Bottom｜月相底部',intro:'把月相當成一個外部時鐘，不先假設它有沒有用。你可以決定看哪種月相、時間窗口多寬，以及市場必須先跌多深才讓月亮「上場」。',fields:[
+ basin:{title:'🔭 Fractal Basin｜分形盆地',intro:'把市場想成一座山谷。三副不同倍率的望遠鏡找低谷；當它們指向差不多的位置，就形成「盆地」。其他細節交給模型內部自動處理。',fields:[
+  {k:'p1',n:'近景望遠鏡',min:2,max:8,step:1,help:'控制短期小凹谷有多敏感。',low:'小：細節多',high:'大：忽略小雜訊'},
+  {k:'p3',n:'遠景望遠鏡',min:10,max:40,step:1,help:'控制大尺度山谷有多嚴格。中景會由模型自動放在近景與遠景之間。',low:'小：較容易認定',high:'大：只看大谷底'},
+  {k:'look',n:'盆地記憶',min:30,max:300,step:5,help:'舊低點可以留在地圖上多久。',low:'短：只記近期',high:'長：記很久'},
+  {k:'width',n:'盆地有多寬',min:.4,max:3,step:.1,help:'不同尺度的低點可以差多遠，還算同一座盆地。',low:'窄：要求接近',high:'寬：容許分散'},
+  {k:'minScales',n:'幾副望遠鏡要同意',min:2,max:3,step:1,help:'2＝至少兩種尺度同意；3＝三種尺度都要同意。',low:'2：較活潑',high:'3：較嚴格'}]},
+ spring:{title:'🌀 Compression Spring｜壓縮彈簧',intro:'把盤整想成一支被壓縮的彈簧。只保留四個最直覺的旋鈕。',fields:[
+  {k:'seg',n:'每一圈有多長',min:5,max:40,step:1,help:'模型把行情切成三圈比較，每圈包含多少根 K 棒。',low:'短：反應快',high:'長：看更大壓縮'},
+  {k:'ratio',n:'要壓得多明顯',min:.45,max:.98,step:.01,help:'下一圈要比上一圈縮小多少才算真正壓縮。',low:'小：收縮要明顯',high:'大：較寬鬆'},
+  {k:'floor',n:'底座可晃多遠',min:.1,max:3,step:.1,help:'壓縮過程中底部可以往下滑多少。',low:'小：底部要穩',high:'大：容許下沉'},
+  {k:'breakout',n:'彈多遠才算釋放',min:0,max:1,step:.05,help:'突破壓縮區後還要走多遠才正式標記。',low:'小：一碰就算',high:'大：要明顯彈出'}]},
+ echo:{title:'📻 Echo Bottom｜歷史回聲',intro:'把現在行情錄成一段聲紋，去歷史找最像的舊故事。搜尋速度與抽樣細節由模型自動處理，只留下五個真正有感的旋鈕。',fields:[
+  {k:'pattern',n:'這段回聲有多長',min:12,max:80,step:2,help:'最近多少根 K 棒算一個完整故事。',low:'短：只看片段',high:'長：看完整故事'},
+  {k:'history',n:'歷史圖書館有多深',min:200,max:3000,step:100,help:'往回翻多少根 K 棒找相似案例。',low:'淺：看近代',high:'深：翻更久'},
+  {k:'topK',n:'要聽幾個最像的回聲',min:3,max:20,step:1,help:'用多少個最相似歷史一起判斷。',low:'少：聚焦最像',high:'多：看群體共識'},
+  {k:'maxDist',n:'多不像就淘汰',min:.2,max:1.5,step:.05,help:'越小越挑剔，只有形狀很像才留下。',low:'小：很挑剔',high:'大：較寬鬆'},
+  {k:'horizon',n:'故事後面看多遠',min:5,max:80,step:5,help:'找到歷史回聲後，往後看多遠的結果。',low:'短：看近期結果',high:'長：看更遠結果'}]},
+ phase:{title:'🌡️ Phase Transition｜市場相變',intro:'把市場想成「寒冬 → 安靜 → 破冰」。只讓你控制四個階段感最強的旋鈕。',fields:[
+  {k:'trendLook',n:'寒冬要看多長',min:10,max:100,step:5,help:'用多長一段歷史判斷是否真的處於下降狀態。',low:'短：快速判定',high:'長：要長期下降'},
+  {k:'slopeATR',n:'要冷到多深',min:.5,max:6,step:.25,help:'下降必須深到什麼程度才算寒冬。',low:'小跌也算',high:'要明顯大跌'},
+  {k:'atrRatio',n:'要安靜到什麼程度',min:.4,max:1.05,step:.05,help:'短期波動要縮到長期波動的什麼程度。',low:'很安靜',high:'稍微降溫也算'},
+  {k:'breakLook',n:'破冰要突破多大的殼',min:4,max:30,step:1,help:'向上時要突破多長一段近期高點。',low:'容易破冰',high:'要突破大結構'}]},
+ lunar:{title:'🌙 Lunar Bottom｜月相底部',intro:'把月相當成外部時鐘。只控制「哪個月亮、時間窗、跌多深」三件事。',fields:[
   {k:'phase',n:'讓哪種月亮上場',type:'select',options:[['both','🌑 新月＋🌕 滿月'],['new','🌑 只看新月'],['full','🌕 只看滿月']],help:'選擇要測試的月相事件。'},
-  {k:'window',n:'月光影響窗口',min:.25,max:5,step:.25,help:'距離新月或滿月前後多少天，都算同一次月相事件。',low:'窄：非常貼近月相',high:'寬：前後多天都算'},
-  {k:'ddLook',n:'月亮要看多長的市場記憶',min:10,max:200,step:5,help:'判斷「最近是否真的跌很多」時，要往回看多長。',low:'短：只看近期跌幅',high:'長：看更長週期'},
-  {k:'minDD',n:'市場跌多深才召喚月亮',min:0,max:.6,step:.01,help:'如果市場沒跌到這個程度，月相就不產生標記。設為 0 = 完全不管價格，只測純月相。',low:'低：月亮常出現',high:'高：只在深跌時出現'}]},
- astro:{title:'✨ Astrology Placebo｜占星安慰劑',intro:'這不是「預測星象」，而是一台故意製造神秘規則的安慰劑機器。目的是看看：亂七八糟的曆法規則，是不是也能被回測包裝得很漂亮。',fields:[
-  {k:'modulus',n:'星盤有幾格',min:5,max:50,step:1,help:'把日期規則切成多少個循環格子。這個數字沒有金融意義，就是 Placebo 規則的齒輪大小。',low:'少：規則較粗',high:'多：規則較碎'},
-  {k:'hits',n:'幾格算「命中神秘力量」',min:1,max:10,step:1,help:'每個循環裡有幾格會亮起。越多，神秘訊號越常出現。',low:'少：稀有神諭',high:'多：神諭滿天飛'},
-  {k:'offset',n:'把星盤轉幾格',min:0,max:30,step:1,help:'把同一套規則往前或往後平移。這個參數特別適合用來測「換個起點是不是就能得到完全不同的漂亮結果」。',low:'小：接近原規則',high:'大：大幅旋轉'},
-  {k:'ddLook',n:'現實濾鏡看多遠',min:10,max:200,step:5,help:'即使是 Placebo，也可以加一層「市場最近跌多少」的現實濾鏡。',low:'短：看近期',high:'長：看更久'},
-  {k:'minDD',n:'現實濾鏡要多嚴格',min:0,max:.6,step:.01,help:'市場至少跌多少，神秘訊號才准出現。設為 0 = 純曆法 Placebo。',low:'低：幾乎不過濾',high:'高：只在深跌時測'}]}
+  {k:'window',n:'月光影響窗口',min:.25,max:5,step:.25,help:'月相前後多少天都算同一次事件。',low:'窄：貼近月相',high:'寬：前後多天都算'},
+  {k:'minDD',n:'市場跌多深才召喚月亮',min:0,max:.6,step:.01,help:'市場至少跌多少才讓月相訊號出現。0＝純月相實驗。',low:'低：常出現',high:'高：只在深跌時'}]},
+ astro:{title:'✨ Astrology Placebo｜占星安慰劑',intro:'這是一台故意製造神秘規則的安慰劑機器。只保留四個最有「玩具感」的旋鈕。',fields:[
+  {k:'modulus',n:'星盤有幾格',min:5,max:50,step:1,help:'把日期規則切成多少個循環格子。',low:'少：規則粗',high:'多：規則碎'},
+  {k:'hits',n:'幾格算命中神秘力量',min:1,max:10,step:1,help:'每個循環裡有幾格會亮起。',low:'少：稀有神諭',high:'多：神諭滿天飛'},
+  {k:'offset',n:'把星盤轉幾格',min:0,max:30,step:1,help:'把整套規則往前或往後平移。',low:'小：接近原規則',high:'大：大幅旋轉'},
+  {k:'minDD',n:'現實濾鏡要多嚴格',min:0,max:.6,step:.01,help:'市場至少跌多少神秘訊號才准出現。0＝純曆法 Placebo。',low:'低：幾乎不過濾',high:'高：只在深跌時'}]}
 };
 const BTC_D='https://raw.githubusercontent.com/alessiostomeo/btc-cycle-data/main/bitstamp/1day/BTCUSD_bitstamp_daily_2012-2026.csv';
 const LOCAL={IXIC:'data/nasdaq_daily.csv',TWII:'data/taiex_daily.csv'};
@@ -172,7 +164,17 @@ function avgATR(A,a,b){let s=0,c=0;for(let i=Math.max(0,a);i<=Math.min(A.length-
 function normPath(start,len){let a=[],base=D[start].c;if(!base)return null;for(let j=0;j<len;j++)a.push(Math.log(D[start+j].c/base));let m=a.reduce((x,y)=>x+y,0)/a.length,v=0;for(let x of a)v+=(x-m)*(x-m);let sd=Math.sqrt(v/a.length)||1e-9;return a.map(x=>(x-m)/sd)}
 function pathDist(a,b){let s=0;for(let i=0;i<a.length;i++){let d=a[i]-b[i];s+=d*d}return Math.sqrt(s/a.length)}
 function med(a){if(!a.length)return NaN;let b=a.slice().sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2}
-function researchCalc(){if(!D.length)return;for(let i=0;i<R.length;i++){R[i].researchSigs=[];R[i].researchZones=[]}let use={basin:q('modBasin').checked,spring:q('modSpring').checked,echo:q('modEcho').checked,phase:q('modPhase').checked,lunar:q('modLunar').checked,astro:q('modAstro').checked},cnt={basin:0,spring:0,echo:0,phase:0,lunar:0,astro:0},A=atrArr(D,14);
+function syncDerivedParams(){
+  EXP.basin.p2=Math.max(EXP.basin.p1+1,Math.round((EXP.basin.p1+EXP.basin.p3)/2));
+  EXP.echo.candidateLook=Math.max(8,Math.round(EXP.echo.pattern*.7));
+  EXP.echo.stride=Math.max(1,Math.round(EXP.echo.pattern/7));
+  EXP.echo.minMedian=0;
+  EXP.phase.compLook=Math.max(5,Math.round(EXP.phase.trendLook*.4));
+  EXP.phase.recentDown=Math.max(10,Math.round(EXP.phase.trendLook*1.35));
+  EXP.lunar.ddLook=60;
+  EXP.astro.ddLook=50;
+}
+function researchCalc(){if(!D.length)return;syncDerivedParams();for(let i=0;i<R.length;i++){R[i].researchSigs=[];R[i].researchZones=[]}let use={basin:q('modBasin').checked,spring:q('modSpring').checked,echo:q('modEcho').checked,phase:q('modPhase').checked,lunar:q('modLunar').checked,astro:q('modAstro').checked},cnt={basin:0,spring:0,echo:0,phase:0,lunar:0,astro:0},A=atrArr(D,14);
 // Fractal Basin
 if(use.basin){let p=EXP.basin,sc=[Math.max(1,Math.round(p.p1)),Math.max(1,Math.round(p.p2)),Math.max(1,Math.round(p.p3))],latest=[null,null,null],lastKey='';for(let i=0;i<D.length;i++){for(let z=0;z<3;z++){let L=sc[z],pi=i-L;if(pi>=L&&pivotLowAt(pi,L))latest[z]={i:pi,low:D[pi].l,L:L}}let vals=latest.filter(v=>v&&i-v.i<=p.look);if(vals.length>=p.minScales&&isFinite(A[i])){let mn=Math.min(...vals.map(v=>v.low)),mx=Math.max(...vals.map(v=>v.low));if(mx-mn<=A[i]*p.width){let top=mx+A[i]*.18,bot=mn-A[i]*.18;R[i].researchZones.push({k:'basin',top:top,bot:bot,label:'Fractal Basin',detail:vals.length+' 個尺度低點集中；寬度 '+fmt(mx-mn)});let key=vals.map(v=>v.i).join('-');if(key!==lastKey){R[i].researchSigs.push({k:'basin',label:'Fractal Basin',detail:vals.length+' 個尺度重疊｜Zone '+fmt(bot)+'–'+fmt(top)});cnt.basin++;lastKey=key}}else lastKey=''}else lastKey=''}}
 // Compression Spring
