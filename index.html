@@ -314,7 +314,86 @@ function aggregate(a,kind){let out=[],u,key;for(let x of a){let d=new Date(x.t*1
 async function binance(interval){let all=[],end=Date.now(),loops=tf==='1h'||tf==='4h'?20:8;for(let n=0;n<loops;n++){let url='https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval='+interval+'&limit=1000&endTime='+end;let a=await fetch(url).then(r=>{if(!r.ok)throw Error('Binance '+r.status);return r.json()});if(!a.length)break;let b=a.map(x=>({t:x[0]/1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[7]}));all=b.concat(all);end=a[0][0]-1;if(a.length<1000)break}let m=new Map(all.map(x=>[x.t,x]));return [...m.values()].sort((a,b)=>a.t-b.t)}
 async function load(){q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。市場圖表是底層；模型與 Script 使用彼此獨立的疊加圖層。'}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
 function atrArr(a,n){let z=a.map((x,i)=>i?Math.max(x.h-x.l,Math.abs(x.h-a[i-1].c),Math.abs(x.l-a[i-1].c)):x.h-x.l),r=Array(a.length).fill(NaN),s=0;for(let i=0;i<z.length;i++){if(i<n){s+=z[i];if(i===n-1)r[i]=s/n}else r[i]=(r[i-1]*(n-1)+z[i])/n}return r}
-function zoneCalc(){if(!D.length)return;let L=ZONE.pivot,n=ZONE.atr,w=ZONE.width,br=ZONE.breakAtr,A=atrArr(D,n),cand=NaN,zones=[],formed=0,validated=0,rejected=0,on=q('modSupport').checked;R=D.map(x=>({...x,zones:[]}));if(on){for(let i=0;i<D.length;i++){let p=i-L,pl=NaN;if(p>=L){let ok=1;for(let j=p-L;j<=p+L;j++)if(j!==p&&D[j].l<=D[p].l){ok=0;break}if(ok)pl=D[p].l}if(isFinite(pl)&&isFinite(A[p])){let av=A[p];if(!isFinite(cand))cand=pl;else if(Math.abs(pl-cand)<=av*w){let top=Math.max(pl,cand)+av*w*.3,bot=Math.min(pl,cand)-av*w*.3;zones.push({top:top,bot:bot,state:'candidate',born:i,departed:false,dead:false});cand=NaN;formed++}else cand=pl}let x=D[i],tol=isFinite(A[i])?A[i]*br:0;for(let k=0;k<zones.length;k++){let z=zones[k];if(z.dead)continue;if(z.state==='candidate'){if(i>z.born&&!z.departed&&x.l>z.top)z.departed=true;if(z.departed&&i>z.born){let touch=x.l<=z.top&&x.h>=z.bot;if(touch){if(x.c<z.bot-tol){z.state='rejected';z.dead=true;rejected++}else if(x.c>=z.bot){z.state='validated';validated++}}}}else if(z.state==='validated'&&x.c<z.bot-tol){z.state='rejected';z.dead=true;rejected++}if(!z.dead)R[i].zones.push({top:z.top,bot:z.bot,state:z.state})}}}setInfo('zoneInfo',on?'v0.5b｜多 Zone 並存｜Candidate '+formed+' · Validated '+validated+' · Rejected '+rejected+'｜優先保留低點候選，不因新 Zone 出現而覆蓋':'Support Zone v0.5b 已關閉');macroCalc()}
+function zoneCalc(){
+  if(!D.length)return;
+  let L=ZONE.pivot,n=ZONE.atr,w=ZONE.width,br=ZONE.breakAtr,
+      A=atrArr(D,n),zones=[],
+      potential=0,candidate=0,validated=0,broken=0,
+      on=q('modSupport').checked;
+
+  R=D.map(x=>({...x,zones:[]}));
+
+  if(on){
+    for(let i=0;i<D.length;i++){
+      let x=D[i],av=A[i],tol=isFinite(av)?av*br:0;
+
+      // Causal support seed: current bar makes a fresh low versus ONLY prior bars.
+      // No right-side/future bars are required, so the newest K can produce POTENTIAL.
+      if(i>=L&&isFinite(av)){
+        let priorLow=Math.min(...D.slice(i-L,i).map(z=>z.l)),
+            fresh=x.l<=priorLow;
+
+        if(fresh){
+          let near=zones.find(z=>!z.dead&&Math.abs(x.l-z.low)<=av*1.5);
+          if(!near){
+            zones.push({
+              low:x.l,
+              top:x.l+av*w*.65,
+              bot:x.l-av*w*.35,
+              state:'potential',
+              born:i,
+              promotedAt:null,
+              dead:false
+            });
+            potential++;
+          }else if(near.state==='potential'&&x.l<near.low){
+            near.low=x.l;
+            near.top=x.l+av*w*.65;
+            near.bot=x.l-av*w*.35;
+          }
+        }
+      }
+
+      for(let z of zones){
+        if(z.dead)continue;
+
+        if(x.c<z.bot-tol){
+          z.state='broken';
+          R[i].zones.push({top:z.top,bot:z.bot,state:'broken'});
+          z.dead=true;
+          broken++;
+          continue;
+        }
+
+        if(z.state==='potential'){
+          // Price first proves it can leave the low area.
+          if(i>z.born&&x.c>z.top){
+            z.state='candidate';
+            z.promotedAt=i;
+            candidate++;
+          }
+        }else if(z.state==='candidate'){
+          // A later retest that holds the zone upgrades it to VALIDATED.
+          let touch=i>(z.promotedAt??z.born)&&x.l<=z.top&&x.h>=z.bot;
+          if(touch&&x.c>=z.bot){
+            z.state='validated';
+            validated++;
+          }
+        }
+
+        R[i].zones.push({top:z.top,bot:z.bot,state:z.state});
+      }
+    }
+  }
+
+  setInfo(
+    'zoneInfo',
+    on
+      ?'Live Support｜Potential '+potential+' · Candidate '+candidate+' · Validated '+validated+' · Broken '+broken+'｜最新 K 可直接產生 Potential'
+      :'Support Zone 已關閉'
+  );
+  macroCalc()
+}
 function macroCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].macro=[];let on=q('modMacro').checked;if(!on){setInfo('macroInfo','Macro Bottom v0.2 已關閉');bottomLabCalc();return}let p=MACRO.p[tf]||MACRO.p['1d'],A=atrArr(D,MACRO.atr),ap=A.map((x,i)=>isFinite(x)&&D[i].c?x/D[i].c:NaN),zones=[],formed=0,confirmed=0,failed=0;for(let i=0;i<D.length;i++){if(i>=Math.max(p.hi,p.low,p.atrAvg)){let hi=Math.max(...D.slice(i-p.hi+1,i+1).map(x=>x.h)),ll=Math.min(...D.slice(i-p.low+1,i+1).map(x=>x.l)),dd=hi?1-D[i].c/hi:0,av=0,c=0;for(let j=i-p.atrAvg+1;j<=i;j++)if(isFinite(ap[j])){av+=ap[j];c++}av=c?av/c:NaN;let fresh=D[i].l<=ll,expanded=isFinite(ap[i])&&isFinite(av)&&ap[i]>=av*p.atrX,near=false;for(let z of zones)if(!z.dead&&Math.abs(D[i].l-z.low)<=A[i]*1.5)near=true;if(fresh&&dd>=p.dd&&expanded&&!near&&isFinite(A[i])){zones.push({top:D[i].l+A[i]*MACRO.zoneUp,bot:D[i].l-A[i]*MACRO.zoneDn,low:D[i].l,trigger:D[i].h,born:i,expires:i+p.confirm,state:'candidate',dead:false});formed++}}for(let z of zones){if(z.dead)continue;let tol=isFinite(A[i])?A[i]*MACRO.breakAtr:0;if(i>z.born&&D[i].c<z.bot-tol){z.dead=true;failed++;continue}if(z.state==='candidate'){if(i>z.born&&i<=z.expires&&D[i].c>z.trigger){z.state='confirmed';confirmed++}else if(i>z.expires){z.dead=true;failed++;continue}}R[i].macro.push({top:z.top,bot:z.bot,state:z.state})}}setInfo('macroInfo','Macro Bottom v0.2｜'+tf.toUpperCase()+'｜Candidate '+formed+' · Confirmed '+confirmed+' · Failed/Expired '+failed+'｜自動依時間框架調整觀察窗；不限制市場與週期');bottomLabCalc()}
 function bottomLabCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].bottomSigs=[];let on=q('modSweep').checked,cnt=0,A=atrArr(D,14),look=tf==='1h'?48:tf==='4h'?42:tf==='1d'?30:tf==='1w'?20:12;if(on){for(let i=Math.max(20,look);i<D.length;i++){let x=D[i],range=Math.max(x.h-x.l,1e-9),pos=(x.c-x.l)/range,priorLow=Math.min(...D.slice(i-look,i).map(z=>z.l));if(x.l<priorLow&&x.c>priorLow&&pos>=.55){R[i].bottomSigs.push({k:'sweep',label:'Liquidity Sweep',slot:0});cnt++}}}setInfo('bottomInfo',on?'Liquidity Sweep｜'+cnt+' 個訊號｜原始跌破收回邏輯':'Liquidity Sweep 已關閉');researchCalc()}
 function mean(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN}
@@ -1031,7 +1110,12 @@ for(let z of OSC_FIELDS){
   });
 }
 for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
-for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){g.fillStyle=z.state==='validated'?'rgba(55,120,255,.20)':'rgba(150,160,180,.12)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})}}
+for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){
+  g.fillStyle=z.state==='validated'?'rgba(55,120,255,.22)':z.state==='candidate'?'rgba(90,165,255,.15)':z.state==='broken'?'rgba(239,107,115,.13)':'rgba(150,160,180,.10)';
+  let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);
+  g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);
+  MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})
+}}
 for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
   if(z.shape==='basinScore'){
     let xPeak=X(Math.max(s,z.peakI)),xS=X(Math.max(s,z.start)),xE=X(Math.min(e,z.end)),
