@@ -1,11 +1,13 @@
 const assert=require('assert');
 const RK=require('../src/research-kernel.js');
 
-assert.equal(RK.VERSION,'1.1.0');
+assert.equal(RK.VERSION,'1.2.0');
 
 const e=RK.makeEvidence({
   model:'field',
   family:'structure',
+  kind:'transition',
+  entityId:'field:9',
   index:12,
   timestamp:123456,
   state:'invalidated',
@@ -17,6 +19,8 @@ const e=RK.makeEvidence({
   meta:{market:'BTC',timeframe:'1d'}
 });
 assert.equal(e.state,'broken');
+assert.equal(e.kind,'transition');
+assert.equal(e.entityId,'field:9');
 assert.equal(e.confidence,87);
 assert.equal(e.detectedAt,9);
 assert.equal(e.evidenceStart,4);
@@ -54,5 +58,20 @@ assert.equal(ev.horizon,2);
 assert(ev.summary);
 assert.equal(ev.summary.n,3);
 assert(ev.summary.upRate>=0&&ev.summary.upRate<=1);
+
+const timeline=[
+  RK.makeEvidence({id:'b',model:'echo',kind:'observation',entityId:'echo:3',index:3,state:'weak',detectedAt:3,evidenceStart:1}),
+  RK.makeEvidence({id:'a',model:'support',kind:'transition',entityId:'support:1',index:1,state:'potential',detectedAt:1,evidenceStart:1}),
+  RK.makeEvidence({id:'c',model:'support',kind:'transition',entityId:'support:1',index:4,state:'candidate',detectedAt:4,evidenceStart:1})
+];
+const sorted=RK.sortTimeline(timeline);
+assert.deepEqual(sorted.map(x=>x.id),['a','b','c']);
+const byModel=RK.timelineByModel(timeline);
+assert.equal(byModel.support.length,2);
+assert.equal(byModel.echo.length,1);
+const summary=RK.timelineSummary(timeline);
+assert.equal(summary.total,3);
+assert.equal(summary.models.support.states.potential,1);
+assert.equal(summary.models.support.kinds.transition,2);
 
 console.log('research-kernel.test.js: OK');

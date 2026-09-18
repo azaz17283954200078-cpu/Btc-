@@ -174,7 +174,7 @@ td:first-child,th:first-child{text-align:left}
 }
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v0.7 · Research Kernel</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v0.8 · M2 Market Memory</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -284,7 +284,24 @@ function moveParamDrag(e){
   let y=Math.max(8,Math.min(window.innerHeight-r.height-8,e.clientY-paramDrag.dy));
   card.style.left=x+'px';card.style.top=y+'px';
 }
-function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[];const RK=window.StrategyLabKernel||null;window.__SL_EVIDENCE__=EVIDENCE;window.__SL_KERNEL__=RK;const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
+function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVIDENCE_IDS=new Set();const RK=window.StrategyLabKernel||null;window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_KERNEL__=RK;
+function evidenceMeta(){return{market:q('market')?.value||'',timeframe:tf,source:sourceNote}}
+function resetEvidenceTimeline(){EVIDENCE_LOG.length=0;EVIDENCE_ERRORS.length=0;EVIDENCE_IDS.clear();window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVIDENCE_BY_MODEL__={};window.__SL_EVIDENCE_SUMMARY__={total:0,models:{}}}
+function rememberEvidence(input){
+  if(!RK||!input)return null;
+  let payload={...input,meta:{...evidenceMeta(),...(input.meta||{})}},e=RK.makeEvidence(payload),v=RK.validateEvidence(e);
+  if(!v.ok){EVIDENCE_ERRORS.push({id:e.id,model:e.model,index:e.index,errors:v.errors});return null}
+  if(EVIDENCE_IDS.has(e.id))return e;
+  EVIDENCE_IDS.add(e.id);EVIDENCE_LOG.push(e);return e
+}
+function finalizeEvidenceTimeline(){
+  if(RK&&RK.compareEvidence)EVIDENCE_LOG.sort(RK.compareEvidence);
+  window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;
+  window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;
+  window.__SL_EVIDENCE_BY_MODEL__=RK&&RK.timelineByModel?RK.timelineByModel(EVIDENCE_LOG):{};
+  window.__SL_EVIDENCE_SUMMARY__=RK&&RK.timelineSummary?RK.timelineSummary(EVIDENCE_LOG):{total:EVIDENCE_LOG.length,models:{}};
+  return EVIDENCE_LOG
+}const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
 const DEFAULT_EXP={
   basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:68},
   spring:{minCycles:2,maxCoreShiftPct:65,maxShapeChangePct:60,minFitPct:82,breakConfirmBars:2},
@@ -323,10 +340,11 @@ function parseCSV(t){let l=t.trim().split(/\r?\n/),h=l.shift().split(',').map(x=
 function setTFs(){let m=q('market').value,arr=m==='BTC'?['1h','4h','1d','1w']:['1d','1w','1m'];if(!arr.includes(tf))tf=m==='BTC'?'1w':'1d';q('tfs').innerHTML=arr.map(x=>'<button data-tf="'+x+'" class="'+(x===tf?'active':'')+'">'+x.toUpperCase()+'</button>').join('')}
 function aggregate(a,kind){let out=[],u,key;for(let x of a){let d=new Date(x.t*1000),k;if(kind==='4h')k=Math.floor(x.t/14400)*14400;else if(kind==='1d')k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())/1000;else if(kind==='1w'){k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-((d.getUTCDay()+6)%7))/1000}else{k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1)/1000}if(!u||key!==k){u={...x,t:k};key=k;out.push(u)}else{u.h=Math.max(u.h,x.h);u.l=Math.min(u.l,x.l);u.c=x.c;u.v+=x.v}}return out}
 async function binance(interval){let all=[],end=Date.now(),loops=tf==='1h'||tf==='4h'?20:8;for(let n=0;n<loops;n++){let url='https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval='+interval+'&limit=1000&endTime='+end;let a=await fetch(url).then(r=>{if(!r.ok)throw Error('Binance '+r.status);return r.json()});if(!a.length)break;let b=a.map(x=>({t:x[0]/1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[7]}));all=b.concat(all);end=a[0][0]-1;if(a.length<1000)break}let m=new Map(all.map(x=>[x.t,x]));return [...m.values()].sort((a,b)=>a.t-b.t)}
-async function load(){q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];EVIDENCE.length=0;window.__SL_EVIDENCE__=EVIDENCE;draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。市場圖表是底層；模型與 Script 使用彼此獨立的疊加圖層。'}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
+async function load(){q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];EVIDENCE.length=0;window.__SL_EVIDENCE__=EVIDENCE;resetEvidenceTimeline();draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。市場圖表是底層；模型與 Script 使用彼此獨立的疊加圖層。'}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
 function atrArr(a,n){let z=a.map((x,i)=>i?Math.max(x.h-x.l,Math.abs(x.h-a[i-1].c),Math.abs(x.l-a[i-1].c)):x.h-x.l),r=Array(a.length).fill(NaN),s=0;for(let i=0;i<z.length;i++){if(i<n){s+=z[i];if(i===n-1)r[i]=s/n}else r[i]=(r[i-1]*(n-1)+z[i])/n}return r}
 function zoneCalc(){
   if(!D.length)return;
+  resetEvidenceTimeline();
   let L=ZONE.pivot,n=ZONE.atr,w=ZONE.width,br=ZONE.breakAtr,
       A=atrArr(D,n),zones=[],
       potential=0,candidate=0,validated=0,broken=0,
@@ -347,7 +365,7 @@ function zoneCalc(){
         if(fresh){
           let near=zones.find(z=>!z.dead&&Math.abs(x.l-z.low)<=av*1.5);
           if(!near){
-            zones.push({
+            let z={
               low:x.l,
               top:x.l+av*w*.65,
               bot:x.l-av*w*.35,
@@ -357,6 +375,14 @@ function zoneCalc(){
               validatedAt:null,
               brokenAt:null,
               dead:false
+            };
+            zones.push(z);
+            rememberEvidence({
+              id:'support:'+z.born+':potential:'+i,entityId:'support:'+z.born,
+              kind:'transition',model:'support',family:'structure',
+              index:i,timestamp:D[i].t,state:'potential',detectedAt:i,evidenceStart:z.born,
+              evidence:{top:z.top,bot:z.bot,low:z.low},
+              invalidation:{kind:'close_below_zone',level:z.bot}
             });
             potential++;
           }else if(near.state==='potential'&&x.l<near.low){
@@ -373,6 +399,13 @@ function zoneCalc(){
         if(x.c<z.bot-tol){
           z.state='broken';
           z.brokenAt=i;
+          rememberEvidence({
+            id:'support:'+z.born+':broken:'+i,entityId:'support:'+z.born,
+            kind:'transition',model:'support',family:'structure',
+            index:i,timestamp:D[i].t,state:'broken',detectedAt:i,evidenceStart:z.born,
+            evidence:{top:z.top,bot:z.bot,low:z.low,reason:'close_break'},
+            invalidation:{kind:'close_below_zone',level:z.bot}
+          });
           R[i].zones.push({top:z.top,bot:z.bot,state:'broken',detectedAt:i,evidenceStart:z.born});
           z.dead=true;
           broken++;
@@ -384,6 +417,12 @@ function zoneCalc(){
           if(i>z.born&&x.c>z.top){
             z.state='candidate';
             z.promotedAt=i;
+            rememberEvidence({
+              id:'support:'+z.born+':candidate:'+i,entityId:'support:'+z.born,
+              kind:'transition',model:'support',family:'structure',
+              index:i,timestamp:D[i].t,state:'candidate',detectedAt:i,evidenceStart:z.born,
+              evidence:{top:z.top,bot:z.bot,low:z.low,reason:'left_zone'}
+            });
             candidate++;
           }
         }else if(z.state==='candidate'){
@@ -392,6 +431,12 @@ function zoneCalc(){
           if(touch&&x.c>=z.bot){
             z.state='validated';
             z.validatedAt=i;
+            rememberEvidence({
+              id:'support:'+z.born+':validated:'+i,entityId:'support:'+z.born,
+              kind:'transition',model:'support',family:'structure',
+              index:i,timestamp:D[i].t,state:'validated',detectedAt:i,evidenceStart:z.born,
+              evidence:{top:z.top,bot:z.bot,low:z.low,reason:'retest_hold'}
+            });
             validated++;
           }
         }
@@ -437,11 +482,18 @@ function macroCalc(){
       for(let z of zones)if(!z.dead&&Math.abs(D[i].l-z.low)<=A[i]*1.5)near=true;
 
       if(fresh&&dd>=p.dd&&expanded&&!near&&isFinite(A[i])){
-        zones.push({
+        let z={
           top:D[i].l+A[i]*MACRO.zoneUp,
           bot:D[i].l-A[i]*MACRO.zoneDn,
           low:D[i].l,trigger:D[i].h,born:i,expires:i+p.confirm,
           state:'candidate',confirmedAt:null,dead:false
+        };
+        zones.push(z);
+        rememberEvidence({
+          id:'macro:'+z.born+':candidate:'+i,entityId:'macro:'+z.born,
+          kind:'transition',model:'macro',family:'structure',
+          index:i,timestamp:D[i].t,state:'candidate',detectedAt:i,evidenceStart:z.born,
+          evidence:{top:z.top,bot:z.bot,low:z.low,trigger:z.trigger}
         });
         formed++;
       }
@@ -452,6 +504,12 @@ function macroCalc(){
       let tol=isFinite(A[i])?A[i]*MACRO.breakAtr:0;
 
       if(i>z.born&&D[i].c<z.bot-tol){
+        rememberEvidence({
+          id:'macro:'+z.born+':failed:'+i,entityId:'macro:'+z.born,
+          kind:'transition',model:'macro',family:'structure',
+          index:i,timestamp:D[i].t,state:'failed',detectedAt:i,evidenceStart:z.born,
+          evidence:{top:z.top,bot:z.bot,trigger:z.trigger,reason:'close_break'}
+        });
         z.dead=true;failed++;continue;
       }
 
@@ -459,8 +517,20 @@ function macroCalc(){
         if(i>z.born&&i<=z.expires&&D[i].c>z.trigger){
           z.state='confirmed';
           z.confirmedAt=i;
+          rememberEvidence({
+            id:'macro:'+z.born+':confirmed:'+i,entityId:'macro:'+z.born,
+            kind:'transition',model:'macro',family:'structure',
+            index:i,timestamp:D[i].t,state:'confirmed',detectedAt:i,evidenceStart:z.born,
+            evidence:{top:z.top,bot:z.bot,trigger:z.trigger,reason:'trigger_break'}
+          });
           confirmed++;
         }else if(i>z.expires){
+          rememberEvidence({
+            id:'macro:'+z.born+':expired:'+i,entityId:'macro:'+z.born,
+            kind:'transition',model:'macro',family:'structure',
+            index:i,timestamp:D[i].t,state:'expired',detectedAt:i,evidenceStart:z.born,
+            evidence:{top:z.top,bot:z.bot,trigger:z.trigger,reason:'expired'}
+          });
           z.dead=true;failed++;continue;
         }
       }
@@ -476,7 +546,33 @@ function macroCalc(){
   setInfo('macroInfo','Macro Bottom v0.2｜'+tf.toUpperCase()+'｜Candidate '+formed+' · Confirmed '+confirmed+' · Failed/Expired '+failed+'｜自動依時間框架調整觀察窗；不限制市場與週期');
   bottomLabCalc()
 }
-function bottomLabCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].bottomSigs=[];let on=q('modSweep').checked,cnt=0,A=atrArr(D,14),look=tf==='1h'?48:tf==='4h'?42:tf==='1d'?30:tf==='1w'?20:12;if(on){for(let i=Math.max(20,look);i<D.length;i++){let x=D[i],range=Math.max(x.h-x.l,1e-9),pos=(x.c-x.l)/range,priorLow=Math.min(...D.slice(i-look,i).map(z=>z.l));if(x.l<priorLow&&x.c>priorLow&&pos>=.55){R[i].bottomSigs.push({k:'sweep',label:'Liquidity Sweep',slot:0});cnt++}}}setInfo('bottomInfo',on?'Liquidity Sweep｜'+cnt+' 個訊號｜原始跌破收回邏輯':'Liquidity Sweep 已關閉');researchCalc()}
+function bottomLabCalc(){
+  if(!D.length)return;
+  for(let i=0;i<R.length;i++)R[i].bottomSigs=[];
+  let on=q('modSweep').checked,cnt=0,A=atrArr(D,14),
+      look=tf==='1h'?48:tf==='4h'?42:tf==='1d'?30:tf==='1w'?20:12;
+
+  if(on){
+    for(let i=Math.max(20,look);i<D.length;i++){
+      let x=D[i],range=Math.max(x.h-x.l,1e-9),pos=(x.c-x.l)/range,
+          priorLow=Math.min(...D.slice(i-look,i).map(z=>z.l));
+
+      if(x.l<priorLow&&x.c>priorLow&&pos>=.55){
+        R[i].bottomSigs.push({k:'sweep',label:'Liquidity Sweep',slot:0});
+        rememberEvidence({
+          id:'sweep:'+i,entityId:'sweep:'+i,kind:'event',
+          model:'sweep',family:'event',index:i,timestamp:D[i].t,
+          state:'event',detectedAt:i,evidenceStart:i,
+          evidence:{priorLow,low:x.l,close:x.c,closePosition:pos}
+        });
+        cnt++;
+      }
+    }
+  }
+
+  setInfo('bottomInfo',on?'Liquidity Sweep｜'+cnt+' 個訊號｜原始跌破收回邏輯':'Liquidity Sweep 已關閉');
+  researchCalc()
+}
 function mean(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN}
 function stdev(a){if(a.length<2)return 0;let m=mean(a);return Math.sqrt(mean(a.map(x=>(x-m)*(x-m))))}
 function median(a){if(!a.length)return NaN;let b=a.slice().sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2}
@@ -849,8 +945,8 @@ function basinBestCandidateRange(end,floorMin,floorMax,cliffMax){
   }
   return best
 }
-function basinLiveStage(end,p){
-  let full=basinBestCandidate(end,p);
+function basinLiveStage(end,p,fullCandidate){
+  let full=fullCandidate===undefined?basinBestCandidate(end,p):fullCandidate;
   if(full&&full.score>=p.threshold)return{stage:'active',candidate:full,confidence:full.score};
   let earlyMax=Math.max(4,p.floorMin-1),
       early=basinBestCandidateRange(end,4,earlyMax,p.cliffMax);
@@ -874,7 +970,7 @@ function rebuildEvidence(){
         push=x=>{let e=RK.makeEvidence(x),v=RK.validateEvidence(e);if(v.ok)EVIDENCE.push(e)};
 
   (row.zones||[]).forEach((z,k)=>push({
-    id:'support:'+i+':'+k+':'+z.state,
+    id:'support:'+i+':'+k+':'+z.state,entityId:'support:'+(z.evidenceStart??z.detectedAt??i),kind:'snapshot',
     model:'support',family:'structure',index:i,timestamp:D[i].t,state:z.state,
     detectedAt:z.detectedAt??i,evidenceStart:z.evidenceStart??z.detectedAt??i,
     evidence:{top:z.top,bot:z.bot},
@@ -883,7 +979,7 @@ function rebuildEvidence(){
   }));
 
   (row.macro||[]).forEach((z,k)=>push({
-    id:'macro:'+i+':'+k+':'+z.state,
+    id:'macro:'+i+':'+k+':'+z.state,entityId:'macro:'+(z.evidenceStart??z.detectedAt??i),kind:'snapshot',
     model:'macro',family:'structure',index:i,timestamp:D[i].t,state:z.state,
     detectedAt:z.detectedAt??i,evidenceStart:z.evidenceStart??z.detectedAt??i,
     evidence:{top:z.top,bot:z.bot},
@@ -892,13 +988,13 @@ function rebuildEvidence(){
   }));
 
   (row.bottomSigs||[]).forEach((z,k)=>push({
-    id:'sweep:'+i+':'+k,
+    id:'sweep:'+i+':'+k,entityId:'sweep:'+i,kind:'event',
     model:'sweep',family:'event',index:i,timestamp:D[i].t,state:'event',
     detectedAt:i,evidenceStart:i,evidence:{label:z.label||'Liquidity Sweep'},meta
   }));
 
   BASIN_EPISODES.filter(z=>z.end===i).forEach((z,k)=>push({
-    id:'basin:'+i+':'+k+':'+z.state,
+    id:'basin:'+i+':'+k+':'+z.state,entityId:'basin:'+(z.detectedAt??i),kind:'snapshot',
     model:'basin',family:'structure',index:i,timestamp:D[i].t,state:z.state||'active',
     confidence:z.score,detectedAt:z.detectedAt??i,evidenceStart:z.start??z.detectedAt??i,
     evidence:{top:z.top,bot:z.bot,peakI:z.peakI,features:z.features||{},raw:z.raw||{}},
@@ -906,7 +1002,7 @@ function rebuildEvidence(){
   }));
 
   OSC_FIELDS.filter(z=>z.end===i).forEach((z,k)=>push({
-    id:'field:'+i+':'+k+':'+z.state,
+    id:'field:'+i+':'+k+':'+z.state,entityId:'field:'+(z.detectedAt??i),kind:'snapshot',
     model:'field',family:'structure',index:i,timestamp:D[i].t,state:z.state||'active',
     confidence:z.score,detectedAt:z.detectedAt??i,evidenceStart:z.start??z.detectedAt??i,
     evidence:{
@@ -921,7 +1017,7 @@ function rebuildEvidence(){
   (row.researchSigs||[]).forEach((z,k)=>{
     if(z.k==='echo'&&z.echo){
       push({
-        id:'echo:'+i+':'+k,
+        id:'echo:'+i+':'+k,entityId:'echo:'+i,kind:'snapshot',
         model:'echo',family:'analogy',index:i,timestamp:D[i].t,
         state:(z.echo.strength||'weak').toLowerCase(),
         confidence:(z.echo.bestSim||0)*100,detectedAt:i,evidenceStart:z.echo.current?.start??i,
@@ -941,7 +1037,7 @@ function rebuildEvidence(){
     }else if(z.k==='astro'){
       let upcoming=String(z.label||'').includes('Upcoming');
       push({
-        id:'astro:'+i+':'+k,
+        id:'astro:'+i+':'+k,entityId:'astro:'+i,kind:upcoming?'projection':'event',
         model:'astro',family:'external_time',index:i,timestamp:D[i].t,
         state:upcoming?'upcoming':'active',detectedAt:i,evidenceStart:i,
         evidence:{label:z.label||'',detail:z.detail||''},meta
@@ -963,7 +1059,8 @@ function researchCalc(){
   // Basin Mapper live lifecycle: LANDING -> FORMING -> ACTIVE -> EXIT.
   if(use.basin){
     let p=EXP.basin,evalStep=D.length>6000?4:D.length>2500?2:1,
-        active=null,gap=0,gapLimit=Math.max(2,Math.round(p.floorMin/3));
+        active=null,gap=0,gapLimit=Math.max(2,Math.round(p.floorMin/3)),
+        previewState=null,previewEntity=null,previewEvidenceStart=null,lastEval=-1;
 
     function finishBasin(a,state){
       if(!a)return;
@@ -977,8 +1074,24 @@ function researchCalc(){
       });
     }
 
+    function recordBasinStage(entityId,state,i,c,confidence,evidenceStart,reason){
+      if(!c)return;
+      rememberEvidence({
+        id:entityId+':'+state+':'+i,entityId,kind:'transition',
+        model:'basin',family:'structure',index:i,timestamp:D[i].t,
+        state,confidence,detectedAt:i,evidenceStart:evidenceStart??c.fs,
+        evidence:{
+          top:c.floorHi,bot:c.floorLo,peakI:c.peakI,
+          cliffLen:c.cliffLen,floorLen:c.floorLen,
+          features:c.features||{},reason:reason||null
+        }
+      })
+    }
+
     for(let i=Math.max(20,p.floorMin+8);i<D.length;i+=evalStep){
+      lastEval=i;
       let best=basinBestCandidate(i,p),pass=best&&best.score>=p.threshold;
+
       if(pass){
         let detail='ACTIVE '+best.score.toFixed(0)+'｜下山 '+(best.features.dropDepth*100).toFixed(0)+
           '｜平坦 '+(best.features.floorRelief*100).toFixed(0)+
@@ -986,12 +1099,22 @@ function researchCalc(){
           '｜中心 '+(best.features.centerStability*100).toFixed(0)+
           '｜尺度 '+best.cliffLen+'→'+best.floorLen;
         let overlaps=active&&best.fs<=active.end+Math.max(evalStep,p.floorMin)&&best.fs>=active.start-Math.max(p.floorMin,evalStep*2);
+
         if(!active||!overlaps){
-          if(active)finishBasin(active,'exit');
+          if(active){
+            recordBasinStage(active.entityId,'exit',i,active.best,active.best.score,active.evidenceStart,'new_structure');
+            finishBasin(active,'exit');
+          }
+
+          let entityId=previewEntity||('basin:'+i),
+              evidenceStart=previewEvidenceStart??best.fs;
           active={
             start:best.fs,end:i,peakI:best.peakI,cliffTop:best.cliffTop,
-            top:best.floorHi,bot:best.floorLo,best,detectedAt:i,detail
+            top:best.floorHi,bot:best.floorLo,best,detectedAt:i,detail,
+            entityId,evidenceStart
           };
+          recordBasinStage(entityId,'active',i,best,best.score,evidenceStart,'threshold_reached');
+          previewState=null;previewEntity=null;previewEvidenceStart=null;
           R[i].researchSigs.push({k:'basin',label:'Basin ACTIVE '+best.score.toFixed(0),detail});
         }else{
           active.end=i;active.start=Math.min(active.start,best.fs);
@@ -1003,7 +1126,25 @@ function researchCalc(){
         gap=0;
       }else if(active){
         gap+=evalStep;
-        if(gap>gapLimit){finishBasin(active,'exit');active=null;gap=0}
+        if(gap>gapLimit){
+          recordBasinStage(active.entityId,'exit',i,active.best,active.best.score,active.evidenceStart,'evidence_faded');
+          finishBasin(active,'exit');active=null;gap=0;
+        }
+      }else{
+        let live=basinLiveStage(i,p,best);
+        if(live&&(live.stage==='landing'||live.stage==='forming')){
+          let c=live.candidate;
+          if(!previewEntity){
+            previewEntity='basin:'+i;
+            previewEvidenceStart=c.fs;
+          }
+          if(live.stage!==previewState){
+            recordBasinStage(previewEntity,live.stage,i,c,live.confidence,previewEvidenceStart,'early_evidence');
+            previewState=live.stage;
+          }
+        }else{
+          previewState=null;previewEntity=null;previewEvidenceStart=null;
+        }
       }
     }
 
@@ -1011,19 +1152,26 @@ function researchCalc(){
     if(active)finishBasin(active,'active');
 
     if(!activeAtEnd&&D.length){
-      let live=basinLiveStage(D.length-1,p);
+      let end=D.length-1,live=basinLiveStage(end,p);
       if(live&&live.stage!=='active'){
         let c=live.candidate,label=live.stage==='forming'?'FORMING':'LANDING',
             detail=label+' '+live.confidence.toFixed(0)+'｜下山 '+(c.features.dropDepth*100).toFixed(0)+
               '｜平坦 '+(c.features.floorRelief*100).toFixed(0)+'｜已走 '+c.floorLen+' 根';
+
+        if(end!==lastEval&&live.stage!==previewState){
+          if(!previewEntity){previewEntity='basin:'+end;previewEvidenceStart=c.fs}
+          recordBasinStage(previewEntity,live.stage,end,c,live.confidence,previewEvidenceStart,'latest_evidence');
+          previewState=live.stage;
+        }
+
         BASIN_EPISODES.push({
           k:'basin',shape:'basinScore',
-          start:c.fs,end:D.length-1,peakI:c.peakI,cliffTop:c.cliffTop,
+          start:c.fs,end,peakI:c.peakI,cliffTop:c.cliffTop,
           top:c.floorHi,bot:c.floorLo,score:live.confidence,
-          features:c.features,raw:c.raw,detectedAt:D.length-1,state:live.stage,
+          features:c.features,raw:c.raw,detectedAt:end,state:live.stage,
           label:'Basin Mapper｜'+label,detail
         });
-        R[D.length-1].researchSigs.push({k:'basin',label:'Basin '+label+' '+live.confidence.toFixed(0),detail});
+        R[end].researchSigs.push({k:'basin',label:'Basin '+label+' '+live.confidence.toFixed(0),detail});
       }
     }
   }
@@ -1032,7 +1180,8 @@ function researchCalc(){
   // oscillation creates the box; only confirmed BODY breakout destroys it.
   if(use.spring){
     let p=EXP.spring,active=null,evalStep=D.length>10000?4:D.length>5000?2:1,
-        confirmBars=Math.max(1,Math.round(p.breakConfirmBars));
+        confirmBars=Math.max(1,Math.round(p.breakConfirmBars)),
+        previewState=null,previewEntity=null,previewEvidenceStart=null,lastEval=-1;
 
     function finishField(a){
       if(!a||a.end<a.detectedAt)return;
@@ -1052,6 +1201,21 @@ function researchCalc(){
       });
     }
 
+    function recordFieldStage(entityId,state,i,c,confidence,evidenceStart,extra={}){
+      if(!c)return;
+      rememberEvidence({
+        id:entityId+':'+state+':'+i,entityId,kind:'transition',
+        model:'field',family:'structure',index:i,timestamp:D[i].t,
+        state,confidence,detectedAt:i,evidenceStart:evidenceStart??c.start,
+        evidence:{
+          cycles:c.cycles??null,containment:c.containment??null,
+          drift:c.drift??null,shapeChange:c.shapeChange??null,
+          geometrySmooth:c.geometrySmooth??null,...extra
+        },
+        invalidation:{kind:'confirmed_body_break',bars:confirmBars}
+      })
+    }
+
     for(let i=23;i<D.length;i++){
       if(active){
         active.end=i;
@@ -1063,8 +1227,15 @@ function researchCalc(){
           if(active.breakRun>=confirmBars){
             active.invalidatedAt=i;
             active.breakout=side>0?'up':'down';
+            recordFieldStage(
+              active.entityId,'broken',i,
+              {start:active.start,cycles:active.birthCycles,containment:1},
+              active.birthScore,active.evidenceStart,
+              {breakout:active.breakout,reason:'confirmed_body_break'}
+            );
             finishField(active);
             active=null;
+            previewState=null;previewEntity=null;previewEvidenceStart=null;
             continue;
           }
         }else{
@@ -1075,21 +1246,43 @@ function researchCalc(){
       }
 
       if(i%evalStep!==0)continue;
+      lastEval=i;
       let c=fieldBestCandidate(i,p);
+
       if(c&&c.pass){
-        let lock=lockFieldGeometry(c);
+        let lock=lockFieldGeometry(c),
+            entityId=previewEntity||('field:'+i),
+            evidenceStart=previewEvidenceStart??c.start;
         active={
           start:c.start,end:i,detectedAt:i,lock,
           birthScore:c.score,birthCycles:c.cycles,
-          breakRun:0,breakSide:0,invalidatedAt:null,breakout:null
+          breakRun:0,breakSide:0,invalidatedAt:null,breakout:null,
+          entityId,evidenceStart
         };
+        recordFieldStage(entityId,'active',i,c,c.score,evidenceStart,{reason:'field_formed'});
+        previewState=null;previewEntity=null;previewEvidenceStart=null;
         R[i].researchSigs.push({
           k:'spring',
           label:'震盪場 FIELD '+c.score.toFixed(0),
           detail:'形態框成立｜'+c.cycles.toFixed(1)+' 回合｜之後只由破界決定失效'
         });
+      }else{
+        let preview=fieldPreviewState(c,p);
+        if(preview&&(preview.state==='seed'||preview.state==='forming')){
+          if(!previewEntity){
+            previewEntity='field:'+i;
+            previewEvidenceStart=c.start;
+          }
+          if(preview.state!==previewState){
+            recordFieldStage(previewEntity,preview.state,i,c,preview.confidence,previewEvidenceStart,{reason:'early_oscillation'});
+            previewState=preview.state;
+          }
+        }else{
+          previewState=null;previewEntity=null;previewEvidenceStart=null;
+        }
       }
     }
+
     let activeAtEnd=!!active;
     finishField(active);
 
@@ -1100,6 +1293,13 @@ function researchCalc(){
             geom=fieldEpisodeStats(lock,c.start,end),
             state=preview.state,
             label=state==='forming'?'FORMING':'SEED';
+
+        if(end!==lastEval&&state!==previewState){
+          if(!previewEntity){previewEntity='field:'+end;previewEvidenceStart=c.start}
+          recordFieldStage(previewEntity,state,end,c,preview.confidence,previewEvidenceStart,{reason:'latest_oscillation'});
+          previewState=state;
+        }
+
         OSC_FIELDS.push({
           k:'spring',shape:'oscillationField',
           start:c.start,end,lock,
@@ -1120,7 +1320,7 @@ function researchCalc(){
     }
   }
 
-  // Echo: nearest historical matches plus causal forward-path backtest.
+  // Echo: every evaluated bar becomes a causal historical observation.
   if(use.echo){
     let p=EXP.echo,L=Math.max(8,Math.round(p.length)),
         hist=Math.max(L*3,Math.round(p.history)),
@@ -1150,13 +1350,26 @@ function researchCalc(){
 
       all.sort((a,b)=>b.sim-a.sim);
       let strong=all.filter(m=>m.sim>=sim),
-          show=isLatest?all.slice(0,4):strong.slice(0,4);
-      if(!isLatest&&!strong.length)continue;
+          best=all[0].sim,
+          strength=best>=sim?'STRONG':'WEAK',
+          btSource=strong.length?strong:all.slice(0,Math.min(10,all.length)),
+          backtest=echoBacktest(btSource,follow);
 
-      let btSource=strong.length?strong:all.slice(0,Math.min(10,all.length)),
-          backtest=echoBacktest(btSource,follow),
-          best=show[0].sim,
-          strength=best>=sim?'STRONG':'WEAK';
+      rememberEvidence({
+        id:'echo:'+i+':observation',entityId:'echo:'+i,kind:'observation',
+        model:'echo',family:'analogy',index:i,timestamp:D[i].t,
+        state:strength.toLowerCase(),confidence:best*100,
+        detectedAt:i,evidenceStart:i-L+1,
+        evidence:{length:L,threshold:sim,strongCount:strong.length,bestSim:best},
+        projection:backtest?{
+          kind:'historical_distribution',horizon:backtest.horizon,
+          sampleMode:strong.length?'strong':'nearest',n:backtest.n
+        }:null,
+        metrics:{backtest}
+      });
+
+      let show=isLatest?all.slice(0,4):strong.slice(0,4);
+      if(!isLatest&&!strong.length)continue;
 
       R[i].researchSigs.push({
         k:'echo',
@@ -1190,7 +1403,15 @@ function researchCalc(){
         const signs=['牡羊','金牛','雙子','巨蟹','獅子','處女','天秤','天蠍','射手','摩羯','水瓶','雙魚'];
         for(let name of planets){let s0=Math.floor(prevPos[name]/30),s1=Math.floor(pos[name]/30);if(s0!==s1)events.push(ASTRO_NAME[name]+' 進入'+signs[s1]+'座')}
       }
-      if(events.length)R[i].researchSigs.push({k:'astro',label:'Astrology Engine｜占星盤',detail:events.slice(0,4).join(' · ')+(events.length>4?' · +'+(events.length-4):'')});
+      if(events.length){
+        let detail=events.slice(0,4).join(' · ')+(events.length>4?' · +'+(events.length-4):'');
+        R[i].researchSigs.push({k:'astro',label:'Astrology Engine｜占星盤',detail});
+        rememberEvidence({
+          id:'astro:'+i+':event',entityId:'astro:'+i,kind:'event',
+          model:'astro',family:'external_time',index:i,timestamp:D[i].t,
+          state:'event',detectedAt:i,evidenceStart:i,evidence:{detail,eventCount:events.length}
+        });
+      }
       prevAspect=active;prevPos=pos;
     }
 
@@ -1241,9 +1462,17 @@ function researchCalc(){
       if(upcoming.length){
         let detail=upcoming.map(u=>date(u.t)+' '+u.events.join(' / ')).join(' · ');
         R[last].researchSigs.push({k:'astro',label:'Astrology Upcoming｜未來事件',detail});
+        rememberEvidence({
+          id:'astro:'+last+':upcoming',entityId:'astro:upcoming:'+last,kind:'projection',
+          model:'astro',family:'external_time',index:last,timestamp:D[last].t,
+          state:'upcoming',detectedAt:last,evidenceStart:last,
+          projection:{kind:'astronomy_timing',horizonDays:horizon,events:upcoming},
+          evidence:{detail}
+        });
       }
     }
   }
+  finalizeEvidenceTimeline();
   rebuildEvidence();
   safeDrawModels();
 }

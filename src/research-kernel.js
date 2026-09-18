@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const VERSION='1.1.0';
+  const VERSION='1.2.0';
 
   const STATE_MAP={
     support:{
@@ -27,7 +27,7 @@
       weak:'weak',strong:'strong'
     },
     astro:{
-      upcoming:'upcoming',active:'active',passed:'passed'
+      upcoming:'upcoming',event:'event',active:'active',passed:'passed'
     }
   };
 
@@ -66,6 +66,8 @@
       id:input.id||makeId(model,index,state),
       model,
       family:input.family||'model',
+      kind:input.kind||'snapshot',
+      entityId:input.entityId||null,
       index,
       timestamp:finiteOrNull(input.timestamp),
       state,
@@ -86,6 +88,8 @@
     if(e.version!==1)errors.push('version');
     if(!e.model)errors.push('model');
     if(!e.state)errors.push('state');
+    if(!e.kind)errors.push('kind');
+    if(e.entityId!==null&&typeof e.entityId!=='string')errors.push('entityId');
     if(e.index!==null&&!Number.isInteger(e.index))errors.push('index');
     if(e.detectedAt!==null&&!Number.isInteger(e.detectedAt))errors.push('detectedAt');
     if(e.evidenceStart!==null&&!Number.isInteger(e.evidenceStart))errors.push('evidenceStart');
@@ -160,6 +164,44 @@
     }
     return out;
   }
+  function compareEvidence(a,b){
+    const ai=Number.isInteger(a&&a.index)?a.index:Number.MAX_SAFE_INTEGER,
+          bi=Number.isInteger(b&&b.index)?b.index:Number.MAX_SAFE_INTEGER;
+    if(ai!==bi)return ai-bi;
+    const ad=Number.isInteger(a&&a.detectedAt)?a.detectedAt:ai,
+          bd=Number.isInteger(b&&b.detectedAt)?b.detectedAt:bi;
+    if(ad!==bd)return ad-bd;
+    const am=String(a&&a.model||''),bm=String(b&&b.model||'');
+    if(am!==bm)return am.localeCompare(bm);
+    return String(a&&a.id||'').localeCompare(String(b&&b.id||''));
+  }
+
+  function sortTimeline(evidence){
+    return (evidence||[]).slice().sort(compareEvidence);
+  }
+
+  function timelineByModel(evidence){
+    const out={};
+    for(const e of sortTimeline(evidence)){
+      if(!e||!e.model)continue;
+      (out[e.model]||(out[e.model]=[])).push(e);
+    }
+    return out;
+  }
+
+  function timelineSummary(evidence){
+    const out={total:0,models:{}};
+    for(const e of evidence||[]){
+      if(!e||!e.model)continue;
+      out.total++;
+      const m=out.models[e.model]||(out.models[e.model]={total:0,states:{},kinds:{}});
+      m.total++;
+      m.states[e.state]=(m.states[e.state]||0)+1;
+      m.kinds[e.kind]=(m.kinds[e.kind]||0)+1;
+    }
+    return out;
+  }
+
 
   return{
     VERSION,
@@ -170,6 +212,10 @@
     forwardOutcome,
     summarizeOutcomes,
     evaluateEvidence,
-    latestByModel
+    latestByModel,
+    compareEvidence,
+    sortTimeline,
+    timelineByModel,
+    timelineSummary
   };
 });

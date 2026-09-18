@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v0.7 · Research Kernel**
+**v0.8 · M2 Market Memory**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -35,7 +35,7 @@ Base Chart Canvas
 
 模型不能直接修改底層 K 線圖。
 
-Research Kernel v1 新增統一 Evidence Object：
+Research Kernel v1.2 提供統一 Evidence Object 與 M2 Historical Evidence Timeline：
 
 ```text
 Market Data
@@ -54,7 +54,7 @@ Normalized Evidence
 Visualization / Evaluation / Future Prediction Layer
 ```
 
-瀏覽器中可透過 `window.__SL_EVIDENCE__` 查看目前最新 K 的標準化模型證據。
+瀏覽器中可透過 `window.__SL_EVIDENCE__` 查看目前最新 K 的標準化模型證據；`window.__SL_EVIDENCE_LOG__` 則保存目前已啟用模型的因果歷史事件／狀態轉移，`window.__SL_EVIDENCE_SUMMARY__` 提供模型與狀態數量摘要。
 
 ## Automated checks
 
@@ -75,4 +75,4 @@ GitHub Actions 會自動檢查：
 
 ## Direction
 
-下一階段重點是建立統一 Evaluation Layer，讓不同模型的 FORMING / ACTIVE / EVENT 狀態可以用同一套 forward return、MFE、MAE 與狀態生命週期進行比較，再接 Prediction Layer。
+M1「可信任的地基」與 M2「市場記憶」已完成。下一階段是 M3「自我驗證」：讓 Historical Evidence Timeline 直接進入統一 Evaluation Layer，以同一套 forward return、MFE、MAE、狀態轉換率、失敗率與存活時間驗證不同模型。

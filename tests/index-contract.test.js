@@ -41,4 +41,24 @@ for(const token of [
   assert(s.includes(token),'missing evidence adapter '+token);
 }
 
+assert(s.includes('window.__SL_EVIDENCE_LOG__'),'M2 historical evidence log export missing');
+assert(s.includes('window.__SL_EVIDENCE_SUMMARY__'),'M2 timeline summary export missing');
+assert(s.includes('function rememberEvidence(input)'),'M2 evidence recorder missing');
+assert(s.includes('function finalizeEvidenceTimeline()'),'M2 timeline finalizer missing');
+for(const token of [
+  "id:'support:'+z.born+':potential:'+i",
+  "id:'support:'+z.born+':validated:'+i",
+  "id:'macro:'+z.born+':candidate:'+i",
+  "id:'macro:'+z.born+':confirmed:'+i",
+  "id:'sweep:'+i",
+  "function recordBasinStage(",
+  "function recordFieldStage(",
+  "id:'echo:'+i+':observation'",
+  "id:'astro:'+i+':event'"
+]){
+  assert(s.includes(token),'M2 model history hook missing: '+token);
+}
+assert(s.includes("state:'broken',i"),'Field broken transition hook missing');
+assert(s.includes('finalizeEvidenceTimeline();\n  rebuildEvidence();'),'timeline must finalize before latest snapshot rebuild');
+
 console.log('index-contract.test.js: OK');
