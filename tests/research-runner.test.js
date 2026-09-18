@@ -44,6 +44,15 @@ function synthetic(n=420){
     'parameter sets require distinct fingerprints'
   );
 
+  const local=await Runner.loadMarketData('TWII','1d');
+  assert(local.data.length>1000,'TAIEX project CSV should be usable by the headless runner');
+  const localRun=Runner.runResearch(local.data.slice(-1000),{
+    market:'TWII',timeframe:'1d',source:local.source,
+    enabled:{support:true,macro:false,sweep:false,basin:false,field:false,echo:false,astro:false}
+  });
+  assert.equal(localRun.range.bars,1000);
+  assert.equal(localRun.evidenceErrors.length,0);
+
   const newer=JSON.parse(JSON.stringify(batch));
   newer.engineVersion='future-test';
   newer.runs[0].summary.support.states.potential.count+=1;
