@@ -174,7 +174,7 @@ td:first-child,th:first-child{text-align:left}
 }
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v0.8 · M2 Market Memory</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v0.9 · M3 Evaluation Layer</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -284,9 +284,9 @@ function moveParamDrag(e){
   let y=Math.max(8,Math.min(window.innerHeight-r.height-8,e.clientY-paramDrag.dy));
   card.style.left=x+'px';card.style.top=y+'px';
 }
-function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVIDENCE_IDS=new Set();const RK=window.StrategyLabKernel||null;window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_KERNEL__=RK;
+function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVIDENCE_IDS=new Set(),EVALUATION=null;const EVAL_HORIZONS=[3,5,10,20];const RK=window.StrategyLabKernel||null;window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVALUATION__=EVALUATION;window.__SL_KERNEL__=RK;
 function evidenceMeta(){return{market:q('market')?.value||'',timeframe:tf,source:sourceNote}}
-function resetEvidenceTimeline(){EVIDENCE_LOG.length=0;EVIDENCE_ERRORS.length=0;EVIDENCE_IDS.clear();window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVIDENCE_BY_MODEL__={};window.__SL_EVIDENCE_SUMMARY__={total:0,models:{}}}
+function resetEvidenceTimeline(){EVIDENCE_LOG.length=0;EVIDENCE_ERRORS.length=0;EVIDENCE_IDS.clear();EVALUATION=null;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVIDENCE_BY_MODEL__={};window.__SL_EVIDENCE_SUMMARY__={total:0,models:{}};window.__SL_EVALUATION__=null}
 function rememberEvidence(input){
   if(!RK||!input)return null;
   let payload={...input,meta:{...evidenceMeta(),...(input.meta||{})}},e=RK.makeEvidence(payload),v=RK.validateEvidence(e);
@@ -301,7 +301,19 @@ function finalizeEvidenceTimeline(){
   window.__SL_EVIDENCE_BY_MODEL__=RK&&RK.timelineByModel?RK.timelineByModel(EVIDENCE_LOG):{};
   window.__SL_EVIDENCE_SUMMARY__=RK&&RK.timelineSummary?RK.timelineSummary(EVIDENCE_LOG):{total:EVIDENCE_LOG.length,models:{}};
   return EVIDENCE_LOG
-}const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
+}
+function rebuildEvaluation(){
+  if(!RK||!RK.evaluateTimeline||!D.length){
+    EVALUATION=null;window.__SL_EVALUATION__=null;return null
+  }
+  EVALUATION=RK.evaluateTimeline(D,EVIDENCE_LOG,{
+    horizons:EVAL_HORIZONS,
+    knownThrough:D.length-1
+  });
+  window.__SL_EVALUATION__=EVALUATION;
+  return EVALUATION
+}
+const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
 const DEFAULT_EXP={
   basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:68},
   spring:{minCycles:2,maxCoreShiftPct:65,maxShapeChangePct:60,minFitPct:82,breakConfirmBars:2},
@@ -1473,6 +1485,7 @@ function researchCalc(){
     }
   }
   finalizeEvidenceTimeline();
+  rebuildEvaluation();
   rebuildEvidence();
   safeDrawModels();
 }

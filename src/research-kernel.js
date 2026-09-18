@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const VERSION='1.2.0';
+  const VERSION='1.3.0';
 
   const STATE_MAP={
     support:{
@@ -28,6 +28,29 @@
     },
     astro:{
       upcoming:'upcoming',event:'event',active:'active',passed:'passed'
+    }
+  };
+
+  const DEFAULT_EVAL_HORIZONS=[3,5,10,20];
+
+  // Progression is model-specific; failure/terminal states remain explicit.
+  // Arrays allow an early state to skip directly to a later valid stage.
+  const LIFECYCLE_RULES={
+    support:{
+      progress:{potential:['candidate','validated'],candidate:['validated']},
+      failure:['broken'],terminal:['broken']
+    },
+    macro:{
+      progress:{candidate:['active']},
+      failure:['broken'],terminal:['broken']
+    },
+    basin:{
+      progress:{landing:['forming','active'],forming:['active']},
+      failure:[],terminal:['exit']
+    },
+    field:{
+      progress:{seed:['forming','active'],forming:['active']},
+      failure:['broken'],terminal:['broken']
     }
   };
 
@@ -142,12 +165,15 @@
     };
   }
 
-  function evaluateEvidence(data,evidence,horizon){
+  function evaluateEvidence(data,evidence,horizon,knownThrough){
     const outcomes=[];
     for(const e of evidence||[]){
       if(!e||!Number.isInteger(e.index))continue;
-      const o=forwardOutcome(data,e.index,horizon);
-      if(o)outcomes.push({id:e.id,model:e.model,state:e.state,...o});
+      const o=forwardOutcome(data,e.index,horizon,knownThrough);
+      if(o)outcomes.push({
+        id:e.id,entityId:e.entityId||null,kind:e.kind||'snapshot',
+        model:e.model,state:e.state,...o
+      });
     }
     return{
       horizon:Math.max(1,Math.round(horizon)),
@@ -202,10 +228,216 @@
     return out;
   }
 
+  function normalizeHorizons(horizons){
+    const src=Array.isArray(horizons)&&horizons.length?horizons:DEFAULT_EVAL_HORIZONS;
+    return [...new Set(src.map(x=>Math.max(1,Math.round(Number(x)))).filter(Number.isFinite))].sort((a,b)=>a-b);
+  }
+
+  function filterTimeline(evidence,filter){
+    filter=filter||{};
+    const toSet=x=>x==null?null:new Set(Array.isArray(x)?x:[x]),
+          models=toSet(filter.model??filter.models),
+          states=toSet(filter.state??filter.states),
+          kinds=toSet(filter.kind??filter.kinds),
+          families=toSet(filter.family??filter.families);
+    return (evidence||[]).filter(e=>{
+      if(!e)return false;
+      if(models&&!models.has(e.model))return false;
+      if(states&&!states.has(e.state))return false;
+      if(kinds&&!kinds.has(e.kind))return false;
+      if(families&&!families.has(e.family))return false;
+      return true;
+    });
+  }
+
+  function evaluateHorizonSet(data,evidence,horizons,knownThrough){
+    const out={};
+    for(const h of normalizeHorizons(horizons)){
+      const ev=evaluateEvidence(data,evidence,h,knownThrough),
+            s=ev.summary,
+            n=s?s.n:0;
+      out[h]={
+        n,
+        incomplete:Math.max(0,(evidence||[]).length-n),
+        upRate:s?s.upRate:null,
+        downRate:s?s.downRate:null,
+        flatRate:s?s.flatRate:null,
+        medianReturn:s?s.medianReturn:null,
+        medianMFE:s?s.medianMFE:null,
+        medianMAE:s?s.medianMAE:null
+      };
+    }
+    return out;
+  }
+
+  function buildEntitySequences(evidence){
+    const entities={};
+    for(const e of sortTimeline(evidence)){
+      if(!e||e.kind!=='transition'||!e.entityId||!e.model)continue;
+      const key=e.model+'|'+e.entityId;
+      (entities[key]||(entities[key]={model:e.model,entityId:e.entityId,events:[]})).events.push(e);
+    }
+    for(const x of Object.values(entities)){
+      const dedup=[];
+      for(const e of x.events){
+        const prev=dedup[dedup.length-1];
+        if(prev&&prev.state===e.state)continue;
+        dedup.push(e);
+      }
+      x.events=dedup;
+    }
+    return Object.values(entities);
+  }
+
+  function evaluateLifecycle(evidence,rules){
+    rules=rules||LIFECYCLE_RULES;
+    const sequences=buildEntitySequences(evidence),out={models:{}};
+
+    for(const seq of sequences){
+      const rule=rules[seq.model]||{progress:{},failure:[],terminal:[]},
+            model=out.models[seq.model]||(out.models[seq.model]={
+              entities:0,resolvedEntities:0,openEntities:0,
+              medianResolvedLifetimeBars:null,terminalStates:{},transitions:{},states:{}
+            }),
+            events=seq.events;
+      if(!events.length)continue;
+
+      model.entities++;
+      const last=events[events.length-1],
+            isResolved=(rule.terminal||[]).includes(last.state),
+            life=last.index-events[0].index;
+      if(isResolved){
+        model.resolvedEntities++;
+        (model._lifetimes||(model._lifetimes=[])).push(life);
+        model.terminalStates[last.state]=(model.terminalStates[last.state]||0)+1;
+      }else model.openEntities++;
+
+      for(let i=0;i<events.length;i++){
+        const cur=events[i],next=events[i+1],
+              st=model.states[cur.state]||(model.states[cur.state]={
+                occurrences:0,next:{},unresolvedNext:0,
+                progressionTargets:(rule.progress&&rule.progress[cur.state])?rule.progress[cur.state].slice():[],
+                progressed:0,failedBeforeProgress:0,endedBeforeProgress:0,unresolvedProgress:0,
+                progressionRate:null,failureRate:null,medianBarsToProgression:null
+              });
+        st.occurrences++;
+
+        if(next){
+          const bars=next.index-cur.index,
+                nextStat=st.next[next.state]||(st.next[next.state]={n:0,rate:null,medianBars:null,_bars:[]});
+          nextStat.n++;nextStat._bars.push(bars);
+
+          const tk=cur.state+'→'+next.state,
+                tr=model.transitions[tk]||(model.transitions[tk]={from:cur.state,to:next.state,n:0,rateFromState:null,medianBars:null,_bars:[]});
+          tr.n++;tr._bars.push(bars);
+        }else st.unresolvedNext++;
+
+        const targets=st.progressionTargets;
+        if(targets.length){
+          let resolved=null;
+          for(let j=i+1;j<events.length;j++){
+            const later=events[j];
+            if(targets.includes(later.state)){
+              resolved={type:'progress',bars:later.index-cur.index};
+              break;
+            }
+            if((rule.failure||[]).includes(later.state)){
+              resolved={type:'failure',bars:later.index-cur.index};
+              break;
+            }
+            if((rule.terminal||[]).includes(later.state)){
+              resolved={type:'ended',bars:later.index-cur.index};
+              break;
+            }
+          }
+          if(!resolved)st.unresolvedProgress++;
+          else if(resolved.type==='progress'){
+            st.progressed++;
+            (st._progressBars||(st._progressBars=[])).push(resolved.bars);
+          }else if(resolved.type==='failure')st.failedBeforeProgress++;
+          else st.endedBeforeProgress++;
+        }
+      }
+    }
+
+    for(const model of Object.values(out.models)){
+      if(model._lifetimes){
+        model.medianResolvedLifetimeBars=median(model._lifetimes);
+        delete model._lifetimes;
+      }
+
+      for(const st of Object.values(model.states)){
+        const nextResolved=Object.values(st.next).reduce((n,x)=>n+x.n,0);
+        for(const x of Object.values(st.next)){
+          x.rate=nextResolved?x.n/nextResolved:null;
+          x.medianBars=median(x._bars);
+          delete x._bars;
+        }
+
+        const progressResolved=st.progressed+st.failedBeforeProgress+st.endedBeforeProgress;
+        if(st.progressionTargets.length){
+          st.progressionRate=progressResolved?st.progressed/progressResolved:null;
+          st.failureRate=progressResolved?st.failedBeforeProgress/progressResolved:null;
+          st.medianBarsToProgression=st._progressBars?median(st._progressBars):null;
+        }
+        delete st._progressBars;
+      }
+
+      for(const tr of Object.values(model.transitions)){
+        const fromState=model.states[tr.from],
+              denom=fromState?Object.values(fromState.next).reduce((n,x)=>n+x.n,0):0;
+        tr.rateFromState=denom?tr.n/denom:null;
+        tr.medianBars=median(tr._bars);
+        delete tr._bars;
+      }
+    }
+
+    out.totalEntities=Object.values(out.models).reduce((n,m)=>n+m.entities,0);
+    return out;
+  }
+
+  function evaluateTimeline(data,evidence,options){
+    options=options||{};
+    const horizons=normalizeHorizons(options.horizons),
+          knownThrough=options.knownThrough==null?(Array.isArray(data)?data.length-1:null):Math.round(options.knownThrough),
+          eligibleKinds=options.kinds||['transition','event','observation'],
+          rows=filterTimeline(evidence,{kinds:eligibleKinds}),
+          models={};
+
+    for(const e of rows){
+      if(!e||!e.model||!e.state||!Number.isInteger(e.index))continue;
+      const m=models[e.model]||(models[e.model]={count:0,states:{}}),
+            st=m.states[e.state]||(m.states[e.state]={count:0,kinds:{},horizons:null});
+      m.count++;st.count++;
+      st.kinds[e.kind]=(st.kinds[e.kind]||0)+1;
+    }
+
+    for(const [modelName,m] of Object.entries(models)){
+      for(const [stateName,st] of Object.entries(m.states)){
+        const group=rows.filter(e=>e.model===modelName&&e.state===stateName);
+        st.horizons=evaluateHorizonSet(data,group,horizons,knownThrough);
+      }
+    }
+
+    return{
+      version:1,
+      horizons,
+      knownThrough,
+      eligibleKinds:eligibleKinds.slice(),
+      totalEvidence:(evidence||[]).length,
+      evaluatedEvidence:rows.length,
+      excludedEvidence:Math.max(0,(evidence||[]).length-rows.length),
+      models,
+      lifecycle:evaluateLifecycle(evidence,options.lifecycleRules||LIFECYCLE_RULES)
+    };
+  }
+
 
   return{
     VERSION,
     STATE_MAP,
+    DEFAULT_EVAL_HORIZONS,
+    LIFECYCLE_RULES,
     normalizeState,
     makeEvidence,
     validateEvidence,
@@ -216,6 +448,12 @@
     compareEvidence,
     sortTimeline,
     timelineByModel,
-    timelineSummary
+    timelineSummary,
+    normalizeHorizons,
+    filterTimeline,
+    evaluateHorizonSet,
+    buildEntitySequences,
+    evaluateLifecycle,
+    evaluateTimeline
   };
 });

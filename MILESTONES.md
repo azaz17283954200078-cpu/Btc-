@@ -33,19 +33,34 @@
 
 Timeline 記錄的是狀態「被知道的時間」，而不是事後把完整形態回填到過去。
 
-## M3｜自我驗證 — Next
+## M3｜自我驗證 — ✅ Completed
 
-讓任何 Historical Evidence 都能回答：
+Historical Evidence Timeline 現在直接進入統一 Evaluation Layer，不重新掃描或重新解讀模型歷史。
 
-- 以前發生幾次？
-- 3 / 5 / 10 / 20 bars 後通常怎麼走？
-- Median Return / MFE / MAE
-- lifecycle 轉換率與失敗率
-- 從形成到失效／完成通常多久？
+每個 model + state 都可取得：
 
-Evaluation 必須直接讀取 M2 Timeline，不另造一套歷史答案。
+- 歷史樣本數
+- 3 / 5 / 10 / 20 bars 的有效樣本數與未完成樣本數
+- Up / Down / Flat rate
+- Median Forward Return
+- Median MFE / MAE
 
-## M4｜一眼懂，點下去很深
+Lifecycle Evaluation 會依 entityId 重建同一市場結構的一生，提供：
+
+- 狀態轉移次數與比例
+- 狀態間的中位等待 bars
+- Potential / Candidate / Landing / Forming / Seed 等早期狀態的 progression rate
+- 在進展前先 Broken 的 failure rate
+- resolved / open entity 數量
+- resolved lifecycle 的中位存活 bars
+
+Evaluation 預設只使用 transition / event / observation；projection 不會被當成已發生的市場樣本。
+
+瀏覽器研究介面：
+
+- `window.__SL_EVALUATION__`：目前市場、週期、參數與已啟用模型的完整 M3 評估結果
+
+## M4｜一眼懂，點下去很深 — Next
 
 將同一份 Evidence 做成漸進式資訊深度；不建立新手／專業模式。
 

@@ -61,4 +61,10 @@ for(const token of [
 assert(s.includes("active.entityId,'broken',i"),'Field broken transition hook missing');
 assert(s.includes('finalizeEvidenceTimeline();\n  rebuildEvidence();'),'timeline must finalize before latest snapshot rebuild');
 
+assert(s.includes('window.__SL_EVALUATION__'),'M3 evaluation export missing');
+assert(s.includes('const EVAL_HORIZONS=[3,5,10,20]'),'M3 standard horizons missing');
+assert(s.includes('function rebuildEvaluation()'),'M3 evaluation rebuild hook missing');
+assert(s.includes('RK.evaluateTimeline(D,EVIDENCE_LOG'),'M3 must evaluate directly from M2 timeline');
+assert(s.includes('finalizeEvidenceTimeline();\n  rebuildEvaluation();\n  rebuildEvidence();'),'M3 evaluation must run after timeline finalization');
+
 console.log('index-contract.test.js: OK');

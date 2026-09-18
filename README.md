@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v0.8 · M2 Market Memory**
+**v0.9 · M3 Evaluation Layer**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -35,7 +35,7 @@ Base Chart Canvas
 
 模型不能直接修改底層 K 線圖。
 
-Research Kernel v1.2 提供統一 Evidence Object 與 M2 Historical Evidence Timeline：
+Research Kernel v1.3 提供統一 Evidence Object、M2 Historical Evidence Timeline 與 M3 Evaluation Layer：
 
 ```text
 Market Data
@@ -54,12 +54,12 @@ Normalized Evidence
 Visualization / Evaluation / Future Prediction Layer
 ```
 
-瀏覽器中可透過 `window.__SL_EVIDENCE__` 查看目前最新 K 的標準化模型證據；`window.__SL_EVIDENCE_LOG__` 則保存目前已啟用模型的因果歷史事件／狀態轉移，`window.__SL_EVIDENCE_SUMMARY__` 提供模型與狀態數量摘要。
+瀏覽器中可透過 `window.__SL_EVIDENCE__` 查看目前最新 K 的標準化模型證據；`window.__SL_EVIDENCE_LOG__` 保存目前已啟用模型的因果歷史事件／狀態轉移；`window.__SL_EVALUATION__` 則直接使用這條 Timeline 計算 3 / 5 / 10 / 20 bars 的 forward return、MFE、MAE 與 lifecycle progression / failure / lifetime。
 
 ## Automated checks
 
 GitHub Actions 會自動檢查：
-- Research Kernel schema / forward evaluation
+- Research Kernel schema / causal forward evaluation / M3 lifecycle evaluation
 - protected Chart Core 是否被模型邏輯污染
 - 三層 Canvas 是否存在
 - Experimental models 是否維持預設關閉
@@ -75,4 +75,4 @@ GitHub Actions 會自動檢查：
 
 ## Direction
 
-M1「可信任的地基」與 M2「市場記憶」已完成。下一階段是 M3「自我驗證」：讓 Historical Evidence Timeline 直接進入統一 Evaluation Layer，以同一套 forward return、MFE、MAE、狀態轉換率、失敗率與存活時間驗證不同模型。
+M1「可信任的地基」、M2「市場記憶」與 M3「自我驗證」已完成。下一階段是 M4「一眼懂，點下去很深」：把同一份 Evidence 與 Evaluation 透過嚴格 UI 入場條件做成漸進式理解路徑，不建立新手／專業模式。

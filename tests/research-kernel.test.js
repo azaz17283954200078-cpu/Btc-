@@ -1,7 +1,7 @@
 const assert=require('assert');
 const RK=require('../src/research-kernel.js');
 
-assert.equal(RK.VERSION,'1.2.0');
+assert.equal(RK.VERSION,'1.3.0');
 
 const e=RK.makeEvidence({
   model:'field',
@@ -73,5 +73,54 @@ const summary=RK.timelineSummary(timeline);
 assert.equal(summary.total,3);
 assert.equal(summary.models.support.states.potential,1);
 assert.equal(summary.models.support.kinds.transition,2);
+
+// M3 unified Evaluation Layer.
+const evalData=[];
+for(let i=0;i<30;i++)evalData.push({c:100+i,h:101+i,l:99+i});
+
+const history=[
+  RK.makeEvidence({id:'sp1-p',model:'support',kind:'transition',entityId:'sp1',index:1,state:'potential',detectedAt:1,evidenceStart:1}),
+  RK.makeEvidence({id:'sp2-p',model:'support',kind:'transition',entityId:'sp2',index:2,state:'potential',detectedAt:2,evidenceStart:2}),
+  RK.makeEvidence({id:'sp1-c',model:'support',kind:'transition',entityId:'sp1',index:3,state:'candidate',detectedAt:3,evidenceStart:1}),
+  RK.makeEvidence({id:'sp2-b',model:'support',kind:'transition',entityId:'sp2',index:4,state:'broken',detectedAt:4,evidenceStart:2}),
+  RK.makeEvidence({id:'sp1-v',model:'support',kind:'transition',entityId:'sp1',index:5,state:'validated',detectedAt:5,evidenceStart:1}),
+  RK.makeEvidence({id:'mc1-c',model:'macro',kind:'transition',entityId:'mc1',index:6,state:'candidate',detectedAt:6,evidenceStart:6}),
+  RK.makeEvidence({id:'mc1-a',model:'macro',kind:'transition',entityId:'mc1',index:8,state:'confirmed',detectedAt:8,evidenceStart:6}),
+  RK.makeEvidence({id:'sp1-b',model:'support',kind:'transition',entityId:'sp1',index:9,state:'broken',detectedAt:9,evidenceStart:1}),
+  RK.makeEvidence({id:'echo10',model:'echo',kind:'observation',entityId:'echo10',index:10,state:'strong',detectedAt:10,evidenceStart:4}),
+  RK.makeEvidence({id:'astro20',model:'astro',kind:'projection',entityId:'astro20',index:20,state:'upcoming',detectedAt:20,evidenceStart:20})
+];
+
+const life=RK.evaluateLifecycle(history);
+assert.equal(life.totalEntities,3);
+assert.equal(life.models.support.entities,2);
+assert.equal(life.models.support.resolvedEntities,2);
+assert.equal(life.models.support.medianResolvedLifetimeBars,5);
+assert.equal(life.models.support.states.potential.progressionRate,.5);
+assert.equal(life.models.support.states.potential.failureRate,.5);
+assert.equal(life.models.support.states.candidate.progressionRate,1);
+assert.equal(life.models.macro.states.candidate.progressionRate,1);
+assert.equal(life.models.macro.openEntities,1);
+assert.equal(life.models.support.transitions['potential→candidate'].n,1);
+assert.equal(life.models.support.transitions['candidate→validated'].medianBars,2);
+
+const fullEval=RK.evaluateTimeline(evalData,history,{horizons:[3,5,10,20],knownThrough:15});
+assert.deepEqual(fullEval.horizons,[3,5,10,20]);
+assert.equal(fullEval.totalEvidence,10);
+assert.equal(fullEval.evaluatedEvidence,9,'projection must be excluded from default market outcome evaluation');
+assert.equal(fullEval.excludedEvidence,1);
+assert.equal(fullEval.models.support.states.potential.count,2);
+assert.equal(fullEval.models.support.states.potential.horizons[3].n,2);
+assert.equal(fullEval.models.echo.states.strong.horizons[5].n,1);
+assert.equal(fullEval.models.echo.states.strong.horizons[10].n,0);
+assert.equal(fullEval.models.echo.states.strong.horizons[10].incomplete,1);
+assert(fullEval.models.support.states.candidate.horizons[3].medianReturn>0);
+assert.equal(fullEval.lifecycle.models.support.states.potential.progressionRate,.5);
+
+const filtered=RK.filterTimeline(history,{model:'support',state:'candidate'});
+assert.equal(filtered.length,1);
+const supportCandidate=RK.evaluateHorizonSet(evalData,filtered,[3,5],15);
+assert.equal(supportCandidate[3].n,1);
+assert.equal(supportCandidate[5].n,1);
 
 console.log('research-kernel.test.js: OK');
