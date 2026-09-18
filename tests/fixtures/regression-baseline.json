@@ -1,0 +1,2817 @@
+{
+  "schemaVersion": 1,
+  "fixtures": {
+    "taiex_1d_fixed": {
+      "name": "taiex_1d_fixed",
+      "market": "TWII",
+      "timeframe": "1d",
+      "bars": 1200,
+      "start": 1633996800,
+      "end": 1789603200,
+      "parameterFingerprint": "fnv1a-a3639b6b",
+      "evidenceTotal": 1473,
+      "evidenceSummary": {
+        "astro": {
+          "total": 945,
+          "states": {
+            "event": 944,
+            "upcoming": 1
+          },
+          "kinds": {
+            "event": 944,
+            "projection": 1
+          }
+        },
+        "support": {
+          "total": 198,
+          "states": {
+            "potential": 61,
+            "broken": 43,
+            "candidate": 55,
+            "validated": 39
+          },
+          "kinds": {
+            "transition": 198
+          }
+        },
+        "field": {
+          "total": 87,
+          "states": {
+            "forming": 33,
+            "active": 17,
+            "broken": 17,
+            "seed": 20
+          },
+          "kinds": {
+            "transition": 87
+          }
+        },
+        "echo": {
+          "total": 143,
+          "states": {
+            "weak": 142,
+            "strong": 1
+          },
+          "kinds": {
+            "observation": 143
+          }
+        },
+        "basin": {
+          "total": 70,
+          "states": {
+            "forming": 40,
+            "landing": 30
+          },
+          "kinds": {
+            "transition": 70
+          }
+        },
+        "sweep": {
+          "total": 14,
+          "states": {
+            "event": 14
+          },
+          "kinds": {
+            "event": 14
+          }
+        },
+        "macro": {
+          "total": 16,
+          "states": {
+            "candidate": 7,
+            "broken": 6,
+            "active": 3
+          },
+          "kinds": {
+            "transition": 16
+          }
+        }
+      },
+      "lifecycle": {
+        "support": {
+          "entities": 61,
+          "resolvedEntities": 43,
+          "openEntities": 18,
+          "medianResolvedLifetimeBars": 10,
+          "terminalStates": {
+            "broken": 43
+          },
+          "states": {
+            "potential": {
+              "occurrences": 61,
+              "unresolvedNext": 1,
+              "progressed": 55,
+              "failedBeforeProgress": 5,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 1,
+              "progressionRate": 0.91666667,
+              "failureRate": 0.08333333,
+              "medianBarsToProgression": 1
+            },
+            "broken": {
+              "occurrences": 43,
+              "unresolvedNext": 43,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            },
+            "candidate": {
+              "occurrences": 55,
+              "unresolvedNext": 9,
+              "progressed": 39,
+              "failedBeforeProgress": 7,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 9,
+              "progressionRate": 0.84782609,
+              "failureRate": 0.15217391,
+              "medianBarsToProgression": 3
+            },
+            "validated": {
+              "occurrences": 39,
+              "unresolvedNext": 8,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            }
+          },
+          "transitions": {
+            "potential→broken": {
+              "n": 5,
+              "rateFromState": 0.08333333,
+              "medianBars": 1
+            },
+            "potential→candidate": {
+              "n": 55,
+              "rateFromState": 0.91666667,
+              "medianBars": 1
+            },
+            "candidate→validated": {
+              "n": 39,
+              "rateFromState": 0.84782609,
+              "medianBars": 3
+            },
+            "validated→broken": {
+              "n": 31,
+              "rateFromState": 1,
+              "medianBars": 6
+            },
+            "candidate→broken": {
+              "n": 7,
+              "rateFromState": 0.15217391,
+              "medianBars": 2
+            }
+          }
+        },
+        "field": {
+          "entities": 55,
+          "resolvedEntities": 17,
+          "openEntities": 38,
+          "medianResolvedLifetimeBars": 4,
+          "terminalStates": {
+            "broken": 17
+          },
+          "states": {
+            "forming": {
+              "occurrences": 33,
+              "unresolvedNext": 24,
+              "progressed": 3,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 30,
+              "progressionRate": 1,
+              "failureRate": 0,
+              "medianBarsToProgression": 1
+            },
+            "active": {
+              "occurrences": 17,
+              "unresolvedNext": 0,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            },
+            "broken": {
+              "occurrences": 17,
+              "unresolvedNext": 17,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            },
+            "seed": {
+              "occurrences": 20,
+              "unresolvedNext": 14,
+              "progressed": 6,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 14,
+              "progressionRate": 1,
+              "failureRate": 0,
+              "medianBarsToProgression": 1
+            }
+          },
+          "transitions": {
+            "forming→active": {
+              "n": 3,
+              "rateFromState": 0.33333333,
+              "medianBars": 1
+            },
+            "active→broken": {
+              "n": 17,
+              "rateFromState": 1,
+              "medianBars": 3
+            },
+            "seed→forming": {
+              "n": 5,
+              "rateFromState": 0.83333333,
+              "medianBars": 1
+            },
+            "forming→seed": {
+              "n": 6,
+              "rateFromState": 0.66666667,
+              "medianBars": 1
+            },
+            "seed→active": {
+              "n": 1,
+              "rateFromState": 0.16666667,
+              "medianBars": 2
+            }
+          }
+        },
+        "basin": {
+          "entities": 36,
+          "resolvedEntities": 0,
+          "openEntities": 36,
+          "medianResolvedLifetimeBars": null,
+          "terminalStates": {},
+          "states": {
+            "forming": {
+              "occurrences": 40,
+              "unresolvedNext": 23,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 40,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            },
+            "landing": {
+              "occurrences": 30,
+              "unresolvedNext": 13,
+              "progressed": 17,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 13,
+              "progressionRate": 1,
+              "failureRate": 0,
+              "medianBarsToProgression": 3
+            }
+          },
+          "transitions": {
+            "landing→forming": {
+              "n": 17,
+              "rateFromState": 1,
+              "medianBars": 3
+            },
+            "forming→landing": {
+              "n": 17,
+              "rateFromState": 1,
+              "medianBars": 2
+            }
+          }
+        },
+        "macro": {
+          "entities": 7,
+          "resolvedEntities": 6,
+          "openEntities": 1,
+          "medianResolvedLifetimeBars": 5.5,
+          "terminalStates": {
+            "broken": 6
+          },
+          "states": {
+            "candidate": {
+              "occurrences": 7,
+              "unresolvedNext": 0,
+              "progressed": 3,
+              "failedBeforeProgress": 4,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": 0.42857143,
+              "failureRate": 0.57142857,
+              "medianBarsToProgression": 1
+            },
+            "broken": {
+              "occurrences": 6,
+              "unresolvedNext": 6,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            },
+            "active": {
+              "occurrences": 3,
+              "unresolvedNext": 1,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            }
+          },
+          "transitions": {
+            "candidate→broken": {
+              "n": 4,
+              "rateFromState": 0.57142857,
+              "medianBars": 2
+            },
+            "candidate→active": {
+              "n": 3,
+              "rateFromState": 0.42857143,
+              "medianBars": 1
+            },
+            "active→broken": {
+              "n": 2,
+              "rateFromState": 1,
+              "medianBars": 29.5
+            }
+          }
+        }
+      },
+      "evaluation": {
+        "astro": {
+          "count": 944,
+          "states": {
+            "event": {
+              "count": 944,
+              "kinds": {
+                "event": 944
+              },
+              "horizons": {
+                "3": {
+                  "n": 942,
+                  "incomplete": 2,
+                  "upRate": 0.57643312,
+                  "downRate": 0.42356688,
+                  "flatRate": 0,
+                  "medianReturn": 0.00376324,
+                  "medianMFE": 0.01173514,
+                  "medianMAE": -0.00861564
+                },
+                "5": {
+                  "n": 940,
+                  "incomplete": 4,
+                  "upRate": 0.58085106,
+                  "downRate": 0.41914894,
+                  "flatRate": 0,
+                  "medianReturn": 0.00598085,
+                  "medianMFE": 0.01625046,
+                  "medianMAE": -0.0115325
+                },
+                "10": {
+                  "n": 936,
+                  "incomplete": 8,
+                  "upRate": 0.61004274,
+                  "downRate": 0.38995726,
+                  "flatRate": 0,
+                  "medianReturn": 0.00975435,
+                  "medianMFE": 0.02465443,
+                  "medianMAE": -0.01726127
+                },
+                "20": {
+                  "n": 929,
+                  "incomplete": 15,
+                  "upRate": 0.63401507,
+                  "downRate": 0.36598493,
+                  "flatRate": 0,
+                  "medianReturn": 0.01819064,
+                  "medianMFE": 0.03892724,
+                  "medianMAE": -0.02549125
+                }
+              }
+            }
+          }
+        },
+        "support": {
+          "count": 198,
+          "states": {
+            "potential": {
+              "count": 61,
+              "kinds": {
+                "transition": 61
+              },
+              "horizons": {
+                "3": {
+                  "n": 61,
+                  "incomplete": 0,
+                  "upRate": 0.62295082,
+                  "downRate": 0.37704918,
+                  "flatRate": 0,
+                  "medianReturn": 0.00683159,
+                  "medianMFE": 0.01427285,
+                  "medianMAE": -0.00807103
+                },
+                "5": {
+                  "n": 60,
+                  "incomplete": 1,
+                  "upRate": 0.75,
+                  "downRate": 0.25,
+                  "flatRate": 0,
+                  "medianReturn": 0.01165643,
+                  "medianMFE": 0.02018087,
+                  "medianMAE": -0.01011947
+                },
+                "10": {
+                  "n": 60,
+                  "incomplete": 1,
+                  "upRate": 0.61666667,
+                  "downRate": 0.38333333,
+                  "flatRate": 0,
+                  "medianReturn": 0.01259627,
+                  "medianMFE": 0.03078077,
+                  "medianMAE": -0.01746721
+                },
+                "20": {
+                  "n": 60,
+                  "incomplete": 1,
+                  "upRate": 0.7,
+                  "downRate": 0.3,
+                  "flatRate": 0,
+                  "medianReturn": 0.02012095,
+                  "medianMFE": 0.04745662,
+                  "medianMAE": -0.02251479
+                }
+              }
+            },
+            "broken": {
+              "count": 43,
+              "kinds": {
+                "transition": 43
+              },
+              "horizons": {
+                "3": {
+                  "n": 43,
+                  "incomplete": 0,
+                  "upRate": 0.53488372,
+                  "downRate": 0.46511628,
+                  "flatRate": 0,
+                  "medianReturn": 0.00245058,
+                  "medianMFE": 0.01787173,
+                  "medianMAE": -0.01346005
+                },
+                "5": {
+                  "n": 43,
+                  "incomplete": 0,
+                  "upRate": 0.6744186,
+                  "downRate": 0.3255814,
+                  "flatRate": 0,
+                  "medianReturn": 0.01117848,
+                  "medianMFE": 0.02370549,
+                  "medianMAE": -0.01584776
+                },
+                "10": {
+                  "n": 43,
+                  "incomplete": 0,
+                  "upRate": 0.60465116,
+                  "downRate": 0.39534884,
+                  "flatRate": 0,
+                  "medianReturn": 0.00610888,
+                  "medianMFE": 0.02762501,
+                  "medianMAE": -0.0222456
+                },
+                "20": {
+                  "n": 43,
+                  "incomplete": 0,
+                  "upRate": 0.6744186,
+                  "downRate": 0.3255814,
+                  "flatRate": 0,
+                  "medianReturn": 0.02391299,
+                  "medianMFE": 0.04262358,
+                  "medianMAE": -0.0240944
+                }
+              }
+            },
+            "candidate": {
+              "count": 55,
+              "kinds": {
+                "transition": 55
+              },
+              "horizons": {
+                "3": {
+                  "n": 55,
+                  "incomplete": 0,
+                  "upRate": 0.63636364,
+                  "downRate": 0.36363636,
+                  "flatRate": 0,
+                  "medianReturn": 0.00559934,
+                  "medianMFE": 0.01261693,
+                  "medianMAE": -0.00824886
+                },
+                "5": {
+                  "n": 55,
+                  "incomplete": 0,
+                  "upRate": 0.61818182,
+                  "downRate": 0.38181818,
+                  "flatRate": 0,
+                  "medianReturn": 0.00808034,
+                  "medianMFE": 0.01983723,
+                  "medianMAE": -0.01155592
+                },
+                "10": {
+                  "n": 55,
+                  "incomplete": 0,
+                  "upRate": 0.65454545,
+                  "downRate": 0.34545455,
+                  "flatRate": 0,
+                  "medianReturn": 0.01026142,
+                  "medianMFE": 0.02537418,
+                  "medianMAE": -0.01901797
+                },
+                "20": {
+                  "n": 55,
+                  "incomplete": 0,
+                  "upRate": 0.67272727,
+                  "downRate": 0.32727273,
+                  "flatRate": 0,
+                  "medianReturn": 0.02267675,
+                  "medianMFE": 0.04453853,
+                  "medianMAE": -0.02339216
+                }
+              }
+            },
+            "validated": {
+              "count": 39,
+              "kinds": {
+                "transition": 39
+              },
+              "horizons": {
+                "3": {
+                  "n": 39,
+                  "incomplete": 0,
+                  "upRate": 0.53846154,
+                  "downRate": 0.46153846,
+                  "flatRate": 0,
+                  "medianReturn": 0.00643729,
+                  "medianMFE": 0.0130427,
+                  "medianMAE": -0.01067363
+                },
+                "5": {
+                  "n": 39,
+                  "incomplete": 0,
+                  "upRate": 0.53846154,
+                  "downRate": 0.46153846,
+                  "flatRate": 0,
+                  "medianReturn": 0.00491013,
+                  "medianMFE": 0.01744838,
+                  "medianMAE": -0.01584776
+                },
+                "10": {
+                  "n": 39,
+                  "incomplete": 0,
+                  "upRate": 0.56410256,
+                  "downRate": 0.43589744,
+                  "flatRate": 0,
+                  "medianReturn": 0.01108575,
+                  "medianMFE": 0.02580541,
+                  "medianMAE": -0.02242115
+                },
+                "20": {
+                  "n": 38,
+                  "incomplete": 1,
+                  "upRate": 0.63157895,
+                  "downRate": 0.36842105,
+                  "flatRate": 0,
+                  "medianReturn": 0.01254022,
+                  "medianMFE": 0.0394882,
+                  "medianMAE": -0.02719489
+                }
+              }
+            }
+          }
+        },
+        "field": {
+          "count": 87,
+          "states": {
+            "forming": {
+              "count": 33,
+              "kinds": {
+                "transition": 33
+              },
+              "horizons": {
+                "3": {
+                  "n": 32,
+                  "incomplete": 1,
+                  "upRate": 0.65625,
+                  "downRate": 0.34375,
+                  "flatRate": 0,
+                  "medianReturn": 0.00563345,
+                  "medianMFE": 0.01334924,
+                  "medianMAE": -0.00618165
+                },
+                "5": {
+                  "n": 32,
+                  "incomplete": 1,
+                  "upRate": 0.59375,
+                  "downRate": 0.40625,
+                  "flatRate": 0,
+                  "medianReturn": 0.00521721,
+                  "medianMFE": 0.0183746,
+                  "medianMAE": -0.00763539
+                },
+                "10": {
+                  "n": 32,
+                  "incomplete": 1,
+                  "upRate": 0.53125,
+                  "downRate": 0.46875,
+                  "flatRate": 0,
+                  "medianReturn": 0.00560038,
+                  "medianMFE": 0.02342063,
+                  "medianMAE": -0.01685172
+                },
+                "20": {
+                  "n": 31,
+                  "incomplete": 2,
+                  "upRate": 0.64516129,
+                  "downRate": 0.35483871,
+                  "flatRate": 0,
+                  "medianReturn": 0.01376201,
+                  "medianMFE": 0.03545853,
+                  "medianMAE": -0.0292425
+                }
+              }
+            },
+            "active": {
+              "count": 17,
+              "kinds": {
+                "transition": 17
+              },
+              "horizons": {
+                "3": {
+                  "n": 17,
+                  "incomplete": 0,
+                  "upRate": 0.52941176,
+                  "downRate": 0.47058824,
+                  "flatRate": 0,
+                  "medianReturn": 0.00476925,
+                  "medianMFE": 0.00954328,
+                  "medianMAE": -0.00844552
+                },
+                "5": {
+                  "n": 17,
+                  "incomplete": 0,
+                  "upRate": 0.70588235,
+                  "downRate": 0.29411765,
+                  "flatRate": 0,
+                  "medianReturn": 0.0109088,
+                  "medianMFE": 0.01892296,
+                  "medianMAE": -0.00892892
+                },
+                "10": {
+                  "n": 17,
+                  "incomplete": 0,
+                  "upRate": 0.70588235,
+                  "downRate": 0.29411765,
+                  "flatRate": 0,
+                  "medianReturn": 0.0071352,
+                  "medianMFE": 0.02615031,
+                  "medianMAE": -0.01356191
+                },
+                "20": {
+                  "n": 17,
+                  "incomplete": 0,
+                  "upRate": 0.70588235,
+                  "downRate": 0.29411765,
+                  "flatRate": 0,
+                  "medianReturn": 0.01946669,
+                  "medianMFE": 0.03356313,
+                  "medianMAE": -0.01637346
+                }
+              }
+            },
+            "broken": {
+              "count": 17,
+              "kinds": {
+                "transition": 17
+              },
+              "horizons": {
+                "3": {
+                  "n": 17,
+                  "incomplete": 0,
+                  "upRate": 0.52941176,
+                  "downRate": 0.47058824,
+                  "flatRate": 0,
+                  "medianReturn": 0.00588709,
+                  "medianMFE": 0.012332,
+                  "medianMAE": -0.0109207
+                },
+                "5": {
+                  "n": 17,
+                  "incomplete": 0,
+                  "upRate": 0.64705882,
+                  "downRate": 0.35294118,
+                  "flatRate": 0,
+                  "medianReturn": 0.01168736,
+                  "medianMFE": 0.0191646,
+                  "medianMAE": -0.01107383
+                },
+                "10": {
+                  "n": 17,
+                  "incomplete": 0,
+                  "upRate": 0.64705882,
+                  "downRate": 0.35294118,
+                  "flatRate": 0,
+                  "medianReturn": 0.01660149,
+                  "medianMFE": 0.02988104,
+                  "medianMAE": -0.01107383
+                },
+                "20": {
+                  "n": 17,
+                  "incomplete": 0,
+                  "upRate": 0.64705882,
+                  "downRate": 0.35294118,
+                  "flatRate": 0,
+                  "medianReturn": 0.01581981,
+                  "medianMFE": 0.03623908,
+                  "medianMAE": -0.01216135
+                }
+              }
+            },
+            "seed": {
+              "count": 20,
+              "kinds": {
+                "transition": 20
+              },
+              "horizons": {
+                "3": {
+                  "n": 20,
+                  "incomplete": 0,
+                  "upRate": 0.65,
+                  "downRate": 0.35,
+                  "flatRate": 0,
+                  "medianReturn": 0.01176412,
+                  "medianMFE": 0.01945469,
+                  "medianMAE": -0.00818951
+                },
+                "5": {
+                  "n": 20,
+                  "incomplete": 0,
+                  "upRate": 0.6,
+                  "downRate": 0.4,
+                  "flatRate": 0,
+                  "medianReturn": 0.00555625,
+                  "medianMFE": 0.01945469,
+                  "medianMAE": -0.01120378
+                },
+                "10": {
+                  "n": 20,
+                  "incomplete": 0,
+                  "upRate": 0.6,
+                  "downRate": 0.4,
+                  "flatRate": 0,
+                  "medianReturn": 0.0127263,
+                  "medianMFE": 0.02481715,
+                  "medianMAE": -0.01871622
+                },
+                "20": {
+                  "n": 19,
+                  "incomplete": 1,
+                  "upRate": 0.57894737,
+                  "downRate": 0.42105263,
+                  "flatRate": 0,
+                  "medianReturn": 0.00699085,
+                  "medianMFE": 0.03903599,
+                  "medianMAE": -0.02701617
+                }
+              }
+            }
+          }
+        },
+        "echo": {
+          "count": 143,
+          "states": {
+            "weak": {
+              "count": 142,
+              "kinds": {
+                "observation": 142
+              },
+              "horizons": {
+                "3": {
+                  "n": 141,
+                  "incomplete": 1,
+                  "upRate": 0.59574468,
+                  "downRate": 0.40425532,
+                  "flatRate": 0,
+                  "medianReturn": 0.00553279,
+                  "medianMFE": 0.01207275,
+                  "medianMAE": -0.00960997
+                },
+                "5": {
+                  "n": 141,
+                  "incomplete": 1,
+                  "upRate": 0.57446809,
+                  "downRate": 0.42553191,
+                  "flatRate": 0,
+                  "medianReturn": 0.00550384,
+                  "medianMFE": 0.01664772,
+                  "medianMAE": -0.01129261
+                },
+                "10": {
+                  "n": 140,
+                  "incomplete": 2,
+                  "upRate": 0.58571429,
+                  "downRate": 0.41428571,
+                  "flatRate": 0,
+                  "medianReturn": 0.008498,
+                  "medianMFE": 0.02541165,
+                  "medianMAE": -0.01769542
+                },
+                "20": {
+                  "n": 139,
+                  "incomplete": 3,
+                  "upRate": 0.64748201,
+                  "downRate": 0.35251799,
+                  "flatRate": 0,
+                  "medianReturn": 0.01624266,
+                  "medianMFE": 0.03774162,
+                  "medianMAE": -0.02507416
+                }
+              }
+            },
+            "strong": {
+              "count": 1,
+              "kinds": {
+                "observation": 1
+              },
+              "horizons": {
+                "3": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 0,
+                  "downRate": 1,
+                  "flatRate": 0,
+                  "medianReturn": -0.02796874,
+                  "medianMFE": -0.00185899,
+                  "medianMAE": -0.02927404
+                },
+                "5": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.02661031,
+                  "medianMFE": 0.02878733,
+                  "medianMAE": -0.02927404
+                },
+                "10": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.08647991,
+                  "medianMFE": 0.0918512,
+                  "medianMAE": -0.02927404
+                },
+                "20": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.07278377,
+                  "medianMFE": 0.13066535,
+                  "medianMAE": -0.02927404
+                }
+              }
+            }
+          }
+        },
+        "basin": {
+          "count": 70,
+          "states": {
+            "forming": {
+              "count": 40,
+              "kinds": {
+                "transition": 40
+              },
+              "horizons": {
+                "3": {
+                  "n": 40,
+                  "incomplete": 0,
+                  "upRate": 0.4,
+                  "downRate": 0.6,
+                  "flatRate": 0,
+                  "medianReturn": -0.00653291,
+                  "medianMFE": 0.00961294,
+                  "medianMAE": -0.01506978
+                },
+                "5": {
+                  "n": 40,
+                  "incomplete": 0,
+                  "upRate": 0.425,
+                  "downRate": 0.575,
+                  "flatRate": 0,
+                  "medianReturn": -0.0072807,
+                  "medianMFE": 0.01052716,
+                  "medianMAE": -0.0209368
+                },
+                "10": {
+                  "n": 40,
+                  "incomplete": 0,
+                  "upRate": 0.475,
+                  "downRate": 0.525,
+                  "flatRate": 0,
+                  "medianReturn": -0.00439684,
+                  "medianMFE": 0.01353046,
+                  "medianMAE": -0.03670415
+                },
+                "20": {
+                  "n": 40,
+                  "incomplete": 0,
+                  "upRate": 0.55,
+                  "downRate": 0.45,
+                  "flatRate": 0,
+                  "medianReturn": 0.00932405,
+                  "medianMFE": 0.03090075,
+                  "medianMAE": -0.04298483
+                }
+              }
+            },
+            "landing": {
+              "count": 30,
+              "kinds": {
+                "transition": 30
+              },
+              "horizons": {
+                "3": {
+                  "n": 30,
+                  "incomplete": 0,
+                  "upRate": 0.53333333,
+                  "downRate": 0.46666667,
+                  "flatRate": 0,
+                  "medianReturn": 0.00425973,
+                  "medianMFE": 0.0116874,
+                  "medianMAE": -0.01842888
+                },
+                "5": {
+                  "n": 30,
+                  "incomplete": 0,
+                  "upRate": 0.43333333,
+                  "downRate": 0.56666667,
+                  "flatRate": 0,
+                  "medianReturn": -0.00051515,
+                  "medianMFE": 0.01770374,
+                  "medianMAE": -0.01980495
+                },
+                "10": {
+                  "n": 30,
+                  "incomplete": 0,
+                  "upRate": 0.5,
+                  "downRate": 0.5,
+                  "flatRate": 0,
+                  "medianReturn": -0.00148875,
+                  "medianMFE": 0.02172369,
+                  "medianMAE": -0.02728413
+                },
+                "20": {
+                  "n": 30,
+                  "incomplete": 0,
+                  "upRate": 0.6,
+                  "downRate": 0.4,
+                  "flatRate": 0,
+                  "medianReturn": 0.00816734,
+                  "medianMFE": 0.04390649,
+                  "medianMAE": -0.03540451
+                }
+              }
+            }
+          }
+        },
+        "sweep": {
+          "count": 14,
+          "states": {
+            "event": {
+              "count": 14,
+              "kinds": {
+                "event": 14
+              },
+              "horizons": {
+                "3": {
+                  "n": 14,
+                  "incomplete": 0,
+                  "upRate": 0.28571429,
+                  "downRate": 0.71428571,
+                  "flatRate": 0,
+                  "medianReturn": -0.00437792,
+                  "medianMFE": 0.01178924,
+                  "medianMAE": -0.01277245
+                },
+                "5": {
+                  "n": 14,
+                  "incomplete": 0,
+                  "upRate": 0.5,
+                  "downRate": 0.5,
+                  "flatRate": 0,
+                  "medianReturn": 0.00339148,
+                  "medianMFE": 0.01461981,
+                  "medianMAE": -0.02246302
+                },
+                "10": {
+                  "n": 14,
+                  "incomplete": 0,
+                  "upRate": 0.71428571,
+                  "downRate": 0.28571429,
+                  "flatRate": 0,
+                  "medianReturn": 0.01832091,
+                  "medianMFE": 0.02319632,
+                  "medianMAE": -0.02246302
+                },
+                "20": {
+                  "n": 14,
+                  "incomplete": 0,
+                  "upRate": 0.78571429,
+                  "downRate": 0.21428571,
+                  "flatRate": 0,
+                  "medianReturn": 0.02663183,
+                  "medianMFE": 0.04723307,
+                  "medianMAE": -0.02246302
+                }
+              }
+            }
+          }
+        },
+        "macro": {
+          "count": 16,
+          "states": {
+            "candidate": {
+              "count": 7,
+              "kinds": {
+                "transition": 7
+              },
+              "horizons": {
+                "3": {
+                  "n": 7,
+                  "incomplete": 0,
+                  "upRate": 0.28571429,
+                  "downRate": 0.71428571,
+                  "flatRate": 0,
+                  "medianReturn": -0.01229682,
+                  "medianMFE": 0.01375455,
+                  "medianMAE": -0.02492981
+                },
+                "5": {
+                  "n": 7,
+                  "incomplete": 0,
+                  "upRate": 0.71428571,
+                  "downRate": 0.28571429,
+                  "flatRate": 0,
+                  "medianReturn": 0.00846751,
+                  "medianMFE": 0.01507717,
+                  "medianMAE": -0.02727939
+                },
+                "10": {
+                  "n": 7,
+                  "incomplete": 0,
+                  "upRate": 0.57142857,
+                  "downRate": 0.42857143,
+                  "flatRate": 0,
+                  "medianReturn": 0.0144697,
+                  "medianMFE": 0.0323739,
+                  "medianMAE": -0.03453493
+                },
+                "20": {
+                  "n": 7,
+                  "incomplete": 0,
+                  "upRate": 0.85714286,
+                  "downRate": 0.14285714,
+                  "flatRate": 0,
+                  "medianReturn": 0.04262358,
+                  "medianMFE": 0.04825947,
+                  "medianMAE": -0.03453493
+                }
+              }
+            },
+            "broken": {
+              "count": 6,
+              "kinds": {
+                "transition": 6
+              },
+              "horizons": {
+                "3": {
+                  "n": 6,
+                  "incomplete": 0,
+                  "upRate": 0.66666667,
+                  "downRate": 0.33333333,
+                  "flatRate": 0,
+                  "medianReturn": 0.00567057,
+                  "medianMFE": 0.01825409,
+                  "medianMAE": -0.0083589
+                },
+                "5": {
+                  "n": 6,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.02457778,
+                  "medianMFE": 0.03185001,
+                  "medianMAE": -0.00918338
+                },
+                "10": {
+                  "n": 6,
+                  "incomplete": 0,
+                  "upRate": 0.66666667,
+                  "downRate": 0.33333333,
+                  "flatRate": 0,
+                  "medianReturn": 0.03396644,
+                  "medianMFE": 0.04473278,
+                  "medianMAE": -0.01647913
+                },
+                "20": {
+                  "n": 6,
+                  "incomplete": 0,
+                  "upRate": 0.83333333,
+                  "downRate": 0.16666667,
+                  "flatRate": 0,
+                  "medianReturn": 0.05120018,
+                  "medianMFE": 0.06166,
+                  "medianMAE": -0.01647913
+                }
+              }
+            },
+            "active": {
+              "count": 3,
+              "kinds": {
+                "transition": 3
+              },
+              "horizons": {
+                "3": {
+                  "n": 3,
+                  "incomplete": 0,
+                  "upRate": 0.33333333,
+                  "downRate": 0.66666667,
+                  "flatRate": 0,
+                  "medianReturn": -0.00966852,
+                  "medianMFE": 0.00418265,
+                  "medianMAE": -0.03704718
+                },
+                "5": {
+                  "n": 3,
+                  "incomplete": 0,
+                  "upRate": 0.66666667,
+                  "downRate": 0.33333333,
+                  "flatRate": 0,
+                  "medianReturn": 0.00595179,
+                  "medianMFE": 0.00796432,
+                  "medianMAE": -0.03704718
+                },
+                "10": {
+                  "n": 3,
+                  "incomplete": 0,
+                  "upRate": 0.66666667,
+                  "downRate": 0.33333333,
+                  "flatRate": 0,
+                  "medianReturn": 0.02519897,
+                  "medianMFE": 0.03675957,
+                  "medianMAE": -0.03704718
+                },
+                "20": {
+                  "n": 3,
+                  "incomplete": 0,
+                  "upRate": 0.66666667,
+                  "downRate": 0.33333333,
+                  "flatRate": 0,
+                  "medianReturn": 0.03951112,
+                  "medianMFE": 0.03988238,
+                  "medianMAE": -0.03704718
+                }
+              }
+            }
+          }
+        }
+      },
+      "anchors": {
+        "astro": [
+          {
+            "id": "astro:0:event",
+            "state": "event",
+            "kind": "event",
+            "index": 0,
+            "detectedAt": 0,
+            "evidenceStart": 0
+          },
+          {
+            "id": "astro:1:event",
+            "state": "event",
+            "kind": "event",
+            "index": 1,
+            "detectedAt": 1,
+            "evidenceStart": 1
+          },
+          {
+            "id": "astro:1198:event",
+            "state": "event",
+            "kind": "event",
+            "index": 1198,
+            "detectedAt": 1198,
+            "evidenceStart": 1198
+          },
+          {
+            "id": "astro:1199:upcoming",
+            "state": "upcoming",
+            "kind": "projection",
+            "index": 1199,
+            "detectedAt": 1199,
+            "evidenceStart": 1199
+          }
+        ],
+        "support": [
+          {
+            "id": "support:31:potential:31",
+            "state": "potential",
+            "kind": "transition",
+            "index": 31,
+            "detectedAt": 31,
+            "evidenceStart": 31
+          },
+          {
+            "id": "support:31:broken:33",
+            "state": "broken",
+            "kind": "transition",
+            "index": 33,
+            "detectedAt": 33,
+            "evidenceStart": 31
+          },
+          {
+            "id": "support:1178:validated:1180",
+            "state": "validated",
+            "kind": "transition",
+            "index": 1180,
+            "detectedAt": 1180,
+            "evidenceStart": 1178
+          },
+          {
+            "id": "support:1195:potential:1195",
+            "state": "potential",
+            "kind": "transition",
+            "index": 1195,
+            "detectedAt": 1195,
+            "evidenceStart": 1195
+          }
+        ],
+        "field": [
+          {
+            "id": "field:42:forming:42",
+            "state": "forming",
+            "kind": "transition",
+            "index": 42,
+            "detectedAt": 42,
+            "evidenceStart": 19
+          },
+          {
+            "id": "field:49:forming:49",
+            "state": "forming",
+            "kind": "transition",
+            "index": 49,
+            "detectedAt": 49,
+            "evidenceStart": 14
+          },
+          {
+            "id": "field:1188:forming:1189",
+            "state": "forming",
+            "kind": "transition",
+            "index": 1189,
+            "detectedAt": 1189,
+            "evidenceStart": 1153
+          },
+          {
+            "id": "field:1199:forming:1199",
+            "state": "forming",
+            "kind": "transition",
+            "index": 1199,
+            "detectedAt": 1199,
+            "evidenceStart": 1148
+          }
+        ],
+        "echo": [
+          {
+            "id": "echo:64:observation",
+            "state": "weak",
+            "kind": "observation",
+            "index": 64,
+            "detectedAt": 64,
+            "evidenceStart": 33
+          },
+          {
+            "id": "echo:72:observation",
+            "state": "weak",
+            "kind": "observation",
+            "index": 72,
+            "detectedAt": 72,
+            "evidenceStart": 41
+          },
+          {
+            "id": "echo:1192:observation",
+            "state": "weak",
+            "kind": "observation",
+            "index": 1192,
+            "detectedAt": 1192,
+            "evidenceStart": 1161
+          },
+          {
+            "id": "echo:1199:observation",
+            "state": "weak",
+            "kind": "observation",
+            "index": 1199,
+            "detectedAt": 1199,
+            "evidenceStart": 1168
+          }
+        ],
+        "basin": [
+          {
+            "id": "basin:122:forming:122",
+            "state": "forming",
+            "kind": "transition",
+            "index": 122,
+            "detectedAt": 122,
+            "evidenceStart": 117
+          },
+          {
+            "id": "basin:126:forming:126",
+            "state": "forming",
+            "kind": "transition",
+            "index": 126,
+            "detectedAt": 126,
+            "evidenceStart": 118
+          },
+          {
+            "id": "basin:882:forming:882",
+            "state": "forming",
+            "kind": "transition",
+            "index": 882,
+            "detectedAt": 882,
+            "evidenceStart": 877
+          },
+          {
+            "id": "basin:1165:landing:1165",
+            "state": "landing",
+            "kind": "transition",
+            "index": 1165,
+            "detectedAt": 1165,
+            "evidenceStart": 1162
+          }
+        ],
+        "sweep": [
+          {
+            "id": "sweep:138",
+            "state": "event",
+            "kind": "event",
+            "index": 138,
+            "detectedAt": 138,
+            "evidenceStart": 138
+          },
+          {
+            "id": "sweep:177",
+            "state": "event",
+            "kind": "event",
+            "index": 177,
+            "detectedAt": 177,
+            "evidenceStart": 177
+          },
+          {
+            "id": "sweep:762",
+            "state": "event",
+            "kind": "event",
+            "index": 762,
+            "detectedAt": 762,
+            "evidenceStart": 762
+          },
+          {
+            "id": "sweep:820",
+            "state": "event",
+            "kind": "event",
+            "index": 820,
+            "detectedAt": 820,
+            "evidenceStart": 820
+          }
+        ],
+        "macro": [
+          {
+            "id": "macro:174:candidate:174",
+            "state": "candidate",
+            "kind": "transition",
+            "index": 174,
+            "detectedAt": 174,
+            "evidenceStart": 174
+          },
+          {
+            "id": "macro:174:failed:175",
+            "state": "broken",
+            "kind": "transition",
+            "index": 175,
+            "detectedAt": 175,
+            "evidenceStart": 174
+          },
+          {
+            "id": "macro:844:candidate:844",
+            "state": "candidate",
+            "kind": "transition",
+            "index": 844,
+            "detectedAt": 844,
+            "evidenceStart": 844
+          },
+          {
+            "id": "macro:844:confirmed:845",
+            "state": "active",
+            "kind": "transition",
+            "index": 845,
+            "detectedAt": 845,
+            "evidenceStart": 844
+          }
+        ]
+      }
+    },
+    "nasdaq_1d_fixed": {
+      "name": "nasdaq_1d_fixed",
+      "market": "IXIC",
+      "timeframe": "1d",
+      "bars": 1200,
+      "start": 1638835200,
+      "end": 1789689600,
+      "parameterFingerprint": "fnv1a-a3639b6b",
+      "evidenceTotal": 1476,
+      "evidenceSummary": {
+        "astro": {
+          "total": 946,
+          "states": {
+            "event": 945,
+            "upcoming": 1
+          },
+          "kinds": {
+            "event": 945,
+            "projection": 1
+          }
+        },
+        "support": {
+          "total": 181,
+          "states": {
+            "potential": 56,
+            "broken": 43,
+            "candidate": 47,
+            "validated": 35
+          },
+          "kinds": {
+            "transition": 181
+          }
+        },
+        "field": {
+          "total": 107,
+          "states": {
+            "forming": 32,
+            "active": 28,
+            "broken": 27,
+            "seed": 20
+          },
+          "kinds": {
+            "transition": 107
+          }
+        },
+        "basin": {
+          "total": 76,
+          "states": {
+            "landing": 39,
+            "forming": 37
+          },
+          "kinds": {
+            "transition": 76
+          }
+        },
+        "sweep": {
+          "total": 21,
+          "states": {
+            "event": 21
+          },
+          "kinds": {
+            "event": 21
+          }
+        },
+        "echo": {
+          "total": 143,
+          "states": {
+            "weak": 141,
+            "strong": 2
+          },
+          "kinds": {
+            "observation": 143
+          }
+        },
+        "macro": {
+          "total": 2,
+          "states": {
+            "candidate": 1,
+            "active": 1
+          },
+          "kinds": {
+            "transition": 2
+          }
+        }
+      },
+      "lifecycle": {
+        "support": {
+          "entities": 56,
+          "resolvedEntities": 43,
+          "openEntities": 13,
+          "medianResolvedLifetimeBars": 10,
+          "terminalStates": {
+            "broken": 43
+          },
+          "states": {
+            "potential": {
+              "occurrences": 56,
+              "unresolvedNext": 0,
+              "progressed": 47,
+              "failedBeforeProgress": 9,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": 0.83928571,
+              "failureRate": 0.16071429,
+              "medianBarsToProgression": 1
+            },
+            "broken": {
+              "occurrences": 43,
+              "unresolvedNext": 43,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            },
+            "candidate": {
+              "occurrences": 47,
+              "unresolvedNext": 6,
+              "progressed": 35,
+              "failedBeforeProgress": 6,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 6,
+              "progressionRate": 0.85365854,
+              "failureRate": 0.14634146,
+              "medianBarsToProgression": 3
+            },
+            "validated": {
+              "occurrences": 35,
+              "unresolvedNext": 7,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            }
+          },
+          "transitions": {
+            "potential→broken": {
+              "n": 9,
+              "rateFromState": 0.16071429,
+              "medianBars": 2
+            },
+            "potential→candidate": {
+              "n": 47,
+              "rateFromState": 0.83928571,
+              "medianBars": 1
+            },
+            "candidate→validated": {
+              "n": 35,
+              "rateFromState": 0.85365854,
+              "medianBars": 3
+            },
+            "validated→broken": {
+              "n": 28,
+              "rateFromState": 1,
+              "medianBars": 19.5
+            },
+            "candidate→broken": {
+              "n": 6,
+              "rateFromState": 0.14634146,
+              "medianBars": 1.5
+            }
+          }
+        },
+        "field": {
+          "entities": 56,
+          "resolvedEntities": 27,
+          "openEntities": 29,
+          "medianResolvedLifetimeBars": 9,
+          "terminalStates": {
+            "broken": 27
+          },
+          "states": {
+            "forming": {
+              "occurrences": 32,
+              "unresolvedNext": 15,
+              "progressed": 13,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 19,
+              "progressionRate": 1,
+              "failureRate": 0,
+              "medianBarsToProgression": 1
+            },
+            "active": {
+              "occurrences": 28,
+              "unresolvedNext": 1,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            },
+            "broken": {
+              "occurrences": 27,
+              "unresolvedNext": 27,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            },
+            "seed": {
+              "occurrences": 20,
+              "unresolvedNext": 13,
+              "progressed": 7,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 13,
+              "progressionRate": 1,
+              "failureRate": 0,
+              "medianBarsToProgression": 1
+            }
+          },
+          "transitions": {
+            "forming→active": {
+              "n": 13,
+              "rateFromState": 0.76470588,
+              "medianBars": 1
+            },
+            "active→broken": {
+              "n": 27,
+              "rateFromState": 1,
+              "medianBars": 8
+            },
+            "seed→forming": {
+              "n": 3,
+              "rateFromState": 0.42857143,
+              "medianBars": 1
+            },
+            "forming→seed": {
+              "n": 4,
+              "rateFromState": 0.23529412,
+              "medianBars": 3
+            },
+            "seed→active": {
+              "n": 4,
+              "rateFromState": 0.57142857,
+              "medianBars": 1
+            }
+          }
+        },
+        "basin": {
+          "entities": 26,
+          "resolvedEntities": 0,
+          "openEntities": 26,
+          "medianResolvedLifetimeBars": null,
+          "terminalStates": {},
+          "states": {
+            "landing": {
+              "occurrences": 39,
+              "unresolvedNext": 13,
+              "progressed": 26,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 13,
+              "progressionRate": 1,
+              "failureRate": 0,
+              "medianBarsToProgression": 3
+            },
+            "forming": {
+              "occurrences": 37,
+              "unresolvedNext": 13,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 37,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            }
+          },
+          "transitions": {
+            "landing→forming": {
+              "n": 26,
+              "rateFromState": 1,
+              "medianBars": 3
+            },
+            "forming→landing": {
+              "n": 24,
+              "rateFromState": 1,
+              "medianBars": 2
+            }
+          }
+        },
+        "macro": {
+          "entities": 1,
+          "resolvedEntities": 0,
+          "openEntities": 1,
+          "medianResolvedLifetimeBars": null,
+          "terminalStates": {},
+          "states": {
+            "candidate": {
+              "occurrences": 1,
+              "unresolvedNext": 0,
+              "progressed": 1,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": 1,
+              "failureRate": 0,
+              "medianBarsToProgression": 3
+            },
+            "active": {
+              "occurrences": 1,
+              "unresolvedNext": 1,
+              "progressed": 0,
+              "failedBeforeProgress": 0,
+              "endedBeforeProgress": 0,
+              "unresolvedProgress": 0,
+              "progressionRate": null,
+              "failureRate": null,
+              "medianBarsToProgression": null
+            }
+          },
+          "transitions": {
+            "candidate→active": {
+              "n": 1,
+              "rateFromState": 1,
+              "medianBars": 3
+            }
+          }
+        }
+      },
+      "evaluation": {
+        "astro": {
+          "count": 945,
+          "states": {
+            "event": {
+              "count": 945,
+              "kinds": {
+                "event": 945
+              },
+              "horizons": {
+                "3": {
+                  "n": 943,
+                  "incomplete": 2,
+                  "upRate": 0.5514316,
+                  "downRate": 0.4485684,
+                  "flatRate": 0,
+                  "medianReturn": 0.00299048,
+                  "medianMFE": 0.01316898,
+                  "medianMAE": -0.01257697
+                },
+                "5": {
+                  "n": 941,
+                  "incomplete": 4,
+                  "upRate": 0.5717322,
+                  "downRate": 0.4282678,
+                  "flatRate": 0,
+                  "medianReturn": 0.00521647,
+                  "medianMFE": 0.01772409,
+                  "medianMAE": -0.01762975
+                },
+                "10": {
+                  "n": 937,
+                  "incomplete": 8,
+                  "upRate": 0.58697972,
+                  "downRate": 0.41302028,
+                  "flatRate": 0,
+                  "medianReturn": 0.00842278,
+                  "medianMFE": 0.02608353,
+                  "medianMAE": -0.02364203
+                },
+                "20": {
+                  "n": 930,
+                  "incomplete": 15,
+                  "upRate": 0.6172043,
+                  "downRate": 0.3827957,
+                  "flatRate": 0,
+                  "medianReturn": 0.01611265,
+                  "medianMFE": 0.04120476,
+                  "medianMAE": -0.0320096
+                }
+              }
+            }
+          }
+        },
+        "support": {
+          "count": 181,
+          "states": {
+            "potential": {
+              "count": 56,
+              "kinds": {
+                "transition": 56
+              },
+              "horizons": {
+                "3": {
+                  "n": 56,
+                  "incomplete": 0,
+                  "upRate": 0.58928571,
+                  "downRate": 0.41071429,
+                  "flatRate": 0,
+                  "medianReturn": 0.00630377,
+                  "medianMFE": 0.0165537,
+                  "medianMAE": -0.01167738
+                },
+                "5": {
+                  "n": 56,
+                  "incomplete": 0,
+                  "upRate": 0.625,
+                  "downRate": 0.375,
+                  "flatRate": 0,
+                  "medianReturn": 0.00710609,
+                  "medianMFE": 0.0228703,
+                  "medianMAE": -0.01443746
+                },
+                "10": {
+                  "n": 56,
+                  "incomplete": 0,
+                  "upRate": 0.55357143,
+                  "downRate": 0.44642857,
+                  "flatRate": 0,
+                  "medianReturn": 0.00592873,
+                  "medianMFE": 0.0308515,
+                  "medianMAE": -0.02242286
+                },
+                "20": {
+                  "n": 56,
+                  "incomplete": 0,
+                  "upRate": 0.69642857,
+                  "downRate": 0.30357143,
+                  "flatRate": 0,
+                  "medianReturn": 0.02088067,
+                  "medianMFE": 0.04794414,
+                  "medianMAE": -0.03051009
+                }
+              }
+            },
+            "broken": {
+              "count": 43,
+              "kinds": {
+                "transition": 43
+              },
+              "horizons": {
+                "3": {
+                  "n": 43,
+                  "incomplete": 0,
+                  "upRate": 0.53488372,
+                  "downRate": 0.46511628,
+                  "flatRate": 0,
+                  "medianReturn": 0.00170394,
+                  "medianMFE": 0.02087623,
+                  "medianMAE": -0.01232122
+                },
+                "5": {
+                  "n": 43,
+                  "incomplete": 0,
+                  "upRate": 0.58139535,
+                  "downRate": 0.41860465,
+                  "flatRate": 0,
+                  "medianReturn": 0.00390107,
+                  "medianMFE": 0.02456385,
+                  "medianMAE": -0.0232192
+                },
+                "10": {
+                  "n": 43,
+                  "incomplete": 0,
+                  "upRate": 0.58139535,
+                  "downRate": 0.41860465,
+                  "flatRate": 0,
+                  "medianReturn": 0.01610942,
+                  "medianMFE": 0.03941426,
+                  "medianMAE": -0.02936804
+                },
+                "20": {
+                  "n": 43,
+                  "incomplete": 0,
+                  "upRate": 0.65116279,
+                  "downRate": 0.34883721,
+                  "flatRate": 0,
+                  "medianReturn": 0.02560065,
+                  "medianMFE": 0.05009342,
+                  "medianMAE": -0.04082925
+                }
+              }
+            },
+            "candidate": {
+              "count": 47,
+              "kinds": {
+                "transition": 47
+              },
+              "horizons": {
+                "3": {
+                  "n": 47,
+                  "incomplete": 0,
+                  "upRate": 0.65957447,
+                  "downRate": 0.34042553,
+                  "flatRate": 0,
+                  "medianReturn": 0.00848749,
+                  "medianMFE": 0.01509445,
+                  "medianMAE": -0.00879281
+                },
+                "5": {
+                  "n": 47,
+                  "incomplete": 0,
+                  "upRate": 0.59574468,
+                  "downRate": 0.40425532,
+                  "flatRate": 0,
+                  "medianReturn": 0.00691641,
+                  "medianMFE": 0.02009231,
+                  "medianMAE": -0.01175571
+                },
+                "10": {
+                  "n": 47,
+                  "incomplete": 0,
+                  "upRate": 0.57446809,
+                  "downRate": 0.42553191,
+                  "flatRate": 0,
+                  "medianReturn": 0.01405622,
+                  "medianMFE": 0.0300819,
+                  "medianMAE": -0.01944665
+                },
+                "20": {
+                  "n": 46,
+                  "incomplete": 1,
+                  "upRate": 0.67391304,
+                  "downRate": 0.32608696,
+                  "flatRate": 0,
+                  "medianReturn": 0.02134529,
+                  "medianMFE": 0.04280998,
+                  "medianMAE": -0.02614711
+                }
+              }
+            },
+            "validated": {
+              "count": 35,
+              "kinds": {
+                "transition": 35
+              },
+              "horizons": {
+                "3": {
+                  "n": 35,
+                  "incomplete": 0,
+                  "upRate": 0.68571429,
+                  "downRate": 0.31428571,
+                  "flatRate": 0,
+                  "medianReturn": 0.01089141,
+                  "medianMFE": 0.021412,
+                  "medianMAE": -0.00966587
+                },
+                "5": {
+                  "n": 35,
+                  "incomplete": 0,
+                  "upRate": 0.65714286,
+                  "downRate": 0.34285714,
+                  "flatRate": 0,
+                  "medianReturn": 0.00983965,
+                  "medianMFE": 0.02863517,
+                  "medianMAE": -0.01355117
+                },
+                "10": {
+                  "n": 35,
+                  "incomplete": 0,
+                  "upRate": 0.71428571,
+                  "downRate": 0.28571429,
+                  "flatRate": 0,
+                  "medianReturn": 0.01778219,
+                  "medianMFE": 0.03756601,
+                  "medianMAE": -0.0145956
+                },
+                "20": {
+                  "n": 34,
+                  "incomplete": 1,
+                  "upRate": 0.55882353,
+                  "downRate": 0.44117647,
+                  "flatRate": 0,
+                  "medianReturn": 0.00705472,
+                  "medianMFE": 0.0522083,
+                  "medianMAE": -0.02679059
+                }
+              }
+            }
+          }
+        },
+        "field": {
+          "count": 107,
+          "states": {
+            "forming": {
+              "count": 32,
+              "kinds": {
+                "transition": 32
+              },
+              "horizons": {
+                "3": {
+                  "n": 31,
+                  "incomplete": 1,
+                  "upRate": 0.61290323,
+                  "downRate": 0.38709677,
+                  "flatRate": 0,
+                  "medianReturn": 0.0049725,
+                  "medianMFE": 0.01411035,
+                  "medianMAE": -0.01074695
+                },
+                "5": {
+                  "n": 31,
+                  "incomplete": 1,
+                  "upRate": 0.64516129,
+                  "downRate": 0.35483871,
+                  "flatRate": 0,
+                  "medianReturn": 0.00584589,
+                  "medianMFE": 0.02809343,
+                  "medianMAE": -0.01499914
+                },
+                "10": {
+                  "n": 31,
+                  "incomplete": 1,
+                  "upRate": 0.5483871,
+                  "downRate": 0.4516129,
+                  "flatRate": 0,
+                  "medianReturn": 0.00710753,
+                  "medianMFE": 0.03469363,
+                  "medianMAE": -0.02187675
+                },
+                "20": {
+                  "n": 31,
+                  "incomplete": 1,
+                  "upRate": 0.67741935,
+                  "downRate": 0.32258065,
+                  "flatRate": 0,
+                  "medianReturn": 0.02636715,
+                  "medianMFE": 0.04420786,
+                  "medianMAE": -0.03626609
+                }
+              }
+            },
+            "active": {
+              "count": 28,
+              "kinds": {
+                "transition": 28
+              },
+              "horizons": {
+                "3": {
+                  "n": 27,
+                  "incomplete": 1,
+                  "upRate": 0.55555556,
+                  "downRate": 0.44444444,
+                  "flatRate": 0,
+                  "medianReturn": 0.00328203,
+                  "medianMFE": 0.01137623,
+                  "medianMAE": -0.01571409
+                },
+                "5": {
+                  "n": 27,
+                  "incomplete": 1,
+                  "upRate": 0.7037037,
+                  "downRate": 0.2962963,
+                  "flatRate": 0,
+                  "medianReturn": 0.01278568,
+                  "medianMFE": 0.0208013,
+                  "medianMAE": -0.01594036
+                },
+                "10": {
+                  "n": 27,
+                  "incomplete": 1,
+                  "upRate": 0.48148148,
+                  "downRate": 0.51851852,
+                  "flatRate": 0,
+                  "medianReturn": -0.00242622,
+                  "medianMFE": 0.02389483,
+                  "medianMAE": -0.03268707
+                },
+                "20": {
+                  "n": 27,
+                  "incomplete": 1,
+                  "upRate": 0.48148148,
+                  "downRate": 0.51851852,
+                  "flatRate": 0,
+                  "medianReturn": -0.00729751,
+                  "medianMFE": 0.03885753,
+                  "medianMAE": -0.04244658
+                }
+              }
+            },
+            "broken": {
+              "count": 27,
+              "kinds": {
+                "transition": 27
+              },
+              "horizons": {
+                "3": {
+                  "n": 27,
+                  "incomplete": 0,
+                  "upRate": 0.44444444,
+                  "downRate": 0.55555556,
+                  "flatRate": 0,
+                  "medianReturn": -0.00238267,
+                  "medianMFE": 0.01618318,
+                  "medianMAE": -0.01059279
+                },
+                "5": {
+                  "n": 27,
+                  "incomplete": 0,
+                  "upRate": 0.62962963,
+                  "downRate": 0.37037037,
+                  "flatRate": 0,
+                  "medianReturn": 0.00801229,
+                  "medianMFE": 0.01813481,
+                  "medianMAE": -0.02430749
+                },
+                "10": {
+                  "n": 27,
+                  "incomplete": 0,
+                  "upRate": 0.48148148,
+                  "downRate": 0.51851852,
+                  "flatRate": 0,
+                  "medianReturn": -0.0006214,
+                  "medianMFE": 0.03141804,
+                  "medianMAE": -0.03070386
+                },
+                "20": {
+                  "n": 27,
+                  "incomplete": 0,
+                  "upRate": 0.48148148,
+                  "downRate": 0.51851852,
+                  "flatRate": 0,
+                  "medianReturn": -0.00020348,
+                  "medianMFE": 0.0383721,
+                  "medianMAE": -0.04168215
+                }
+              }
+            },
+            "seed": {
+              "count": 20,
+              "kinds": {
+                "transition": 20
+              },
+              "horizons": {
+                "3": {
+                  "n": 20,
+                  "incomplete": 0,
+                  "upRate": 0.5,
+                  "downRate": 0.5,
+                  "flatRate": 0,
+                  "medianReturn": -0.00211171,
+                  "medianMFE": 0.01022644,
+                  "medianMAE": -0.01482798
+                },
+                "5": {
+                  "n": 20,
+                  "incomplete": 0,
+                  "upRate": 0.35,
+                  "downRate": 0.65,
+                  "flatRate": 0,
+                  "medianReturn": -0.00557022,
+                  "medianMFE": 0.0117982,
+                  "medianMAE": -0.02040678
+                },
+                "10": {
+                  "n": 20,
+                  "incomplete": 0,
+                  "upRate": 0.3,
+                  "downRate": 0.7,
+                  "flatRate": 0,
+                  "medianReturn": -0.01615551,
+                  "medianMFE": 0.01541547,
+                  "medianMAE": -0.02955675
+                },
+                "20": {
+                  "n": 20,
+                  "incomplete": 0,
+                  "upRate": 0.55,
+                  "downRate": 0.45,
+                  "flatRate": 0,
+                  "medianReturn": 0.00435536,
+                  "medianMFE": 0.02225583,
+                  "medianMAE": -0.04128959
+                }
+              }
+            }
+          }
+        },
+        "basin": {
+          "count": 76,
+          "states": {
+            "landing": {
+              "count": 39,
+              "kinds": {
+                "transition": 39
+              },
+              "horizons": {
+                "3": {
+                  "n": 39,
+                  "incomplete": 0,
+                  "upRate": 0.64102564,
+                  "downRate": 0.35897436,
+                  "flatRate": 0,
+                  "medianReturn": 0.00573624,
+                  "medianMFE": 0.02138795,
+                  "medianMAE": -0.0223594
+                },
+                "5": {
+                  "n": 39,
+                  "incomplete": 0,
+                  "upRate": 0.71794872,
+                  "downRate": 0.28205128,
+                  "flatRate": 0,
+                  "medianReturn": 0.01873847,
+                  "medianMFE": 0.02715088,
+                  "medianMAE": -0.02294188
+                },
+                "10": {
+                  "n": 39,
+                  "incomplete": 0,
+                  "upRate": 0.51282051,
+                  "downRate": 0.48717949,
+                  "flatRate": 0,
+                  "medianReturn": 0.01419787,
+                  "medianMFE": 0.04544617,
+                  "medianMAE": -0.02917183
+                },
+                "20": {
+                  "n": 39,
+                  "incomplete": 0,
+                  "upRate": 0.51282051,
+                  "downRate": 0.48717949,
+                  "flatRate": 0,
+                  "medianReturn": 0.00936635,
+                  "medianMFE": 0.05420104,
+                  "medianMAE": -0.05980569
+                }
+              }
+            },
+            "forming": {
+              "count": 37,
+              "kinds": {
+                "transition": 37
+              },
+              "horizons": {
+                "3": {
+                  "n": 37,
+                  "incomplete": 0,
+                  "upRate": 0.54054054,
+                  "downRate": 0.45945946,
+                  "flatRate": 0,
+                  "medianReturn": 0.0012625,
+                  "medianMFE": 0.02783585,
+                  "medianMAE": -0.01594036
+                },
+                "5": {
+                  "n": 37,
+                  "incomplete": 0,
+                  "upRate": 0.62162162,
+                  "downRate": 0.37837838,
+                  "flatRate": 0,
+                  "medianReturn": 0.01013978,
+                  "medianMFE": 0.03287249,
+                  "medianMAE": -0.02297443
+                },
+                "10": {
+                  "n": 37,
+                  "incomplete": 0,
+                  "upRate": 0.59459459,
+                  "downRate": 0.40540541,
+                  "flatRate": 0,
+                  "medianReturn": 0.01421481,
+                  "medianMFE": 0.03743153,
+                  "medianMAE": -0.03132588
+                },
+                "20": {
+                  "n": 37,
+                  "incomplete": 0,
+                  "upRate": 0.51351351,
+                  "downRate": 0.48648649,
+                  "flatRate": 0,
+                  "medianReturn": 0.00656459,
+                  "medianMFE": 0.05636131,
+                  "medianMAE": -0.05109642
+                }
+              }
+            }
+          }
+        },
+        "sweep": {
+          "count": 21,
+          "states": {
+            "event": {
+              "count": 21,
+              "kinds": {
+                "event": 21
+              },
+              "horizons": {
+                "3": {
+                  "n": 21,
+                  "incomplete": 0,
+                  "upRate": 0.47619048,
+                  "downRate": 0.52380952,
+                  "flatRate": 0,
+                  "medianReturn": -0.00527755,
+                  "medianMFE": 0.01738941,
+                  "medianMAE": -0.02308661
+                },
+                "5": {
+                  "n": 21,
+                  "incomplete": 0,
+                  "upRate": 0.57142857,
+                  "downRate": 0.42857143,
+                  "flatRate": 0,
+                  "medianReturn": 0.00274647,
+                  "medianMFE": 0.02411836,
+                  "medianMAE": -0.02322001
+                },
+                "10": {
+                  "n": 21,
+                  "incomplete": 0,
+                  "upRate": 0.57142857,
+                  "downRate": 0.42857143,
+                  "flatRate": 0,
+                  "medianReturn": 0.01347709,
+                  "medianMFE": 0.03581601,
+                  "medianMAE": -0.02948472
+                },
+                "20": {
+                  "n": 21,
+                  "incomplete": 0,
+                  "upRate": 0.47619048,
+                  "downRate": 0.52380952,
+                  "flatRate": 0,
+                  "medianReturn": -0.002721,
+                  "medianMFE": 0.05270181,
+                  "medianMAE": -0.03644628
+                }
+              }
+            }
+          }
+        },
+        "echo": {
+          "count": 143,
+          "states": {
+            "weak": {
+              "count": 141,
+              "kinds": {
+                "observation": 141
+              },
+              "horizons": {
+                "3": {
+                  "n": 140,
+                  "incomplete": 1,
+                  "upRate": 0.53571429,
+                  "downRate": 0.46428571,
+                  "flatRate": 0,
+                  "medianReturn": 0.00254795,
+                  "medianMFE": 0.01213251,
+                  "medianMAE": -0.01151604
+                },
+                "5": {
+                  "n": 140,
+                  "incomplete": 1,
+                  "upRate": 0.58571429,
+                  "downRate": 0.41428571,
+                  "flatRate": 0,
+                  "medianReturn": 0.00587348,
+                  "medianMFE": 0.01675779,
+                  "medianMAE": -0.01657985
+                },
+                "10": {
+                  "n": 139,
+                  "incomplete": 2,
+                  "upRate": 0.58273381,
+                  "downRate": 0.41726619,
+                  "flatRate": 0,
+                  "medianReturn": 0.01133787,
+                  "medianMFE": 0.02737909,
+                  "medianMAE": -0.02299583
+                },
+                "20": {
+                  "n": 138,
+                  "incomplete": 3,
+                  "upRate": 0.5942029,
+                  "downRate": 0.4057971,
+                  "flatRate": 0,
+                  "medianReturn": 0.01608041,
+                  "medianMFE": 0.04015688,
+                  "medianMAE": -0.03060583
+                }
+              }
+            },
+            "strong": {
+              "count": 2,
+              "kinds": {
+                "observation": 2
+              },
+              "horizons": {
+                "3": {
+                  "n": 2,
+                  "incomplete": 0,
+                  "upRate": 0,
+                  "downRate": 1,
+                  "flatRate": 0,
+                  "medianReturn": -0.02074523,
+                  "medianMFE": -0.00432568,
+                  "medianMAE": -0.02578712
+                },
+                "5": {
+                  "n": 2,
+                  "incomplete": 0,
+                  "upRate": 0,
+                  "downRate": 1,
+                  "flatRate": 0,
+                  "medianReturn": -0.01050582,
+                  "medianMFE": -0.00432568,
+                  "medianMAE": -0.02970669
+                },
+                "10": {
+                  "n": 2,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.01088325,
+                  "medianMFE": 0.0151103,
+                  "medianMAE": -0.02970669
+                },
+                "20": {
+                  "n": 2,
+                  "incomplete": 0,
+                  "upRate": 0.5,
+                  "downRate": 0.5,
+                  "flatRate": 0,
+                  "medianReturn": 0.01125828,
+                  "medianMFE": 0.03892656,
+                  "medianMAE": -0.0432425
+                }
+              }
+            }
+          }
+        },
+        "macro": {
+          "count": 2,
+          "states": {
+            "candidate": {
+              "count": 1,
+              "kinds": {
+                "transition": 1
+              },
+              "horizons": {
+                "3": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.09861441,
+                  "medianMFE": 0.10361632,
+                  "medianMAE": -0.05156342
+                },
+                "5": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.07292059,
+                  "medianMFE": 0.10361632,
+                  "medianMAE": -0.05156342
+                },
+                "10": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.01816231,
+                  "medianMFE": 0.10361632,
+                  "medianMAE": -0.05156342
+                },
+                "20": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.14475754,
+                  "medianMFE": 0.15788255,
+                  "medianMAE": -0.05156342
+                }
+              }
+            },
+            "active": {
+              "count": 1,
+              "kinds": {
+                "transition": 1
+              },
+              "horizons": {
+                "3": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 0,
+                  "downRate": 1,
+                  "flatRate": 0,
+                  "medianReturn": -0.01713815,
+                  "medianMFE": 0.00067678,
+                  "medianMAE": -0.07186588
+                },
+                "5": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 0,
+                  "downRate": 1,
+                  "flatRate": 0,
+                  "medianReturn": -0.04775544,
+                  "medianMFE": 0.00067678,
+                  "medianMAE": -0.07186588
+                },
+                "10": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.00239816,
+                  "medianMFE": 0.00288344,
+                  "medianMAE": -0.08406675
+                },
+                "20": {
+                  "n": 1,
+                  "incomplete": 0,
+                  "upRate": 1,
+                  "downRate": 0,
+                  "flatRate": 0,
+                  "medianReturn": 0.04690051,
+                  "medianMFE": 0.05670254,
+                  "medianMAE": -0.08406675
+                }
+              }
+            }
+          }
+        }
+      },
+      "anchors": {
+        "astro": [
+          {
+            "id": "astro:0:event",
+            "state": "event",
+            "kind": "event",
+            "index": 0,
+            "detectedAt": 0,
+            "evidenceStart": 0
+          },
+          {
+            "id": "astro:1:event",
+            "state": "event",
+            "kind": "event",
+            "index": 1,
+            "detectedAt": 1,
+            "evidenceStart": 1
+          },
+          {
+            "id": "astro:1199:event",
+            "state": "event",
+            "kind": "event",
+            "index": 1199,
+            "detectedAt": 1199,
+            "evidenceStart": 1199
+          },
+          {
+            "id": "astro:1199:upcoming",
+            "state": "upcoming",
+            "kind": "projection",
+            "index": 1199,
+            "detectedAt": 1199,
+            "evidenceStart": 1199
+          }
+        ],
+        "support": [
+          {
+            "id": "support:19:potential:19",
+            "state": "potential",
+            "kind": "transition",
+            "index": 19,
+            "detectedAt": 19,
+            "evidenceStart": 19
+          },
+          {
+            "id": "support:19:broken:20",
+            "state": "broken",
+            "kind": "transition",
+            "index": 20,
+            "detectedAt": 20,
+            "evidenceStart": 19
+          },
+          {
+            "id": "support:1177:candidate:1182",
+            "state": "candidate",
+            "kind": "transition",
+            "index": 1182,
+            "detectedAt": 1182,
+            "evidenceStart": 1177
+          },
+          {
+            "id": "support:1177:validated:1183",
+            "state": "validated",
+            "kind": "transition",
+            "index": 1183,
+            "detectedAt": 1183,
+            "evidenceStart": 1177
+          }
+        ],
+        "field": [
+          {
+            "id": "field:23:forming:23",
+            "state": "forming",
+            "kind": "transition",
+            "index": 23,
+            "detectedAt": 23,
+            "evidenceStart": 0
+          },
+          {
+            "id": "field:23:active:24",
+            "state": "active",
+            "kind": "transition",
+            "index": 24,
+            "detectedAt": 24,
+            "evidenceStart": 0
+          },
+          {
+            "id": "field:1197:forming:1197",
+            "state": "forming",
+            "kind": "transition",
+            "index": 1197,
+            "detectedAt": 1197,
+            "evidenceStart": 1174
+          },
+          {
+            "id": "field:1197:active:1198",
+            "state": "active",
+            "kind": "transition",
+            "index": 1198,
+            "detectedAt": 1198,
+            "evidenceStart": 1174
+          }
+        ],
+        "basin": [
+          {
+            "id": "basin:30:landing:30",
+            "state": "landing",
+            "kind": "transition",
+            "index": 30,
+            "detectedAt": 30,
+            "evidenceStart": 27
+          },
+          {
+            "id": "basin:33:landing:33",
+            "state": "landing",
+            "kind": "transition",
+            "index": 33,
+            "detectedAt": 33,
+            "evidenceStart": 30
+          },
+          {
+            "id": "basin:857:forming:857",
+            "state": "forming",
+            "kind": "transition",
+            "index": 857,
+            "detectedAt": 857,
+            "evidenceStart": 852
+          },
+          {
+            "id": "basin:1081:landing:1081",
+            "state": "landing",
+            "kind": "transition",
+            "index": 1081,
+            "detectedAt": 1081,
+            "evidenceStart": 1078
+          }
+        ],
+        "sweep": [
+          {
+            "id": "sweep:32",
+            "state": "event",
+            "kind": "event",
+            "index": 32,
+            "detectedAt": 32,
+            "evidenceStart": 32
+          },
+          {
+            "id": "sweep:54",
+            "state": "event",
+            "kind": "event",
+            "index": 54,
+            "detectedAt": 54,
+            "evidenceStart": 54
+          },
+          {
+            "id": "sweep:1073",
+            "state": "event",
+            "kind": "event",
+            "index": 1073,
+            "detectedAt": 1073,
+            "evidenceStart": 1073
+          },
+          {
+            "id": "sweep:1162",
+            "state": "event",
+            "kind": "event",
+            "index": 1162,
+            "detectedAt": 1162,
+            "evidenceStart": 1162
+          }
+        ],
+        "echo": [
+          {
+            "id": "echo:64:observation",
+            "state": "weak",
+            "kind": "observation",
+            "index": 64,
+            "detectedAt": 64,
+            "evidenceStart": 33
+          },
+          {
+            "id": "echo:72:observation",
+            "state": "weak",
+            "kind": "observation",
+            "index": 72,
+            "detectedAt": 72,
+            "evidenceStart": 41
+          },
+          {
+            "id": "echo:1192:observation",
+            "state": "weak",
+            "kind": "observation",
+            "index": 1192,
+            "detectedAt": 1192,
+            "evidenceStart": 1161
+          },
+          {
+            "id": "echo:1199:observation",
+            "state": "weak",
+            "kind": "observation",
+            "index": 1199,
+            "detectedAt": 1199,
+            "evidenceStart": 1168
+          }
+        ],
+        "macro": [
+          {
+            "id": "macro:834:candidate:834",
+            "state": "candidate",
+            "kind": "transition",
+            "index": 834,
+            "detectedAt": 834,
+            "evidenceStart": 834
+          },
+          {
+            "id": "macro:834:confirmed:837",
+            "state": "active",
+            "kind": "transition",
+            "index": 837,
+            "detectedAt": 837,
+            "evidenceStart": 834
+          }
+        ]
+      }
+    }
+  }
+}

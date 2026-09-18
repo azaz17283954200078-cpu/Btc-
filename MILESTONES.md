@@ -99,6 +99,23 @@ Research Runner
 
 M3.5 是研究基礎設施，沒有新增 Lab 的主要 UI。
 
+## Pre-M4 Regression Gate｜M1–M3.5 回歸品質閘門 — ✅ Passed
+
+M3.5 把模型從 `index.html` 大幅搬到 Shared Model Engine 後，進 M4 前重新驗證既有里程碑，而不是重做它們。
+
+永久回歸契約：
+
+- M1：Chart Core / 三層 Canvas / Experimental default OFF 仍受 architecture contract 保護
+- M2：Evidence schema、時間因果順序、Timeline 排序、entity lifecycle chronology
+- M3：每個 horizon 的 `N + incomplete = state count`、rate / metric 有效性、projection 不混入已發生樣本
+- M3.5：Lab / Runner 共用 Model Engine，Evidence / Evaluation parity
+- Data：NASDAQ / TAIEX 必須非空、完整 OHLC、日期嚴格遞增、不可長期失去更新
+- Behavior：凍結 NASDAQ 1D 與 TAIEX 1D 各 1200 根 K 作為 regression fixtures；模型狀態數、lifecycle、Evaluation 與 causal anchors 必須與 baseline 一致
+
+若未來刻意修改模型世界觀或參數，regression baseline 可以更新，但必須把 baseline diff 當成模型行為變更審查，而不是直接忽略。
+
+本次 audit 也發現市場資料更新曾留下未完成的最新 K；Updater 已改為先驗證並 drop incomplete OHLC，再原子替換資料檔，避免壞資料覆蓋既有歷史。
+
 ## M4｜一眼懂，點下去很深 — Next
 
 將同一份 Evidence 與 Evaluation 做成漸進式資訊深度；不建立新手／專業模式。

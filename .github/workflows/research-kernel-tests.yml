@@ -7,6 +7,7 @@ on:
       - "src/**"
       - "tests/**"
       - "scripts/**"
+      - "data/**"
       - ".github/workflows/research-kernel-tests.yml"
   pull_request:
     paths:
@@ -14,6 +15,7 @@ on:
       - "src/**"
       - "tests/**"
       - "scripts/**"
+      - "data/**"
       - ".github/workflows/research-kernel-tests.yml"
   workflow_dispatch:
 
@@ -34,5 +36,9 @@ jobs:
         run: node tests/model-engine.test.js
       - name: Research Runner parity and batch tests
         run: node tests/research-runner.test.js
+      - name: Market data sanity
+        run: node tests/market-data.test.js
+      - name: Pre-M4 regression baseline
+        run: node tests/regression-audit.test.js
       - name: Strategy Lab architecture contract
         run: node tests/index-contract.test.js

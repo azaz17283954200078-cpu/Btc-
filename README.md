@@ -84,6 +84,8 @@ GitHub Actions 會自動檢查：
 - Research Kernel schema / causal forward evaluation / M3 lifecycle evaluation
 - Shared Model Engine deterministic runtime
 - Research Runner 與 Lab Engine 的 Evidence / Evaluation parity
+- NASDAQ / TAIEX market-data completeness / freshness
+- Pre-M4 fixed-fixture behavior regression（NASDAQ 1D + TAIEX 1D）
 - protected Chart Core 是否被模型邏輯污染
 - 三層 Canvas 是否存在
 - Experimental models 是否維持預設關閉
@@ -96,6 +98,8 @@ GitHub Actions 會自動檢查：
 - NASDAQ / TAIEX：專案內日線資料，由 GitHub Actions 定期更新
 
 不同資料來源的 Volume 定義可能不同，因此研究時應保留 source / timeframe / market metadata。
+
+進入 M4 前另建立固定 regression fixtures。它們不是最新行情，而是刻意凍結的 1200-bar 樣本，用來檢查未來重構是否讓模型 lifecycle、Evidence 或 Evaluation 在沒有說明的情況下悄悄改變。
 
 ## Direction
 
