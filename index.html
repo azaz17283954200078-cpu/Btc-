@@ -557,9 +557,9 @@ function fieldPreviewState(c,p){
       geomOK=Math.abs(c.drift)<=maxShift*1.35&&Math.abs(c.shapeChange)<=maxShape*1.35,
       confidence=100*clamp(.38*clamp(cycleRatio,0,1)+.38*clamp(fitRatio,0,1)+.24*clamp(c.geometrySmooth,0,1),0,1);
   if(c.pass)return{state:'active',confidence};
-  if(geomOK&&c.cycles>=Math.max(1,p.minCycles*.60)&&c.containment>=minFit*.82&&c.geometrySmooth>=.28)
+  if(geomOK&&c.cycles>=Math.max(1,p.minCycles*.60)&&c.containment>=minFit*.78&&c.geometrySmooth>=.22)
     return{state:'forming',confidence};
-  if(geomOK&&c.cycles>=.5&&c.containment>=minFit*.65&&c.geometrySmooth>=.18)
+  if(geomOK&&c.cycles>=.5&&c.containment>=minFit*.60&&c.geometrySmooth>=.12)
     return{state:'seed',confidence};
   return null
 }
