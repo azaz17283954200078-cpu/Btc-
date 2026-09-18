@@ -305,7 +305,7 @@ function angleNorm(x){x%=360;if(x<0)x+=360;return x}
 function angleDiff(a,b){let d=angleNorm(a-b);return d>180?d-360:d}
 function minAngle(a,b){return Math.abs(angleDiff(a,b))}
 function shapeVector(end,len,points=16){
-  let start=end-len+1;if(start<0)return null,a=[];
+  let start=end-len+1;if(start<0)return null;let a=[];
   for(let p=0;p<points;p++){let pos=start+(len-1)*p/(points-1),i=Math.floor(pos),f=pos-i,v=i+1<=end?D[i].c*(1-f)+D[i+1].c*f:D[i].c;a.push(Math.log(Math.max(v,1e-9)))}
   let m=mean(a),sd=stdev(a)||1e-9;return a.map(x=>(x-m)/sd)
 }
