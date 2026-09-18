@@ -60,9 +60,52 @@ Evaluation 預設只使用 transition / event / observation；projection 不會�
 
 - `window.__SL_EVALUATION__`：目前市場、週期、參數與已啟用模型的完整 M3 評估結果
 
+## M3.5｜Research Runner｜批次研究引擎 — Planned
+
+把 Strategy Lab 的「互動研究」與「大量批次實驗」分開，但兩者必須共用同一套模型與 Research Kernel。
+
+目標架構：
+
+```text
+Strategy Lab UI
+    │
+    ├─ Shared Model Engine
+    ├─ Research Kernel
+    └─ Evaluation
+          ↑
+          │ 同一套邏輯
+          ↓
+Research Runner
+    ├─ Batch Markets
+    ├─ Batch Timeframes
+    ├─ Batch Models / Params
+    ├─ Version Comparison
+    └─ Research Dataset
+```
+
+Runner 不得複製或重寫另一份 Support、Basin、Field、Echo 等模型邏輯。  
+如果 UI 與 Runner 不能由同一份模型程式碼產生相同 Evidence，M3.5 不算完成。
+
+預計工作：
+
+- 將目前仍綁在 `index.html` 的模型運算逐步抽成可共用模組
+- 建立 headless `scripts/research-runner.js`
+- 可指定 market / timeframe / model / parameter set 批次執行
+- Runner 直接產生與 Lab 相同 schema 的 Evidence Timeline
+- 使用 M3 Evaluation Layer 產生統一研究結果
+- 研究輸出必須包含 model version / parameter fingerprint / market / timeframe / data source
+- 支援基礎模型版本或參數比較
+- 初期輸出使用可檢查的 JSON / CSV 類研究資料集，不因「未來可能需要」就先引入大型資料庫
+
+持久化 Research Database 是後續可選升級，而不是 M3.5 的必要條件。只有當跨市場、跨參數、跨模型版本的研究量已經讓每次重算變得昂貴，才討論 SQLite 或其他資料庫。
+
+M3.5 是研究基礎設施，不新增 Lab 的主要 UI。
+
 ## M4｜一眼懂，點下去很深 — Next
 
-將同一份 Evidence 做成漸進式資訊深度；不建立新手／專業模式。
+將同一份 Evidence 與 Evaluation 做成漸進式資訊深度；不建立新手／專業模式。
+
+M4 的介面設計必須遵守憲法的 UI 入場條件與重大介面共同決策條款。
 
 ## M5｜條件式市場推論
 
