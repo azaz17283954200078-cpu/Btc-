@@ -2,6 +2,10 @@
 
 多市場、可視化、可回測的策略研究環境。核心目標不是直接輸出買賣答案，而是把市場現象轉成可觀察、可驗證、可回測的模型證據。
 
+## Project principles
+
+Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUTION.md)。
+
 ## Current milestone
 
 **v0.7 · Research Kernel**
