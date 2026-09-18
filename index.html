@@ -203,7 +203,7 @@ td:first-child,th:first-child{text-align:left}
 
         <div class="model-group-title">Experimental Lab｜實驗模型</div>
         <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Basin Mapper｜盆地辨識</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">不再用四個硬條件判定。模型會從多種時間尺度描述「下山後走平」的整體形狀，再給出盆地分數。</div><span class="model-tag">形態分數</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Oscillation Field｜震盪場</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">把震盪直接畫成形態框：水平時像盒子，傾斜時像斜向整理；只抓外框，不再畫網格。</div><span class="model-tag">市場物理 / 場域</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Oscillation Field｜震盪場</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">震盪只負責讓形態框成形；成形後盒子會持續延伸，直到 K 棒實體出現確認破界才結束。</div><span class="model-tag">市場物理 / 場域</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接比較整段 K 線型態；Echo 區間會框在主圖上，游標移到標記時，最像的歷史 K 線會半透明疊到目前 K 線上。</div><span class="model-tag">形狀搜尋</span></div>
         <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Engine｜占星盤</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接採用西洋占星常見的行星、相位、逆行與入座，把天體事件疊到市場時間軸上。</div><span class="model-tag">外部時間系統</span></div>
       </div>
@@ -277,7 +277,7 @@ function moveParamDrag(e){
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[];const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
 const DEFAULT_EXP={
   basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:68},
-  spring:{minCycles:2,maxCoreShiftPct:55,breakBars:3},
+  spring:{minCycles:2,maxCoreShiftPct:65,maxShapeChangePct:60,minFitPct:82,breakConfirmBars:2},
   echo:{length:32,history:1000,similarity:.82},
   astro:{planetSet:'classic',aspectSet:'major',orb:4,retro:'off',ingress:'off'}
 };
@@ -288,9 +288,12 @@ const PARAM_SCHEMA={
     {k:'floorMax',n:'最長平盤尺度',min:20,max:240,step:5,help:'自動尺度搜尋的上限。像週線的大型盆地，可以把這個值拉長。',low:'短：看小結構',high:'長：看大結構'},
     {k:'cliffMax',n:'下山最多回看多久',min:10,max:180,step:5,help:'平盤前最多往回找多長的下降段。模型會在範圍內自己選最像「下山」的尺度。',low:'近：只看急跌',high:'遠：也看長下跌'},
     {k:'threshold',n:'幾分才標成盆地',min:50,max:95,step:1,help:'Basin Score 達到這個分數才畫在圖上。分數來自多個特徵，不是單一條件。',low:'低：較寬鬆',high:'高：較挑剔'}]},
-  spring:{title:'🌀 Oscillation Field｜震盪場',intro:'目的很單純：把價格整理成一個「盒子或斜盒子」。模型自己找尺度，影線可以刺出去；真正拿來判斷形態邊界的是 K 棒實體。',fields:[
-    {k:'minCycles',n:'至少震盪幾回合',min:1,max:8,step:.5,help:'至少完成多少次上下來回，才畫出形態框。',low:'少：較快形成',high:'多：確認更充分'},
-    {k:'maxCoreShiftPct',n:'盒子可以斜多少',min:10,max:120,step:5,help:'用盒子高度當尺。50% 代表從左到右，中心線最多移動約半個盒子高度。',low:'小：接近水平盒子',high:'大：容許斜向盒子'}]},
+  spring:{title:'🌀 Oscillation Field｜震盪場',intro:'先用震盪證據讓形態框「誕生」，之後只追蹤這個框有沒有被真正破壞。來回次數只決定能不能成形，不會讓已成立的盒子自己消失。',fields:[
+    {k:'minCycles',n:'至少震盪幾回合',min:1,max:8,step:.5,help:'至少完成多少次上下來回，形態框才有資格成立。成立之後不再用這個條件決定生死。',low:'少：較早成形',high:'多：證據更充分'},
+    {k:'maxCoreShiftPct',n:'盒子可以斜多少',min:10,max:150,step:5,help:'用盒子高度當尺。50% 代表從左到右，中心線最多移動約半個盒子高度。',low:'小：接近水平盒子',high:'大：容許斜向整理'},
+    {k:'maxShapeChangePct',n:'盒子可以變形多少',min:10,max:120,step:5,help:'限制盒子從左到右可以收窄或放寬多少。50% 代表右端寬度最多比左端改變約 50%。',low:'小：接近等寬',high:'大：容許明顯收斂或擴張'},
+    {k:'minFitPct',n:'最低貼合度',min:60,max:98,step:1,help:'形態成立前，至少多少比例的 K 棒實體要合理落在候選外框裡。',low:'低：較寬鬆',high:'高：外框要更貼合'},
+    {k:'breakConfirmBars',n:'破界確認幾根',min:1,max:6,step:1,help:'形態成立後，K 棒實體要連續越過外框幾根，才正式宣告失效。影線可以刺出去，不算破界。',low:'少：破界反應快',high:'多：避免單根假突破'}]},
   echo:{title:'📻 Echo｜歷史回聲',intro:'比較的是整段 K 線型態：每根 K 棒的開、高、低、收與相對位置。游標移到 Echo 時，歷史 K 線會直接疊到目前 K 線上。',fields:[
     {k:'length',n:'聲音有多長',min:12,max:100,step:2,help:'用最近多少根 K 棒組成這一次要搜尋的價格形狀。',low:'短：短句',high:'長：完整段落'},
     {k:'history',n:'往多久以前喊',min:200,max:5000,step:100,help:'往回搜尋多長的歷史資料。',low:'近：只聽近代',high:'遠：找更久以前'},
@@ -379,8 +382,8 @@ function fieldEnvelope(seg){
   if(!seg||seg.length<3)return null;
   let bodyLow=seg.map(x=>Math.min(x.o,x.c)),
       bodyHigh=seg.map(x=>Math.max(x.o,x.c)),
-      lower=quantile(bodyLow,.15),
-      upper=quantile(bodyHigh,.85);
+      lower=quantile(bodyLow,.05),
+      upper=quantile(bodyHigh,.95);
   if(!(upper>lower))return null;
   return{lower,upper,center:(upper+lower)/2,amp:(upper-lower)/2}
 }
@@ -398,38 +401,61 @@ function fieldCycles(seg,c0,c1,a0,a1){
 function fieldStats(seg){
   if(!seg||seg.length<16)return null;
   let n=seg.length,part=Math.max(4,Math.floor(n/3)),
-      e0=fieldEnvelope(seg.slice(0,part)),e1=fieldEnvelope(seg.slice(n-part));
-  if(!e0||!e1)return null;
+      first=seg.slice(0,part),
+      middle=seg.slice(Math.floor((n-part)/2),Math.floor((n-part)/2)+part),
+      last=seg.slice(n-part),
+      e0=fieldEnvelope(first),em=fieldEnvelope(middle),e1=fieldEnvelope(last);
+  if(!e0||!em||!e1)return null;
   let avgHeight=e0.amp+e1.amp;if(!(avgHeight>0))return null;
+
   let drift=(e1.center-e0.center)/avgHeight,
-      ampRatio=Math.min(e0.amp,e1.amp)/Math.max(e0.amp,e1.amp),
+      shapeChange=(e1.amp-e0.amp)/Math.max(e0.amp,1e-9),
       compression=1-e1.amp/Math.max(e0.amp,1e-9),
+      ampRatio=Math.min(e0.amp,e1.amp)/Math.max(e0.amp,e1.amp),
+      expectedMidCenter=(e0.center+e1.center)/2,
+      expectedMidAmp=(e0.amp+e1.amp)/2,
+      centerLineError=Math.abs(em.center-expectedMidCenter)/Math.max(avgHeight,1e-9),
+      widthLineError=Math.abs(em.amp-expectedMidAmp)/Math.max(expectedMidAmp,1e-9),
+      geometrySmooth=1-clamp(centerLineError/.30+widthLineError/.45,0,1),
       cycles=fieldCycles(seg,e0.center,e1.center,e0.amp,e1.amp),
       inside=0,biasVals=[];
+
   for(let i=0;i<n;i++){
-    let t=i/Math.max(1,n-1),center=e0.center+(e1.center-e0.center)*t,
+    let t=i/Math.max(1,n-1),
+        center=e0.center+(e1.center-e0.center)*t,
         amp=Math.max(1e-9,e0.amp+(e1.amp-e0.amp)*t),
         bodyLo=Math.min(seg[i].o,seg[i].c),
         bodyHi=Math.max(seg[i].o,seg[i].c),
         d=(seg[i].c-center)/amp;
-    if(bodyLo>=center-amp*1.15&&bodyHi<=center+amp*1.15)inside++;
+    if(bodyLo>=center-amp*1.08&&bodyHi<=center+amp*1.08)inside++;
     if(i>=n-part)biasVals.push(clamp(d,-1.5,1.5));
   }
+
   return{
     lower0:e0.center-e0.amp,upper0:e0.center+e0.amp,center0:e0.center,amp0:e0.amp,
     lower1:e1.center-e1.amp,upper1:e1.center+e1.amp,center1:e1.center,amp1:e1.amp,
-    cycles,drift,compression,ampRatio,containment:inside/n,bias:clamp(mean(biasVals)/1.15,-1,1)
+    cycles,drift,shapeChange,compression,ampRatio,
+    containment:inside/n,geometrySmooth,
+    centerLineError,widthLineError,
+    bias:clamp(mean(biasVals)/1.15,-1,1)
   }
 }
 function fieldScore(st,p){
   if(!st)return{score:0,pass:false};
   let maxShift=Math.max(.05,p.maxCoreShiftPct/100),
+      maxShape=Math.max(.05,p.maxShapeChangePct/100),
+      minFit=clamp(p.minFitPct/100,.50,.99),
       cycleScore=clamp(st.cycles/Math.max(1,p.minCycles+1),0,1),
-      driftScore=1-clamp(Math.abs(st.drift)/maxShift,0,1),
-      containScore=clamp((st.containment-.55)/.40,0,1),
-      ampScore=clamp((st.ampRatio-.25)/.75,0,1),
-      score=100*(.34*cycleScore+.26*driftScore+.22*containScore+.18*ampScore),
-      pass=st.cycles>=p.minCycles&&Math.abs(st.drift)<=maxShift&&st.containment>=.65&&st.ampRatio>=.25;
+      fitScore=clamp((st.containment-.55)/.45,0,1),
+      smoothScore=clamp(st.geometrySmooth,0,1),
+      marginShift=1-clamp(Math.abs(st.drift)/Math.max(maxShift,1e-9),0,1),
+      marginShape=1-clamp(Math.abs(st.shapeChange)/Math.max(maxShape,1e-9),0,1),
+      score=100*(.30*cycleScore+.34*fitScore+.24*smoothScore+.06*marginShift+.06*marginShape),
+      pass=st.cycles>=p.minCycles&&
+           Math.abs(st.drift)<=maxShift&&
+           Math.abs(st.shapeChange)<=maxShape&&
+           st.containment>=minFit&&
+           st.geometrySmooth>=.35;
   return{score,pass}
 }
 function fieldScaleList(){return[24,36,52,76,108,156,220]}
@@ -444,7 +470,7 @@ function fieldBestCandidate(end,p){
 }
 function lockFieldGeometry(c){
   let span=Math.max(1,c.end-c.start),
-      a0=Math.max(1e-9,c.amp0),a1=Math.max(1e-9,c.amp1),scale=1;
+      a0=Math.max(1e-9,c.amp0),a1=Math.max(1e-9,c.amp1),needs=[];
   for(let i=c.start;i<=c.end;i++){
     let t=(i-c.start)/span,
         center=c.center0+(c.center1-c.center0)*t,
@@ -452,14 +478,14 @@ function lockFieldGeometry(c){
         bodyHi=Math.max(D[i].o,D[i].c),
         bodyLo=Math.min(D[i].o,D[i].c),
         need=Math.max((bodyHi-center)/amp,(center-bodyLo)/amp);
-    if(isFinite(need))scale=Math.max(scale,need);
+    if(isFinite(need))needs.push(need);
   }
-  scale*=1.01;
+  let scale=Math.max(1,quantile(needs,.98))*1.01;
   return{
     anchorStart:c.start,anchorEnd:c.end,
     center0:c.center0,center1:c.center1,
     amp0:a0*scale,amp1:a1*scale,
-    minAmp:Math.max(1e-9,Math.min(a0,a1)*scale*.25)
+    minAmp:Math.max(1e-9,Math.min(a0,a1)*scale*.20)
   }
 }
 function fieldBoundaryAt(lock,i){
@@ -469,18 +495,23 @@ function fieldBoundaryAt(lock,i){
       amp=Math.max(lock.minAmp,lock.amp0+(lock.amp1-lock.amp0)*t);
   return{center,amp,upper:center+amp,lower:center-amp}
 }
-function fieldBarInside(lock,i){
-  if(i<0||i>=D.length)return false;
+function fieldBodyBreach(lock,i){
+  if(i<0||i>=D.length)return 0;
   let b=fieldBoundaryAt(lock,i),x=D[i],
       bodyHi=Math.max(x.o,x.c),
       bodyLo=Math.min(x.o,x.c);
-  return bodyHi<=b.upper&&bodyLo>=b.lower
+  if(bodyLo>b.upper||bodyHi>b.upper)return 1;
+  if(bodyHi<b.lower||bodyLo<b.lower)return -1;
+  return 0
 }
+function fieldBarInside(lock,i){return fieldBodyBreach(lock,i)===0}
+
 function fieldEpisodeStats(lock,start,end){
   let b0=fieldBoundaryAt(lock,start),b1=fieldBoundaryAt(lock,end),
       seg=D.slice(start,end+1),
       cycles=fieldCycles(seg,b0.center,b1.center,b0.amp,b1.amp),
       drift=(b1.center-b0.center)/Math.max(1e-9,b0.amp+b1.amp),
+      shapeChange=(b1.amp-b0.amp)/Math.max(1e-9,b0.amp),
       compression=1-b1.amp/Math.max(1e-9,b0.amp),
       ampRatio=Math.min(b0.amp,b1.amp)/Math.max(b0.amp,b1.amp),
       n=Math.max(1,end-start+1),part=Math.max(1,Math.floor(n/3)),biasVals=[];
@@ -491,7 +522,9 @@ function fieldEpisodeStats(lock,start,end){
   return{
     lower0:b0.lower,upper0:b0.upper,center0:b0.center,amp0:b0.amp,
     lower1:b1.lower,upper1:b1.upper,center1:b1.center,amp1:b1.amp,
-    cycles,drift,compression,ampRatio,containment:1,bias:clamp(mean(biasVals)/1.15,-1,1)
+    cycles,drift,shapeChange,compression,ampRatio,containment:1,
+    geometrySmooth:1,centerLineError:0,widthLineError:0,
+    bias:clamp(mean(biasVals)/1.15,-1,1)
   }
 }
 function fieldStatus(score){return score>=82?'● 穩定':score>=68?'◐ 偏移':'▲ 失衡'}
@@ -655,62 +688,65 @@ function researchCalc(){
     finishBasin(active);
   }
 
-  // Oscillation Field: draw a morphology box/channel from candle bodies. Wicks may protrude; a body breach ends the field.
+  // Oscillation Field lifecycle:
+  // oscillation creates the box; only confirmed BODY breakout destroys it.
   if(use.spring){
-    let p=EXP.spring,active=null,gap=0,
-        evalStep=D.length>10000?4:D.length>5000?2:1,
-        gapLimit=Math.max(1,Math.round(p.breakBars));
+    let p=EXP.spring,active=null,evalStep=D.length>10000?4:D.length>5000?2:1,
+        confirmBars=Math.max(1,Math.round(p.breakConfirmBars));
 
     function finishField(a){
       if(!a||a.end<a.detectedAt)return;
-      let geom=fieldEpisodeStats(a.lock,a.start,a.end),
-          sc=fieldScore(geom,p);
+      let geom=fieldEpisodeStats(a.lock,a.start,a.end);
       OSC_FIELDS.push({
         k:'spring',shape:'oscillationField',
         start:a.start,end:a.end,lock:a.lock,
         lower0:geom.lower0,upper0:geom.upper0,center0:geom.center0,amp0:geom.amp0,
         lower1:geom.lower1,upper1:geom.upper1,center1:geom.center1,amp1:geom.amp1,
-        score:sc.score,cycles:geom.cycles,drift:geom.drift,
-        compression:geom.compression,bias:geom.bias,containment:1,
-        detectedAt:a.detectedAt,
+        score:a.birthScore,cycles:a.birthCycles,drift:geom.drift,
+        shapeChange:geom.shapeChange,compression:geom.compression,bias:geom.bias,
+        containment:1,detectedAt:a.detectedAt,
+        state:a.invalidatedAt!=null?'invalidated':'active',
+        invalidatedAt:a.invalidatedAt??null,
+        breakout:a.breakout||null,
         label:'Oscillation Field｜震盪場'
       });
     }
 
     for(let i=23;i<D.length;i++){
       if(active){
-        if(!fieldBarInside(active.lock,i)){
-          active.end=i-1;
-          finishField(active);
-          active=null;
-          gap=0;
-          continue;
-        }
-
         active.end=i;
+        let side=fieldBodyBreach(active.lock,i);
 
-        if(i%evalStep===0){
-          let c=fieldBestCandidate(i,p),
-              stillCoherent=c&&c.pass&&c.start<=active.end+Math.max(2,evalStep*2);
-          gap=stillCoherent?0:gap+evalStep;
-          if(gap>=gapLimit){
+        if(side!==0){
+          if(active.breakSide===side)active.breakRun++;
+          else{active.breakSide=side;active.breakRun=1}
+          if(active.breakRun>=confirmBars){
+            active.invalidatedAt=i;
+            active.breakout=side>0?'up':'down';
             finishField(active);
             active=null;
-            gap=0;
+            continue;
           }
+        }else{
+          active.breakRun=0;
+          active.breakSide=0;
         }
-        if(active)continue;
+        continue;
       }
 
       if(i%evalStep!==0)continue;
       let c=fieldBestCandidate(i,p);
       if(c&&c.pass){
         let lock=lockFieldGeometry(c);
-        active={start:c.start,end:i,best:c,detectedAt:i,lock};
+        active={
+          start:c.start,end:i,detectedAt:i,lock,
+          birthScore:c.score,birthCycles:c.cycles,
+          breakRun:0,breakSide:0,invalidatedAt:null,breakout:null
+        };
         R[i].researchSigs.push({
           k:'spring',
           label:'震盪場 FIELD '+c.score.toFixed(0),
-          detail:'形態框已建立｜'+c.cycles.toFixed(1)+' 回合｜影線可越界'
+          detail:'形態框成立｜'+c.cycles.toFixed(1)+' 回合｜之後只由破界決定失效'
         });
       }
     }
@@ -791,21 +827,23 @@ function echoCompareHTML(e){
 }
 function fieldPanelHTML(f){
   if(!f)return '';
-  let core=(f.center0+f.center1)/2,lo=Math.min(f.lower0,f.lower1),hi=Math.max(f.upper0,f.upper1);
+  let core=(f.center0+f.center1)/2,lo=Math.min(f.lower0,f.lower1),hi=Math.max(f.upper0,f.upper1),
+      life=f.state==='invalidated'?('◆ 已破界'+(f.breakout==='up'?' ↑':' ↓')):'● 仍有效';
   return '<div class="field-panel">'+
-    '<div class="field-head"><b>震盪場 FIELD '+Math.round(f.score)+'</b><span class="field-status">'+esc(fieldStatus(f.score))+'</span></div>'+
+    '<div class="field-head"><b>震盪場 FIELD '+Math.round(f.score)+'</b><span class="field-status">'+esc(life)+'</span></div>'+
     '<div class="field-grid">'+
       '<div class="field-k">盒子中心</div><div class="field-v">'+fmt(core)+'</div>'+
       '<div class="field-k">形態邊界</div><div class="field-v">'+fmt(lo)+' ～ '+fmt(hi)+'</div>'+
-      '<div class="field-k">震盪回合</div><div class="field-v">約 '+f.cycles.toFixed(1)+' 次</div>'+
+      '<div class="field-k">成形回合</div><div class="field-v">約 '+f.cycles.toFixed(1)+' 次</div>'+
       '<div class="field-k">核心走向</div><div class="field-v">'+esc(fieldDriftText(f.drift))+'</div>'+
-      '<div class="field-k">振幅收束</div><div class="field-v">'+esc(fieldCompressionText(f.compression))+'</div>'+
+      '<div class="field-k">寬度變化</div><div class="field-v">'+esc(fieldCompressionText(f.compression))+'</div>'+
       '<div class="field-k">價格偏壓</div><div class="field-v">'+esc(fieldBiasText(f.bias))+'</div>'+
-      '<div class="field-k">場域狀態</div><div class="field-v">'+esc(fieldStatus(f.score))+'</div>'+
+      '<div class="field-k">形態生命</div><div class="field-v">'+esc(life)+'</div>'+
     '</div>'+
-    '<div class="field-note">盒子看 K 棒實體，不看影線。影線可以刺出邊界；實體越界才算形態失效。</div>'+
+    '<div class="field-note">來回次數只負責讓盒子成立。成立後即使不再來回，只要 K 棒實體沒有連續有效破界，盒子就繼續存在；影線可刺出外框。</div>'+
   '</div>'
 }
+
 function showBar(i){if(i<0||i>=D.length)return;let x=D[i],p=i?D[i-1].c:x.o,pct=p?(x.c/p-1)*100:0;q('ohlc').innerHTML='<b>'+date(x.t)+'</b>　O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'　<span class="'+(pct>=0?'good':'err')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</span>　Volume USD '+fmt(x.v)}
 function updateChartTip(){
   let tip=q('chartTip');
@@ -982,7 +1020,8 @@ for(let z of OSC_FIELDS){
 
   let hi=Math.min(e,Math.max(s,z.detectedAt||z.start)),
       field={score:z.score,center0:z.center0,center1:z.center1,lower0:z.lower0,lower1:z.lower1,
-             upper0:z.upper0,upper1:z.upper1,cycles:z.cycles,drift:z.drift,compression:z.compression,bias:z.bias};
+             upper0:z.upper0,upper1:z.upper1,cycles:z.cycles,drift:z.drift,compression:z.compression,bias:z.bias,
+             state:z.state,breakout:z.breakout,invalidatedAt:z.invalidatedAt};
   MODEL_HIT.push({
     kind:'zone',zone:true,i:hi,rect:true,
     x1:Math.min(xS,xE),x2:Math.max(xS,xE),
