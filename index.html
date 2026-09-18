@@ -4,15 +4,15 @@
 <div class="bar"><label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label><span id="tfs"></span><button onclick="load()">載入 / 更新</button><button onclick="resetView()">↺ 初始視野</button><button onclick="allView()">全部歷史</button></div></section>
 <section class="box stats"><div class="stat">資料範圍<b id="range">—</b></div><div class="stat">K 棒<b id="bars">—</b></div><div class="stat">市場<b id="mkt">BTC/USD</b></div><div class="stat">週期<b id="tfv">1W</b></div><div class="stat">狀態<b id="status">準備</b></div></section>
 <section class="box"><div id="ohlc" class="muted">移動游標或點選 K 棒查看：日期 · OHLC · 漲跌幅 · Volume</div><canvas id="c"></canvas><div id="msg" class="muted">滾輪／雙指縮放 · 拖曳移動 · 雙擊或「初始視野」復位。</div></section>
-<div class="grid2"><section class="box"><b>內建研究模組</b><div class="muted">七個模型可獨立啟用與疊加；模型說明只描述判定條件，不代表預測準確度。</div>
+<div class="grid2"><section class="box"><b>內建研究模組</b><div class="muted">七個模型可以單獨使用，也可以同時開啟比較。它們只是用不同方式標記可能值得注意的位置，不代表一定會形成底部。</div>
 <div class="model-list">
-  <div class="model-row"><div class="model-name"><label><input id="modSupport" type="checkbox" checked onchange="zoneCalc()"> Support Zone v0.5b</label></div><div class="model-desc">以相近 Pivot Low 配對形成價格區間，使用 ATR 決定容許距離與區間寬度；後續回測與跌破條件用於更新區間狀態。</div></div>
-  <div class="model-row"><div class="model-name"><label><input id="modMacro" type="checkbox" checked onchange="macroCalc()"> Macro Bottom v0.2</label></div><div class="model-desc">以近期新低、相對高點回撤幅度與 ATR 擴張建立候選區；後續收盤突破候選 K 棒高點時轉為確認狀態。</div></div>
-  <div class="model-row"><div class="model-name"><label><input id="modCap" type="checkbox" onchange="bottomLabCalc()"> Capitulation</label></div><div class="model-desc">成交量相對近期均值顯著放大，同時刷新區間低點，且 K 棒下影與收盤位置符合反彈特徵時產生訊號。</div></div>
-  <div class="model-row"><div class="model-name"><label><input id="modDev" type="checkbox" onchange="bottomLabCalc()"> Deep Reclaim</label></div><div class="model-desc">價格先明顯低於移動平均與 ATR 所定義的偏離範圍，之後收盤重新突破前一根 K 棒高點並縮小偏離時產生訊號。</div></div>
-  <div class="model-row"><div class="model-name"><label><input id="modDiv" type="checkbox" onchange="bottomLabCalc()"> RSI Divergence</label></div><div class="model-desc">目前價格形成較低低點，而 RSI 相對先前低點形成較高讀值，且兩次 RSI 至少一處位於偏低區域時產生訊號。</div></div>
-  <div class="model-row"><div class="model-name"><label><input id="modSweep" type="checkbox" onchange="bottomLabCalc()"> Liquidity Sweep</label></div><div class="model-desc">盤中低點跌破近期價格區間低點，但同一根 K 棒收盤重新回到該低點上方，且收盤位於 K 棒相對上半部時產生訊號。</div></div>
-  <div class="model-row"><div class="model-name"><label><input id="modExh" type="checkbox" onchange="bottomLabCalc()"> Exhaustion Reversal</label></div><div class="model-desc">先出現連續下降的收盤結構與相對 ATR 足夠大的短期跌幅，之後以收紅且突破前一根 K 棒高點作為反轉條件。</div></div>
+  <div class="model-row"><div class="model-name"><label><input id="modSupport" type="checkbox" checked onchange="zoneCalc()"> Support Zone v0.5b</label></div><div class="model-desc">找出價格多次跌到差不多位置後止跌的區域，視為可能的支撐帶。之後如果價格再次回到這個區域，模型會觀察它是否守住；若明顯跌破，這個支撐區就會失效。</div></div>
+  <div class="model-row"><div class="model-name"><label><input id="modMacro" type="checkbox" checked onchange="macroCalc()"> Macro Bottom v0.2</label></div><div class="model-desc">當價格已經從前一段高點跌了不少、同時又出現近期新低與較大的波動時，模型會把這裡列為可能的低點區。之後若價格重新站回關鍵位置上方，才會進一步確認。</div></div>
+  <div class="model-row"><div class="model-name"><label><input id="modCap" type="checkbox" onchange="bottomLabCalc()"> Capitulation</label></div><div class="model-desc">觀察是否出現『跌得很深、成交量突然放大，但最後又被買回去一些』的情況。這代表市場在低位出現大量交易，模型會把它視為值得注意的反彈訊號。</div></div>
+  <div class="model-row"><div class="model-name"><label><input id="modDev" type="checkbox" onchange="bottomLabCalc()"> Deep Reclaim</label></div><div class="model-desc">先找價格是否跌得離近期平均價格太遠，接著觀察是否開始往上收回。簡單說，就是找『跌過頭之後，價格重新站回來』的情況。</div></div>
+  <div class="model-row"><div class="model-name"><label><input id="modDiv" type="checkbox" onchange="bottomLabCalc()"> RSI Divergence</label></div><div class="model-desc">價格雖然又跌到更低的位置，但 RSI 沒有跟著變得更弱。這表示價格還在創低，但下跌力道可能沒有之前那麼強，模型會把這種差異標記出來。</div></div>
+  <div class="model-row"><div class="model-name"><label><input id="modSweep" type="checkbox" onchange="bottomLabCalc()"> Liquidity Sweep</label></div><div class="model-desc">價格一度跌破近期低點，看起來像要繼續往下，但收盤時又重新站回原本低點上方。模型把這種『跌破後又拉回』的情況標記出來。</div></div>
+  <div class="model-row"><div class="model-name"><label><input id="modExh" type="checkbox" onchange="bottomLabCalc()"> Exhaustion Reversal</label></div><div class="model-desc">先觀察是否已經連續下跌，而且短時間跌幅偏大；如果接著出現明顯向上的 K 棒，並且收盤比前一根高，模型就把它視為可能出現短期反轉。</div></div>
 </div>
 <div class="model-status muted">
   <div id="zoneInfo">Support Zone：等待計算</div>
