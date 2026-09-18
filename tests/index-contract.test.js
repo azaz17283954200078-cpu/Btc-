@@ -58,7 +58,7 @@ for(const token of [
 ]){
   assert(s.includes(token),'M2 model history hook missing: '+token);
 }
-assert(s.includes("state:'broken',i"),'Field broken transition hook missing');
+assert(s.includes("active.entityId,'broken',i"),'Field broken transition hook missing');
 assert(s.includes('finalizeEvidenceTimeline();\n  rebuildEvidence();'),'timeline must finalize before latest snapshot rebuild');
 
 console.log('index-contract.test.js: OK');
