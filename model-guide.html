@@ -81,17 +81,15 @@ table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}th,td{bo
 </section>
 
 <section class="box" id="cap">
-<h2>3. Capitulation</h2>
-<p><b>目的：</b>標記同時出現「放大量、刷新低點、明顯下影、收盤回到 K 棒較高位置」的 K 棒。</p><div class="visual"><div class="visual-title">概念圖｜低位放量 + 長下影 + 收盤拉回</div><div class="flow"><span class="step">刷新低點</span><span class="arrow">+</span><span class="step">成交量 ≥ 近期均量 2×</span><span class="arrow">+</span><span class="step">長下影 / 收回</span></div><div class="candles"><div class="candle down" style="height:42px"></div><div class="candle down" style="height:54px"></div><div class="candle down" style="height:64px"></div><div class="candle up" style="height:27px;margin-bottom:5px"></div><div style="flex:1"></div><div class="barv" style="left:58%;height:22px"></div><div class="barv" style="left:64%;height:28px"></div><div class="barv hot" style="left:70%;height:72px"></div><span class="label-mini" style="right:7%;bottom:80px">放量</span></div></div>
-<h3>使用資料</h3>
-<p>Volume、Low、Open、Close、High，以及依時間框架調整的近期觀察窗。</p>
-<h3>條件</h3>
-<p>目前成交量需至少是近期平均成交量的 <code>2 倍</code>；目前 Low 必須等於或低於觀察窗內最低價；下影長度需至少是較大者「實體長度」或「整根 K 棒的 12%」的 <code>1.4 倍</code>；收盤位置至少位於整根 K 棒從低到高的 58% 位置。</p>
-<div class="formula">收盤位置 = (Close − Low) ÷ (High − Low) ≥ 0.58</div>
-<h3>觀察窗</h3>
-<table><tr><th>框架</th><th>價格觀察窗 look</th><th>成交量平均窗</th></tr>
-<tr><td>1H</td><td>48</td><td>約 34</td></tr><tr><td>4H</td><td>42</td><td>約 29</td></tr><tr><td>1D</td><td>30</td><td>21</td></tr><tr><td>1W</td><td>20</td><td>14</td></tr><tr><td>1M</td><td>12</td><td>10</td></tr></table>
-<div class="note">模型本身只描述當下這根 K 棒是否符合條件，不要求後續一定上漲。</div>
+<h2>3. Capitulation v0.2</h2>
+<p><b>目的：</b>找出急跌、放量與明顯收回同時出現後，市場是否真的在接下來幾根 K 棒完成向上確認。</p>
+<div class="visual"><div class="visual-title">流程｜急跌放量 → 形成候選 → 後續收盤突破候選 K 高點</div><div class="flow"><span class="step">刷新近期低點</span><span class="arrow">+</span><span class="step">量能放大</span><span class="arrow">+</span><span class="step">長下影 / 收回</span><span class="arrow">→</span><span class="step">後續突破高點才確認</span></div></div>
+<h3>候選條件</h3>
+<p>候選 K 棒必須同時符合：刷新近期低點；相對近期高點已有一定回撤；成交量至少是近期平均量的 <code>1.6 倍</code>；整根 K 棒振幅至少達 <code>1.35 ATR</code>；下影至少佔整根 K 棒的 25%；收盤位於整根 K 棒的 55% 以上。</p>
+<h3>確認條件</h3>
+<p>候選出現後，不會立刻畫出訊號。模型會等待接下來數根 K 棒，只有收盤價突破候選 K 棒的 High 才正式標記。若超過期限仍未突破，或價格先跌破候選低點再多 <code>0.6 ATR</code>，候選取消。</p>
+<h3>為什麼改成兩階段</h3>
+<p>單純「爆量 + 長下影」在持續下跌過程中也可能反覆出現。加入後續收復條件後，模型不再把所有恐慌 K 棒都當成完成訊號。</p>
 </section>
 
 <section class="box" id="reclaim">
@@ -107,27 +105,27 @@ table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}th,td{bo
 </section>
 
 <section class="box" id="rsi">
-<h2>5. RSI Divergence</h2>
-<p><b>目的：</b>比較兩次價格低點與 RSI，找出價格更低、但動能指標沒有同步更弱的情況。</p><div class="visual"><div class="visual-title">概念圖｜價格低點更低，但 RSI 低點更高</div><div class="mini-chart"><div class="line" style="left:8%;top:24px;width:30%;transform:rotate(20deg)"></div><div class="line" style="left:38%;top:58px;width:33%;transform:rotate(10deg)"></div><span class="label-mini" style="left:12%;top:10px">價格</span><div class="rsi-band"></div><div class="line alt" style="left:11%;bottom:28px;width:29%;transform:rotate(8deg)"></div><div class="line alt" style="left:40%;bottom:20px;width:31%;transform:rotate(-10deg)"></div><span class="label-mini" style="left:12%;bottom:3px">RSI</span><span class="label-mini" style="right:7%;top:52px">價格更低</span><span class="label-mini" style="right:7%;bottom:16px">RSI 更高</span></div></div>
-<h3>使用資料</h3>
-<p>Low、Close、14 期 RSI，以及依框架調整的回看區間。</p>
-<h3>參考低點怎麼找</h3>
-<p>模型會在目前 K 棒之前的觀察窗內找最低 Low，但刻意排除最近 5 根 K 棒，避免把太靠近現在的低點拿來比較。</p>
-<h3>訊號條件</h3>
-<p>目前 Low 要低於先前參考低點；目前 RSI 至少比參考低點當時的 RSI 高 <code>5</code>；兩次 RSI 中至少一個低於 <code>42</code>；目前收盤位置需高於整根 K 棒的 45% 位置。</p>
-<div class="formula">目前 Low &lt; 前一個 Low<br>目前 RSI ≥ 前一個 RSI + 5<br>min(兩次 RSI) &lt; 42</div>
-<p>這裡的 RSI 不是用「低於 30 就買」的方式，而是拿來比較兩個低點之間的相對動能。</p>
+<h2>5. RSI Divergence v0.2</h2>
+<p><b>目的：</b>只比較兩個已確認的價格低點，找出價格破低但 RSI 相對墊高的情況，再等待價格本身出現收復。</p>
+<div class="visual"><div class="visual-title">流程｜確認低點 A → 確認低點 B → 價格更低 / RSI 更高 → 價格收復才標記</div><div class="flow"><span class="step">Pivot Low A</span><span class="arrow">→</span><span class="step">Pivot Low B 更低</span><span class="arrow">+</span><span class="step">RSI B 更高</span><span class="arrow">→</span><span class="step">突破 B 的高點</span></div></div>
+<h3>使用指標</h3>
+<p>使用 Wilder 算法的 <code>RSI(14)</code>，並以確認後的 Pivot Low 作為比較點。1H～1W 主要使用左右各 3 根 K 棒確認 Pivot；1M 使用 2 根。</p>
+<h3>背離條件</h3>
+<p>後一個 Pivot Low 至少比前一個低 <code>0.15 ATR</code>；後一個 RSI 至少比前一個高 <code>6</code>；兩個 RSI 中至少一個低於 <code>42</code>。</p>
+<h3>確認條件</h3>
+<p>背離成立後仍只算候選。後續收盤必須突破第二個 Pivot Low 所在 K 棒的 High 才正式畫出訊號；若時間到仍未突破，或價格再明顯跌破該低點，候選取消。</p>
+<div class="note">這個版本不再拿「目前 K 棒」去和任意一個區間最低點相比，而是比較兩個真正被確認的局部低點，目的是減少連續下跌中大量重複背離。</div>
 </section>
 
 <section class="box" id="sweep">
-<h2>6. Liquidity Sweep</h2>
-<p><b>目的：</b>標記盤中曾跌破近期最低價，但收盤又回到該價位之上的 K 棒。</p><div class="visual"><div class="visual-title">概念圖｜盤中跌破前低，但收盤重新站回</div><div class="flow"><span class="step">近期低點</span><span class="arrow">→</span><span class="step">盤中跌破</span><span class="arrow">→</span><span class="step">收盤站回</span></div><div class="mini-chart"><div class="line alt" style="left:5%;top:61px;width:88%"></div><div class="line" style="left:10%;top:30px;width:41%;transform:rotate(15deg)"></div><div class="line" style="left:49%;top:70px;width:15%;transform:rotate(20deg)"></div><div class="line" style="left:62%;top:86px;width:20%;transform:rotate(-32deg)"></div><span class="label-mini" style="left:7%;top:48px">前低</span><span class="label-mini" style="left:58%;bottom:4px">跌破</span><span class="label-mini" style="right:8%;top:34px">收回</span></div></div>
-<h3>使用資料</h3>
-<p>近期最低 Low、目前 Low、Close、High。</p>
-<h3>條件</h3>
-<p>先計算「不包含目前 K 棒」的近期最低價。若目前 Low 跌到它下方，但 Close 又回到它上方，同時收盤位置至少位於整根 K 棒的 55%，就產生訊號。</p>
-<div class="formula">目前 Low &lt; 近期最低價<br>目前 Close &gt; 近期最低價<br>(Close − Low) ÷ (High − Low) ≥ 0.55</div>
-<p>模型只判斷「跌破後收回」這個價格行為，不分析造成跌破的訂單來源，因此名稱中的 Liquidity 是對價格型態的描述，不代表模型能直接看到市場深度或逐筆委託。</p>
+<h2>6. Liquidity Sweep v0.2</h2>
+<p><b>目的：</b>觀察價格是否短暫跌破一個已確認的局部低點、收盤重新站回，並在後續出現進一步向上確認。</p>
+<div class="visual"><div class="visual-title">流程｜確認前低 → 盤中跌破 → 收盤站回 → 後續突破 Sweep K 高點</div><div class="flow"><span class="step">已確認 Pivot Low</span><span class="arrow">→</span><span class="step">Low 跌破</span><span class="arrow">→</span><span class="step">Close 站回</span><span class="arrow">→</span><span class="step">後續確認</span></div></div>
+<h3>第一階段：Sweep</h3>
+<p>參考線改用已確認的 Pivot Low，而不是每根 K 棒都重新計算的區間最低價。盤中 Low 必須跌破該 Pivot Low，但跌破深度不可超過 <code>0.8 ATR</code>；收盤必須重新站回 Pivot Low 上方；下影至少佔 K 棒 25%，且收盤位於整根 K 棒的 60% 以上。</p>
+<h3>第二階段：Follow-through</h3>
+<p>Sweep 本身不立刻產生訊號。後續數根 K 棒的收盤必須突破 Sweep K 棒的 High 才正式標記；若先跌破 Sweep Low 再多 <code>0.35 ATR</code>，候選失效。</p>
+<div class="note">模型仍只使用 K 棒價格資料，沒有直接讀取 order book 或逐筆委託，因此「Liquidity Sweep」是價格型態名稱，不代表能確認實際的流動性來源。</div>
 </section>
 
 <section class="box" id="exhaust">
