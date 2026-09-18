@@ -291,7 +291,7 @@ const PARAM_SCHEMA={
   spring:{title:'🌀 Oscillation Field｜震盪場',intro:'不需要猜震盪會持續多久，也不用決定網格密度。模型會自己搜尋不同時間尺度，只讓你控制「要震幾回合、中心線能移動多少、失衡多久才結束」。',fields:[
     {k:'minCycles',n:'至少震盪幾回合',min:1,max:8,step:.5,help:'至少完成多少次上下來回，才建立震盪場。',low:'少：較快形成',high:'多：確認更充分'},
     {k:'maxCoreShiftPct',n:'中心線最多能移動多少',min:10,max:120,step:5,help:'用場域高度當尺。例如場域高 10,000，設定 50% 就代表從左到右的中心線最多移動約 5,000。',low:'小：接近水平震盪',high:'大：容許斜向震盪'},
-    {k:'breakBars',n:'失衡幾根才結束',min:1,max:10,step:1,help:'連續幾次偵測不到穩定場域後才結束，避免單根雜訊把場域切斷。',low:'少：結束較快',high:'多：容忍短暫擾動'}]},
+    {k:'breakBars',n:'場內失衡幾根才結束',min:1,max:10,step:1,help:'價格仍在邊界內時，允許結構短暫變亂幾根 K 棒。只要最高價或最低價越過場域邊界，會立刻失效，不等待這個數值。',low:'少：場內變亂就快結束',high:'多：容忍場內短暫失衡'}]},
   echo:{title:'📻 Echo｜歷史回聲',intro:'比較的是整段 K 線型態：每根 K 棒的開、高、低、收與相對位置。游標移到 Echo 時，歷史 K 線會直接疊到目前 K 線上。',fields:[
     {k:'length',n:'聲音有多長',min:12,max:100,step:2,help:'用最近多少根 K 棒組成這一次要搜尋的價格形狀。',low:'短：短句',high:'長：完整段落'},
     {k:'history',n:'往多久以前喊',min:200,max:5000,step:100,help:'往回搜尋多長的歷史資料。',low:'近：只聽近代',high:'遠：找更久以前'},
@@ -436,6 +436,54 @@ function fieldBestCandidate(end,p){
     let c={start,end,look,...st,...sc};if(!best||c.score>best.score)best=c;
   }
   return best
+}
+function lockFieldGeometry(c){
+  let span=Math.max(1,c.end-c.start),
+      a0=Math.max(1e-9,c.amp0),a1=Math.max(1e-9,c.amp1),scale=1;
+  for(let i=c.start;i<=c.end;i++){
+    let t=(i-c.start)/span,
+        center=c.center0+(c.center1-c.center0)*t,
+        amp=Math.max(1e-9,a0+(a1-a0)*t),
+        need=Math.max((D[i].h-center)/amp,(center-D[i].l)/amp);
+    if(isFinite(need))scale=Math.max(scale,need);
+  }
+  scale*=1.002;
+  return{
+    anchorStart:c.start,anchorEnd:c.end,
+    center0:c.center0,center1:c.center1,
+    amp0:a0*scale,amp1:a1*scale,
+    minAmp:Math.max(1e-9,Math.min(a0,a1)*scale*.25)
+  }
+}
+function fieldBoundaryAt(lock,i){
+  let span=Math.max(1,lock.anchorEnd-lock.anchorStart),
+      t=(i-lock.anchorStart)/span,
+      center=lock.center0+(lock.center1-lock.center0)*t,
+      amp=Math.max(lock.minAmp,lock.amp0+(lock.amp1-lock.amp0)*t);
+  return{center,amp,upper:center+amp,lower:center-amp}
+}
+function fieldBarInside(lock,i){
+  if(i<0||i>=D.length)return false;
+  let b=fieldBoundaryAt(lock,i),x=D[i];
+  return x.h<=b.upper&&x.l>=b.lower
+}
+function fieldEpisodeStats(lock,start,end){
+  let b0=fieldBoundaryAt(lock,start),b1=fieldBoundaryAt(lock,end),
+      seg=D.slice(start,end+1),
+      cycles=fieldCycles(seg,b0.center,b1.center,b0.amp,b1.amp),
+      drift=(b1.center-b0.center)/Math.max(1e-9,b0.amp+b1.amp),
+      compression=1-b1.amp/Math.max(1e-9,b0.amp),
+      ampRatio=Math.min(b0.amp,b1.amp)/Math.max(b0.amp,b1.amp),
+      n=Math.max(1,end-start+1),part=Math.max(1,Math.floor(n/3)),biasVals=[];
+  for(let i=Math.max(start,end-part+1);i<=end;i++){
+    let b=fieldBoundaryAt(lock,i),d=(D[i].c-b.center)/Math.max(1e-9,b.amp);
+    biasVals.push(clamp(d,-1.5,1.5));
+  }
+  return{
+    lower0:b0.lower,upper0:b0.upper,center0:b0.center,amp0:b0.amp,
+    lower1:b1.lower,upper1:b1.upper,center1:b1.center,amp1:b1.amp,
+    cycles,drift,compression,ampRatio,containment:1,bias:clamp(mean(biasVals)/1.15,-1,1)
+  }
 }
 function fieldStatus(score){return score>=82?'● 穩定':score>=68?'◐ 偏移':'▲ 失衡'}
 function fieldDriftText(v){let a=Math.abs(v)*100;if(a<6)return '→ 幾乎水平';return v>0?(a<30?'↗ 中心慢慢抬高':'↑ 中心明顯抬高'):(a<30?'↘ 中心慢慢降低':'↓ 中心明顯降低')}
@@ -598,37 +646,63 @@ function researchCalc(){
     finishBasin(active);
   }
 
-  // Oscillation Field: multi-scale discovery, with no user-selected duration.
+  // Oscillation Field: detect first, then lock the field. Any wick outside the locked boundary ends it immediately.
   if(use.spring){
-    let p=EXP.spring,active=null,gap=0,evalStep=D.length>10000?4:D.length>5000?2:1,
+    let p=EXP.spring,active=null,gap=0,
+        evalStep=D.length>10000?4:D.length>5000?2:1,
         gapLimit=Math.max(1,Math.round(p.breakBars));
+
     function finishField(a){
-      if(!a)return;
-      let whole=fieldStats(D.slice(a.start,a.end+1)),sc=whole?fieldScore(whole,p):null,geom=whole||a.best;
+      if(!a||a.end<a.detectedAt)return;
+      let geom=fieldEpisodeStats(a.lock,a.start,a.end),
+          sc=fieldScore(geom,p);
       OSC_FIELDS.push({
-        k:'spring',shape:'oscillationField',start:a.start,end:a.end,
+        k:'spring',shape:'oscillationField',
+        start:a.start,end:a.end,lock:a.lock,
         lower0:geom.lower0,upper0:geom.upper0,center0:geom.center0,amp0:geom.amp0,
         lower1:geom.lower1,upper1:geom.upper1,center1:geom.center1,amp1:geom.amp1,
-        score:sc?sc.score:a.best.score,cycles:geom.cycles,drift:geom.drift,
-        compression:geom.compression,bias:geom.bias,containment:geom.containment,
+        score:sc.score,cycles:geom.cycles,drift:geom.drift,
+        compression:geom.compression,bias:geom.bias,containment:1,
         detectedAt:a.detectedAt,
         label:'Oscillation Field｜震盪場'
       });
     }
-    for(let i=23;i<D.length;i+=evalStep){
-      let c=fieldBestCandidate(i,p),pass=c&&c.pass;
-      if(pass){
-        let overlaps=active&&c.start<=active.end+Math.max(2,evalStep*2);
-        if(!active||!overlaps){
-          finishField(active);active={start:c.start,end:i,best:c,detectedAt:i};
-          R[i].researchSigs.push({k:'spring',label:'震盪場 FIELD '+c.score.toFixed(0),detail:'平衡核心 '+money((c.center0+c.center1)/2)+'｜場域 '+money(Math.min(c.lower0,c.lower1))+'～'+money(Math.max(c.upper0,c.upper1))+'｜'+c.cycles.toFixed(1)+' 回合'});
-        }else{
-          active.end=i;active.start=Math.min(active.start,c.start);
-          if(c.score>active.best.score)active.best=c;
+
+    for(let i=23;i<D.length;i++){
+      if(active){
+        if(!fieldBarInside(active.lock,i)){
+          active.end=i-1;
+          finishField(active);
+          active=null;
+          gap=0;
+          continue;
         }
-        gap=0;
-      }else if(active){
-        gap+=evalStep;if(gap>=gapLimit){finishField(active);active=null;gap=0}
+
+        active.end=i;
+
+        if(i%evalStep===0){
+          let c=fieldBestCandidate(i,p),
+              stillCoherent=c&&c.pass&&c.start<=active.end+Math.max(2,evalStep*2);
+          gap=stillCoherent?0:gap+evalStep;
+          if(gap>=gapLimit){
+            finishField(active);
+            active=null;
+            gap=0;
+          }
+        }
+        if(active)continue;
+      }
+
+      if(i%evalStep!==0)continue;
+      let c=fieldBestCandidate(i,p);
+      if(c&&c.pass){
+        let lock=lockFieldGeometry(c);
+        active={start:c.start,end:i,best:c,detectedAt:i,lock};
+        R[i].researchSigs.push({
+          k:'spring',
+          label:'震盪場 FIELD '+c.score.toFixed(0),
+          detail:'平衡核心 '+money((c.center0+c.center1)/2)+'｜場域已鎖定｜'+c.cycles.toFixed(1)+' 回合'
+        });
       }
     }
     finishField(active);
@@ -720,7 +794,7 @@ function fieldPanelHTML(f){
       '<div class="field-k">價格偏壓</div><div class="field-v">'+esc(fieldBiasText(f.bias))+'</div>'+
       '<div class="field-k">場域狀態</div><div class="field-v">'+esc(fieldStatus(f.score))+'</div>'+
     '</div>'+
-    '<div class="field-note">只描述場域物理量，不替幾何型態命名，也不預測震盪會維持多久。</div>'+
+    '<div class="field-note">場域一旦建立就鎖定邊界；任何 K 棒的最高價或最低價越界，該場域立即失效。</div>'+
   '</div>'
 }
 function showBar(i){if(i<0||i>=D.length)return;let x=D[i],p=i?D[i-1].c:x.o,pct=p?(x.c/p-1)*100:0;q('ohlc').innerHTML='<b>'+date(x.t)+'</b>　O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'　<span class="'+(pct>=0?'good':'err')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</span>　Volume USD '+fmt(x.v)}
@@ -871,11 +945,10 @@ for(let z of BASIN_EPISODES){
 }
 for(let z of OSC_FIELDS){
   if(z.end<s||z.start>e)continue;
-  let zs=z.start,ze=z.end,visS=Math.max(s,zs),visE=Math.min(e,ze),span=Math.max(1,ze-zs),
-      tS=(visS-zs)/span,tE=(visE-zs)/span,interp=(a,b,t)=>a+(b-a)*t,
-      cS=interp(z.center0,z.center1,tS),cE=interp(z.center0,z.center1,tE),
-      aS=Math.max(1e-9,interp(z.amp0,z.amp1,tS)),aE=Math.max(1e-9,interp(z.amp0,z.amp1,tE)),
-      uS=cS+aS,uE=cE+aE,lS=cS-aS,lE=cE-aE,
+  let visS=Math.max(s,z.start),visE=Math.min(e,z.end),
+      bS=fieldBoundaryAt(z.lock,visS),bE=fieldBoundaryAt(z.lock,visE),
+      cS=bS.center,cE=bE.center,aS=bS.amp,aE=bE.amp,
+      uS=bS.upper,uE=bE.upper,lS=bS.lower,lE=bE.lower,
       xS=X(visS),xE=X(visE),yUS=Y(uS),yUE=Y(uE),yLS=Y(lS),yLE=Y(lE),
       levels=6;
   g.save();
@@ -900,7 +973,7 @@ for(let z of OSC_FIELDS){
   g.fillStyle='rgba(18,24,39,.92)';g.fillRect(lx-tw/2,ly-12,tw,17);
   g.fillStyle='#c8f5ff';g.textAlign='center';g.textBaseline='middle';g.fillText(label,lx,ly-3);
 
-  let midT=(tS+tE)/2,midC=interp(z.center0,z.center1,midT);
+  let midI=Math.round((visS+visE)/2),midC=fieldBoundaryAt(z.lock,midI).center;
   g.fillStyle='#b9efff';g.font='700 10px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
   g.textAlign='left';g.textBaseline='bottom';g.fillText('平衡核心',(xS+xE)/2+4,Math.max(12,Y(midC)-4));
   g.restore();
