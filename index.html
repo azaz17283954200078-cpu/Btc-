@@ -7,21 +7,21 @@
 *{box-sizing:border-box}
 html,body{
   margin:0;height:100%;background:var(--bg);color:var(--text);
-  font:14.5px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI","Microsoft JhengHei","PingFang TC",sans-serif;
+  font:15.5px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI","Microsoft JhengHei","PingFang TC",sans-serif;
   text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
 }
 body{overflow:hidden}
 main{height:100vh;max-width:1680px;margin:auto;padding:12px;display:grid;grid-template-rows:auto 1fr;gap:12px}
 .box{background:var(--panel);border:1px solid var(--line);border-radius:15px}
 .topbar{padding:11px 13px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center}
-.brand{display:flex;align-items:baseline;gap:9px;white-space:nowrap}.brand h1{font-size:22px;line-height:1.1;margin:0;letter-spacing:.2px}.brand .muted{font-size:12px}
+.brand{display:flex;align-items:baseline;gap:9px;white-space:nowrap}.brand h1{font-size:23px;line-height:1.1;margin:0;letter-spacing:.2px}.brand .muted{font-size:12px}
 .controls{display:flex;gap:7px;align-items:center;flex-wrap:wrap;min-width:0}
-.controls label{font-size:13px;color:var(--text2)}
+.controls label{font-size:14px;color:var(--text2)}
 select,input,button,textarea{
   background:#17243a;color:#fff;border:1px solid #3b567e;border-radius:9px;
-  padding:7px 9px;font:inherit;font-size:13px
+  padding:8px 10px;font:inherit;font-size:14px
 }
-select,input,button{min-height:34px}
+select,input,button{min-height:36px}
 button{font-weight:700;cursor:pointer}
 button:hover{border-color:#6086ba}
 button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
@@ -32,8 +32,8 @@ input[type=checkbox]{width:17px;height:17px;min-height:0;padding:0;accent-color:
 .muted{color:var(--muted)}.good{color:var(--good)}.err{color:var(--bad)}.warn{color:var(--warn)}
 .stats-mini{display:grid;grid-template-columns:repeat(5,auto);gap:6px}
 .stat-mini{background:var(--panel2);border:1px solid #20314a;border-radius:9px;padding:6px 8px;min-width:82px}
-.stat-mini span{display:block;color:#99aac5;font-size:10px;line-height:1.2;text-transform:uppercase;letter-spacing:.35px}
-.stat-mini b{display:block;margin-top:2px;font-size:12.5px;line-height:1.3;white-space:nowrap;font-weight:700}
+.stat-mini span{display:block;color:#99aac5;font-size:10.5px;line-height:1.2;text-transform:uppercase;letter-spacing:.35px}
+.stat-mini b{display:block;margin-top:2px;font-size:13px;line-height:1.3;white-space:nowrap;font-weight:700}
 .workspace{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 480px;gap:12px}
 
 /* Chart Core visual layer: only typography/spacing is styled here. */
@@ -59,7 +59,7 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .tabpane{display:none;min-height:0}.tabpane.on{display:grid;height:100%;min-height:0}
 #modelsPane{grid-template-rows:auto 1fr auto}
 .panel-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 8px}
-.panel-title b{font-size:14px}.panel-title .muted{font-size:11.5px}
+.panel-title b{font-size:15px}.panel-title .muted{font-size:12px}
 .model-list{display:grid;grid-template-columns:1fr;gap:8px;align-content:start;overflow:auto;min-height:0;padding:0 4px 8px 1px}
 .model-group-title{
   position:sticky;top:0;z-index:3;background:linear-gradient(180deg,var(--panel) 75%,rgba(16,24,39,0));
@@ -71,13 +71,13 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 }
 .model-row:hover{border-color:#456a99;background:#101d31}
 .model-row:has(input:checked){border-color:#4a6d9a;background:#122139}
-.model-name{font-weight:750;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;line-height:1.35}
+.model-name{font-weight:750;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;line-height:1.4}
 .model-name label{display:flex;align-items:center;gap:7px;min-width:0;cursor:pointer}
 .model-name a{font-size:11px;color:#9bc2ff;text-decoration:none;white-space:nowrap}
 .model-actions{display:flex;gap:5px;align-items:center;flex:0 0 auto}
 .gear{padding:3px 7px;min-height:28px;font-size:12px;line-height:1.2}
-.model-desc{color:#b6c4d9;font-size:11.5px;line-height:1.52;margin-top:6px}
-.model-tag{display:inline-block;font-size:10px;line-height:1.25;color:#9eb2cf;border:1px solid #304968;border-radius:999px;padding:2px 7px;margin-top:7px}
+.model-desc{color:#c0ccde;font-size:12.5px;line-height:1.58;margin-top:6px}
+.model-tag{display:inline-block;font-size:10.5px;line-height:1.25;color:#9eb2cf;border:1px solid #304968;border-radius:999px;padding:2px 7px;margin-top:7px}
 .model-status{margin-top:8px;padding:8px 3px 0;border-top:1px solid #263853;font-size:10.5px;line-height:1.5;color:#9aadc9}
 .model-status summary{cursor:pointer;font-size:11px;color:#adbed6;margin-bottom:4px}
 
@@ -86,15 +86,23 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .param-modal.on{display:flex}
 .param-card{width:min(620px,92vw);max-height:84vh;overflow:auto;background:#101a2b;border:1px solid #506b91;border-radius:16px;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.48)}
 .param-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-.param-head b{font-size:18px;line-height:1.3}.param-close{padding:5px 10px;font-size:16px}
-.param-intro{padding:12px 14px;margin-bottom:14px;background:#0b1423;border:1px solid #263a58;border-radius:11px;color:#d0dbea;font-size:13px;line-height:1.65}
+.param-head b{font-size:19px;line-height:1.3}.param-close{padding:5px 10px;font-size:16px}
+.param-intro{padding:12px 14px;margin-bottom:14px;background:#0b1423;border:1px solid #263a58;border-radius:11px;color:#d6e0ee;font-size:14px;line-height:1.7}
 .param-grid{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:9px 14px;align-items:center}
-.param-label{color:#eef4ff;font-weight:750;font-size:13px}
-.param-help{grid-column:1/-1;color:#a7b8cf;font-size:11.5px;line-height:1.58;margin-top:-3px;padding-bottom:8px;border-bottom:1px dashed #2b3e5a}
+.param-label{color:#eef4ff;font-weight:750;font-size:14px}
+.param-help{grid-column:1/-1;color:#b1c0d5;font-size:12px;line-height:1.62;margin-top:-3px;padding-bottom:8px;border-bottom:1px dashed #2b3e5a}
 .param-grid input,.param-grid select{width:100%;font-size:13px}
 .param-note{font-size:11px;line-height:1.55;color:#9fb0c8;margin-top:13px;border-top:1px solid #2a3d59;padding-top:10px}
 .param-direction{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
 .param-direction span{display:inline-block;padding:2px 6px;border-radius:999px;background:#111d30;border:1px solid #2d4667;font-size:10px;color:#a9bbd3}
+.param-head{cursor:move;user-select:none}.param-head button{cursor:pointer}
+.param-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid #2a3d59}
+.param-actions .right{display:flex;gap:7px;flex-wrap:wrap}.param-run-status{font-size:12px;color:#a8bad2}
+.layer-toggle{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#bcc9dc;white-space:nowrap}
+.layer-toggle input{width:17px;height:17px;min-height:0}
+.panel-actions{display:flex;align-items:center;gap:10px;min-width:0}
+.script-overlay{z-index:3;pointer-events:none}
+
 
 /* Script Lab */
 #scriptPane{grid-template-rows:auto auto minmax(0,1fr) minmax(110px,.55fr);gap:9px}
@@ -135,7 +143,7 @@ td:first-child,th:first-child{text-align:left}
 }
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v0.5</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v0.6</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -155,7 +163,7 @@ td:first-child,th:first-child{text-align:left}
 <div class="workspace">
   <section class="box chartbox">
     <div id="ohlc" class="muted">移動游標或點選 K 棒查看：日期 · OHLC · 漲跌幅 · Volume</div>
-    <div class="chart-stage"><canvas id="c"></canvas><canvas id="modelCanvas" class="model-overlay"></canvas></div><div id="chartTip" class="chart-tip"></div>
+    <div class="chart-stage"><canvas id="c"></canvas><canvas id="modelCanvas" class="model-overlay"></canvas><canvas id="scriptCanvas" class="script-overlay"></canvas></div><div id="chartTip" class="chart-tip"></div>
     <div id="msg" class="muted">滾輪／雙指縮放 · 拖曳移動 · 雙擊或「視野」復位。</div>
   </section>
 
@@ -168,21 +176,20 @@ td:first-child,th:first-child{text-align:left}
     <div id="modelsPane" class="tabpane on">
       <div class="panel-title"><b>模型實驗室</b><span class="muted">可疊加 · 可調參</span></div>
       <div class="model-list"><div class="model-group-title">Core Models｜核心模型</div>
-        <div class="model-row"><div class="model-name"><label><input id="modSupport" type="checkbox" checked onchange="zoneCalc()"> Support Zone</label><span class="model-actions"><a href="model-guide.html#support" target="_blank">說明 ↗</a></span></div><div class="model-desc">多次接近同一價位形成支撐區。</div><span class="model-tag">價格結構</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modMacro" type="checkbox" checked onchange="macroCalc()"> Macro Bottom</label><span class="model-actions"><a href="model-guide.html#macro" target="_blank">說明 ↗</a></span></div><div class="model-desc">深回撤、新低與波動放大後等待收復。</div><span class="model-tag">回撤＋波動</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modSweep" type="checkbox" onchange="bottomLabCalc()"> Liquidity Sweep</label><span class="model-actions"><a href="model-guide.html#sweep" target="_blank">說明 ↗</a></span></div><div class="model-desc">跌破近期低點後收盤重新站回。</div><span class="model-tag">跌破收回</span></div>
-        <div class="model-group-title">Experimental Lab｜實驗模型</div><div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Fractal Basin</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">不同尺度低點集中到同一價格帶。</div><span class="model-tag">分形結構</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Compression Spring</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">振幅逐段收斂後觀察壓縮釋放。</div><span class="model-tag">波動壓縮</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo Bottom</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">搜尋歷史上形狀相近的價格路徑。</div><span class="model-tag">歷史相似</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modPhase" type="checkbox" onchange="researchCalc()"> Phase Transition</label><span class="model-actions"><button class="gear" onclick="openParams('phase')">⚙</button><a href="model-guide.html#phase" target="_blank">說明 ↗</a></span></div><div class="model-desc">偵測下降、壓縮到重新擴張。</div><span class="model-tag">Regime</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modLunar" type="checkbox" onchange="researchCalc()"> Lunar Bottom</label><span class="model-actions"><button class="gear" onclick="openParams('lunar')">⚙</button><a href="model-guide.html#lunar" target="_blank">說明 ↗</a></span></div><div class="model-desc">把月相當成時間特徵做實驗。</div><span class="model-tag">Mystery</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Placebo</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">用人為曆法規則檢查過度擬合。</div><span class="model-tag">Placebo</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modSupport" type="checkbox" onchange="zoneCalc()"> Support Zone｜支撐區</label><span class="model-actions"><a href="model-guide.html#support" target="_blank">說明 ↗</a></span></div><div class="model-desc">價格反覆回到同一片區域，看看那裡是不是真的撐得住。</div><span class="model-tag">價格結構</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modMacro" type="checkbox" onchange="macroCalc()"> Macro Bottom｜宏觀底部</label><span class="model-actions"><a href="model-guide.html#macro" target="_blank">說明 ↗</a></span></div><div class="model-desc">市場已經跌得很深時，觀察它有沒有開始把失地收回來。</div><span class="model-tag">回撤＋波動</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modSweep" type="checkbox" onchange="bottomLabCalc()"> Liquidity Sweep｜流動性掃單</label><span class="model-actions"><a href="model-guide.html#sweep" target="_blank">說明 ↗</a></span></div><div class="model-desc">先跌破大家看得到的舊低點，再快速收回，找可能的假跌破。</div><span class="model-tag">跌破收回</span></div>
+
+        <div class="model-group-title">Experimental Lab｜實驗模型</div>
+        <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Walled Basin｜雙牆盆地</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">先有左高牆，中間走出一片低平地，最後右側再築起高牆，完整地形才叫盆地。</div><span class="model-tag">地形幾何</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Spring System｜彈簧系統</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">把價格當成彈簧：找平衡位置，再估計彈力、位移、震盪節奏與阻尼。</div><span class="model-tag">市場力學</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">把現在這段價格形狀當成一段聲音，往歷史裡喊，看看能聽到幾次相似回聲。</div><span class="model-tag">形狀搜尋</span></div>
+        <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Engine｜占星盤</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接採用西洋占星常見的行星、相位、逆行與入座，把天體事件疊到市場時間軸上。</div><span class="model-tag">外部時間系統</span></div>
       </div>
-      <details class="model-status muted"><summary>計算狀態</summary><div id="zoneInfo">Support Zone：等待計算</div><div id="macroInfo">Macro Bottom：等待計算</div><div id="bottomInfo">Liquidity Sweep：等待計算</div><div id="researchInfo">Experimental Lab：六個模型目前皆關閉</div></details>
     </div>
 
     <div id="scriptPane" class="tabpane">
-      <div class="panel-title"><b>Strategy Script</b><span id="scriptStatus" class="muted">尚未執行</span></div>
+      <div class="panel-title"><b>Strategy Script｜腳本圖層</b><div class="panel-actions"><label class="layer-toggle"><input id="scriptVisible" type="checkbox" checked onchange="toggleScriptLayer()"> 顯示</label><span id="scriptStatus" class="muted">尚未執行</span></div></div>
       <div class="script-tools"><button onclick="runScript()">▶ 執行</button><button onclick="saveScript()">儲存</button><button onclick="loadScript()">讀取</button><button onclick="clearSignals()">清除</button></div>
       <textarea id="script" class="editor">// Strategy Lab Script
 const fast = sma(20);
@@ -197,49 +204,86 @@ state.prevSlow = slow;</textarea>
     </div>
   </aside>
 </div>
-<div id="paramModal" class="param-modal" onclick="if(event.target===this)closeParams()"><div class="param-card"><div class="param-head"><b id="paramTitle">模型參數</b><button class="param-close" onclick="closeParams()">×</button></div><div id="paramBody" class="param-grid"></div><div class="param-note">模型層與市場圖表核心分離。模型參數或繪圖發生錯誤時，不應影響 K 線、成交量、縮放與拖曳。</div></div></div></main><script>
+<div id="paramModal" class="param-modal" onclick="if(event.target===this)closeParams()">
+  <div id="paramCard" class="param-card">
+    <div id="paramDragHandle" class="param-head" onpointerdown="startParamDrag(event)" onpointermove="moveParamDrag(event)" onpointerup="endParamDrag(event)" onpointercancel="endParamDrag(event)">
+      <b id="paramTitle">模型參數</b><button class="param-close" onclick="closeParams()">×</button>
+    </div>
+    <div id="paramBody" class="param-grid"></div>
+    <div class="param-note">先調整旋鈕，再按「執行」套用。模型只畫在自己的圖層，不會改動底層 K 線。</div>
+    <div class="param-actions"><span id="paramRunStatus" class="param-run-status">尚未修改</span><div class="right"><button onclick="restoreParams()">↺ 復原</button><button onclick="applyParams()">▶ 執行</button></div></div>
+  </div>
+</div></main><script>
 window.addEventListener('error',function(e){var st=document.getElementById('status'),msg=document.getElementById('msg');if(st)st.textContent='程式錯誤';if(msg)msg.textContent='JS：'+e.message+' @ '+e.lineno;});
-const q=id=>document.getElementById(id);function openParams(k){let sc=PARAM_SCHEMA[k];if(!sc)return;q('paramTitle').textContent=sc.title;let rows=sc.fields.map(f=>{let v=EXP[k][f.k],control;if(f.type==='select'){control='<select onchange="setParam(\''+k+'\',\''+f.k+'\',this.value,true)">'+f.options.map(o=>'<option value="'+o[0]+'" '+(String(v)===String(o[0])?'selected':'')+'>'+o[1]+'</option>').join('')+'</select>'}else{control='<input type="number" value="'+v+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" onchange="setParam(\''+k+'\',\''+f.k+'\',this.value,false)">'}let dirs=(f.low||f.high)?'<div class="param-direction">'+(f.low?'<span>← '+f.low+'</span>':'')+(f.high?'<span>'+f.high+' →</span>':'')+'</div>':'';return '<div class="param-label">'+f.n+'</div><div>'+control+'</div><div class="param-help">'+(f.help||'')+dirs+'</div>'}).join('');q('paramBody').innerHTML='<div class="param-intro">'+sc.intro+'</div>'+rows;q('paramModal').classList.add('on')}function closeParams(){q('paramModal').classList.remove('on')}function setParam(k,p,v,isText){EXP[k][p]=isText?v:+v;if(D.length)researchCalc()}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],mousePos=null;const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
-const EXP={
- basin:{p1:3,p2:8,p3:21,look:120,width:1.2,minScales:2},
- spring:{seg:12,ratio:.78,floor:1.0,breakout:.10},
- echo:{pattern:28,candidateLook:20,history:800,stride:4,topK:7,maxDist:.70,horizon:20,minMedian:.02},
- phase:{trendLook:30,compLook:12,atrRatio:.75,breakLook:10,recentDown:40,slopeATR:2.0},
- lunar:{phase:'both',window:2,ddLook:60,minDD:.12},
- astro:{modulus:17,hits:2,offset:3,ddLook:50,minDD:.08}
+const q=id=>document.getElementById(id);
+function setInfo(id,t){let e=q(id);if(e)e.textContent=t}
+let ACTIVE_PARAM_MODEL=null,PARAM_DRAFT=null,paramDrag=null;
+function cloneObj(x){return JSON.parse(JSON.stringify(x))}
+function renderParamBody(){
+  let k=ACTIVE_PARAM_MODEL,sc=PARAM_SCHEMA[k];if(!sc||!PARAM_DRAFT)return;
+  let rows=sc.fields.map(f=>{
+    let v=PARAM_DRAFT[f.k],control;
+    if(f.type==='select'){
+      control='<select onchange="setParamDraft(\''+f.k+'\',this.value,true)">'+f.options.map(o=>'<option value="'+o[0]+'" '+(String(v)===String(o[0])?'selected':'')+'>'+o[1]+'</option>').join('')+'</select>';
+    }else{
+      control='<input type="number" value="'+v+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" onchange="setParamDraft(\''+f.k+'\',this.value,false)">';
+    }
+    let dirs=(f.low||f.high)?'<div class="param-direction">'+(f.low?'<span>← '+f.low+'</span>':'')+(f.high?'<span>'+f.high+' →</span>':'')+'</div>':'';
+    return '<div class="param-label">'+f.n+'</div><div>'+control+'</div><div class="param-help">'+(f.help||'')+dirs+'</div>';
+  }).join('');
+  q('paramBody').innerHTML='<div class="param-intro">'+sc.intro+'</div>'+rows;
+}
+function openParams(k){
+  let sc=PARAM_SCHEMA[k];if(!sc)return;
+  ACTIVE_PARAM_MODEL=k;PARAM_DRAFT=cloneObj(EXP[k]);q('paramTitle').textContent=sc.title;
+  renderParamBody();q('paramRunStatus').textContent='尚未修改';q('paramModal').classList.add('on');
+}
+function closeParams(){q('paramModal').classList.remove('on');paramDrag=null}
+function setParamDraft(k,v,isText){if(!PARAM_DRAFT)return;PARAM_DRAFT[k]=isText?v:+v;q('paramRunStatus').textContent='有變更，尚未執行'}
+function restoreParams(){if(!ACTIVE_PARAM_MODEL)return;PARAM_DRAFT=cloneObj(DEFAULT_EXP[ACTIVE_PARAM_MODEL]);renderParamBody();q('paramRunStatus').textContent='已回到預設值，按執行套用'}
+function applyParams(){if(!ACTIVE_PARAM_MODEL||!PARAM_DRAFT)return;EXP[ACTIVE_PARAM_MODEL]=cloneObj(PARAM_DRAFT);if(D.length)researchCalc();q('paramRunStatus').textContent='已執行'}
+function startParamDrag(e){
+  if(e.target.closest('button'))return;let card=q('paramCard'),r=card.getBoundingClientRect();
+  card.style.transform='none';card.style.position='fixed';card.style.left=r.left+'px';card.style.top=r.top+'px';
+  paramDrag={dx:e.clientX-r.left,dy:e.clientY-r.top};e.currentTarget.setPointerCapture(e.pointerId);
+}
+function moveParamDrag(e){
+  if(!paramDrag)return;let card=q('paramCard'),r=card.getBoundingClientRect();
+  let x=Math.max(8,Math.min(window.innerWidth-r.width-8,e.clientX-paramDrag.dx));
+  let y=Math.max(8,Math.min(window.innerHeight-r.height-8,e.clientY-paramDrag.dy));
+  card.style.left=x+'px';card.style.top=y+'px';
+}
+function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true;const ZONE={pivot:5,atr:14,width:.8,breakAtr:.5};const MACRO={atr:14,zoneUp:1.2,zoneDn:.25,breakAtr:.6,p:{'1h':{hi:240,low:40,dd:.10,atrAvg:24,atrX:1.15,confirm:24},'4h':{hi:180,low:30,dd:.14,atrAvg:24,atrX:1.15,confirm:18},'1d':{hi:120,low:20,dd:.20,atrAvg:20,atrX:1.15,confirm:12},'1w':{hi:52,low:8,dd:.30,atrAvg:13,atrX:1.10,confirm:6},'1m':{hi:36,low:6,dd:.30,atrAvg:12,atrX:1.05,confirm:4}}};
+const DEFAULT_EXP={
+  basin:{floorBars:18,wallLook:16,wallHeight:1.8,flatness:.85,symmetry:.45},
+  spring:{minK:.08,minDx:1.25,minCycles:2,maxDamping:.55,periodTol:.38},
+  echo:{length:32,history:1000,similarity:.88},
+  astro:{planetSet:'classic',aspectSet:'major',orb:4,retro:'off',ingress:'off'}
 };
+const EXP=cloneObj(DEFAULT_EXP);
 const PARAM_SCHEMA={
- basin:{title:'🔭 Fractal Basin｜分形盆地',intro:'把市場想成一座山谷。三副不同倍率的望遠鏡找低谷；當它們指向差不多的位置，就形成「盆地」。其他細節交給模型內部自動處理。',fields:[
-  {k:'p1',n:'近景望遠鏡',min:2,max:8,step:1,help:'控制短期小凹谷有多敏感。',low:'小：細節多',high:'大：忽略小雜訊'},
-  {k:'p3',n:'遠景望遠鏡',min:10,max:40,step:1,help:'控制大尺度山谷有多嚴格。中景會由模型自動放在近景與遠景之間。',low:'小：較容易認定',high:'大：只看大谷底'},
-  {k:'look',n:'盆地記憶',min:30,max:300,step:5,help:'舊低點可以留在地圖上多久。',low:'短：只記近期',high:'長：記很久'},
-  {k:'width',n:'盆地有多寬',min:.4,max:3,step:.1,help:'不同尺度的低點可以差多遠，還算同一座盆地。',low:'窄：要求接近',high:'寬：容許分散'},
-  {k:'minScales',n:'幾副望遠鏡要同意',min:2,max:3,step:1,help:'2＝至少兩種尺度同意；3＝三種尺度都要同意。',low:'2：較活潑',high:'3：較嚴格'}]},
- spring:{title:'🌀 Compression Spring｜壓縮彈簧',intro:'把盤整想成一支被壓縮的彈簧。只保留四個最直覺的旋鈕。',fields:[
-  {k:'seg',n:'每一圈有多長',min:5,max:40,step:1,help:'模型把行情切成三圈比較，每圈包含多少根 K 棒。',low:'短：反應快',high:'長：看更大壓縮'},
-  {k:'ratio',n:'要壓得多明顯',min:.45,max:.98,step:.01,help:'下一圈要比上一圈縮小多少才算真正壓縮。',low:'小：收縮要明顯',high:'大：較寬鬆'},
-  {k:'floor',n:'底座可晃多遠',min:.1,max:3,step:.1,help:'壓縮過程中底部可以往下滑多少。',low:'小：底部要穩',high:'大：容許下沉'},
-  {k:'breakout',n:'彈多遠才算釋放',min:0,max:1,step:.05,help:'突破壓縮區後還要走多遠才正式標記。',low:'小：一碰就算',high:'大：要明顯彈出'}]},
- echo:{title:'📻 Echo Bottom｜歷史回聲',intro:'把現在行情錄成一段聲紋，去歷史找最像的舊故事。搜尋速度與抽樣細節由模型自動處理，只留下五個真正有感的旋鈕。',fields:[
-  {k:'pattern',n:'這段回聲有多長',min:12,max:80,step:2,help:'最近多少根 K 棒算一個完整故事。',low:'短：只看片段',high:'長：看完整故事'},
-  {k:'history',n:'歷史圖書館有多深',min:200,max:3000,step:100,help:'往回翻多少根 K 棒找相似案例。',low:'淺：看近代',high:'深：翻更久'},
-  {k:'topK',n:'要聽幾個最像的回聲',min:3,max:20,step:1,help:'用多少個最相似歷史一起判斷。',low:'少：聚焦最像',high:'多：看群體共識'},
-  {k:'maxDist',n:'多不像就淘汰',min:.2,max:1.5,step:.05,help:'越小越挑剔，只有形狀很像才留下。',low:'小：很挑剔',high:'大：較寬鬆'},
-  {k:'horizon',n:'故事後面看多遠',min:5,max:80,step:5,help:'找到歷史回聲後，往後看多遠的結果。',low:'短：看近期結果',high:'長：看更遠結果'}]},
- phase:{title:'🌡️ Phase Transition｜市場相變',intro:'把市場想成「寒冬 → 安靜 → 破冰」。只讓你控制四個階段感最強的旋鈕。',fields:[
-  {k:'trendLook',n:'寒冬要看多長',min:10,max:100,step:5,help:'用多長一段歷史判斷是否真的處於下降狀態。',low:'短：快速判定',high:'長：要長期下降'},
-  {k:'slopeATR',n:'要冷到多深',min:.5,max:6,step:.25,help:'下降必須深到什麼程度才算寒冬。',low:'小跌也算',high:'要明顯大跌'},
-  {k:'atrRatio',n:'要安靜到什麼程度',min:.4,max:1.05,step:.05,help:'短期波動要縮到長期波動的什麼程度。',low:'很安靜',high:'稍微降溫也算'},
-  {k:'breakLook',n:'破冰要突破多大的殼',min:4,max:30,step:1,help:'向上時要突破多長一段近期高點。',low:'容易破冰',high:'要突破大結構'}]},
- lunar:{title:'🌙 Lunar Bottom｜月相底部',intro:'把月相當成外部時鐘。只控制「哪個月亮、時間窗、跌多深」三件事。',fields:[
-  {k:'phase',n:'讓哪種月亮上場',type:'select',options:[['both','🌑 新月＋🌕 滿月'],['new','🌑 只看新月'],['full','🌕 只看滿月']],help:'選擇要測試的月相事件。'},
-  {k:'window',n:'月光影響窗口',min:.25,max:5,step:.25,help:'月相前後多少天都算同一次事件。',low:'窄：貼近月相',high:'寬：前後多天都算'},
-  {k:'minDD',n:'市場跌多深才召喚月亮',min:0,max:.6,step:.01,help:'市場至少跌多少才讓月相訊號出現。0＝純月相實驗。',low:'低：常出現',high:'高：只在深跌時'}]},
- astro:{title:'✨ Astrology Placebo｜占星安慰劑',intro:'這是一台故意製造神秘規則的安慰劑機器。只保留四個最有「玩具感」的旋鈕。',fields:[
-  {k:'modulus',n:'星盤有幾格',min:5,max:50,step:1,help:'把日期規則切成多少個循環格子。',low:'少：規則粗',high:'多：規則碎'},
-  {k:'hits',n:'幾格算命中神秘力量',min:1,max:10,step:1,help:'每個循環裡有幾格會亮起。',low:'少：稀有神諭',high:'多：神諭滿天飛'},
-  {k:'offset',n:'把星盤轉幾格',min:0,max:30,step:1,help:'把整套規則往前或往後平移。',low:'小：接近原規則',high:'大：大幅旋轉'},
-  {k:'minDD',n:'現實濾鏡要多嚴格',min:0,max:.6,step:.01,help:'市場至少跌多少神秘訊號才准出現。0＝純曆法 Placebo。',low:'低：幾乎不過濾',high:'高：只在深跌時'}]}
+  basin:{title:'🏞️ Walled Basin｜雙牆盆地',intro:'先找左右兩面高牆，再檢查中間是不是真的有一片低而平的地。少一面牆，就還不能叫盆地。',fields:[
+    {k:'floorBars',n:'平地要多寬',min:6,max:60,step:1,help:'兩面牆中間至少要留出多少根 K 棒，才像一片真正的盆底。',low:'短：小盆地',high:'長：大盆地'},
+    {k:'wallLook',n:'每面牆找多寬',min:5,max:40,step:1,help:'左右各用多寬的範圍去找最高的牆。',low:'窄：找近牆',high:'寬：找大牆'},
+    {k:'wallHeight',n:'牆至少要多高',min:.5,max:5,step:.1,help:'牆頂必須明顯高過盆底，才算真的把低地包起來。',low:'低：容易成盆',high:'高：牆要很明顯'},
+    {k:'flatness',n:'地面要多平',min:.25,max:2.5,step:.05,help:'盆底上下起伏可以有多大。數字越小，要求越像平地。',low:'小：很平',high:'大：可較崎嶇'},
+    {k:'symmetry',n:'兩面牆可差多少',min:.05,max:.9,step:.05,help:'左右牆高度差太多，就比較不像被兩側高牆包住的盆地。',low:'小：兩牆接近',high:'大：容許不對稱'}]},
+  spring:{title:'🌀 Spring System｜彈簧系統',intro:'把價格當成圍繞平衡位置震盪的彈簧。模型會估計有效彈力係數 k、向下位移 Δx、震盪週期與阻尼。',fields:[
+    {k:'minK',n:'彈簧至少多硬',min:.01,max:.5,step:.01,help:'價格偏離平衡點後，要有多明顯的「拉回去」傾向。',low:'軟：拉回弱',high:'硬：拉回強'},
+    {k:'minDx',n:'至少壓多深',min:.3,max:4,step:.1,help:'現在價格要低於平衡位置多遠，才算真的把彈簧往下壓。',low:'淺壓也算',high:'要壓很深'},
+    {k:'minCycles',n:'至少震幾圈',min:1,max:6,step:1,help:'要看到幾次完整來回，才相信這不是偶然晃動。',low:'少：較靈敏',high:'多：節奏更完整'},
+    {k:'maxDamping',n:'允許多少阻尼',min:.05,max:.9,step:.05,help:'震盪幅度可以衰減多快。太快消失，就不像持續運作的彈簧。',low:'阻尼小',high:'容許快速衰減'},
+    {k:'periodTol',n:'節奏可以多不整齊',min:.08,max:.8,step:.04,help:'每一圈需要多久可以有多少差異。',low:'小：節奏很整齊',high:'大：節奏可較亂'}]},
+  echo:{title:'📻 Echo｜歷史回聲',intro:'只做一件事：拿現在這段價格形狀去歷史裡找相似形狀。它不先判斷後來漲不漲，只告訴你找到了幾次回聲。',fields:[
+    {k:'length',n:'聲音有多長',min:12,max:100,step:2,help:'用最近多少根 K 棒組成這一次要搜尋的價格形狀。',low:'短：短句',high:'長：完整段落'},
+    {k:'history',n:'往多久以前喊',min:200,max:5000,step:100,help:'往回搜尋多長的歷史資料。',low:'近：只聽近代',high:'遠：找更久以前'},
+    {k:'similarity',n:'多像才算回聲',min:.65,max:.99,step:.01,help:'形狀相似度至少要多高，才計入一次回聲。',low:'低：容易聽到',high:'高：幾乎要一樣'}]},
+  astro:{title:'🔮 Astrology Engine｜占星盤',intro:'採用西洋占星常見的行星與主要相位：合相、六合、刑、拱、沖。這裡把它當外部時間系統來做市場實驗。',fields:[
+    {k:'planetSet',n:'使用哪些星體',type:'select',options:[['classic','傳統七曜'],['modern','七曜＋天王／海王／冥王']],help:'傳統七曜包含日、月、水、金、火、木、土；Modern 再加入三王星。'},
+    {k:'aspectSet',n:'觀察哪些相位',type:'select',options:[['major','主要相位：合／六合／刑／拱／沖'],['hard','緊張相位：合／刑／沖'],['harmony','和諧相位：六合／拱']],help:'直接使用西洋占星常見相位角度，不自創日期規則。'},
+    {k:'orb',n:'Orb 容許幾度',min:.5,max:10,step:.5,help:'距離精確相位角多少度以內，仍算同一個相位。',low:'窄：要求精準',high:'寬：事件較多'},
+    {k:'retro',n:'加入逆行事件',type:'select',options:[['off','不加入'],['on','加入逆行開始']],help:'開啟後，行星從順行轉成逆行時也會產生占星事件。'},
+    {k:'ingress',n:'加入入座事件',type:'select',options:[['off','不加入'],['on','加入進入新星座']],help:'開啟後，行星跨過每 30° 星座邊界時也會產生事件。'}]}
 };
 const BTC_D='https://raw.githubusercontent.com/alessiostomeo/btc-cycle-data/main/bitstamp/1day/BTCUSD_bitstamp_daily_2012-2026.csv';
 const LOCAL={IXIC:'data/nasdaq_daily.csv',TWII:'data/taiex_daily.csv'};
@@ -248,44 +292,127 @@ function parseCSV(t){let l=t.trim().split(/\r?\n/),h=l.shift().split(',').map(x=
 function setTFs(){let m=q('market').value,arr=m==='BTC'?['1h','4h','1d','1w']:['1d','1w','1m'];if(!arr.includes(tf))tf=m==='BTC'?'1w':'1d';q('tfs').innerHTML=arr.map(x=>'<button data-tf="'+x+'" class="'+(x===tf?'active':'')+'">'+x.toUpperCase()+'</button>').join('')}
 function aggregate(a,kind){let out=[],u,key;for(let x of a){let d=new Date(x.t*1000),k;if(kind==='4h')k=Math.floor(x.t/14400)*14400;else if(kind==='1d')k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())/1000;else if(kind==='1w'){k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-((d.getUTCDay()+6)%7))/1000}else{k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1)/1000}if(!u||key!==k){u={...x,t:k};key=k;out.push(u)}else{u.h=Math.max(u.h,x.h);u.l=Math.min(u.l,x.l);u.c=x.c;u.v+=x.v}}return out}
 async function binance(interval){let all=[],end=Date.now(),loops=tf==='1h'||tf==='4h'?20:8;for(let n=0;n<loops;n++){let url='https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval='+interval+'&limit=1000&endTime='+end;let a=await fetch(url).then(r=>{if(!r.ok)throw Error('Binance '+r.status);return r.json()});if(!a.length)break;let b=a.map(x=>({t:x[0]/1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[7]}));all=b.concat(all);end=a[0][0]-1;if(a.length<1000)break}let m=new Map(all.map(x=>[x.t,x]));return [...m.values()].sort((a,b)=>a.t-b.t)}
-async function load(){q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。灰色＝候選 Zone；藍色＝已驗證支撐；紅色＝回測失敗；Script 訊號會疊加在圖上。'}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
+async function load(){q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。市場圖表是底層；模型與 Script 使用彼此獨立的疊加圖層。'}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
 function atrArr(a,n){let z=a.map((x,i)=>i?Math.max(x.h-x.l,Math.abs(x.h-a[i-1].c),Math.abs(x.l-a[i-1].c)):x.h-x.l),r=Array(a.length).fill(NaN),s=0;for(let i=0;i<z.length;i++){if(i<n){s+=z[i];if(i===n-1)r[i]=s/n}else r[i]=(r[i-1]*(n-1)+z[i])/n}return r}
-function zoneCalc(){if(!D.length)return;let L=ZONE.pivot,n=ZONE.atr,w=ZONE.width,br=ZONE.breakAtr,A=atrArr(D,n),cand=NaN,zones=[],formed=0,validated=0,rejected=0,on=q('modSupport').checked;R=D.map(x=>({...x,zones:[]}));if(on){for(let i=0;i<D.length;i++){let p=i-L,pl=NaN;if(p>=L){let ok=1;for(let j=p-L;j<=p+L;j++)if(j!==p&&D[j].l<=D[p].l){ok=0;break}if(ok)pl=D[p].l}if(isFinite(pl)&&isFinite(A[p])){let av=A[p];if(!isFinite(cand))cand=pl;else if(Math.abs(pl-cand)<=av*w){let top=Math.max(pl,cand)+av*w*.3,bot=Math.min(pl,cand)-av*w*.3;zones.push({top:top,bot:bot,state:'candidate',born:i,departed:false,dead:false});cand=NaN;formed++}else cand=pl}let x=D[i],tol=isFinite(A[i])?A[i]*br:0;for(let k=0;k<zones.length;k++){let z=zones[k];if(z.dead)continue;if(z.state==='candidate'){if(i>z.born&&!z.departed&&x.l>z.top)z.departed=true;if(z.departed&&i>z.born){let touch=x.l<=z.top&&x.h>=z.bot;if(touch){if(x.c<z.bot-tol){z.state='rejected';z.dead=true;rejected++}else if(x.c>=z.bot){z.state='validated';validated++}}}}else if(z.state==='validated'&&x.c<z.bot-tol){z.state='rejected';z.dead=true;rejected++}if(!z.dead)R[i].zones.push({top:z.top,bot:z.bot,state:z.state})}}}q('zoneInfo').textContent=on?'v0.5b｜多 Zone 並存｜Candidate '+formed+' · Validated '+validated+' · Rejected '+rejected+'｜優先保留低點候選，不因新 Zone 出現而覆蓋':'Support Zone v0.5b 已關閉';macroCalc()}
-function macroCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].macro=[];let on=q('modMacro').checked;if(!on){q('macroInfo').textContent='Macro Bottom v0.2 已關閉';bottomLabCalc();return}let p=MACRO.p[tf]||MACRO.p['1d'],A=atrArr(D,MACRO.atr),ap=A.map((x,i)=>isFinite(x)&&D[i].c?x/D[i].c:NaN),zones=[],formed=0,confirmed=0,failed=0;for(let i=0;i<D.length;i++){if(i>=Math.max(p.hi,p.low,p.atrAvg)){let hi=Math.max(...D.slice(i-p.hi+1,i+1).map(x=>x.h)),ll=Math.min(...D.slice(i-p.low+1,i+1).map(x=>x.l)),dd=hi?1-D[i].c/hi:0,av=0,c=0;for(let j=i-p.atrAvg+1;j<=i;j++)if(isFinite(ap[j])){av+=ap[j];c++}av=c?av/c:NaN;let fresh=D[i].l<=ll,expanded=isFinite(ap[i])&&isFinite(av)&&ap[i]>=av*p.atrX,near=false;for(let z of zones)if(!z.dead&&Math.abs(D[i].l-z.low)<=A[i]*1.5)near=true;if(fresh&&dd>=p.dd&&expanded&&!near&&isFinite(A[i])){zones.push({top:D[i].l+A[i]*MACRO.zoneUp,bot:D[i].l-A[i]*MACRO.zoneDn,low:D[i].l,trigger:D[i].h,born:i,expires:i+p.confirm,state:'candidate',dead:false});formed++}}for(let z of zones){if(z.dead)continue;let tol=isFinite(A[i])?A[i]*MACRO.breakAtr:0;if(i>z.born&&D[i].c<z.bot-tol){z.dead=true;failed++;continue}if(z.state==='candidate'){if(i>z.born&&i<=z.expires&&D[i].c>z.trigger){z.state='confirmed';confirmed++}else if(i>z.expires){z.dead=true;failed++;continue}}R[i].macro.push({top:z.top,bot:z.bot,state:z.state})}}q('macroInfo').textContent='Macro Bottom v0.2｜'+tf.toUpperCase()+'｜Candidate '+formed+' · Confirmed '+confirmed+' · Failed/Expired '+failed+'｜自動依時間框架調整觀察窗；不限制市場與週期';bottomLabCalc()}
-function bottomLabCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].bottomSigs=[];let on=q('modSweep').checked,cnt=0,A=atrArr(D,14),look=tf==='1h'?48:tf==='4h'?42:tf==='1d'?30:tf==='1w'?20:12;if(on){for(let i=Math.max(20,look);i<D.length;i++){let x=D[i],range=Math.max(x.h-x.l,1e-9),pos=(x.c-x.l)/range,priorLow=Math.min(...D.slice(i-look,i).map(z=>z.l));if(x.l<priorLow&&x.c>priorLow&&pos>=.55){R[i].bottomSigs.push({k:'sweep',label:'Liquidity Sweep',slot:0});cnt++}}}q('bottomInfo').textContent=on?'Liquidity Sweep｜'+cnt+' 個訊號｜原始跌破收回邏輯':'Liquidity Sweep 已關閉';researchCalc()}
-function pivotLowAt(p,L){if(p<L||p+L>=D.length)return false;for(let j=p-L;j<=p+L;j++)if(j!==p&&D[j].l<=D[p].l)return false;return true}
-function avgATR(A,a,b){let s=0,c=0;for(let i=Math.max(0,a);i<=Math.min(A.length-1,b);i++)if(isFinite(A[i])){s+=A[i];c++}return c?s/c:NaN}
-function normPath(start,len){let a=[],base=D[start].c;if(!base)return null;for(let j=0;j<len;j++)a.push(Math.log(D[start+j].c/base));let m=a.reduce((x,y)=>x+y,0)/a.length,v=0;for(let x of a)v+=(x-m)*(x-m);let sd=Math.sqrt(v/a.length)||1e-9;return a.map(x=>(x-m)/sd)}
-function pathDist(a,b){let s=0;for(let i=0;i<a.length;i++){let d=a[i]-b[i];s+=d*d}return Math.sqrt(s/a.length)}
-function med(a){if(!a.length)return NaN;let b=a.slice().sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2}
-function syncDerivedParams(){
-  EXP.basin.p2=Math.max(EXP.basin.p1+1,Math.round((EXP.basin.p1+EXP.basin.p3)/2));
-  EXP.echo.candidateLook=Math.max(8,Math.round(EXP.echo.pattern*.7));
-  EXP.echo.stride=Math.max(1,Math.round(EXP.echo.pattern/7));
-  EXP.echo.minMedian=0;
-  EXP.phase.compLook=Math.max(5,Math.round(EXP.phase.trendLook*.4));
-  EXP.phase.recentDown=Math.max(10,Math.round(EXP.phase.trendLook*1.35));
-  EXP.lunar.ddLook=60;
-  EXP.astro.ddLook=50;
+function zoneCalc(){if(!D.length)return;let L=ZONE.pivot,n=ZONE.atr,w=ZONE.width,br=ZONE.breakAtr,A=atrArr(D,n),cand=NaN,zones=[],formed=0,validated=0,rejected=0,on=q('modSupport').checked;R=D.map(x=>({...x,zones:[]}));if(on){for(let i=0;i<D.length;i++){let p=i-L,pl=NaN;if(p>=L){let ok=1;for(let j=p-L;j<=p+L;j++)if(j!==p&&D[j].l<=D[p].l){ok=0;break}if(ok)pl=D[p].l}if(isFinite(pl)&&isFinite(A[p])){let av=A[p];if(!isFinite(cand))cand=pl;else if(Math.abs(pl-cand)<=av*w){let top=Math.max(pl,cand)+av*w*.3,bot=Math.min(pl,cand)-av*w*.3;zones.push({top:top,bot:bot,state:'candidate',born:i,departed:false,dead:false});cand=NaN;formed++}else cand=pl}let x=D[i],tol=isFinite(A[i])?A[i]*br:0;for(let k=0;k<zones.length;k++){let z=zones[k];if(z.dead)continue;if(z.state==='candidate'){if(i>z.born&&!z.departed&&x.l>z.top)z.departed=true;if(z.departed&&i>z.born){let touch=x.l<=z.top&&x.h>=z.bot;if(touch){if(x.c<z.bot-tol){z.state='rejected';z.dead=true;rejected++}else if(x.c>=z.bot){z.state='validated';validated++}}}}else if(z.state==='validated'&&x.c<z.bot-tol){z.state='rejected';z.dead=true;rejected++}if(!z.dead)R[i].zones.push({top:z.top,bot:z.bot,state:z.state})}}}setInfo('zoneInfo',on?'v0.5b｜多 Zone 並存｜Candidate '+formed+' · Validated '+validated+' · Rejected '+rejected+'｜優先保留低點候選，不因新 Zone 出現而覆蓋':'Support Zone v0.5b 已關閉');macroCalc()}
+function macroCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].macro=[];let on=q('modMacro').checked;if(!on){setInfo('macroInfo','Macro Bottom v0.2 已關閉');bottomLabCalc();return}let p=MACRO.p[tf]||MACRO.p['1d'],A=atrArr(D,MACRO.atr),ap=A.map((x,i)=>isFinite(x)&&D[i].c?x/D[i].c:NaN),zones=[],formed=0,confirmed=0,failed=0;for(let i=0;i<D.length;i++){if(i>=Math.max(p.hi,p.low,p.atrAvg)){let hi=Math.max(...D.slice(i-p.hi+1,i+1).map(x=>x.h)),ll=Math.min(...D.slice(i-p.low+1,i+1).map(x=>x.l)),dd=hi?1-D[i].c/hi:0,av=0,c=0;for(let j=i-p.atrAvg+1;j<=i;j++)if(isFinite(ap[j])){av+=ap[j];c++}av=c?av/c:NaN;let fresh=D[i].l<=ll,expanded=isFinite(ap[i])&&isFinite(av)&&ap[i]>=av*p.atrX,near=false;for(let z of zones)if(!z.dead&&Math.abs(D[i].l-z.low)<=A[i]*1.5)near=true;if(fresh&&dd>=p.dd&&expanded&&!near&&isFinite(A[i])){zones.push({top:D[i].l+A[i]*MACRO.zoneUp,bot:D[i].l-A[i]*MACRO.zoneDn,low:D[i].l,trigger:D[i].h,born:i,expires:i+p.confirm,state:'candidate',dead:false});formed++}}for(let z of zones){if(z.dead)continue;let tol=isFinite(A[i])?A[i]*MACRO.breakAtr:0;if(i>z.born&&D[i].c<z.bot-tol){z.dead=true;failed++;continue}if(z.state==='candidate'){if(i>z.born&&i<=z.expires&&D[i].c>z.trigger){z.state='confirmed';confirmed++}else if(i>z.expires){z.dead=true;failed++;continue}}R[i].macro.push({top:z.top,bot:z.bot,state:z.state})}}setInfo('macroInfo','Macro Bottom v0.2｜'+tf.toUpperCase()+'｜Candidate '+formed+' · Confirmed '+confirmed+' · Failed/Expired '+failed+'｜自動依時間框架調整觀察窗；不限制市場與週期');bottomLabCalc()}
+function bottomLabCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].bottomSigs=[];let on=q('modSweep').checked,cnt=0,A=atrArr(D,14),look=tf==='1h'?48:tf==='4h'?42:tf==='1d'?30:tf==='1w'?20:12;if(on){for(let i=Math.max(20,look);i<D.length;i++){let x=D[i],range=Math.max(x.h-x.l,1e-9),pos=(x.c-x.l)/range,priorLow=Math.min(...D.slice(i-look,i).map(z=>z.l));if(x.l<priorLow&&x.c>priorLow&&pos>=.55){R[i].bottomSigs.push({k:'sweep',label:'Liquidity Sweep',slot:0});cnt++}}}setInfo('bottomInfo',on?'Liquidity Sweep｜'+cnt+' 個訊號｜原始跌破收回邏輯':'Liquidity Sweep 已關閉');researchCalc()}
+function mean(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN}
+function stdev(a){if(a.length<2)return 0;let m=mean(a);return Math.sqrt(mean(a.map(x=>(x-m)*(x-m))))}
+function median(a){if(!a.length)return NaN;let b=a.slice().sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function angleNorm(x){x%=360;if(x<0)x+=360;return x}
+function angleDiff(a,b){let d=angleNorm(a-b);return d>180?d-360:d}
+function minAngle(a,b){return Math.abs(angleDiff(a,b))}
+function shapeVector(end,len,points=16){
+  let start=end-len+1;if(start<0)return null,a=[];
+  for(let p=0;p<points;p++){let pos=start+(len-1)*p/(points-1),i=Math.floor(pos),f=pos-i,v=i+1<=end?D[i].c*(1-f)+D[i+1].c*f:D[i].c;a.push(Math.log(Math.max(v,1e-9)))}
+  let m=mean(a),sd=stdev(a)||1e-9;return a.map(x=>(x-m)/sd)
 }
-function researchCalc(){if(!D.length)return;syncDerivedParams();for(let i=0;i<R.length;i++){R[i].researchSigs=[];R[i].researchZones=[]}let use={basin:q('modBasin').checked,spring:q('modSpring').checked,echo:q('modEcho').checked,phase:q('modPhase').checked,lunar:q('modLunar').checked,astro:q('modAstro').checked},cnt={basin:0,spring:0,echo:0,phase:0,lunar:0,astro:0},A=atrArr(D,14);
-// Fractal Basin
-if(use.basin){let p=EXP.basin,sc=[Math.max(1,Math.round(p.p1)),Math.max(1,Math.round(p.p2)),Math.max(1,Math.round(p.p3))],latest=[null,null,null],lastKey='';for(let i=0;i<D.length;i++){for(let z=0;z<3;z++){let L=sc[z],pi=i-L;if(pi>=L&&pivotLowAt(pi,L))latest[z]={i:pi,low:D[pi].l,L:L}}let vals=latest.filter(v=>v&&i-v.i<=p.look);if(vals.length>=p.minScales&&isFinite(A[i])){let mn=Math.min(...vals.map(v=>v.low)),mx=Math.max(...vals.map(v=>v.low));if(mx-mn<=A[i]*p.width){let top=mx+A[i]*.18,bot=mn-A[i]*.18;R[i].researchZones.push({k:'basin',top:top,bot:bot,label:'Fractal Basin',detail:vals.length+' 個尺度低點集中；寬度 '+fmt(mx-mn)});let key=vals.map(v=>v.i).join('-');if(key!==lastKey){R[i].researchSigs.push({k:'basin',label:'Fractal Basin',detail:vals.length+' 個尺度重疊｜Zone '+fmt(bot)+'–'+fmt(top)});cnt.basin++;lastKey=key}}else lastKey=''}else lastKey=''}}
-// Compression Spring
-if(use.spring){let p=EXP.spring,n=Math.max(3,Math.round(p.seg));for(let i=n*3;i<D.length;i++){let seg=(a,b)=>{let x=D.slice(a,b),hi=Math.max(...x.map(z=>z.h)),lo=Math.min(...x.map(z=>z.l));return{hi,lo,r:hi-lo}},a=seg(i-3*n,i-2*n),b=seg(i-2*n,i-n),c=seg(i-n,i),atr=A[i];if(!isFinite(atr))continue;let shrink=b.r<=a.r*p.ratio&&c.r<=b.r*p.ratio,floorOK=c.lo>=Math.min(a.lo,b.lo)-atr*p.floor;if(shrink&&floorOK){R[i].researchZones.push({k:'spring',top:c.hi,bot:c.lo,label:'Compression Spring',detail:'Range '+fmt(a.r)+' → '+fmt(b.r)+' → '+fmt(c.r)});if(D[i].c>c.hi+atr*p.breakout){R[i].researchSigs.push({k:'spring',label:'Compression Spring Release',detail:'三段振幅收斂後突破壓縮區'});cnt.spring++}}}}
-// Echo Bottom
-if(use.echo){let p=EXP.echo,L=Math.max(8,Math.round(p.pattern)),cand=Math.max(4,Math.round(p.candidateLook)),hist=Math.max(100,Math.round(p.history)),stride=Math.max(1,Math.round(p.stride)),topK=Math.max(2,Math.round(p.topK)),hor=Math.max(1,Math.round(p.horizon));for(let i=Math.max(L+cand+hor+10,100);i<D.length;i++){let ll=Math.min(...D.slice(i-cand+1,i+1).map(z=>z.l));if(D[i].l>ll)continue;let cs=i-L+1,cp=normPath(cs,L);if(!cp)continue;let best=[],hs0=Math.max(0,cs-hist-L-hor),hs1=cs-L-hor-2;for(let hs=hs0;hs<=hs1;hs+=stride){let hp=normPath(hs,L);if(!hp)continue;let dist=pathDist(cp,hp),he=hs+L-1;if(he+hor>=cs)continue;let fut=D[he+hor].c/D[he].c-1;best.push({d:dist,r:fut,end:he})}if(best.length<topK)continue;best.sort((x,y)=>x.d-y.d);let top=best.slice(0,topK),md=top.reduce((x,y)=>x+y.d,0)/top.length,mr=med(top.map(x=>x.r));if(md<=p.maxDist&&mr>=p.minMedian){R[i].researchSigs.push({k:'echo',label:'Echo Bottom',detail:'Top '+topK+' 平均距離 '+md.toFixed(2)+'｜後續中位 '+(mr*100).toFixed(1)+'%'});cnt.echo++}}}
-// Phase Transition
-if(use.phase){let p=EXP.phase,lastDown=-1,armed=false;for(let i=Math.max(p.trendLook,p.compLook,p.breakLook)+1;i<D.length;i++){let atr=A[i];if(!isFinite(atr))continue;let slope=(D[i].c-D[i-p.trendLook].c)/atr,down=slope<=-p.slopeATR,sa=avgATR(A,i-p.compLook+1,i),la=avgATR(A,i-p.trendLook+1,i),ratio=isFinite(sa)&&isFinite(la)&&la?sa/la:NaN,comp=isFinite(ratio)&&ratio<=p.atrRatio;if(down)lastDown=i;if(comp&&lastDown>=0&&i-lastDown<=p.recentDown)armed=true;let priorHi=Math.max(...D.slice(i-p.breakLook,i).map(z=>z.h)),breakout=D[i].c>priorHi;if(armed&&breakout&&i-lastDown<=p.recentDown){R[i].researchSigs.push({k:'phase',label:'Phase Transition',detail:'下降 → 壓縮 → 向上突破｜ATR ratio '+ratio.toFixed(2)});cnt.phase++;armed=false}if(lastDown>=0&&i-lastDown>p.recentDown)armed=false}}
-// Lunar Bottom
-if(use.lunar){let p=EXP.lunar,epoch=947182440,cycle=29.530588853,lastKey='';for(let i=Math.max(2,Math.round(p.ddLook));i<D.length;i++){let days=(D[i].t-epoch)/86400,age=((days%cycle)+cycle)%cycle,dn=Math.min(age,cycle-age),df=Math.abs(age-cycle/2),which=null,dist=99;if((p.phase==='both'||p.phase==='new')&&dn<=p.window){which='New Moon';dist=dn}if((p.phase==='both'||p.phase==='full')&&df<=p.window&&df<dist){which='Full Moon';dist=df}if(!which)continue;let hi=Math.max(...D.slice(i-p.ddLook+1,i+1).map(z=>z.h)),dd=hi?1-D[i].c/hi:0,key=Math.floor(days/cycle)+'-'+which;if(dd>=p.minDD&&key!==lastKey){R[i].researchSigs.push({k:'lunar',label:'Lunar Bottom · '+which,detail:'距月相 '+dist.toFixed(1)+' 天｜回撤 '+(dd*100).toFixed(1)+'%'});cnt.lunar++;lastKey=key}}}
-// Astrology Placebo
-if(use.astro){let p=EXP.astro,lastDay='';for(let i=Math.max(2,Math.round(p.ddLook));i<D.length;i++){let dt=new Date(D[i].t*1000),dayKey=dt.toISOString().slice(0,10);if(dayKey===lastDay)continue;lastDay=dayKey;let start=Date.UTC(dt.getUTCFullYear(),0,0),doy=Math.floor((dt.getTime()-start)/86400000),z=Math.floor(((doy+p.offset)%365)/30.4375)%12,w=dt.getUTCDay(),dom=dt.getUTCDate(),score=((z*7+w*3+dom+p.offset)%Math.max(2,Math.round(p.modulus))+Math.max(2,Math.round(p.modulus)))%Math.max(2,Math.round(p.modulus)),hi=Math.max(...D.slice(i-p.ddLook+1,i+1).map(x=>x.h)),dd=hi?1-D[i].c/hi:0;if(score<Math.min(p.hits,p.modulus)&&dd>=p.minDD){R[i].researchSigs.push({k:'astro',label:'Astrology Placebo',detail:'Calendar score '+score+' / '+p.modulus+'｜回撤 '+(dd*100).toFixed(1)+'%'});cnt.astro++}}}
-q('researchInfo').textContent='Experimental Lab｜Basin '+cnt.basin+' · Spring '+cnt.spring+' · Echo '+cnt.echo+' · Phase '+cnt.phase+' · Lunar '+cnt.lunar+' · Placebo '+cnt.astro;safeDrawModels()}
+function shapeSimilarity(a,b){if(!a||!b||a.length!==b.length)return 0;let d=Math.sqrt(mean(a.map((x,i)=>(x-b[i])*(x-b[i]))));return clamp(1-d/2.2,0,1)}
+
+// Simplified astronomical positions for the astrology experiment.
+// Circular-orbit geocentric approximation: enough to preserve real orbital periods,
+// retrograde geometry and standard astrology aspect definitions without a remote dependency.
+const ORBIT={
+ Mercury:{r:.387,p:87.969,L:252.251},Venus:{r:.723,p:224.701,L:181.980},Earth:{r:1,p:365.256,L:100.464},
+ Mars:{r:1.524,p:686.980,L:355.453},Jupiter:{r:5.203,p:4332.589,L:34.404},Saturn:{r:9.537,p:10759.22,L:49.944},
+ Uranus:{r:19.191,p:30688.5,L:313.232},Neptune:{r:30.07,p:60182,L:304.880},Pluto:{r:39.48,p:90560,L:238.929}
+};
+function astroPos(t){
+  let d=t/86400-10957.5,rad=Math.PI/180,e=ORBIT.Earth,Le=angleNorm(e.L+360*d/e.p),ex=e.r*Math.cos(Le*rad),ey=e.r*Math.sin(Le*rad),out={};
+  out.Sun=angleNorm(Math.atan2(-ey,-ex)/rad);
+  out.Moon=angleNorm(218.316+13.176396*d);
+  for(let [name,o] of Object.entries(ORBIT)){if(name==='Earth')continue;let L=angleNorm(o.L+360*d/o.p),x=o.r*Math.cos(L*rad)-ex,y=o.r*Math.sin(L*rad)-ey;out[name]=angleNorm(Math.atan2(y,x)/rad)}
+  return out
+}
+function astroPlanets(set){return set==='modern'?['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']:['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn']}
+const ASTRO_NAME={Sun:'太陽',Moon:'月亮',Mercury:'水星',Venus:'金星',Mars:'火星',Jupiter:'木星',Saturn:'土星',Uranus:'天王星',Neptune:'海王星',Pluto:'冥王星'};
+const ASPECT_NAME={0:'合相 ☌',60:'六合 ⚹',90:'刑 □',120:'拱 △',180:'沖 ☍'};
+function aspectAngles(set){return set==='hard'?[0,90,180]:set==='harmony'?[60,120]:[0,60,90,120,180]}
+
+function researchCalc(){
+  if(!D.length)return;
+  for(let i=0;i<R.length;i++){R[i].researchSigs=[];R[i].researchZones=[]}
+  let use={basin:q('modBasin').checked,spring:q('modSpring').checked,echo:q('modEcho').checked,astro:q('modAstro').checked},A=atrArr(D,14);
+
+  // Walled Basin: left wall -> flat low land -> right wall.
+  if(use.basin){
+    let p=EXP.basin,F=Math.max(4,Math.round(p.floorBars)),W=Math.max(3,Math.round(p.wallLook)),last=-9999;
+    for(let i=2*W+F-1;i<D.length;i++){
+      let ls=i-(2*W+F)+1,le=ls+W-1,fs=le+1,fe=fs+F-1,rs=fe+1,re=i,atr=A[fe];
+      if(!isFinite(atr))continue;
+      let floorClose=D.slice(fs,fe+1).map(x=>x.c),floorMid=median(floorClose),floorRange=Math.max(...floorClose)-Math.min(...floorClose);
+      let leftPeak=Math.max(...D.slice(ls,le+1).map(x=>x.h)),rightPeak=Math.max(...D.slice(rs,re+1).map(x=>x.h));
+      let lh=leftPeak-floorMid,rh=rightPeak-floorMid,sym=Math.abs(lh-rh)/Math.max(lh,rh,1e-9);
+      if(lh>=atr*p.wallHeight&&rh>=atr*p.wallHeight&&floorRange<=atr*p.flatness&&sym<=p.symmetry&&i-last>Math.max(3,Math.round(F/2))){
+        let top=floorMid+Math.max(floorRange/2,atr*.12),bot=floorMid-Math.max(floorRange/2,atr*.12);
+        for(let j=fs;j<=fe;j++)R[j].researchZones.push({k:'basin',top,bot,label:'Walled Basin｜雙牆盆地',detail:'左牆 '+(lh/atr).toFixed(1)+' ATR｜右牆 '+(rh/atr).toFixed(1)+' ATR｜平地 '+F+' bars'});
+        R[i].researchSigs.push({k:'basin',label:'Walled Basin｜雙牆盆地',detail:'兩側高牆完成｜牆差 '+(sym*100).toFixed(0)+'%｜盆底波動 '+(floorRange/atr).toFixed(2)+' ATR'});
+        last=i;
+      }
+    }
+  }
+
+  // Spring System: estimate restoring force, displacement, cycles, damping and rhythm.
+  if(use.spring){
+    let p=EXP.spring,look=Math.max(60,Math.round(p.minCycles*26));
+    for(let i=look;i<D.length;i++){
+      let vals=D.slice(i-look+1,i+1).map(x=>x.c),eq=mean(vals),atr=A[i];if(!isFinite(atr)||atr<=0)continue;
+      let xs=vals.map(v=>(v-eq)/atr),num=0,den=0;
+      for(let t=2;t<vals.length;t++){let acc=(vals[t]-2*vals[t-1]+vals[t-2])/atr,x=xs[t-1];num+=x*acc;den+=x*x}
+      let k=den?Math.max(0,-num/den):0,dx=(eq-D[i].c)/atr;
+      let cross=[];for(let t=1;t<xs.length;t++)if((xs[t-1]<=0&&xs[t]>0)||(xs[t-1]>=0&&xs[t]<0))cross.push(t);
+      let cycles=cross.length/2,periods=[];for(let z=2;z<cross.length;z++)periods.push(cross[z]-cross[z-2]);
+      let T=periods.length?mean(periods):NaN,pcv=periods.length>1?stdev(periods)/Math.max(T,1e-9):0;
+      let amps=[];for(let z=1;z<cross.length;z++){let seg=xs.slice(cross[z-1],cross[z]+1);if(seg.length)amps.push(Math.max(...seg.map(Math.abs)))}
+      let damp=0;if(amps.length>=2){let first=mean(amps.slice(0,Math.ceil(amps.length/2))),last=mean(amps.slice(Math.floor(amps.length/2)));damp=clamp(1-last/Math.max(first,1e-9),0,1)}
+      if(k>=p.minK&&dx>=p.minDx&&cycles>=p.minCycles&&damp<=p.maxDamping&&pcv<=p.periodTol){
+        R[i].researchSigs.push({k:'spring',label:'Spring System｜彈簧系統',detail:'k* '+k.toFixed(2)+'｜Δx '+dx.toFixed(2)+' ATR｜'+cycles.toFixed(1)+' 圈｜阻尼 '+damp.toFixed(2)+'｜T '+(isFinite(T)?T.toFixed(1):'—')});
+      }
+    }
+  }
+
+  // Echo: shape only. Count historical echoes; do not use future returns.
+  if(use.echo){
+    let p=EXP.echo,L=Math.max(8,Math.round(p.length)),hist=Math.max(L*3,Math.round(p.history)),sim=p.similarity;
+    let evalStep=Math.max(1,Math.round(L/4)),histStep=Math.max(1,Math.round(L/3));
+    for(let i=L-1;i<D.length;i++){
+      if(i!==D.length-1&&i%evalStep!==0)continue;
+      let cur=shapeVector(i,L),count=0,best=0,start=Math.max(L-1,i-hist),end=i-L;
+      for(let j=start;j<=end;j+=histStep){let hs=shapeVector(j,L),ss=shapeSimilarity(cur,hs);if(ss>=sim){count++;if(ss>best)best=ss}}
+      if(count>0)R[i].researchSigs.push({k:'echo',label:'Echo｜歷史回聲',detail:'找到 '+count+' 次回聲｜最佳相似度 '+(best*100).toFixed(0)+'%｜聲音長度 '+L+' bars'});
+    }
+  }
+
+  // Astrology Engine: standard western astrology aspect vocabulary.
+  if(use.astro){
+    let p=EXP.astro,planets=astroPlanets(p.planetSet),angles=aspectAngles(p.aspectSet),prevAspect=new Set(),prevPos=null,prevDir={},lastDay='';
+    for(let i=0;i<D.length;i++){
+      let day=date(D[i].t);if(day===lastDay)continue;lastDay=day;
+      let pos=astroPos(D[i].t),events=[],active=new Set();
+      for(let a=0;a<planets.length;a++)for(let b=a+1;b<planets.length;b++){
+        let A1=planets[a],B1=planets[b],sep=minAngle(pos[A1],pos[B1]);
+        for(let ang of angles){let orb=Math.abs(sep-ang);if(orb<=p.orb){let key=A1+'-'+B1+'-'+ang;active.add(key);if(!prevAspect.has(key))events.push(ASTRO_NAME[A1]+' '+ASPECT_NAME[ang]+' '+ASTRO_NAME[B1]+'（orb '+orb.toFixed(1)+'°）')}}
+      }
+      if(prevPos&&p.retro==='on'){
+        for(let name of planets){if(name==='Sun'||name==='Moon')continue;let dir=angleDiff(pos[name],prevPos[name]),pd=prevDir[name];if(pd!==undefined&&pd>=0&&dir<0)events.push(ASTRO_NAME[name]+' 開始逆行');prevDir[name]=dir}
+      }else if(prevPos){for(let name of planets)if(name!=='Sun'&&name!=='Moon')prevDir[name]=angleDiff(pos[name],prevPos[name])}
+      if(prevPos&&p.ingress==='on'){
+        const signs=['牡羊','金牛','雙子','巨蟹','獅子','處女','天秤','天蠍','射手','摩羯','水瓶','雙魚'];
+        for(let name of planets){let s0=Math.floor(prevPos[name]/30),s1=Math.floor(pos[name]/30);if(s0!==s1)events.push(ASTRO_NAME[name]+' 進入'+signs[s1]+'座')}
+      }
+      if(events.length)R[i].researchSigs.push({k:'astro',label:'Astrology Engine｜占星盤',detail:events.slice(0,4).join(' · ')+(events.length>4?' · +'+(events.length-4):'')});
+      prevAspect=active;prevPos=pos;
+    }
+  }
+  safeDrawModels();
+}
 function smaAt(i,n){if(i<n-1)return NaN;let s=0;for(let k=i-n+1;k<=i;k++)s+=D[k].c;return s/n}function emaSeries(n){let a=Array(D.length).fill(NaN),k=2/(n+1),s=0;for(let i=0;i<D.length;i++){if(i<n){s+=D[i].c;if(i===n-1)a[i]=s/n}else a[i]=D[i].c*k+a[i-1]*(1-k)}return a}
-function runScript(){if(!D.length)return;SIG=[];let code=q('script').value,fn;try{fn=new Function('open','high','low','close','volume','index','sma','ema','atr','highest','lowest','buy','sell','state',code)}catch(e){q('scriptStatus').innerHTML='<span class=err>編譯錯誤：'+e.message+'</span>';return}let state={},emaCache={},atrCache={};try{for(let i=0;i<D.length;i++){let sig=[];let sma=n=>smaAt(i,n),ema=n=>{if(!emaCache[n])emaCache[n]=emaSeries(n);return emaCache[n][i]},atr=n=>{if(!atrCache[n])atrCache[n]=atrArr(D,n);return atrCache[n][i]},highest=n=>i<n-1?NaN:Math.max(...D.slice(i-n+1,i+1).map(x=>x.h)),lowest=n=>i<n-1?NaN:Math.min(...D.slice(i-n+1,i+1).map(x=>x.l)),buy=(c,l='BUY')=>{if(c)sig.push({side:'BUY',label:l})},sell=(c,l='SELL')=>{if(c)sig.push({side:'SELL',label:l})};fn(D[i].o,D[i].h,D[i].l,D[i].c,D[i].v,i,sma,ema,atr,highest,lowest,buy,sell,state);for(let s of sig)SIG.push({i,t:D[i].t,p:D[i].c,...s})}q('scriptStatus').innerHTML='<span class=good>完成：'+SIG.length+' 個訊號</span>';q('events').innerHTML=SIG.slice().reverse().slice(0,300).map(s=>'<tr><td>'+date(s.t)+'</td><td class="'+(s.side==='BUY'?'good':'warn')+'">'+s.side+'</td><td>'+money(s.p)+'</td><td>'+s.label+'</td></tr>').join('');safeDrawModels()}catch(e){q('scriptStatus').innerHTML='<span class=err>執行錯誤：'+e.message+'</span>'}}
+function runScript(){if(!D.length)return;SIG=[];let code=q('script').value,fn;try{fn=new Function('open','high','low','close','volume','index','sma','ema','atr','highest','lowest','buy','sell','state',code)}catch(e){q('scriptStatus').innerHTML='<span class=err>編譯錯誤：'+e.message+'</span>';return}let state={},emaCache={},atrCache={};try{for(let i=0;i<D.length;i++){let sig=[];let sma=n=>smaAt(i,n),ema=n=>{if(!emaCache[n])emaCache[n]=emaSeries(n);return emaCache[n][i]},atr=n=>{if(!atrCache[n])atrCache[n]=atrArr(D,n);return atrCache[n][i]},highest=n=>i<n-1?NaN:Math.max(...D.slice(i-n+1,i+1).map(x=>x.h)),lowest=n=>i<n-1?NaN:Math.min(...D.slice(i-n+1,i+1).map(x=>x.l)),buy=(c,l='BUY')=>{if(c)sig.push({side:'BUY',label:l})},sell=(c,l='SELL')=>{if(c)sig.push({side:'SELL',label:l})};fn(D[i].o,D[i].h,D[i].l,D[i].c,D[i].v,i,sma,ema,atr,highest,lowest,buy,sell,state);for(let s of sig)SIG.push({i,t:D[i].t,p:D[i].c,...s})}q('scriptStatus').innerHTML='<span class=good>完成：'+SIG.length+' 個訊號</span>';q('events').innerHTML=SIG.slice().reverse().slice(0,300).map(s=>'<tr><td>'+date(s.t)+'</td><td class="'+(s.side==='BUY'?'good':'warn')+'">'+s.side+'</td><td>'+money(s.p)+'</td><td>'+s.label+'</td></tr>').join('');safeDrawScript()}catch(e){q('scriptStatus').innerHTML='<span class=err>執行錯誤：'+e.message+'</span>'}}
 function saveScript(){localStorage.setItem('strategyLabScript',q('script').value);q('scriptStatus').textContent='草稿已儲存在此瀏覽器'}function loadScript(){let x=localStorage.getItem('strategyLabScript');if(x!==null){q('script').value=x;q('scriptStatus').textContent='已讀取草稿'}else q('scriptStatus').textContent='尚無草稿'}
-function clearSignals(){SIG=[];q('events').innerHTML='';q('scriptStatus').textContent='已清除';safeDrawModels()}
+function clearSignals(){SIG=[];q('events').innerHTML='';q('scriptStatus').textContent='已清除';safeDrawScript()}
+function toggleScriptLayer(){scriptVisible=!!q('scriptVisible').checked;safeDrawScript()}
 function fmt(x){return isFinite(x)?x.toLocaleString(undefined,{maximumFractionDigits:2}):'—'}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function showBar(i){if(i<0||i>=D.length)return;let x=D[i],p=i?D[i-1].c:x.o,pct=p?(x.c/p-1)*100:0;q('ohlc').innerHTML='<b>'+date(x.t)+'</b>　O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'　<span class="'+(pct>=0?'good':'err')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</span>　Volume USD '+fmt(x.v)}
@@ -295,18 +422,25 @@ function chartGeom(r){if(!R.length)return null;let s=Math.max(0,Math.floor(V[0])
 
 function drawBase(){let c=q('c'),d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);if(!R.length)return;let m=chartGeom(r);if(!m)return;let{s,e,vb,lo,hi,X,Y,YV,bw}=m;g.font='12px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';g.strokeStyle='#24324c';g.fillStyle='#a8b8cf';for(let k=0;k<5;k++){let v=lo+(hi-lo)*k/4,y=Y(v);g.beginPath();g.moveTo(52,y);g.lineTo(r.width-15,y);g.stroke();g.fillText(money(v),2,y+4)}for(let i=s;i<=e;i++){let x=R[i],xx=X(i),col=x.c>=x.o?'#43c59e':'#ef6b73';g.strokeStyle=g.fillStyle=col;g.beginPath();g.moveTo(xx,Y(x.h));g.lineTo(xx,Y(x.l));g.stroke();g.fillRect(xx-bw/2,Math.min(Y(x.o),Y(x.c)),bw,Math.max(1,Math.abs(Y(x.o)-Y(x.c))));if(x.v>0){g.globalAlpha=.5;g.fillRect(xx-bw/2,YV(x.v),bw,vb-YV(x.v));g.globalAlpha=1}}if(hover>=s&&hover<=e){let xx=X(hover);g.strokeStyle='#9badcc';g.setLineDash([4,4]);g.beginPath();g.moveTo(xx,8);g.lineTo(xx,vb);g.stroke();g.setLineDash([]);showBar(hover)}}
 
-function clearModelCanvas(){let c=q('modelCanvas');if(!c)return;let d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);HIT=[]}
+function refreshHits(){HIT=MODEL_HIT.concat(SCRIPT_HIT)}
+function clearModelCanvas(){let c=q('modelCanvas');if(!c)return;let d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);MODEL_HIT=[];refreshHits()}
+function clearScriptCanvas(){let c=q('scriptCanvas');if(!c)return;let d=devicePixelRatio||1,r=c.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);SCRIPT_HIT=[];refreshHits()}
 
-function drawModelsOverlay(){let c=q('modelCanvas'),base=q('c');if(!c||!base)return;let d=devicePixelRatio||1,r=base.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);HIT=[];if(!R.length)return;let m=chartGeom(r);if(!m)return;let{s,e,X,Y}=m;
-for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom · '+z.state,top:z.top,bot:z.bot})}}
-for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){g.fillStyle=z.state==='validated'?'rgba(55,120,255,.20)':'rgba(150,160,180,.12)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone · '+z.state,top:z.top,bot:z.bot})}}
-for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){g.fillStyle=z.k==='basin'?'rgba(176,132,255,.13)':'rgba(77,215,255,.10)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),Math.max(2,y2-y1));HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:z.label,detail:z.detail,top:z.top,bot:z.bot})}}
-for(let i=s;i<=e;i++){let bs=R[i].bottomSigs||[];for(let j=0;j<bs.length;j++){let z=bs[j],xx=X(i),yy=Y(R[i].l)-12-j*15;g.fillStyle='#ffd166';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,6.5,0,Math.PI*2);g.fill();g.stroke();HIT.push({kind:'model',i,x:xx,y:yy,r:11,label:z.label,detail:z.detail})}}
-for(let i=s;i<=e;i++){let rs=R[i].researchSigs||[],baseN=(R[i].bottomSigs||[]).length;for(let j=0;j<rs.length;j++){let z=rs[j],xx=X(i),yy=Y(R[i].l)-12-(baseN+j)*15,col=z.k==='basin'?'#b084ff':z.k==='spring'?'#4dd7ff':z.k==='echo'?'#d8e8ff':z.k==='phase'?'#ff9f43':z.k==='lunar'?'#c9d4e8':'#ff79c6';g.fillStyle=col;g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();if(z.k==='phase'){g.moveTo(xx,yy-8);g.lineTo(xx+8,yy);g.lineTo(xx,yy+8);g.lineTo(xx-8,yy);g.closePath()}else if(z.k==='spring'){g.rect(xx-6.5,yy-6.5,13,13)}else{g.arc(xx,yy,7,0,Math.PI*2)}g.fill();g.stroke();HIT.push({kind:'model',i,x:xx,y:yy,r:12,label:z.label,detail:z.detail})}}
-for(let z of SIG)if(z.i>=s&&z.i<=e){let xx=X(z.i),yy=Y(z.p);g.fillStyle=z.side==='BUY'?'#5ed6aa':'#ffd479';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,6,0,Math.PI*2);g.fill();g.stroke();HIT.push({kind:'script',i:z.i,x:xx,y:yy,r:11,label:(z.label||z.side),price:z.p})}}
+function drawModelsOverlay(){let c=q('modelCanvas'),base=q('c');if(!c||!base)return;let d=devicePixelRatio||1,r=base.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);MODEL_HIT=[];if(!R.length){refreshHits();return}let m=chartGeom(r);if(!m){refreshHits();return}let{s,e,X,Y}=m;
+for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
+for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){g.fillStyle=z.state==='validated'?'rgba(55,120,255,.20)':'rgba(150,160,180,.12)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})}}
+for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){g.fillStyle='rgba(176,132,255,.15)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),Math.max(2,y2-y1));MODEL_HIT.push({kind:'zone',zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:z.label,detail:z.detail,top:z.top,bot:z.bot})}}
+for(let i=s;i<=e;i++){let bs=R[i].bottomSigs||[];for(let j=0;j<bs.length;j++){let z=bs[j],xx=X(i),yy=Y(R[i].l)-12-j*16;g.fillStyle='#ffd166';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,7,0,Math.PI*2);g.fill();g.stroke();MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:12,label:'Liquidity Sweep｜流動性掃單',detail:z.detail})}}
+for(let i=s;i<=e;i++){let rs=R[i].researchSigs||[],baseN=(R[i].bottomSigs||[]).length;for(let j=0;j<rs.length;j++){let z=rs[j],xx=X(i),yy=Y(R[i].l)-12-(baseN+j)*16,col=z.k==='basin'?'#b084ff':z.k==='spring'?'#4dd7ff':z.k==='echo'?'#d8e8ff':'#ff79c6';g.fillStyle=col;g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();if(z.k==='spring'){g.rect(xx-7,yy-7,14,14)}else if(z.k==='astro'){g.moveTo(xx,yy-8);g.lineTo(xx+7,yy+6);g.lineTo(xx-7,yy+6);g.closePath()}else{g.arc(xx,yy,7.5,0,Math.PI*2)}g.fill();g.stroke();MODEL_HIT.push({kind:'model',i,x:xx,y:yy,r:13,label:z.label,detail:z.detail})}}
+refreshHits()}
 
-function safeDrawModels(){try{drawModelsOverlay()}catch(e){clearModelCanvas();let ri=q('researchInfo');if(ri)ri.textContent='模型圖層錯誤：'+e.message}updateChartTip()}
-function draw(){drawBase();safeDrawModels()}
+function drawScriptOverlay(){let c=q('scriptCanvas'),base=q('c');if(!c||!base)return;let d=devicePixelRatio||1,r=base.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);SCRIPT_HIT=[];if(!scriptVisible||!R.length){refreshHits();return}let m=chartGeom(r);if(!m){refreshHits();return}let{s,e,X,Y}=m;
+for(let z of SIG)if(z.i>=s&&z.i<=e){let xx=X(z.i),yy=Y(z.p);g.fillStyle=z.side==='BUY'?'#5ed6aa':'#ffd479';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,6.5,0,Math.PI*2);g.fill();g.stroke();SCRIPT_HIT.push({kind:'script',i:z.i,x:xx,y:yy,r:12,label:(z.label||z.side),price:z.p})}
+refreshHits()}
+
+function safeDrawModels(){try{drawModelsOverlay()}catch(e){console.error('Model overlay:',e);clearModelCanvas()}updateChartTip()}
+function safeDrawScript(){try{drawScriptOverlay()}catch(e){console.error('Script overlay:',e);clearScriptCanvas()}updateChartTip()}
+function draw(){drawBase();safeDrawModels();safeDrawScript()}
 function defaultBars(){return tf==='1h'?240:tf==='4h'?240:tf==='1d'?260:tf==='1w'?208:120}
 function resetView(redraw=true){let n=defaultBars(),e=Math.max(1,D.length-1);V=[Math.max(0,e-n+1),e];hover=-1;if(redraw)draw()}
 function allView(){V=[0,Math.max(1,D.length-1)];hover=-1;draw()}
