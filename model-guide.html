@@ -1,5 +1,61 @@
 <!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Strategy Lab｜模型詳細說明</title><style>
-*{box-sizing:border-box}body{margin:0;background:#080d18;color:#eaf0ff;font:15px/1.72 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:980px;margin:auto;padding:18px}.box{background:#111a2c;border:1px solid #263653;border-radius:14px;padding:18px;margin-bottom:14px}h1{font-size:26px;margin:0 0 6px}h2{font-size:21px;margin:0 0 10px}h3{font-size:16px;margin:18px 0 6px;color:#dce7ff}a{color:#8db8ff;text-decoration:none}.muted{color:#9aa9c4}.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.toc a,.back{background:#18243a;border:1px solid #385075;border-radius:8px;padding:7px 10px}.note{padding:10px 12px;background:#0c1424;border-left:3px solid #516b95;border-radius:6px}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0b1322;padding:8px 10px;border-radius:7px;overflow:auto}.flow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}.step{padding:7px 9px;background:#15233a;border:1px solid #365174;border-radius:8px;font-size:12px}.arrow{color:#6682aa;font-weight:800}table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}th,td{border-bottom:1px solid #263653;padding:8px;text-align:left;vertical-align:top}th{color:#b9c8e4}.pill{display:inline-block;border:1px solid #365174;border-radius:999px;padding:2px 8px;font-size:11px;color:#9fb5d5;margin-right:5px}@media(max-width:700px){main{padding:10px}.box{padding:14px}table{font-size:12px}}
+:root{--bg:#080d18;--text:#edf3ff;--muted:#a7b5ca;--line:#263853;--link:#9bc2ff;--panel:#101827}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:17px/1.82 ui-sans-serif,system-ui,-apple-system,"Segoe UI","Microsoft JhengHei","PingFang TC",sans-serif;
+  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased
+}
+main{max-width:900px;margin:auto;padding:28px 26px 56px}
+.box{
+  background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;
+  padding:28px 4px;margin:0
+}
+.box:first-child{
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:24px 26px;margin-bottom:12px
+}
+h1,h2,h3{line-height:1.28;letter-spacing:.1px}
+h1{font-size:31px;margin:0 0 10px}
+h2{font-size:24px;margin:0 0 14px;scroll-margin-top:22px}
+h3{font-size:18px;margin:24px 0 8px;color:#dce7f8}
+p{max-width:72ch;margin:0 0 1em;color:#d3ddea}
+b,strong{color:#f4f7ff}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+.muted{color:var(--muted);font-size:15.5px;line-height:1.7}
+.toc{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.toc a,.back{
+  display:inline-block;background:#17243a;border:1px solid #3b567e;border-radius:9px;
+  padding:8px 11px;font-size:14px
+}
+.note{
+  max-width:72ch;padding:12px 14px;margin:12px 0 18px;background:#0d1727;
+  border-left:4px solid #5878a6;border-radius:8px;color:#cbd7e8;font-size:15.5px;line-height:1.72
+}
+.formula{
+  max-width:72ch;font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;
+  background:#0b1322;border:1px solid #22344f;padding:11px 13px;border-radius:9px;overflow:auto;margin:12px 0 18px
+}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 20px}
+.step{padding:8px 10px;background:#142139;border:1px solid #365174;border-radius:9px;font-size:13.5px;line-height:1.4}
+.arrow{color:#7891b5;font-weight:800}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:15px;line-height:1.6}
+th,td{border-bottom:1px solid #2a3d59;padding:10px 9px;text-align:left;vertical-align:top}
+th{color:#c7d5ea;font-size:14px}
+.pill{display:inline-block;border:1px solid #3b567e;border-radius:999px;padding:3px 9px;font-size:12px;color:#a9bedb;margin-right:6px;margin-bottom:8px}
+code{font-size:.92em;background:#111d30;border:1px solid #243854;border-radius:5px;padding:1px 5px;color:#dce8fb}
+@media(max-width:700px){
+ body{font-size:16.5px;line-height:1.78}
+ main{padding:14px 15px 40px}
+ .box{padding:24px 0}
+ .box:first-child{padding:20px 18px}
+ h1{font-size:27px}h2{font-size:22px}h3{font-size:17px}
+ .muted{font-size:15px}
+ table{font-size:14px}
+ .toc a,.back{font-size:13.5px}
+}
 </style></head><body><main>
 <section class="box"><a class="back" href="./">← 返回 Strategy Lab</a><h1 style="margin-top:16px">模型詳細說明</h1><div class="muted">目前保留 3 個既有模型，並新增 6 個 Experimental Lab 模型。六個新模型都有可調參數；參數改動只改變模型如何定義現象，不代表存在「最佳」固定值。</div><div class="toc"><a href="#support">Support Zone</a><a href="#macro">Macro Bottom</a><a href="#sweep">Liquidity Sweep</a><a href="#basin">Fractal Basin</a><a href="#spring">Compression Spring</a><a href="#echo">Echo Bottom</a><a href="#phase">Phase Transition</a><a href="#lunar">Lunar Bottom</a><a href="#astro">Astrology Placebo</a></div></section>
 
