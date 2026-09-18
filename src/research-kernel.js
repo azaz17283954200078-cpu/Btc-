@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const VERSION='1.0.0';
+  const VERSION='1.1.0';
 
   const STATE_MAP={
     support:{
@@ -71,6 +71,7 @@
       state,
       confidence:normalizeConfidence(input.confidence),
       detectedAt:input.detectedAt==null?index:Math.round(input.detectedAt),
+      evidenceStart:input.evidenceStart==null?null:Math.round(input.evidenceStart),
       evidence:clone(input.evidence||{}),
       projection:input.projection==null?null:clone(input.projection),
       invalidation:input.invalidation==null?null:clone(input.invalidation),
@@ -87,16 +88,20 @@
     if(!e.state)errors.push('state');
     if(e.index!==null&&!Number.isInteger(e.index))errors.push('index');
     if(e.detectedAt!==null&&!Number.isInteger(e.detectedAt))errors.push('detectedAt');
+    if(e.evidenceStart!==null&&!Number.isInteger(e.evidenceStart))errors.push('evidenceStart');
+    if(Number.isInteger(e.index)&&Number.isInteger(e.detectedAt)&&e.detectedAt>e.index)errors.push('detectedAt_after_index');
+    if(Number.isInteger(e.detectedAt)&&Number.isInteger(e.evidenceStart)&&e.evidenceStart>e.detectedAt)errors.push('evidenceStart_after_detectedAt');
     if(e.confidence!==null&&(!Number.isFinite(e.confidence)||e.confidence<0||e.confidence>100))errors.push('confidence');
     return{ok:errors.length===0,errors};
   }
 
-  function forwardOutcome(data,index,horizon){
+  function forwardOutcome(data,index,horizon,knownThrough){
     if(!Array.isArray(data)||!data.length)return null;
     index=Math.round(index);
     horizon=Math.max(1,Math.round(horizon));
-    const end=index+horizon;
-    if(index<0||index>=data.length||end>=data.length)return null;
+    const end=index+horizon,
+          known=knownThrough==null?data.length-1:Math.min(data.length-1,Math.round(knownThrough));
+    if(!Number.isFinite(known)||index<0||index>=data.length||end>=data.length||end>known)return null;
     const entry=Number(data[index].c);
     if(!(entry>0))return null;
     const future=data.slice(index+1,end+1);

@@ -354,6 +354,8 @@ function zoneCalc(){
               state:'potential',
               born:i,
               promotedAt:null,
+              validatedAt:null,
+              brokenAt:null,
               dead:false
             });
             potential++;
@@ -370,7 +372,8 @@ function zoneCalc(){
 
         if(x.c<z.bot-tol){
           z.state='broken';
-          R[i].zones.push({top:z.top,bot:z.bot,state:'broken',detectedAt:z.born});
+          z.brokenAt=i;
+          R[i].zones.push({top:z.top,bot:z.bot,state:'broken',detectedAt:i,evidenceStart:z.born});
           z.dead=true;
           broken++;
           continue;
@@ -388,11 +391,14 @@ function zoneCalc(){
           let touch=i>(z.promotedAt??z.born)&&x.l<=z.top&&x.h>=z.bot;
           if(touch&&x.c>=z.bot){
             z.state='validated';
+            z.validatedAt=i;
             validated++;
           }
         }
 
-        R[i].zones.push({top:z.top,bot:z.bot,state:z.state,detectedAt:z.born});
+        let stateDetectedAt=z.state==='validated'?(z.validatedAt??i):
+                            z.state==='candidate'?(z.promotedAt??i):z.born;
+        R[i].zones.push({top:z.top,bot:z.bot,state:z.state,detectedAt:stateDetectedAt,evidenceStart:z.born});
       }
     }
   }
@@ -405,7 +411,71 @@ function zoneCalc(){
   );
   macroCalc()
 }
-function macroCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].macro=[];let on=q('modMacro').checked;if(!on){setInfo('macroInfo','Macro Bottom v0.2 已關閉');bottomLabCalc();return}let p=MACRO.p[tf]||MACRO.p['1d'],A=atrArr(D,MACRO.atr),ap=A.map((x,i)=>isFinite(x)&&D[i].c?x/D[i].c:NaN),zones=[],formed=0,confirmed=0,failed=0;for(let i=0;i<D.length;i++){if(i>=Math.max(p.hi,p.low,p.atrAvg)){let hi=Math.max(...D.slice(i-p.hi+1,i+1).map(x=>x.h)),ll=Math.min(...D.slice(i-p.low+1,i+1).map(x=>x.l)),dd=hi?1-D[i].c/hi:0,av=0,c=0;for(let j=i-p.atrAvg+1;j<=i;j++)if(isFinite(ap[j])){av+=ap[j];c++}av=c?av/c:NaN;let fresh=D[i].l<=ll,expanded=isFinite(ap[i])&&isFinite(av)&&ap[i]>=av*p.atrX,near=false;for(let z of zones)if(!z.dead&&Math.abs(D[i].l-z.low)<=A[i]*1.5)near=true;if(fresh&&dd>=p.dd&&expanded&&!near&&isFinite(A[i])){zones.push({top:D[i].l+A[i]*MACRO.zoneUp,bot:D[i].l-A[i]*MACRO.zoneDn,low:D[i].l,trigger:D[i].h,born:i,expires:i+p.confirm,state:'candidate',dead:false});formed++}}for(let z of zones){if(z.dead)continue;let tol=isFinite(A[i])?A[i]*MACRO.breakAtr:0;if(i>z.born&&D[i].c<z.bot-tol){z.dead=true;failed++;continue}if(z.state==='candidate'){if(i>z.born&&i<=z.expires&&D[i].c>z.trigger){z.state='confirmed';confirmed++}else if(i>z.expires){z.dead=true;failed++;continue}}R[i].macro.push({top:z.top,bot:z.bot,state:z.state,detectedAt:z.born})}}setInfo('macroInfo','Macro Bottom v0.2｜'+tf.toUpperCase()+'｜Candidate '+formed+' · Confirmed '+confirmed+' · Failed/Expired '+failed+'｜自動依時間框架調整觀察窗；不限制市場與週期');bottomLabCalc()}
+function macroCalc(){
+  if(!D.length)return;
+  for(let i=0;i<R.length;i++)R[i].macro=[];
+  let on=q('modMacro').checked;
+  if(!on){setInfo('macroInfo','Macro Bottom v0.2 已關閉');bottomLabCalc();return}
+
+  let p=MACRO.p[tf]||MACRO.p['1d'],
+      A=atrArr(D,MACRO.atr),
+      ap=A.map((x,i)=>isFinite(x)&&D[i].c?x/D[i].c:NaN),
+      zones=[],formed=0,confirmed=0,failed=0;
+
+  for(let i=0;i<D.length;i++){
+    if(i>=Math.max(p.hi,p.low,p.atrAvg)){
+      let hi=Math.max(...D.slice(i-p.hi+1,i+1).map(x=>x.h)),
+          ll=Math.min(...D.slice(i-p.low+1,i+1).map(x=>x.l)),
+          dd=hi?1-D[i].c/hi:0,av=0,c=0;
+
+      for(let j=i-p.atrAvg+1;j<=i;j++)if(isFinite(ap[j])){av+=ap[j];c++}
+      av=c?av/c:NaN;
+
+      let fresh=D[i].l<=ll,
+          expanded=isFinite(ap[i])&&isFinite(av)&&ap[i]>=av*p.atrX,
+          near=false;
+      for(let z of zones)if(!z.dead&&Math.abs(D[i].l-z.low)<=A[i]*1.5)near=true;
+
+      if(fresh&&dd>=p.dd&&expanded&&!near&&isFinite(A[i])){
+        zones.push({
+          top:D[i].l+A[i]*MACRO.zoneUp,
+          bot:D[i].l-A[i]*MACRO.zoneDn,
+          low:D[i].l,trigger:D[i].h,born:i,expires:i+p.confirm,
+          state:'candidate',confirmedAt:null,dead:false
+        });
+        formed++;
+      }
+    }
+
+    for(let z of zones){
+      if(z.dead)continue;
+      let tol=isFinite(A[i])?A[i]*MACRO.breakAtr:0;
+
+      if(i>z.born&&D[i].c<z.bot-tol){
+        z.dead=true;failed++;continue;
+      }
+
+      if(z.state==='candidate'){
+        if(i>z.born&&i<=z.expires&&D[i].c>z.trigger){
+          z.state='confirmed';
+          z.confirmedAt=i;
+          confirmed++;
+        }else if(i>z.expires){
+          z.dead=true;failed++;continue;
+        }
+      }
+
+      let stateDetectedAt=z.state==='confirmed'?(z.confirmedAt??i):z.born;
+      R[i].macro.push({
+        top:z.top,bot:z.bot,state:z.state,
+        detectedAt:stateDetectedAt,evidenceStart:z.born
+      });
+    }
+  }
+
+  setInfo('macroInfo','Macro Bottom v0.2｜'+tf.toUpperCase()+'｜Candidate '+formed+' · Confirmed '+confirmed+' · Failed/Expired '+failed+'｜自動依時間框架調整觀察窗；不限制市場與週期');
+  bottomLabCalc()
+}
 function bottomLabCalc(){if(!D.length)return;for(let i=0;i<R.length;i++)R[i].bottomSigs=[];let on=q('modSweep').checked,cnt=0,A=atrArr(D,14),look=tf==='1h'?48:tf==='4h'?42:tf==='1d'?30:tf==='1w'?20:12;if(on){for(let i=Math.max(20,look);i<D.length;i++){let x=D[i],range=Math.max(x.h-x.l,1e-9),pos=(x.c-x.l)/range,priorLow=Math.min(...D.slice(i-look,i).map(z=>z.l));if(x.l<priorLow&&x.c>priorLow&&pos>=.55){R[i].bottomSigs.push({k:'sweep',label:'Liquidity Sweep',slot:0});cnt++}}}setInfo('bottomInfo',on?'Liquidity Sweep｜'+cnt+' 個訊號｜原始跌破收回邏輯':'Liquidity Sweep 已關閉');researchCalc()}
 function mean(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN}
 function stdev(a){if(a.length<2)return 0;let m=mean(a);return Math.sqrt(mean(a.map(x=>(x-m)*(x-m))))}
@@ -441,10 +511,14 @@ function candleShapeSimilarity(a,b){
   }
   let rms=Math.sqrt(sum/Math.max(1,a.length));
   return clamp(1-rms/.45,0,1)
-}function echoForwardStats(end,horizon){
+}function echoForwardStats(end,horizon,knownThrough=D.length-1){
   horizon=Math.max(1,Math.round(horizon));
-  let futureEnd=end+horizon;
-  if(end<0||futureEnd>=D.length)return null;
+  if(RK){
+    let o=RK.forwardOutcome(D,end,horizon,knownThrough);
+    return o?{horizon:o.horizon,futureEnd:o.futureEnd,ret:o.return,mfe:o.mfe,mae:o.mae}:null
+  }
+  let futureEnd=end+horizon,known=Math.min(D.length-1,Math.round(knownThrough));
+  if(end<0||futureEnd>=D.length||futureEnd>known)return null;
   let entry=D[end].c,seg=D.slice(end+1,futureEnd+1);
   if(!(entry>0)||!seg.length)return null;
   return{
@@ -802,7 +876,7 @@ function rebuildEvidence(){
   (row.zones||[]).forEach((z,k)=>push({
     id:'support:'+i+':'+k+':'+z.state,
     model:'support',family:'structure',index:i,timestamp:D[i].t,state:z.state,
-    detectedAt:z.detectedAt??i,
+    detectedAt:z.detectedAt??i,evidenceStart:z.evidenceStart??z.detectedAt??i,
     evidence:{top:z.top,bot:z.bot},
     invalidation:{kind:'close_below_zone',level:z.bot},
     meta
@@ -811,7 +885,7 @@ function rebuildEvidence(){
   (row.macro||[]).forEach((z,k)=>push({
     id:'macro:'+i+':'+k+':'+z.state,
     model:'macro',family:'structure',index:i,timestamp:D[i].t,state:z.state,
-    detectedAt:z.detectedAt??i,
+    detectedAt:z.detectedAt??i,evidenceStart:z.evidenceStart??z.detectedAt??i,
     evidence:{top:z.top,bot:z.bot},
     invalidation:{kind:'close_below_zone',level:z.bot},
     meta
@@ -820,13 +894,13 @@ function rebuildEvidence(){
   (row.bottomSigs||[]).forEach((z,k)=>push({
     id:'sweep:'+i+':'+k,
     model:'sweep',family:'event',index:i,timestamp:D[i].t,state:'event',
-    detectedAt:i,evidence:{label:z.label||'Liquidity Sweep'},meta
+    detectedAt:i,evidenceStart:i,evidence:{label:z.label||'Liquidity Sweep'},meta
   }));
 
   BASIN_EPISODES.filter(z=>z.end===i).forEach((z,k)=>push({
     id:'basin:'+i+':'+k+':'+z.state,
     model:'basin',family:'structure',index:i,timestamp:D[i].t,state:z.state||'active',
-    confidence:z.score,detectedAt:z.detectedAt??i,
+    confidence:z.score,detectedAt:z.detectedAt??i,evidenceStart:z.start??z.detectedAt??i,
     evidence:{top:z.top,bot:z.bot,peakI:z.peakI,features:z.features||{},raw:z.raw||{}},
     meta
   }));
@@ -834,7 +908,7 @@ function rebuildEvidence(){
   OSC_FIELDS.filter(z=>z.end===i).forEach((z,k)=>push({
     id:'field:'+i+':'+k+':'+z.state,
     model:'field',family:'structure',index:i,timestamp:D[i].t,state:z.state||'active',
-    confidence:z.score,detectedAt:z.detectedAt??i,
+    confidence:z.score,detectedAt:z.detectedAt??i,evidenceStart:z.start??z.detectedAt??i,
     evidence:{
       upper0:z.upper0,lower0:z.lower0,upper1:z.upper1,lower1:z.lower1,
       cycles:z.cycles,drift:z.drift,shapeChange:z.shapeChange,
@@ -850,7 +924,7 @@ function rebuildEvidence(){
         id:'echo:'+i+':'+k,
         model:'echo',family:'analogy',index:i,timestamp:D[i].t,
         state:(z.echo.strength||'weak').toLowerCase(),
-        confidence:(z.echo.bestSim||0)*100,detectedAt:i,
+        confidence:(z.echo.bestSim||0)*100,detectedAt:i,evidenceStart:z.echo.current?.start??i,
         evidence:{
           length:z.echo.length,threshold:z.echo.threshold,
           strongCount:z.echo.strongCount,bestSim:z.echo.bestSim
@@ -869,7 +943,7 @@ function rebuildEvidence(){
       push({
         id:'astro:'+i+':'+k,
         model:'astro',family:'external_time',index:i,timestamp:D[i].t,
-        state:upcoming?'upcoming':'active',detectedAt:i,
+        state:upcoming?'upcoming':'active',detectedAt:i,evidenceStart:i,
         evidence:{label:z.label||'',detail:z.detail||''},meta
       });
     }
@@ -1069,7 +1143,7 @@ function researchCalc(){
           end:j,start:j-L+1,
           sim:candleShapeSimilarity(cur,hs),
           shape:hs,
-          forward:echoForwardStats(j,follow)
+          forward:echoForwardStats(j,follow,i)
         });
       }
       if(!all.length)continue;

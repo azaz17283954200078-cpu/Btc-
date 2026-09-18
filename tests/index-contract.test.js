@@ -9,6 +9,11 @@ for(const id of ['c','modelCanvas','scriptCanvas']){
 assert(s.includes('<script src="src/research-kernel.js"></script>'),'Research Kernel script not loaded');
 assert(s.includes('window.__SL_EVIDENCE__'),'normalized evidence export missing');
 assert(s.includes('rebuildEvidence()'),'evidence rebuild hook missing');
+assert(s.includes('forward:echoForwardStats(j,follow,i)'),'Echo historical backtest must be bounded by evaluation bar');
+assert(!s.includes('forward:echoForwardStats(j,follow)'),'unbounded Echo historical forward lookup found');
+assert(s.includes("z.validatedAt=i"),'Support validated transition timestamp missing');
+assert(s.includes("z.confirmedAt=i"),'Macro confirmed transition timestamp missing');
+assert(s.includes('evidenceStart:z.evidenceStart??z.detectedAt??i'),'Support/Macro evidence origin missing');
 
 const baseStart=s.indexOf('function drawBase(){');
 const baseEnd=s.indexOf('function findHoveredEcho',baseStart);
