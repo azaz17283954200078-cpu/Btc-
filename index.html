@@ -547,6 +547,22 @@ function fieldBestCandidate(end,p){
   }
   return best
 }
+function fieldPreviewState(c,p){
+  if(!c)return null;
+  let minFit=clamp(p.minFitPct/100,.50,.99),
+      maxShift=Math.max(.05,p.maxCoreShiftPct/100),
+      maxShape=Math.max(.05,p.maxShapeChangePct/100),
+      cycleRatio=c.cycles/Math.max(1,p.minCycles),
+      fitRatio=c.containment/Math.max(.01,minFit),
+      geomOK=Math.abs(c.drift)<=maxShift*1.35&&Math.abs(c.shapeChange)<=maxShape*1.35,
+      confidence=100*clamp(.38*clamp(cycleRatio,0,1)+.38*clamp(fitRatio,0,1)+.24*clamp(c.geometrySmooth,0,1),0,1);
+  if(c.pass)return{state:'active',confidence};
+  if(geomOK&&c.cycles>=Math.max(1,p.minCycles*.60)&&c.containment>=minFit*.82&&c.geometrySmooth>=.28)
+    return{state:'forming',confidence};
+  if(geomOK&&c.cycles>=.5&&c.containment>=minFit*.65&&c.geometrySmooth>=.18)
+    return{state:'seed',confidence};
+  return null
+}
 function lockFieldGeometry(c){
   let span=Math.max(1,c.end-c.start),
       a0=Math.max(1e-9,c.amp0),a1=Math.max(1e-9,c.amp1),needs=[];
@@ -707,6 +723,35 @@ function basinBestCandidate(end,p){
   }
   return best
 }
+function basinBestCandidateRange(end,floorMin,floorMax,cliffMax){
+  floorMin=Math.max(4,Math.round(floorMin));
+  floorMax=Math.max(floorMin,Math.round(floorMax));
+  let floors=basinScaleList(floorMin,floorMax),
+      cliffs=basinScaleList(6,Math.max(6,Math.round(cliffMax))),
+      best=null;
+  for(let F of floors){
+    if(end-F<1)continue;
+    for(let C of cliffs){
+      let c=basinCandidate(end,F,C);
+      if(c&&(!best||c.score>best.score))best=c;
+    }
+  }
+  return best
+}
+function basinLiveStage(end,p){
+  let full=basinBestCandidate(end,p);
+  if(full&&full.score>=p.threshold)return{stage:'active',candidate:full,confidence:full.score};
+  let earlyMax=Math.max(4,p.floorMin-1),
+      early=basinBestCandidateRange(end,4,earlyMax,p.cliffMax);
+  if(!early)return null;
+  let f=early.features,
+      duration=clamp(early.floorLen/Math.max(1,p.floorMin),0,1),
+      confidence=100*(.24*f.dropDepth+.14*f.dropEfficiency+.18*f.floorRelief+
+                      .14*f.floorSlope+.10*f.volShift+.12*f.centerStability+.08*duration);
+  if(confidence>=p.threshold*.72&&duration>=.45)return{stage:'forming',candidate:early,confidence};
+  if(confidence>=p.threshold*.48&&f.dropDepth>=.30&&f.dropEfficiency>=.20)return{stage:'landing',candidate:early,confidence};
+  return null
+}
 
 function researchCalc(){
   if(!D.length)return;
@@ -715,42 +760,39 @@ function researchCalc(){
   for(let i=0;i<R.length;i++){R[i].researchSigs=[];R[i].researchZones=[]}
   let use={basin:q('modBasin').checked,spring:q('modSpring').checked,echo:q('modEcho').checked,astro:q('modAstro').checked},A=atrArr(D,14);
 
-  // Basin Mapper: multi-scale shape score. No single hard geometric condition decides the result.
+  // Basin Mapper live lifecycle: LANDING -> FORMING -> ACTIVE -> EXIT.
   if(use.basin){
     let p=EXP.basin,evalStep=D.length>6000?4:D.length>2500?2:1,
         active=null,gap=0,gapLimit=Math.max(2,Math.round(p.floorMin/3));
 
-    function finishBasin(a){
+    function finishBasin(a,state){
       if(!a)return;
       BASIN_EPISODES.push({
         k:'basin',shape:'basinScore',
         start:a.start,end:a.end,peakI:a.peakI,cliffTop:a.cliffTop,
         top:a.top,bot:a.bot,score:a.best.score,
         features:a.best.features,raw:a.best.raw,
-        detectedAt:a.detectedAt,
-        label:'Basin Mapper｜盆地辨識',
-        detail:a.detail
+        detectedAt:a.detectedAt,state:state||'active',
+        label:'Basin Mapper｜盆地辨識',detail:a.detail
       });
     }
 
     for(let i=Math.max(20,p.floorMin+8);i<D.length;i+=evalStep){
       let best=basinBestCandidate(i,p),pass=best&&best.score>=p.threshold;
-
       if(pass){
-        let detail='Basin '+best.score.toFixed(0)+'｜下山 '+(best.features.dropDepth*100).toFixed(0)+
+        let detail='ACTIVE '+best.score.toFixed(0)+'｜下山 '+(best.features.dropDepth*100).toFixed(0)+
           '｜平坦 '+(best.features.floorRelief*100).toFixed(0)+
           '｜走平 '+(best.features.floorSlope*100).toFixed(0)+
           '｜中心 '+(best.features.centerStability*100).toFixed(0)+
           '｜尺度 '+best.cliffLen+'→'+best.floorLen;
-
         let overlaps=active&&best.fs<=active.end+Math.max(evalStep,p.floorMin)&&best.fs>=active.start-Math.max(p.floorMin,evalStep*2);
         if(!active||!overlaps){
-          finishBasin(active);
+          if(active)finishBasin(active,'exit');
           active={
             start:best.fs,end:i,peakI:best.peakI,cliffTop:best.cliffTop,
             top:best.floorHi,bot:best.floorLo,best,detectedAt:i,detail
           };
-          R[i].researchSigs.push({k:'basin',label:'Basin '+best.score.toFixed(0)+'｜盆地辨識',detail});
+          R[i].researchSigs.push({k:'basin',label:'Basin ACTIVE '+best.score.toFixed(0),detail});
         }else{
           active.end=i;active.start=Math.min(active.start,best.fs);
           active.top=Math.max(active.top,best.floorHi);active.bot=Math.min(active.bot,best.floorLo);
@@ -761,10 +803,29 @@ function researchCalc(){
         gap=0;
       }else if(active){
         gap+=evalStep;
-        if(gap>gapLimit){finishBasin(active);active=null;gap=0}
+        if(gap>gapLimit){finishBasin(active,'exit');active=null;gap=0}
       }
     }
-    finishBasin(active);
+
+    let activeAtEnd=!!active;
+    if(active)finishBasin(active,'active');
+
+    if(!activeAtEnd&&D.length){
+      let live=basinLiveStage(D.length-1,p);
+      if(live&&live.stage!=='active'){
+        let c=live.candidate,label=live.stage==='forming'?'FORMING':'LANDING',
+            detail=label+' '+live.confidence.toFixed(0)+'｜下山 '+(c.features.dropDepth*100).toFixed(0)+
+              '｜平坦 '+(c.features.floorRelief*100).toFixed(0)+'｜已走 '+c.floorLen+' 根';
+        BASIN_EPISODES.push({
+          k:'basin',shape:'basinScore',
+          start:c.fs,end:D.length-1,peakI:c.peakI,cliffTop:c.cliffTop,
+          top:c.floorHi,bot:c.floorLo,score:live.confidence,
+          features:c.features,raw:c.raw,detectedAt:D.length-1,state:live.stage,
+          label:'Basin Mapper｜'+label,detail
+        });
+        R[D.length-1].researchSigs.push({k:'basin',label:'Basin '+label+' '+live.confidence.toFixed(0),detail});
+      }
+    }
   }
 
   // Oscillation Field lifecycle:
@@ -829,35 +890,67 @@ function researchCalc(){
         });
       }
     }
+    let activeAtEnd=!!active;
     finishField(active);
+
+    if(!activeAtEnd&&D.length){
+      let end=D.length-1,c=fieldBestCandidate(end,p),preview=fieldPreviewState(c,p);
+      if(preview&&(preview.state==='seed'||preview.state==='forming')){
+        let lock=lockFieldGeometry(c),
+            geom=fieldEpisodeStats(lock,c.start,end),
+            state=preview.state,
+            label=state==='forming'?'FORMING':'SEED';
+        OSC_FIELDS.push({
+          k:'spring',shape:'oscillationField',
+          start:c.start,end,lock,
+          lower0:geom.lower0,upper0:geom.upper0,center0:geom.center0,amp0:geom.amp0,
+          lower1:geom.lower1,upper1:geom.upper1,center1:geom.center1,amp1:geom.amp1,
+          score:preview.confidence,cycles:c.cycles,drift:geom.drift,
+          shapeChange:geom.shapeChange,compression:geom.compression,bias:geom.bias,
+          containment:c.containment,detectedAt:end,state,
+          invalidatedAt:null,breakout:null,preview:true,
+          label:'Oscillation Field｜'+label
+        });
+        R[end].researchSigs.push({
+          k:'spring',
+          label:'FIELD '+label+' '+preview.confidence.toFixed(0),
+          detail:label+'｜'+c.cycles.toFixed(1)+' 回合｜貼合 '+(c.containment*100).toFixed(0)+'%'
+        });
+      }
+    }
   }
 
-  // Echo: compare full candlestick geometry (O/H/L/C), not a trend line.
+  // Echo: newest K always receives nearest historical echoes, even below threshold.
   if(use.echo){
     let p=EXP.echo,L=Math.max(8,Math.round(p.length)),hist=Math.max(L*3,Math.round(p.history)),sim=p.similarity;
     let evalStep=Math.max(1,Math.round(L/4)),histStep=Math.max(1,Math.round(L/5));
     for(let i=L-1;i<D.length;i++){
-      if(i!==D.length-1&&i%evalStep!==0)continue;
-      let cur=candleShape(i,L),matches=[],start=Math.max(L-1,i-hist),end=i-L;
+      let isLatest=i===D.length-1;
+      if(!isLatest&&i%evalStep!==0)continue;
+      let cur=candleShape(i,L),all=[],start=Math.max(L-1,i-hist),end=i-L;
       if(!cur)continue;
       for(let j=start;j<=end;j+=histStep){
-        let hs=candleShape(j,L),ss=candleShapeSimilarity(cur,hs);
-        if(ss>=sim)matches.push({end:j,start:j-L+1,sim:ss,shape:hs});
+        let hs=candleShape(j,L);
+        if(!hs)continue;
+        all.push({end:j,start:j-L+1,sim:candleShapeSimilarity(cur,hs),shape:hs});
       }
-      if(matches.length){
-        matches.sort((a,b)=>b.sim-a.sim);
-        let top=matches.slice(0,4),best=top[0].sim;
-        R[i].researchSigs.push({
-          k:'echo',
-          label:'Echo｜歷史回聲',
-          detail:'找到 '+matches.length+' 次 K線回聲｜最佳 '+(best*100).toFixed(0)+'%｜'+L+' bars',
-          echo:{
-            length:L,threshold:sim,count:matches.length,
-            current:{start:i-L+1,end:i,shape:cur},
-            matches:top
-          }
-        });
-      }
+      if(!all.length)continue;
+      all.sort((a,b)=>b.sim-a.sim);
+      let strong=all.filter(m=>m.sim>=sim),
+          show=isLatest?all.slice(0,4):strong.slice(0,4);
+      if(!isLatest&&!strong.length)continue;
+      let best=show[0].sim,strength=best>=sim?'STRONG':'WEAK';
+      R[i].researchSigs.push({
+        k:'echo',
+        label:'Echo '+strength+' '+(best*100).toFixed(0),
+        detail:'最佳 '+(best*100).toFixed(0)+'%｜門檻以上 '+strong.length+' 次｜'+L+' bars',
+        echo:{
+          length:L,threshold:sim,count:strong.length,strongCount:strong.length,
+          bestSim:best,strength,
+          current:{start:i-L+1,end:i,shape:cur},
+          matches:show
+        }
+      });
     }
   }
 
@@ -881,6 +974,56 @@ function researchCalc(){
       if(events.length)R[i].researchSigs.push({k:'astro',label:'Astrology Engine｜占星盤',detail:events.slice(0,4).join(' · ')+(events.length>4?' · +'+(events.length-4):'')});
       prevAspect=active;prevPos=pos;
     }
+
+    if(D.length){
+      let last=D.length-1,lastT=D[last].t,
+          horizon=tf==='1h'||tf==='4h'?14:tf==='1d'?60:tf==='1w'?180:365,
+          step=86400,upcoming=[],
+          prevP=astroPos(lastT),prevA=new Set(),prevD={};
+
+      for(let a=0;a<planets.length;a++)for(let b=a+1;b<planets.length;b++){
+        let A1=planets[a],B1=planets[b],sep=minAngle(prevP[A1],prevP[B1]);
+        for(let ang of angles)if(Math.abs(sep-ang)<=p.orb)prevA.add(A1+'-'+B1+'-'+ang);
+      }
+      let before=astroPos(lastT-step);
+      for(let name of planets)if(name!=='Sun'&&name!=='Moon')prevD[name]=angleDiff(prevP[name],before[name]);
+
+      for(let d=1;d<=horizon&&upcoming.length<4;d++){
+        let t=lastT+d*step,pos=astroPos(t),events=[],activeA=new Set();
+        for(let a=0;a<planets.length;a++)for(let b=a+1;b<planets.length;b++){
+          let A1=planets[a],B1=planets[b],sep=minAngle(pos[A1],pos[B1]);
+          for(let ang of angles){
+            let orb=Math.abs(sep-ang),key=A1+'-'+B1+'-'+ang;
+            if(orb<=p.orb){
+              activeA.add(key);
+              if(!prevA.has(key))events.push(ASTRO_NAME[A1]+' '+ASPECT_NAME[ang]+' '+ASTRO_NAME[B1]);
+            }
+          }
+        }
+        if(p.retro==='on'){
+          for(let name of planets){
+            if(name==='Sun'||name==='Moon')continue;
+            let dir=angleDiff(pos[name],prevP[name]),pd=prevD[name];
+            if(pd!==undefined&&pd>=0&&dir<0)events.push(ASTRO_NAME[name]+' 開始逆行');
+            prevD[name]=dir;
+          }
+        }
+        if(p.ingress==='on'){
+          const signs=['牡羊','金牛','雙子','巨蟹','獅子','處女','天秤','天蠍','射手','摩羯','水瓶','雙魚'];
+          for(let name of planets){
+            let s0=Math.floor(prevP[name]/30),s1=Math.floor(pos[name]/30);
+            if(s0!==s1)events.push(ASTRO_NAME[name]+' 進入'+signs[s1]+'座');
+          }
+        }
+        if(events.length)upcoming.push({t,events:events.slice(0,2)});
+        prevA=activeA;prevP=pos;
+      }
+
+      if(upcoming.length){
+        let detail=upcoming.map(u=>date(u.t)+' '+u.events.join(' / ')).join(' · ');
+        R[last].researchSigs.push({k:'astro',label:'Astrology Upcoming｜未來事件',detail});
+      }
+    }
   }
   safeDrawModels();
 }
@@ -899,7 +1042,7 @@ function echoCompareHTML(e){
     matches+='<div class="echo-match"><div><b>Echo '+(k+1)+'</b><div class="tmuted">'+range+'</div></div><span class="sim">'+(m.sim*100).toFixed(1)+'%</span></div>';
   }
   return '<div class="echo-compare">'+
-    '<div class="echo-title"><span>K線回聲</span><span class="tmuted">'+e.count+' 次符合門檻</span></div>'+
+    '<div class="echo-title"><span>K線回聲</span><span class="tmuted">最佳 '+(e.bestSim*100).toFixed(1)+'% · 門檻以上 '+e.strongCount+' 次</span></div>'+
     '<div class="echo-matches">'+matches+'</div>'+
     '<div class="echo-note">游標留在 Echo 標記上時，前三個歷史 K 線型態會直接疊到主圖的目前 K 線區間。</div>'+
   '</div>'
@@ -907,7 +1050,10 @@ function echoCompareHTML(e){
 function fieldPanelHTML(f){
   if(!f)return '';
   let core=(f.center0+f.center1)/2,lo=Math.min(f.lower0,f.lower1),hi=Math.max(f.upper0,f.upper1),
-      life=f.state==='invalidated'?('◆ 已破界'+(f.breakout==='up'?' ↑':' ↓')):'● 仍有效';
+      life=f.state==='seed'?'○ SEED｜萌芽':
+           f.state==='forming'?'◐ FORMING｜成形中':
+           f.state==='invalidated'?('◆ BROKEN｜已破界'+(f.breakout==='up'?' ↑':' ↓')):
+           '● ACTIVE｜已成立';
   return '<div class="field-panel">'+
     '<div class="field-head"><b>震盪場 FIELD '+Math.round(f.score)+'</b><span class="field-status">'+esc(life)+'</span></div>'+
     '<div class="field-grid">'+
@@ -1054,12 +1200,18 @@ for(let z of BASIN_EPISODES){
       yPeak=Y(z.cliffTop),yTop=Y(z.top),yBot=Y(z.bot),
       opacity=.10+.22*clamp((z.score-50)/50,0,1);
   g.save();
-  g.strokeStyle='rgba(190,150,255,.78)';g.lineWidth=2;g.setLineDash([6,4]);
-  g.beginPath();g.moveTo(xPeak,yPeak);g.lineTo(xS,(yTop+yBot)/2);g.stroke();g.setLineDash([]);
-  g.fillStyle='rgba(176,132,255,'+opacity.toFixed(3)+')';g.strokeStyle='rgba(205,180,255,.95)';g.lineWidth=2.2;
+  let forming=z.state==='landing'||z.state==='forming',exited=z.state==='exit';
+  g.strokeStyle=exited?'rgba(155,130,190,.55)':forming?'rgba(190,150,255,.72)':'rgba(190,150,255,.88)';
+  g.lineWidth=2;g.setLineDash([6,4]);
+  g.beginPath();g.moveTo(xPeak,yPeak);g.lineTo(xS,(yTop+yBot)/2);g.stroke();
+  g.setLineDash(forming?[5,4]:[]);
+  g.fillStyle=forming?'rgba(176,132,255,.055)':exited?'rgba(176,132,255,.045)':'rgba(176,132,255,'+opacity.toFixed(3)+')';
+  g.strokeStyle=forming?'rgba(205,180,255,.72)':exited?'rgba(170,150,195,.55)':'rgba(205,180,255,.95)';
+  g.lineWidth=2.2;
   g.fillRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
   g.strokeRect(xS,yTop,Math.max(3,xE-xS),Math.max(4,yBot-yTop));
-  let label='Basin '+Math.round(z.score);
+  g.setLineDash([]);
+  let label=(z.state==='landing'?'LANDING ':z.state==='forming'?'FORMING ':z.state==='exit'?'EXIT ':'Basin ')+Math.round(z.score);
   g.font='700 11px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
   let tw=g.measureText(label).width+12,lx=Math.max(xS+tw/2,Math.min(xE-tw/2,(xS+xE)/2)),ly=Math.max(14,yTop-18);
   g.fillStyle='rgba(18,24,39,.90)';g.fillRect(lx-tw/2,ly-12,tw,17);
@@ -1077,15 +1229,17 @@ for(let z of OSC_FIELDS){
       xS=X(visS),xE=X(visE),yUS=Y(uS),yUE=Y(uE),yLS=Y(lS),yLE=Y(lE);
   g.save();
 
-  // Morphology first: one clean outer box/channel. Wicks may extend beyond it.
-  g.fillStyle='rgba(77,215,255,.055)';
-  g.strokeStyle='rgba(77,215,255,.90)';
-  g.lineWidth=2;
+  // Preview states are dashed; ACTIVE is solid.
+  let preview=z.state==='seed'||z.state==='forming',broken=z.state==='invalidated';
+  g.fillStyle=preview?'rgba(77,215,255,.025)':broken?'rgba(120,145,160,.035)':'rgba(77,215,255,.055)';
+  g.strokeStyle=preview?'rgba(77,215,255,.64)':broken?'rgba(160,175,185,.55)':'rgba(77,215,255,.90)';
+  g.lineWidth=2;g.setLineDash(preview?[6,4]:[]);
   g.beginPath();
   g.moveTo(xS,yUS);g.lineTo(xE,yUE);g.lineTo(xE,yLE);g.lineTo(xS,yLS);g.closePath();
-  g.fill();g.stroke();
+  g.fill();g.stroke();g.setLineDash([]);
 
-  let label='FIELD '+Math.round(z.score),yTop=Math.min(yUS,yUE);
+  let prefix=z.state==='seed'?'SEED':z.state==='forming'?'FORMING':z.state==='invalidated'?'BROKEN':'FIELD',
+      label=prefix+' '+Math.round(z.score),yTop=Math.min(yUS,yUE);
   g.font='700 11px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
   let tw=g.measureText(label).width+12,
       lx=Math.max(xS+tw/2,Math.min(xE-tw/2,(xS+xE)/2)),
@@ -1172,7 +1326,7 @@ for(let i=s;i<=e;i++){
         g.setLineDash([]);
         g.fillStyle='#d8e8ff';g.font='700 10px "Segoe UI","Microsoft JhengHei",system-ui,sans-serif';
         g.textAlign='right';g.textBaseline='bottom';
-        g.fillText('Echo ×'+z.echo.count,x2,Math.max(12,y1-3));
+        g.fillText('Echo '+(z.echo.bestSim*100).toFixed(0)+'%',x2,Math.max(12,y1-3));
         g.restore();
       }
     }
