@@ -50,6 +50,8 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
   box-shadow:0 10px 30px rgba(0,0,0,.38);font-size:12px;line-height:1.58;color:#e4ecfa
 }
 .chart-tip b{font-size:13px;color:#fff}.chart-tip .tmuted{color:#a5b5cd}
+.chart-tip.has-research{pointer-events:auto}
+.tip-pin{display:block;width:100%;margin-top:8px;min-height:34px;padding:5px 8px;font-size:10.5px;text-align:center;background:#183455;border-color:#5f87b5;color:#eaf4ff}
 .chart-tip.echo-tip{width:min(560px,calc(100vw - 24px));max-width:560px;padding:12px 14px;pointer-events:auto}
 .chart-tip.field-tip{width:min(390px,calc(100vw - 24px));max-width:390px;padding:12px 14px}
 .field-panel{margin-top:9px;padding-top:9px;border-top:1px solid #2c4262}
@@ -85,9 +87,9 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 /* M4 progressive research surface */
 .research-quick{margin-top:8px;padding-top:8px;border-top:1px solid #2b405f;color:#d9e5f6}
 .research-quick b{font-size:11.5px;color:#fff}.research-quick .rq-meta{margin-top:2px;color:#93a8c5;font-size:10.5px}
-.evidence-dock{display:none;margin-top:8px;max-height:46%;overflow:auto;padding:11px;background:#0b1423;border:1px solid #345174;border-radius:12px}
+.evidence-dock{display:none;position:fixed;top:72px;right:18px;bottom:18px;z-index:60;width:min(760px,56vw);max-height:none;overflow:auto;padding:18px 20px;background:#0b1423;border:1px solid #46678e;border-radius:16px;box-shadow:0 22px 70px rgba(0,0,0,.52)}
 .evidence-dock.on{display:block}
-.evidence-dock-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;position:sticky;top:-11px;z-index:4;background:#0b1423;padding:10px 0 8px;border-bottom:1px solid #263b59}
+.evidence-dock-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;position:sticky;top:-18px;z-index:8;background:#0b1423;padding:14px 0 10px;border-bottom:1px solid #263b59}
 .evidence-title b{display:block;font-size:14px;line-height:1.35}.evidence-state{display:block;color:#94aac8;font-size:10.5px;margin-top:2px}
 .evidence-close{min-width:34px;padding:4px 8px}
 .research-plain{margin-top:10px;padding:10px 11px;border-radius:10px;background:#111e31;border:1px solid #2c4667;color:#e5edf8;font-size:12px;line-height:1.6}
@@ -108,6 +110,29 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .research-empty{color:#859ab6;font-size:10.5px;line-height:1.55}
 .evidence-backdrop{display:none}
 
+/* G01｜單一模型研究引導：先理解一個模型，再進入多模型研究 */
+.research-fixed-note{display:flex;align-items:center;gap:7px;margin-top:8px;color:#9eb3cf;font-size:10px}
+.research-fixed-dot{width:7px;height:7px;border-radius:999px;background:#8cbcff;box-shadow:0 0 0 3px rgba(140,188,255,.12)}
+.guide-flow{display:grid;gap:8px;margin-top:11px}
+.guide-step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:11px 12px;border:1px solid #304b6a;border-radius:11px;background:#0e1b2d}
+.guide-step-no{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:999px;background:#152b47;border:1px solid #557aa6;color:#e8f2ff;font-weight:850;font-size:11px}
+.guide-step b{display:block;color:#eef5ff;font-size:12px;margin-bottom:3px}.guide-step p{margin:0;color:#b7c7dc;font-size:11px;line-height:1.62}
+.guide-caution{margin-top:8px;padding:9px 11px;border-left:3px solid #536e91;background:#0d1929;color:#9eb2cc;font-size:10.5px;line-height:1.55}
+.research-section.primary{margin-top:16px;padding:13px 14px;border:1px solid #365578;border-radius:12px;background:#0c1829}
+.research-section.primary h4{font-size:13px;color:#e5effc;text-transform:none;letter-spacing:0}
+.horizon-explain{padding:10px 11px;border-radius:9px;background:#101f33;border:1px solid #2e4a69;color:#b4c5da;font-size:10.5px;line-height:1.62}
+.horizon-explain b{color:#eef5ff}
+.horizon-card{padding:11px 12px}
+.horizon-card .horizon-human{display:block;color:#edf5ff;font-size:12px;font-weight:800;line-height:1.35}
+.horizon-card .hz{display:block;margin-top:2px}
+.horizon-card .median-sentence{display:block;margin-top:5px;color:#c5d3e4;font-size:10px;line-height:1.5}
+.horizon-meta{margin-top:7px;padding-top:7px;border-top:1px dashed #29425f}
+.horizon-meta b{display:inline;font-size:inherit;margin:0;color:#dce9f8}
+.case-browser-intro{margin-bottom:8px;color:#a7bad2;font-size:10.5px;line-height:1.55}
+.case-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.case-link{min-height:58px;padding:9px 10px;align-items:flex-start}
+.case-link span{font-size:11px;line-height:1.45}.case-link small{font-size:9px;line-height:1.35;text-align:right}
+.single-model-first{margin-top:12px;padding:9px 10px;border:1px dashed #36506f;border-radius:9px;background:#0d1928;color:#9fb3cc;font-size:10px;line-height:1.55}
 /* Sidebar */
 .side{min-height:0;padding:10px;display:grid;grid-template-rows:auto 1fr}
 .tabs{display:flex;gap:7px;margin-bottom:10px}
@@ -325,12 +350,13 @@ td:first-child,th:first-child{text-align:left}
 @media(max-width:650px){
   button,.tabbtn,.controls button{min-height:44px}
   .gear{min-height:40px;min-width:40px}
-  .evidence-backdrop.on{display:block;position:fixed;inset:0;z-index:58;background:rgba(2,6,12,.64)}
-  .evidence-dock{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;margin:0;max-height:min(76dvh,720px);padding:14px 14px calc(14px + env(safe-area-inset-bottom));border-radius:18px 18px 0 0;border-left:0;border-right:0;border-bottom:0;box-shadow:0 -18px 50px rgba(0,0,0,.45)}
+  .evidence-backdrop.on{display:block;position:fixed;inset:0;z-index:58;background:rgba(2,6,12,.72)}
+  .evidence-dock{display:none;position:fixed;inset:0;z-index:60;width:auto;max-width:none;margin:0;max-height:none;padding:16px 15px calc(18px + env(safe-area-inset-bottom));border-radius:0;border:0;box-shadow:none}
   .evidence-dock.on{display:block}
-  .evidence-dock-head{top:-14px;padding-top:11px}
-  .horizon-grid{grid-template-columns:1fr 1fr}
-  .case-link{min-height:44px}
+  .evidence-dock-head{top:-16px;padding:12px 0 10px}
+  .horizon-grid{grid-template-columns:1fr}
+  .case-list{grid-template-columns:1fr}
+  .case-link{min-height:58px}
   .research-actions button{min-height:42px}
   .param-modal{align-items:flex-end;justify-content:stretch;padding:0}
   .param-card{width:100%;max-width:none;max-height:88dvh;border-radius:18px 18px 0 0;border-left:0;border-right:0;border-bottom:0;padding:16px 15px calc(16px + env(safe-area-inset-bottom))}
@@ -356,7 +382,7 @@ td:first-child,th:first-child{text-align:left}
 }
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.5 · M5 關係式漏斗</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.6 · G01 單一模型引導</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -377,7 +403,7 @@ td:first-child,th:first-child{text-align:left}
   <section class="box chartbox">
     <div id="ohlc" class="muted">移動游標或點選 K 棒查看：日期 · OHLC · 漲跌幅 · Volume</div>
     <div class="chart-stage"><canvas id="c"></canvas><canvas id="modelCanvas" class="model-overlay"></canvas><canvas id="scriptCanvas" class="script-overlay"></canvas></div><div id="chartTip" class="chart-tip"></div>
-    <div id="msg" class="muted">先在右側把模型放進漏斗，直接選時間或價格關係；點圖上標記可查看該證據細節。滾輪／雙指縮放 · 拖曳移動。</div>
+    <div id="msg" class="muted">先看懂一個模型：移到圖上看預覽，點標記或按「固定到研究區」打開完整解讀。滾輪／雙指縮放 · 拖曳移動。</div>
   </section>
 
   <aside class="box side">
@@ -388,11 +414,11 @@ td:first-child,th:first-child{text-align:left}
 
     <div id="modelsPane" class="tabpane on">
       <div class="research-workspace">
-        <div class="panel-title"><b>研究條件組</b><span class="muted">先組條件，再看歷史</span></div>
-        <div class="guided-start"><b>先把你想研究的模型放進條件組</b><span>目前開啟的模型會變成上方的模型磚。先看它現在找到什麼，再決定要不要把它加入同一組條件。完整原理與參數不用一次全部看完。</span></div>
+        <div class="panel-title"><b>模型研究</b><span class="muted">先看懂一個，再做組合</span></div>
+        <div class="guided-start"><b>先挑一個模型，看懂它現在為什麼出現</b><span>先不用理解 Evidence、MFE 或條件重疊。點一個模型的案例後，研究區會依序告訴你「現在看到什麼、為什麼、接下來看什麼」，最後才看歷史結果。</span></div>
 
         <div class="research-stack-head">
-          <div><b>目前開啟的模型</b><span>每顆磚都能獨立調整</span></div>
+          <div><b>目前開啟的模型</b><span>先從其中一個開始理解</span></div>
           <button onclick="openModelLibrary()">＋ 加入模型</button>
         </div>
         <div id="researchStackSummary" class="research-stack-summary" aria-live="polite">正在整理目前研究條件…</div>
@@ -507,7 +533,7 @@ td:first-child,th:first-child{text-align:left}
         </details>
       </div>
       <div id="evidenceBackdrop" class="evidence-backdrop" onclick="closeEvidenceDock()"></div>
-      <section id="evidenceDock" class="evidence-dock" aria-live="polite" aria-label="Evidence research">
+      <section id="evidenceDock" class="evidence-dock" aria-live="polite" aria-label="固定模型研究區">
         <div class="evidence-dock-head">
           <div class="evidence-title"><b id="evidenceDockTitle">看看以前發生過什麼</b><span id="evidenceDockState" class="evidence-state">—</span></div>
           <button class="evidence-close" onclick="closeEvidenceDock()" aria-label="關閉研究">×</button>
@@ -713,7 +739,7 @@ function moveParamDrag(e){
 }
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}
 function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',MARKET_COVERAGE={provider:null,requestedBars:null,returnedBars:0,targetReached:true,historyExhausted:false,fetchInterrupted:false,reason:''},HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
-let PINNED_RESEARCH=null,RESEARCH_DETAIL_OPEN=false;
+let PINNED_RESEARCH=null,RESEARCH_DETAIL_OPEN=false,LAST_TOOLTIP_HIT=null;
 const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,CE=window.StrategyLabConditionEngine||null;
 if(!ME||!MP||!CE)throw new Error('Strategy Lab shared research modules failed to load');
 window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
@@ -970,6 +996,112 @@ const STATE_PLAIN={
   'astro|event':'這個時間點出現占星事件；它被當成外部時間條件做歷史檢驗。',
   'astro|upcoming':'這是未來時間投影，尚未發生，因此不會混入已發生樣本統計。'
 };
+const MODEL_GUIDANCE={
+  'support|potential':{
+    why:'這根 K 的低點相較前一段價格形成新的低位，模型先用當下波動幅度建立一個「可能支撐區」。目前只代表這裡值得繼續觀察。',
+    watch:'先看價格能不能真正離開這個區域。若連離開都做不到，它還不能升級成候選支撐。'
+  },
+  'support|candidate':{
+    why:'價格已經從支撐區往上離開，表示低點出現過初步反應；但還沒有用一次回踩證明這個區域真的撐得住。',
+    watch:'接下來看價格是否回到支撐帶後仍守住下緣。守住會升級成「已驗證」；明確收盤跌破則代表結構失效。'
+  },
+  'support|validated':{
+    why:'價格後來真的回到這個支撐帶，而且當時收盤仍守在失效邊界上方，所以模型把它從候選升級成已驗證。',
+    watch:'接下來不是預測一定反彈，而是持續觀察這個支撐帶有沒有被收盤確認跌破。'
+  },
+  'support|broken':{
+    why:'價格收盤已跌破模型定義的支撐失效邊界，因此先前的支撐假說不再成立。',
+    watch:'把它當成失敗案例看：回頭比較它在失效前和成功守住的支撐有什麼不同。'
+  },
+  'macro|candidate':{
+    why:'市場同時出現較深回撤、新低與波動擴張，所以模型先建立一個宏觀底部候選；此時還沒有收復確認。',
+    watch:'接下來看價格能否在模型允許的期限內收復候選形成時的觸發高點；沒有完成就不算確認。'
+  },
+  'macro|active':{
+    why:'候選出現後，價格在限制時間內突破了模型設定的觸發高點，因此宏觀底部條件完成確認。',
+    watch:'這只表示模型的確認條件完成。接下來用歷史案例看確認之後的分布，而不是直接把它當成買點。'
+  },
+  'macro|broken':{
+    why:'候選沒有完成確認、失去有效期，或價格破壞了候選結構，因此模型把這次假說視為失敗。',
+    watch:'用失敗案例理解宏觀底部模型在哪些市場環境容易失效。'
+  },
+  'sweep|event':{
+    why:'這根 K 先跌破前一段可見低點，但收盤又回到舊低上方，而且收盤位置符合模型門檻，所以被記成一次掃單事件。',
+    watch:'事件本身只描述「跌破又收回」。下一步應該看過去同類事件在幾根 K 後的分布，不先假設一定反轉。'
+  },
+  'basin|landing':{
+    why:'市場先經歷明顯下跌，現在跌勢開始減速並出現初步走平跡象，但盆地形狀還很早。',
+    watch:'看後續是否持續走平、中心是否穩定，而不是只因為跌很多就把它當成底部。'
+  },
+  'basin|forming':{
+    why:'下跌後的價格已累積更多平坦與穩定特徵，盆地正在成形，但整體分數尚未完成成立門檻。',
+    watch:'看平盤結構能否繼續維持並達到完整門檻；若證據消退，這次成形會結束。'
+  },
+  'basin|active':{
+    why:'下跌後的走平結構在目前資料下已達到模型設定的盆地門檻，因此模型把它視為成立中的結構。',
+    watch:'成立不代表會上漲。接下來觀察盆地結構是否維持，並用歷史樣本理解成立後曾出現哪些路徑。'
+  },
+  'basin|exit':{
+    why:'先前的盆地特徵已經消退，或新的價格結構取代了它，因此這段盆地生命週期結束。',
+    watch:'回頭看它是如何離開盆地，而不是把 Exit 自動解讀成上漲或下跌訊號。'
+  },
+  'field|seed':{
+    why:'價格開始出現可辨識的來回震盪，但回合數、邊界或幾何穩定性仍不足，所以只算萌芽。',
+    watch:'看來回行為是否持續，逐漸形成可用的震盪邊界。'
+  },
+  'field|forming':{
+    why:'震盪的回合與幾何證據比萌芽更完整，但還沒有達到「震盪場成立」門檻。',
+    watch:'看盒狀區域是否正式成立；成立後重點會轉成邊界是否被實體 K 棒確認破壞。'
+  },
+  'field|active':{
+    why:'模型已鎖定一個有足夠來回證據的震盪區域。成立之後，不要求每根 K 都繼續來回。',
+    watch:'主要看 K 棒實體是否連續確認破界。影線短暫刺出邊界不會立刻讓震盪場失效。'
+  },
+  'field|broken':{
+    why:'K 棒實體已依模型設定完成確認破界，所以先前的震盪場失效。',
+    watch:'把它當作盒狀結構結束的案例，研究破界前後的市場行為；它本身不判斷突破方向好壞。'
+  },
+  'echo|strong':{
+    why:'目前這段 K 線形狀和歷史片段的相似度已達到模型設定的強回聲門檻。',
+    watch:'直接回到那些歷史片段看它們後來怎麼走，並留意相似形狀的後續結果是否其實很分散。'
+  },
+  'echo|weak':{
+    why:'系統找得到最相似的歷史片段，但相似度還沒有高到「強回聲」門檻。',
+    watch:'先把它當成參考樣本，不要因為「有點像」就假設歷史會重演。'
+  },
+  'astro|event':{
+    why:'這個時間點符合占星實驗定義的一個外部時間事件，因此被記成可檢驗的事件樣本。',
+    watch:'只比較歷史上同類時間事件的市場分布；這裡不把天體事件當成價格因果。'
+  },
+  'astro|upcoming':{
+    why:'這是依時間規則可以預先知道的未來事件日期，但事件尚未發生。',
+    watch:'等事件真正到來後才可成為已發生樣本；未來投影不會混進歷史績效統計。'
+  }
+};
+const MODEL_CAUTION={
+  support:'支撐區描述的是價格結構，不等於「碰到就會漲」。',
+  macro:'宏觀底部模型描述候選與確認過程，不是在預測市場絕對最低點。',
+  sweep:'掃單是一種價格事件，不等於每次都會反轉。',
+  basin:'盆地描述下跌後的走平形狀，不保證之後向上。',
+  field:'震盪場描述邊界與破界，不預測最後往哪個方向突破。',
+  echo:'歷史形狀相似不代表未來一定重演。',
+  astro:'占星模組只是可反駁的時間假說，不代表天體事件造成價格變動。'
+};
+function guideFor(model,state){
+  return MODEL_GUIDANCE[model+'|'+state]||{
+    why:'模型依目前可用資料把這個時間點分類成「'+String(STATE_LABELS[state]||state).split('｜')[0]+'」。更深的原始 Evidence 可在最下方檢查。',
+    watch:'先觀察這個狀態之後如何發展，再用歷史案例理解它曾出現過哪些結果。'
+  }
+}
+function guidanceHTML(model,state){
+  let g=guideFor(model,state);
+  return '<div class="guide-flow">'+
+    '<div class="guide-step"><span class="guide-step-no">1</span><div><b>現在看到什麼？</b><p>'+esc(plainResearch(model,state))+'</p></div></div>'+
+    '<div class="guide-step"><span class="guide-step-no">2</span><div><b>為什麼模型會這樣判斷？</b><p>'+esc(g.why)+'</p></div></div>'+
+    '<div class="guide-step"><span class="guide-step-no">3</span><div><b>接下來觀察什麼？</b><p>'+esc(g.watch)+'</p></div></div>'+
+    '</div><div class="guide-caution"><b>先不要把它解讀成：</b> '+esc(MODEL_CAUTION[model]||'這是一個研究證據，不是買賣答案。')+'</div>'
+}
+
 
 function isMobileUI(){return window.matchMedia&&window.matchMedia('(max-width:650px)').matches}
 function isCoarsePointer(){return window.matchMedia&&window.matchMedia('(pointer: coarse)').matches}
@@ -1244,8 +1376,9 @@ function openLatestResearch(model){
 function quickResearchHTML(hit){
   let r=resolveResearchHit(hit);if(!r)return'';
   let st=evalState(r.model,r.state),n=st?st.count:0,
-      sample=st?('歷史同狀態 '+n+' 次'):(r.state==='upcoming'?'未來投影，不納入歷史結果統計':'目前沒有可用的歷史結果統計');
-  return '<div class="research-quick"><b>'+esc(plainResearch(r.model,r.state))+'</b><div class="rq-meta">'+esc(sample)+' · 點擊查看完整研究</div></div>'
+      sample=st?('歷史上找到 '+n+' 次同狀態案例'):(r.state==='upcoming'?'未來投影，不算已發生案例':'目前沒有可用的歷史結果統計');
+  return '<div class="research-quick"><b>'+esc(plainResearch(r.model,r.state))+'</b><div class="rq-meta">'+esc(sample)+'</div>'+
+    '<button class="tip-pin" onclick="pinTooltipResearch()">固定到研究區，慢慢看</button></div>'
 }
 function nearestEvidence(model,state,index){
   let best=null,dist=Infinity;
@@ -1302,14 +1435,44 @@ function evidenceFieldsHTML(e){
   }
   return'<div class="metric-explain"><b>最深一層：</b>這裡保留模型當時真正知道的內容，方便你檢查它是不是事後才補上答案。</div><dl class="evidence-fields">'+rows.map(x=>'<dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd>').join('')+'</dl>'
 }
+function horizonHuman(h){
+  h=Math.max(1,Math.round(h));
+  let market=q('market')?q('market').value:'BTC';
+  if(tf==='1h')return '約 '+h+' 小時後';
+  if(tf==='4h'){
+    let hours=h*4;
+    return hours%24===0?'約 '+(hours/24)+' 天後':'約 '+hours+' 小時後';
+  }
+  if(tf==='1d')return market==='BTC'?'約 '+h+' 天後':'約 '+h+' 個交易日後';
+  if(tf==='1w')return '約 '+h+' 週後';
+  if(tf==='1m')return '約 '+h+' 個月後';
+  return h+' 根 K 之後'
+}
+function timeframeKLabel(){
+  if(tf==='1h')return '1 小時 K';
+  if(tf==='4h')return '4 小時 K';
+  if(tf==='1d')return '日 K';
+  if(tf==='1w')return '週 K';
+  if(tf==='1m')return '月 K';
+  return tf.toUpperCase()+' K'
+}
 function horizonsHTML(st){
-  if(!st||!st.horizons)return'<div class="research-empty">這個狀態目前還沒有足夠樣本走完整個後續觀察期。</div>';
-  return'<div class="metric-explain"><b>怎麼讀：</b>「歷史樣本」是已經走完整段觀察期的案例；中位數是把結果排好後站在中間的那一個，不是「現在會漲多少」的預測。途中最大上漲幅度（MFE）與途中最大下跌幅度（MAE）描述案例走過的路徑。</div>'+
+  if(!st||!st.horizons)return'<div class="research-empty">這個狀態目前還沒有足夠案例走完整個後續觀察期。</div>';
+  return '<div class="horizon-explain"><b>「幾根 K 後」到底在比什麼？</b><br>'+
+    '每一個歷史案例都從「模型第一次確認這個狀態」那根 K 的<b>收盤價</b>當起點。'+
+    '例如「3 根 K 後」就是把起點收盤，和往後第 3 根 '+esc(timeframeKLabel())+' 的收盤相比。'+
+    '下面的百分比是在整理很多歷史案例，不是在預測現在這一次。</div>'+
     '<div class="horizon-grid">'+[3,5,10,20].map(h=>{
       let x=st.horizons[h];if(!x)return'';
-      return'<div class="horizon-card"><span class="hz">'+h+' 根 K 之後 · 完整歷史樣本 '+x.n+(x.incomplete?' · 尚未走完 '+x.incomplete:'')+'</span>'+
-        '<b>'+pct(x.medianReturn)+'</b><span class="median-label">歷史中位結果</span>'+
-        '<div class="horizon-meta">途中最好 MFE '+pct(x.medianMFE)+'<br>途中最差 MAE '+pct(x.medianMAE)+'<br>最後上 / 下 '+pct(x.upRate,0)+' / '+pct(x.downRate,0)+'</div></div>'
+      let up=x.upRate==null?'—':Math.round(x.upRate*100)+'%',down=x.downRate==null?'—':Math.round(x.downRate*100)+'%';
+      return '<div class="horizon-card">'+
+        '<span class="horizon-human">'+h+' 根 '+esc(timeframeKLabel())+' 後｜'+esc(horizonHuman(h))+'</span>'+
+        '<span class="hz">已走完整段的歷史案例 '+x.n+' 次'+(x.incomplete?' · 另有 '+x.incomplete+' 次還沒走完':'')+'</span>'+
+        '<b>'+pct(x.medianReturn)+'</b><span class="median-label">這些案例「起點收盤 → '+h+' 根 K 後收盤」的歷史中位變化</span>'+
+        '<span class="median-sentence">把 '+x.n+' 個完整案例的結果由小到大排好，站在中間的結果是 '+pct(x.medianReturn)+'。這不是目前行情的預測值。</span>'+
+        '<div class="horizon-meta"><b>這段路中曾往上走多遠：</b> 歷史中位 '+pct(x.medianMFE)+' <small>（途中最大上漲幅度 MFE）</small><br>'+
+        '<b>這段路中曾往下走多深：</b> 歷史中位 '+pct(x.medianMAE)+' <small>（途中最大下跌幅度 MAE）</small><br>'+
+        '<b>到第 '+h+' 根 K 收盤時：</b> '+up+' 的完整案例高於起點，'+down+' 低於起點。</div></div>'
     }).join('')+'</div>'
 }
 function lifecycleHTML(model,state){
@@ -1323,9 +1486,12 @@ function lifecycleHTML(model,state){
     '<div class="life-grid">'+cells.map(c=>'<div class="life-cell"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b></div>').join('')+'</div>'
 }
 function casesHTML(model,state){
-  let rows=historyCases(model,state);
+  let rows=historyCases(model,state,12);
   if(!rows.length)return'<div class="research-empty">目前沒有歷史案例。</div>';
-  return'<div class="case-list">'+rows.map(e=>'<button class="case-link" onclick="jumpToEvidence('+e.index+')"><span>'+esc(D[e.index]?date(D[e.index].t):('bar '+e.index))+' · '+esc(STATE_LABELS[e.state]||e.state)+'</span><small>'+conf(e.confidence)+' ↗</small></button>').join('')+'</div>'
+  return '<div class="case-browser-intro">下面每一格都是模型在當時真的確認過的案例。點一下會把主圖跳到那個時間點；研究面板會保持固定，方便一個一個比對。</div>'+
+    '<div class="case-list">'+rows.map((e,i)=>'<button class="case-link" onclick="jumpToEvidence('+e.index+')"><span>案例 '+(i+1)+'｜'+
+      esc(D[e.index]?date(D[e.index].t):('bar '+e.index))+'<br>'+esc(String(STATE_LABELS[e.state]||e.state).split('｜')[0])+
+      '</span><small>到圖上看<br>'+conf(e.confidence)+'</small></button>').join('')+'</div>'
 }
 function failuresHTML(model,state){
   let rows=failureExamples(model,state);
@@ -1497,24 +1663,31 @@ function renderEvidenceDock(){
   let dock=q('evidenceDock'),back=q('evidenceBackdrop');if(!dock)return;
   if(!PINNED_RESEARCH||!RESEARCH_DETAIL_OPEN){dock.classList.remove('on');if(back)back.classList.remove('on');return}
   let r=PINNED_RESEARCH,st=evalState(r.model,r.state),ev=nearestEvidence(r.model,r.state,r.index),
-      stateLabel=STATE_LABELS[r.state]||String(r.state||'—'),n=st?st.count:0;
-  q('evidenceDockTitle').textContent=(MODEL_TITLES[r.model]||r.label||r.model)+'｜看看以前發生過什麼';
-  q('evidenceDockState').textContent=stateLabel+' · '+(D[r.index]?date(D[r.index].t):('bar '+r.index));
-  let html='<div class="research-plain">'+esc(plainResearch(r.model,r.state))+'</div>'+
-    '<div class="research-sample"><span class="research-chip">'+(st?'過去同狀態 '+n+' 次':'目前沒有已完成的同狀態統計')+'</span>'+
-    '<span class="research-chip">模型內部名稱 '+esc(r.state||'—')+'</span></div>'+
-    '<div class="metric-explain"><b>先記住：</b>這裡是在看「這個條件以前發生時，結果怎麼分布」，不是替現在行情下買賣結論。</div>';
-  if(!r.expanded){
-    html+='<div class="research-actions"><button onclick="toggleResearchDepth()">看看以前發生過什麼 ↓</button><button onclick="openParams(\''+r.model+'\')">換一種研究方式</button></div>'
-  }else{
-    html+='<div class="research-actions"><button onclick="toggleResearchDepth()">先收起研究 ↑</button><button onclick="openParams(\''+r.model+'\')">換一種研究方式</button></div>'+
-      '<section class="research-section"><h4>之後市場通常怎麼走？</h4>'+horizonsHTML(st)+'</section>'+
-      conditionalExplorerHTML(r)+
-      '<section class="research-section"><h4>這個狀態後來怎麼發展？</h4>'+lifecycleHTML(r.model,r.state)+'</section>'+
-      '<section class="research-section"><h4>回到幾個真實歷史案例</h4>'+casesHTML(r.model,r.state)+'</section>'+
-      '<section class="research-section"><h4>看看它失效時長什麼樣</h4>'+failuresHTML(r.model,r.state)+'</section>'+
-      '<section class="research-section"><h4>模型當時其實知道什麼？</h4>'+evidenceFieldsHTML(ev)+'</section>'+
-      '<div class="research-next"><b>接下來可以做什麼：</b>點一個歷史案例回到圖上看當時 K 線；或按「換一種研究方式」套另一組已驗證參考設定，再比較樣本數與結果分布怎麼變。</div>'
+      stateLabel=String(STATE_LABELS[r.state]||r.state||'—').split('｜')[0],n=st?st.count:0,
+      conditions=researchConditions(r);
+  q('evidenceDockTitle').textContent=(MODEL_TITLES[r.model]||r.label||r.model).split('｜')[0]+'｜一步一步看懂這個模型';
+  q('evidenceDockState').textContent='目前研究：'+stateLabel+' · '+(D[r.index]?date(D[r.index].t):('bar '+r.index));
+  let html='<div class="research-fixed-note"><span class="research-fixed-dot"></span><b>已固定：</b>這個研究區不會因為滑鼠移開而消失。</div>'+
+    guidanceHTML(r.model,r.state)+
+    '<div class="research-sample"><span class="research-chip">'+(st?'歷史上找到同狀態 '+n+' 次':'目前沒有已完成的同狀態統計')+'</span>'+
+    '<span class="research-chip">'+esc(timeframeKLabel())+'</span></div>'+
+    '<div class="research-actions"><button onclick="openParams(\''+r.model+'\')">換一種模型設定</button><button onclick="toggleResearchDepth()">'+(r.expanded?'先收起歷史研究 ↑':'看看以前發生過什麼 ↓')+'</button></div>';
+
+  if(r.expanded){
+    html+='<section class="research-section primary"><h4>以前出現這個狀態後，過幾根 K 發生什麼？</h4>'+horizonsHTML(st)+'</section>'+
+      '<section class="research-section primary"><h4>直接回到真實歷史案例</h4>'+casesHTML(r.model,r.state)+'</section>'+
+      '<section class="research-section"><h4>這個模型狀態後來怎麼發展？</h4>'+lifecycleHTML(r.model,r.state)+'</section>'+
+      '<section class="research-section"><h4>看看它失效時長什麼樣</h4>'+failuresHTML(r.model,r.state)+'</section>';
+
+    if(conditions.length>1){
+      html+=conditionalExplorerHTML(r)
+    }else{
+      html+='<div class="single-model-first"><b>多模型研究先放後面。</b><br>現在先把這一個模型看懂。要做條件組合時，回主側欄的漏斗加入第二個模型即可；這裡不會先塞一堆重疊條件給你。</div>'
+    }
+
+    html+='<details class="research-section"><summary>進階｜模型當時到底記錄了哪些原始證據？</summary>'+
+      evidenceFieldsHTML(ev)+'</details>'+
+      '<div class="research-next"><b>建議下一步：</b>先點 2～3 個真實歷史案例回到圖上比較。如果你已經能說出「這個模型為什麼出現、下一步看什麼」，再回主側欄做多模型漏斗。</div>'
   }
   q('evidenceDockBody').innerHTML=html;
   dock.classList.add('on');renderResearchStack();
@@ -1556,9 +1729,15 @@ function jumpToEcho(start,end,futureEnd){
   draw();showBar(end);
 }
 function showBar(i){if(i<0||i>=D.length)return;let x=D[i],p=i?D[i-1].c:x.o,pct=p?(x.c/p-1)*100:0;q('ohlc').innerHTML='<b>'+date(x.t)+'</b>　O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'　<span class="'+(pct>=0?'good':'err')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</span>　Volume USD '+fmt(x.v)}
+function pinTooltipResearch(){
+  if(!LAST_TOOLTIP_HIT)return false;
+  let hit=LAST_TOOLTIP_HIT;
+  LAST_TOOLTIP_HIT=null;
+  return pinResearch(hit)
+}
 function updateChartTip(){
   let tip=q('chartTip');
-  if(!tip||isCoarsePointer()||!mousePos||drag){if(tip)tip.style.display='none';return}
+  if(!tip||isCoarsePointer()||!mousePos||drag){LAST_TOOLTIP_HIT=null;if(tip){tip.style.display='none';tip.classList.remove('has-research')}return}
   let best=null,bd=1e9;
   for(let h of HIT){
     let d=1e9;
@@ -1567,7 +1746,7 @@ function updateChartTip(){
     }else d=Math.hypot(mousePos.x-h.x,mousePos.y-h.y);
     if((d<=(h.r||0)&&d<bd)||(h.rect&&d===0)){best=h;bd=d}
   }
-  if(!best){tip.style.display='none';tip.classList.remove('echo-tip','field-tip');return}
+  if(!best){LAST_TOOLTIP_HIT=null;tip.style.display='none';tip.classList.remove('echo-tip','field-tip','has-research');return}
 
   let x=D[best.i],
       html='<b>'+esc(best.label)+'</b><div class="tmuted">'+date(x.t)+' · '+tf.toUpperCase()+'</div>'+
@@ -1581,10 +1760,11 @@ function updateChartTip(){
 
   if(best.detail&&!best.field)html+='<div class="tmuted">'+esc(best.detail)+'</div>';
   if(best.echo)html+=echoCompareHTML(best.echo);
-  if(best.model)html+=quickResearchHTML(best);
+  if(best.model){LAST_TOOLTIP_HIT=best;html+=quickResearchHTML(best)}else LAST_TOOLTIP_HIT=null;
 
   tip.classList.toggle('echo-tip',!!best.echo);
   tip.classList.toggle('field-tip',!!best.field);
+  tip.classList.toggle('has-research',!!best.model);
   tip.innerHTML=html;
   tip.style.display='block';
 
@@ -1900,7 +2080,7 @@ c.onpointerleave=e=>{
 };
 q('chartTip').onpointerleave=e=>{
   if(e.relatedTarget===c)return;
-  mousePos=null;q('chartTip').style.display='none'
+  mousePos=null;LAST_TOOLTIP_HIT=null;q('chartTip').style.display='none';q('chartTip').classList.remove('has-research')
 };
 c.ondblclick=()=>resetView();
 c.ontouchstart=e=>{if(e.touches.length===2)touch0={d:Math.abs(e.touches[0].clientX-e.touches[1].clientX),span:V[1]-V[0],mid:(V[0]+V[1])/2}};
