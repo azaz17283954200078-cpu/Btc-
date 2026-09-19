@@ -542,7 +542,7 @@ td:first-child,th:first-child{text-align:left}
 }
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.3 · G02-R7 裝置與流程硬化</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.3 · G02-R7 裝置與流程硬化｜G03-R0 模型語意登錄</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -753,7 +753,7 @@ state.prevSlow = slow;</textarea>
     <div class="param-note"><b>怎麼用：</b>參考設定驗證的是它是否真的比較敏感／平衡／挑剔，以及是否有足夠歷史樣本；不是挑歷史報酬最高的組合。</div>
     <div class="param-actions"><span id="paramRunStatus" class="param-run-status">選一個研究方式，或自己微調</span><div class="right"><button onclick="restoreParams()">恢復模型原本設定</button><button onclick="applyParams()">用這些參數重新找</button></div></div>
   </div>
-</div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script src="src/condition-engine.js"></script><script>
+</div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script src="src/model-semantics.js"></script><script src="src/condition-engine.js"></script><script>
 window.addEventListener('error',function(e){var st=document.getElementById('status'),msg=document.getElementById('msg');if(st)st.textContent='程式錯誤';if(msg)msg.textContent='JS：'+e.message+' @ '+e.lineno;});
 const q=id=>document.getElementById(id);
 function setInfo(id,t){let e=q(id);if(e)e.textContent=t}
@@ -814,6 +814,17 @@ function disableModel(k){
   if(PINNED_RESEARCH&&researchConditions(PINNED_RESEARCH).some(c=>c.model===k))clearResearchFunnel(false);
   let id=modelCheckId(k),el=id&&q(id);if(el)el.checked=false;
   zoneCalc()
+}
+function modelSemanticsHeaderHTML(model){
+  let x=MS&&MS.get?MS.get(model):null;
+  if(!x)return'';
+  let t=MS.typeInfo?MS.typeInfo(x.researchType):null,
+      typeLabel=t&&t.label?t.label:x.researchType,
+      direction=x.directionalClaim?'模型包含方向性主張':'模型本身沒有方向性主張';
+  return '<div class="single-guide">'+
+    '<div class="single-guide-row"><b>研究型態</b><span>'+esc(typeLabel)+'｜'+esc(x.primaryQuestion||'')+'</span></div>'+
+    '<div class="single-guide-row"><b>模型主張</b><span>'+esc(x.claim||'')+' '+esc(direction)+'。</span></div>'+
+    '</div>'
 }
 function modelSettingLabel(k){
   let s=MODEL_SETTING_STATE[k];
@@ -934,9 +945,9 @@ let FOCUSED_MODEL='support',
     ACTIVE_SAVED_RESEARCH_ID=null,
     HANDOFF_NOTICE='';
 let PINNED_RESEARCH=null,RESEARCH_DETAIL_OPEN=false,LAST_TOOLTIP_HIT=null;
-const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,CE=window.StrategyLabConditionEngine||null;
-if(!ME||!MP||!CE)throw new Error('Strategy Lab shared research modules failed to load');
-window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
+const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,MS=window.StrategyLabModelSemantics||null,CE=window.StrategyLabConditionEngine||null;
+if(!ME||!MP||!MS||!CE)throw new Error('Strategy Lab shared research modules failed to load');
+window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;window.__SL_MODEL_SEMANTICS__=MS;window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
 window.__SL_SAVED_RESEARCH__=SAVED_RESEARCH;window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVALUATION__=EVALUATION;
 window.__SL_SINGLE_RESEARCH_CONTEXT__=SINGLE_RESEARCH_CONTEXT;
 window.__SL_COMBINATION_HANDOFF__=COMBINATION_HANDOFF_CONTEXT;
@@ -1969,7 +1980,8 @@ function renderSingleResearch(){
       hist=lastHistoricalEvidence(FOCUSED_MODEL),
       ev=mode==='history'?focusedEvidenceRecord():cur;
   let tabs=currentResearchIdentityHTML()+'<div class="single-context-tabs"><button class="'+(mode==='now'?'on':'')+'" onclick="viewSingleNow()">現在</button>'+
-    '<button class="'+(mode==='history'?'on':'')+'" onclick="'+(hist?'viewLatestHistoricalCase()':'')+'" '+(hist?'':'disabled')+'>歷史案例</button></div>';
+    '<button class="'+(mode==='history'?'on':'')+'" onclick="'+(hist?'viewLatestHistoricalCase()':'')+'" '+(hist?'':'disabled')+'>歷史案例</button></div>'+
+    modelSemanticsHeaderHTML(FOCUSED_MODEL);
   if(mode==='now'&&!cur){
     body.innerHTML=tabs+'<article class="single-now-card empty"><div class="single-now-head"><div><small>現在</small><b>目前沒有形成可用 Evidence</b></div>'+
       '<span class="single-now-date">'+(D.length?esc(date(D[D.length-1].t)):'—')+'</span></div>'+
