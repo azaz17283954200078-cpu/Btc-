@@ -133,13 +133,69 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .case-link{min-height:58px;padding:9px 10px;align-items:flex-start}
 .case-link span{font-size:11px;line-height:1.45}.case-link small{font-size:9px;line-height:1.35;text-align:right}
 .single-model-first{margin-top:12px;padding:9px 10px;border:1px dashed #36506f;border-radius:9px;background:#0d1928;color:#9fb3cc;font-size:10px;line-height:1.55}
+/* G02-R1｜單模型研究架構：主圖 + 單一右側研究器 */
+.single-research-workspace{display:block;min-height:0;overflow:auto;padding:0 4px 12px 1px}
+.single-model-toolbar{position:sticky;top:0;z-index:7;padding:3px 0 10px;background:linear-gradient(180deg,var(--panel) 88%,rgba(16,24,39,0));border-bottom:1px solid #223852}
+.single-model-picker{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;color:#9fb3cc;font-size:10.5px;font-weight:700}
+.single-model-picker select{width:100%;min-height:38px;font-size:12px;font-weight:750;background:#0d192a;border-color:#3c5a7d;color:#e9f2ff}
+.single-model-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.single-model-tools button{min-height:34px;padding:5px 10px;font-size:10.5px}
+.single-overlay-toggle{display:flex;align-items:center;gap:7px;color:#b9c9dc;font-size:10.5px;cursor:pointer}
+.single-research-body{display:grid;gap:10px;margin-top:10px}
+.single-loading{padding:14px 12px;border:1px dashed #355170;border-radius:11px;color:#9fb2cc;font-size:11px}
+.single-context-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.single-context-tabs button{min-height:38px;font-size:11px;background:#0b1625;color:#9eb1c9}
+.single-context-tabs button.on{background:#17304e;border-color:#6f97c4;color:#f1f6ff}
+.single-now-card{padding:13px;border:1px solid #365575;border-radius:12px;background:#0d1a2b}
+.single-now-card.empty{border-style:dashed;background:#0b1625}
+.single-now-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.single-now-head>div{min-width:0}.single-now-head small{display:block;color:#8298b5;font-size:9px;margin-bottom:2px}
+.single-now-head b{display:block;color:#f0f6ff;font-size:15px;line-height:1.35}
+.single-now-date{flex:0 0 auto;color:#90a6c1;font-size:9.5px;white-space:nowrap}
+.single-now-summary{margin-top:8px;color:#d5e0ef;font-size:11.5px;line-height:1.62}
+.single-guide{display:grid;gap:7px;margin-top:11px;padding-top:10px;border-top:1px solid #28415e}
+.single-guide-row{display:grid;grid-template-columns:88px minmax(0,1fr);gap:9px;align-items:start}
+.single-guide-row b{color:#a9bfd9;font-size:10px;line-height:1.55}.single-guide-row span{color:#d3deec;font-size:10.5px;line-height:1.58}
+.single-caution{margin-top:9px;padding:8px 9px;border-left:3px solid #536f91;background:#0a1524;color:#91a6bf;font-size:9.8px;line-height:1.5}
+.single-empty-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.single-empty-actions button{min-height:36px}
+.single-section{padding:12px 13px;border:1px solid #2e4968;border-radius:12px;background:#0b1727}
+.single-section-head{display:flex;justify-content:space-between;gap:10px;align-items:end;margin-bottom:8px}
+.single-section-head b{color:#edf5ff;font-size:12.5px}.single-section-head span{color:#849ab7;font-size:9.5px;text-align:right}
+.single-horizon-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px}
+.single-horizon-tabs button{min-height:36px;padding:5px 4px;font-size:10px;background:#0e1b2c;color:#9fb3cc}
+.single-horizon-tabs button.on{background:#183655;border-color:#7099c6;color:#fff}
+.single-horizon-result{padding:11px;border-radius:10px;background:#101f33;border:1px solid #314e6f}
+.single-horizon-result .headline{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.single-horizon-result .headline b{font-size:18px;color:#f2f7ff}.single-horizon-result .headline span{font-size:10px;color:#a8bad1}
+.single-horizon-result p{margin:6px 0 0;color:#bac9db;font-size:10.5px;line-height:1.58}
+.single-horizon-result .split{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.single-horizon-result .split div{padding:7px 8px;border-radius:8px;background:#0c1828;color:#9fb2ca;font-size:9.5px;line-height:1.45}
+.single-horizon-result .split b{display:block;color:#e4eefb;font-size:11px}
+.single-path-details{margin-top:8px;border-top:1px dashed #2b4562;padding-top:7px;color:#8fa4be;font-size:9.5px;line-height:1.5}
+.single-path-details summary{cursor:pointer;color:#a9bdd5;font-weight:700}
+.single-history-nav{display:grid;gap:8px}
+.single-history-controls{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center}
+.single-history-controls button{min-height:38px;font-size:10px}.single-history-controls span{text-align:center;color:#dbe7f6;font-size:10.5px;font-weight:750;white-space:nowrap}
+.single-history-meta{padding:8px 9px;border-radius:9px;background:#0e1b2c;color:#9eb1ca;font-size:10px;line-height:1.5}
+.single-history-meta b{color:#edf5ff}
+.single-advanced{border:1px solid #293f5c;border-radius:10px;background:#091422;overflow:hidden}
+.single-advanced>summary{cursor:pointer;padding:10px 11px;color:#b8c9dd;font-size:10.5px;font-weight:750}
+.single-advanced-body{padding:0 11px 11px}
+.single-handoff{padding:12px 13px;border:1px solid #496b8f;border-radius:12px;background:#0d1c2f}
+.single-handoff b{display:block;color:#eef5ff;font-size:12px}.single-handoff p{margin:4px 0 9px;color:#9fb3cc;font-size:10px;line-height:1.5}
+.single-handoff button{width:100%;min-height:40px;background:#173858;border-color:#6f98c4;color:#eff6ff;font-weight:800}
+.single-handoff-status{margin-top:9px}
+.single-handoff-ready{padding:9px 10px;border:1px solid #355a7c;border-radius:9px;background:#0e2035;color:#abc0d9;font-size:10px;line-height:1.5}
+.single-handoff-ready b{color:#edf5ff}.single-handoff-ready button{margin-top:7px;min-height:32px;padding:4px 8px;font-size:9.5px}
+.single-research-workspace .model-library{margin-top:12px}
+.single-research-workspace .model-library>summary{color:#9fb3cb}
 /* Sidebar */
 .side{min-height:0;padding:10px;display:grid;grid-template-rows:auto 1fr}
 .tabs{display:flex;gap:7px;margin-bottom:10px}
 .tabbtn{flex:1;padding:8px 10px;font-size:13px}
 .tabbtn.on{background:#24466f;border-color:#75aaff}
 .tabpane{display:none;min-height:0}.tabpane.on{display:grid;height:100%;min-height:0}
-#modelsPane{grid-template-rows:minmax(0,1fr) auto}
+#modelsPane{grid-template-rows:minmax(0,1fr)}
 .panel-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 8px}
 .panel-title b{font-size:15px}.panel-title .muted{font-size:12px}
 .model-list{display:grid;grid-template-columns:1fr;gap:8px;align-content:start;overflow:auto;min-height:0;padding:0 4px 8px 1px}
@@ -380,9 +436,20 @@ td:first-child,th:first-child{text-align:left}
   .preset-choice{min-height:0}
   .model-next button,.guide-btn{min-height:44px}
 }
+
+@media(max-width:650px){
+  .single-model-picker{grid-template-columns:1fr}
+  .single-model-picker select{min-height:44px;font-size:16px}
+  .single-model-tools{align-items:stretch}
+  .single-model-tools button,.single-overlay-toggle{min-height:44px}
+  .single-overlay-toggle{padding:0 8px;border:1px solid #2f4967;border-radius:9px;background:#0c1828}
+  .single-context-tabs button,.single-horizon-tabs button,.single-history-controls button{min-height:44px}
+  .single-guide-row{grid-template-columns:1fr;gap:2px}
+  .single-horizon-result .split{grid-template-columns:1fr}
+}
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.6 · G01 單一模型引導</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.7 · G02-R1 單模型研究架構</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -403,7 +470,7 @@ td:first-child,th:first-child{text-align:left}
   <section class="box chartbox">
     <div id="ohlc" class="muted">移動游標或點選 K 棒查看：日期 · OHLC · 漲跌幅 · Volume</div>
     <div class="chart-stage"><canvas id="c"></canvas><canvas id="modelCanvas" class="model-overlay"></canvas><canvas id="scriptCanvas" class="script-overlay"></canvas></div><div id="chartTip" class="chart-tip"></div>
-    <div id="msg" class="muted">先看懂一個模型：移到圖上看預覽，點標記或按「固定到研究區」打開完整解讀。滾輪／雙指縮放 · 拖曳移動。</div>
+    <div id="msg" class="muted">主圖看市場，右側只研究一個模型。點圖上模型標記會直接同步右側案例；滾輪／雙指縮放 · 拖曳移動。</div>
   </section>
 
   <aside class="box side">
@@ -413,20 +480,34 @@ td:first-child,th:first-child{text-align:left}
     </div>
 
     <div id="modelsPane" class="tabpane on">
-      <div class="research-workspace">
-        <div class="panel-title"><b>模型研究</b><span class="muted">先看懂一個，再做組合</span></div>
-        <div class="guided-start"><b>先挑一個模型，看懂它現在為什麼出現</b><span>先不用理解 Evidence、MFE 或條件重疊。點一個模型的案例後，研究區會依序告訴你「現在看到什麼、為什麼、接下來看什麼」，最後才看歷史結果。</span></div>
+      <div class="research-workspace single-research-workspace">
+        <div class="panel-title"><b>模型研究</b><span class="muted">一次只研究一個模型</span></div>
 
-        <div class="research-stack-head">
-          <div><b>目前開啟的模型</b><span>第一步只要選一個看懂</span></div>
-          <button onclick="openModelLibrary()">＋ 加入模型</button>
+        <div class="single-model-toolbar">
+          <label class="single-model-picker">正在研究
+            <select id="singleModelSelect" onchange="focusSingleModel(this.value)">
+              <option value="support">支撐區｜Support Zone</option>
+              <option value="macro">宏觀底部｜Macro Bottom</option>
+              <option value="sweep">流動性掃單｜Liquidity Sweep</option>
+              <option value="basin">盆地辨識｜Basin Mapper</option>
+              <option value="field">震盪場｜Oscillation Field</option>
+              <option value="echo">歷史回聲｜Echo</option>
+              <option value="astro">占星時間事件｜Astrology Engine</option>
+            </select>
+          </label>
+          <div class="single-model-tools">
+            <label class="single-overlay-toggle"><input id="singleOverlayToggle" type="checkbox" onchange="toggleFocusedOverlay(this.checked)"> 顯示在圖上</label>
+            <button onclick="openFocusedModelParams()">調整模型</button>
+          </div>
         </div>
-        <div id="researchStackSummary" class="research-stack-summary" aria-live="polite">正在整理目前研究條件…</div>
-        <div id="activeModelStack" class="active-model-stack" aria-live="polite"></div>
-        <div id="researchFunnel" class="research-funnel" aria-live="polite"></div>
+
+        <div id="singleResearchBody" class="single-research-body" aria-live="polite">
+          <div class="single-loading">正在整理單一模型研究…</div>
+        </div>
+        <div id="singleHandoffStatus" class="single-handoff-status" aria-live="polite"></div>
 
         <details id="modelLibrary" class="model-library">
-          <summary>模型庫｜選擇、關閉或了解模型</summary>
+          <summary>模型庫與圖層｜勾選只控制主圖顯示</summary>
           <div class="model-list">
             <div class="model-group-title">核心模型</div>
 
@@ -532,15 +613,6 @@ td:first-child,th:first-child{text-align:left}
           </div>
         </details>
       </div>
-      <div id="evidenceBackdrop" class="evidence-backdrop" onclick="closeEvidenceDock()"></div>
-      <section id="evidenceDock" class="evidence-dock" aria-live="polite" aria-label="固定模型研究區">
-        <div class="evidence-dock-head">
-          <div class="evidence-title"><b id="evidenceDockTitle">看看以前發生過什麼</b><span id="evidenceDockState" class="evidence-state">—</span></div>
-          <button class="evidence-close" onclick="closeEvidenceDock()" aria-label="關閉研究">×</button>
-        </div>
-        <div id="evidenceDockBody"></div>
-      </section>
-    </div>
 
     <div id="scriptPane" class="tabpane">
       <div class="panel-title"><b>Strategy Script｜腳本圖層</b><div class="panel-actions"><label class="layer-toggle"><input id="scriptVisible" type="checkbox" checked onchange="toggleScriptLayer()"> 顯示</label><span id="scriptStatus" class="muted">尚未執行</span></div></div>
