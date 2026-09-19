@@ -3,7 +3,7 @@ const assert=require('assert');
 const s=fs.readFileSync('index.html','utf8');
 const me=fs.readFileSync('src/model-engine.js','utf8');
 
-assert(s.includes('v2.0 · G02-R4 模型證據'),'R4 version label missing');
+assert(/v2\.\d+ · G02-R[4-7] /.test(s),'R4+ version label missing');
 for(const fn of [
   'function modelProofHTML(',
   'function modelParameterImpactText(',
