@@ -65,3 +65,16 @@
 - **保護區**：Chart Core、三層 Canvas、Shared Model Engine 世界觀、Research Kernel、Condition Engine v1.2、Evidence schema、causality、Runner parity、sample gates、data sources 均未改。
 - **CI 過程**：前段 UI commits 的 runs `35427293629`、`35427360412`、`35427370801` 先因舊 M4/G01 契約仍要求舊版 primary surface 而失敗；更新 M4/M5/G01 契約後，新增 G02-R1 architecture gate，完整 branch run `35427426794` 全綠；最後補上「從設定視窗切換研究模型時同步右側 inspector」後，final code run `35427496870` 再次全綠。該 final run 包含 Research Kernel、Model Engine、Condition Engine、Runner、real-market causality、market data、regression、architecture、M4、M5、G01、G02-R1、preset 全部成功。
 - **產品驗收**：pending。CI 證明架構契約與既有研究基礎未被破壞，但沒有完成真實桌面／手機視覺與觸控人工驗收；下一步應先由使用者測單模型流程，再決定獨立組合研究工作區。
+
+## G02-R2 — 研究安全
+
+- **來源**：接管 Work 兩輪 v1.7 G02-R1 使用者走查。指南明確要求先處理「研究可靠度、狀態辨識與跨模型延續」，完整多模型功能延後；第一階段阻斷項集中在 Macro 與 Astrology。
+- **本輪問題**：G02-R1 架構已簡化，但仍可能把小樣本的高百分比放得太醒目；Macro 候選與完成確認的關係不夠集中；Astrology 的 future label 可能被誤讀成現實未來，且大量事件可能被誤認為等量獨立證據。
+- **全站樣本安全**：單模型 horizon 先呈現「符合狀態總數／已走完／尚未走完／研究可靠度」，再呈現報酬、上漲比例與 MFE/MAE。N<5 直接標「樣本不足｜只能當案例看」，5–19 為探索性，20+ 才稱較可比較；百分比明確寫成幾個案例中的幾個，且不稱成功率。
+- **Macro 阻斷修正**：同頁顯示候選、完成模型確認、確認前失效／過期、資料尾端未結束；目前 selected horizon 同時顯示 confirmed 案例中已走完／未走完數。Primary state label 把 active 改寫成「已完成收復確認」，candidate 明寫尚未完成確認。
+- **Astrology 阻斷修正**：第一層說明為可否證外部時間假說、不是價格因果；Upcoming 顯示「資料截止日」與瀏覽器今天日期，若投影日期以今天看已過去會直接指出。另顯示 event-bar、底層事件、同 K 多事件與「不一定獨立」；future projection 不可 handoff 到組合研究。
+- **案例數一致性**：歷史案例顯示「可瀏覽 X / 總 Y」，若超過載入上限 500 會明寫只載入最近 500，不再讓 UI cap 冒充總樣本。
+- **參數入口**：Astrology 一般使用者先以三套事件密度參考設定研究，不要求先理解 Orb、相位、逆行等術語。
+- **實際資料 audit**：固定 IXIC 1D fixture 的 Macro candidate=1、confirmed=1、confirmed 10-bar N=1，upRate=100%；固定 TWII 1D fixture candidate=7、confirmed=3、failed-before-confirm=4、confirmed 10-bar N=3，upRate=66.7%。這正是小樣本高百分比需要被攔截的案例，不是績效宣稱。Astrology 分別有 945 / 944 個 event bars 與各 1 筆 upcoming projection；projection 未進 Evaluation。
+- **CI 過程**：初次 code run `35429567409` 因既有 M4 版本標籤契約未接受 v1.8 失敗；後續 runs 依序暴露舊 G01/M4 文案契約仍鎖定 G02-R1 用語。這些屬刻意 UI wording/architecture 變更的契約同步，不是引擎錯誤。更新 inherited contracts 與新增 G02-R2 UI/data safety gates 後，run `35429780000` 全綠，包含 Kernel、Model Engine、Condition Engine、Runner、causality、market data、regression、M4/M5/G01/G02-R1/G02-R2、preset。
+- **產品驗收**：尚未通過第一階段。依 Work 指南，Macro 與 Astrology 阻斷任務仍需要未參與開發的使用者，在沒有口頭提示下實際操作桌面／手機才能關閉。
