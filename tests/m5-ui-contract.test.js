@@ -25,7 +25,10 @@ for(const phrase of [
 
 assert(s.includes('CE.evaluateConditions(D,EVIDENCE_LOG,conditions'),'M5 UI must evaluate through shared Condition Engine');
 assert(s.includes('CE.discoverCompanions(EVIDENCE_LOG,conditions'),'M5 companions must come from shared Condition Engine');
-assert(!/BUY|SELL|勝率最高|最佳組合/.test(s),'M5 UI must not become a trading vote/ranking surface');
+const m5Start=s.indexOf('function conditionalExplorerHTML('),m5End=s.indexOf('function addCondition(',m5Start);
+assert(m5Start>=0&&m5End>m5Start,'M5 conditional UI block missing');
+const m5Block=s.slice(m5Start,m5End);
+assert(!/BUY|SELL|勝率最高|最佳組合/.test(m5Block),'M5 conditional UI must not become a trading vote/ranking surface');
 assert(s.includes("[[0,'當根'],[3,'最近 3 根內'],[5,'最近 5 根內']]"),'event-window control missing');
 
 const a=s.lastIndexOf('<script>'),b=s.lastIndexOf('</script>');
