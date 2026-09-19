@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v1.3 · M5 Conditional Research**
+**v1.4 · M5 研究條件組重構（產品驗收中）**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -129,7 +129,7 @@ GitHub Actions 會自動檢查：
 
 進入 M4 前另建立固定 regression fixtures。它們不是最新行情，而是刻意凍結的 1200-bar 樣本，用來檢查未來重構是否讓模型 lifecycle、Evidence 或 Evaluation 在沒有說明的情況下悄悄改變。
 
-## M5 Conditional Research
+## M5 條件式研究
 
 M5 不把模型做成投票器。研究流程從一個 anchor Evidence 開始，再加入第二／第三個當時已知的條件，比較單一條件與條件組合的歷史 episode 分布。
 
@@ -140,7 +140,7 @@ M5 不把模型做成投票器。研究流程從一個 anchor Evidence 開始，
 - N < 5 顯示樣本不足；5–19 顯示探索性；N ≥ 20 才標示可比較。這些標籤只描述樣本量。
 - 每組條件都和第一個 anchor 的單一條件 baseline 並排，不輸出 BUY / SELL、模型投票或最佳組合排名。
 
-Research Runner 可透過 `--conditions research/conditions.example.json` 使用相同的 Shared Condition Engine。
+目前 UI-R01 將「研究條件組」作為側欄第一層：正在開啟的模型以模型磚呈現，完整模型庫預設收起；中文描述優先，必要英文模型名與 MFE / MAE 僅作第二層識別。這次只重構介面，不改 Shared Condition Engine 的條件語意。\n\nResearch Runner 可透過 `--conditions research/conditions.example.json` 使用相同的 Shared Condition Engine。
 
 M5 驗收時以 BTC / NASDAQ / TAIEX 1D 做 real-market prefix causality audit。這次 audit 實際抓到 future Evidence 被錯誤 clamp 到歷史 checkpoint 的問題，修正後再通過；也因此把 sampling 改成 anchor-centric，確保增加條件不會反而製造更多樣本。固定驗收紀錄保存在 `research/m5-condition-audit.json`。
 

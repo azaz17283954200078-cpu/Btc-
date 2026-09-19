@@ -6,14 +6,14 @@ const s=fs.readFileSync('index.html','utf8');
 assert(/v1\.[2-9] · M[45] /.test(s),'M4+ Guided Research version label missing');
 assert(s.includes('<script src="src/model-presets.js"></script>'),'shared validated presets are not loaded');
 
-for(const id of ['evidenceDock','evidenceDockBody','evidenceBackdrop','presetChoices','presetValidation']){
+for(const id of ['evidenceDock','evidenceDockBody','evidenceBackdrop','presetChoices','presetValidation','activeModelStack','researchStackSummary','modelLibrary']){
   assert(s.includes('id="'+id+'"'),'missing M4 guided research surface '+id);
 }
 
 for(const model of ['support','macro','sweep','basin','field','echo','astro']){
   assert(s.includes('data-model-card="'+model+'"'),'missing guided card for '+model);
 }
-for(const phrase of ['它在問：','開啟後：','別把它當成：','選研究方式','看看它現在找到什麼']){
+for(const phrase of ['它在問：','開啟後：','別把它當成：','調整研究設定','研究目前證據']){
   assert(s.includes(phrase),'missing guided copy: '+phrase);
 }
 for(const fn of [
@@ -21,7 +21,7 @@ for(const fn of [
   'function historyCases(','function failureExamples(','function jumpToEvidence(',
   'function renderModelGuides(','function openLatestResearch(','function renderPresetChoices(',
   'function applyPreset(','function resetModelSettings(','function presetParamSummary(',
-  'function applyDraftToModel('
+  'function applyDraftToModel(','function renderResearchStack(','function openModelLibrary(','function disableModel('
 ]){
   assert(s.includes(fn),'missing M4 Guided Research function '+fn);
 }
@@ -77,3 +77,9 @@ assert(a>=0&&b>a,'inline app script missing');
 new Function(s.slice(a+8,b));
 
 console.log('m4-ui-contract.test.js: OK');
+
+const modelLibrary=s.match(/<details id="modelLibrary"[^>]*>/);
+assert(modelLibrary&&!/\bopen\b/.test(modelLibrary[0]),'model library must be collapsed by default');
+assert(s.includes('研究條件組'),'primary research surface must be Chinese-first');
+assert(s.includes('data-active-model'),'active research models must render as bricks');
+assert(s.includes('MODEL_SETTING_STATE'),'each model brick must retain its UI research-setting source');

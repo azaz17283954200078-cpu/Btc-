@@ -24,3 +24,11 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - BTC 1H target: 30,000 bars; BTC 4H target: 20,000 bars.
 - Browser exposes `window.__SL_MARKET_COVERAGE__`.
 - Interrupted pagination is marked explicitly and is not conflated with low conditional N.
+
+## M5-UI-R01 research-stack architecture
+- User approved a major sidebar information-architecture redesign.
+- Primary sidebar surface: 研究條件組.
+- Full model library: progressively disclosed and collapsed by default.
+- Chinese-first labels; English model names and research abbreviations are secondary.
+- Chart Core, Model Engine, Condition Engine, causality and anchor-centric sampling are protected and unchanged.
+- Product acceptance is still pending real desktop/mobile use.
