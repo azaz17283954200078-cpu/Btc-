@@ -2,23 +2,29 @@
   const RK=(typeof module==='object'&&module.exports)
     ? require('./research-kernel.js')
     : root.StrategyLabKernel;
-  const api=factory(RK);
+  const MS=(typeof module==='object'&&module.exports)
+    ? require('./model-semantics.js')
+    : root.StrategyLabModelSemantics;
+  const api=factory(RK,MS);
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.StrategyLabConditionEngine=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(RK){
+})(typeof globalThis!=='undefined'?globalThis:this,function(RK,MS){
   'use strict';
   if(!RK)throw new Error('Condition Engine requires Research Kernel');
+  if(!MS)throw new Error('Condition Engine requires Model Semantics Registry');
 
-  const VERSION='1.2.0';
-  const STATE_MODELS=new Set(['support','macro','basin','field']);
-  const EVENT_MODELS=new Set(['sweep','astro']);
-  const OBSERVATION_MODELS=new Set(['echo']);
-  const TERMINAL_STATES={
-    support:new Set(['broken']),
-    macro:new Set(['broken']),
-    basin:new Set(['exit']),
-    field:new Set(['broken'])
-  };
+  const VERSION='1.3.0';
+  const SEMANTICS_VERSION=MS.VERSION;
+  const SEMANTIC_MODELS=MS.list();
+  // 保留既有公開集合名稱，讓 Runner/UI 相容；來源改為 G03-R0 的唯一語意登錄。
+  const STATE_MODELS=new Set(SEMANTIC_MODELS.filter(x=>x.conditionMode==='state').map(x=>x.model));
+  const EVENT_MODELS=new Set(SEMANTIC_MODELS.filter(x=>x.conditionMode==='event').map(x=>x.model));
+  const OBSERVATION_MODELS=new Set(SEMANTIC_MODELS.filter(x=>x.conditionMode==='observation').map(x=>x.model));
+  const TERMINAL_STATES=Object.fromEntries(
+    SEMANTIC_MODELS
+      .filter(x=>(x.terminalStates||[]).length)
+      .map(x=>[x.model,new Set(x.terminalStates)])
+  );
 
   function clampIndex(x,known){return Math.max(0,Math.min(known,Math.round(x)))}
   function normalizeCondition(input){
@@ -30,13 +36,10 @@
     return{model,state,windowBars,relation};
   }
   function semantics(input){
-    const c=normalizeCondition(input);
-    if(STATE_MODELS.has(c.model)){
-      if(TERMINAL_STATES[c.model]&&TERMINAL_STATES[c.model].has(c.state))return'transition_event';
-      return'state';
-    }
-    if(EVENT_MODELS.has(c.model))return'event';
-    if(OBSERVATION_MODELS.has(c.model))return'observation';
+    const c=normalizeCondition(input),
+          mode=MS.conditionMode(c.model);
+    if(mode==='state'&&MS.isTerminal(c.model,c.state))return'transition_event';
+    if(mode==='state'||mode==='observation'||mode==='event')return mode;
     return'event';
   }
   function conditionKey(input){
@@ -379,7 +382,7 @@
           stats=evaluateEpisodes(data,episodes,horizons,known),
           baselineStats=evaluateEpisodes(data,baselineEpisodes,horizons,known);
     return{
-      version:2,engineVersion:VERSION,knownThrough:known,horizons,
+      version:2,engineVersion:VERSION,semanticsVersion:SEMANTICS_VERSION,knownThrough:known,horizons,
       conditions:list,
       semantics:list.map(c=>({condition:c,mode:semantics(c)})),
       episodeCount:episodes.length,
@@ -447,7 +450,7 @@
   }
 
   return{
-    VERSION,STATE_MODELS,EVENT_MODELS,OBSERVATION_MODELS,TERMINAL_STATES,
+    VERSION,SEMANTICS_VERSION,STATE_MODELS,EVENT_MODELS,OBSERVATION_MODELS,TERMINAL_STATES,
     normalizeCondition,conditionKey,semantics,priceGeometry,intervalOverlap,
     buildPresenceDetails,buildPresence,episodesFromPresence,relationSnapshotAtIndex,
     conditionGeometryKind,availableRelations,suggestRelation,episodesForConditions,
