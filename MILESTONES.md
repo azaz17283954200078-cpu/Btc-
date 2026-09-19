@@ -204,7 +204,34 @@ G03 不以「更多功能」為目標，而是建立資料可信度、Runner 可
 - 預先定義 future Strategy Adapter 能力邊界，但尚未實作策略模擬。
 - PR CI run `35434017722` 全綠；所有既有 M4/M5/G01/G02 gates 同時通過。
 
-Next: **G03-R1 Runner Observatory**。不得跳過 R1 直接用 outcome 調 preset。
+### G03-R1｜Runner Observatory — ✅ Technical complete
+- Immutable Run ID / Run Manifest，研究條件鎖定；改條件建立新 Run。
+- 既有單模型研究區可展開執行階段與 no-lookahead 教育，不新增主導航。
+
+### G03-R2｜Reliability Standard v1 — ✅ Technical complete
+- Gate-based 不足／探索／可研究／較穩健。
+- 同時保留 raw N 與 overlap-clustered N_eff。
+- Data integrity / coverage / lifecycle / OOS / parameter stability 都會影響研究可信度。
+
+### G03-R3｜Reliability Matrix — ✅ Technical complete
+- Model × Preset × Market × Timeframe × State 診斷。
+- 薄弱原因明確分類；矩陣是研究診斷，不是模型排名。
+- Aggregate strictness gate 與 per-context lifecycle warning 分離，避免為了漂亮單調性扭曲模型生命周期。
+
+### G03-R4｜Preset Calibration — ✅ Technical complete
+- 正式 UI 名稱：寬鬆／平衡／嚴格。
+- 8 個 context aggregate Evidence density 全模型通過 loose ≥ balanced ≥ strict。
+- 21 套 preset 的 parameter-neighborhood stability 全通過。
+- Calibration 禁止使用 historical outcome ranking。
+
+### G03-R5｜Blind / OOS Validation — ✅ Technical complete
+- Chronological 70% calibration / 30% blind OOS。
+- 参数 fingerprint freeze before reveal。
+- 21 presets 全部有 OOS coverage，frozen fingerprint 與 stability gates 全通過。
+- Validation record：`research/g03-preset-validation.json`。
+
+**Next product action: external no-hint desktop/mobile testing.**  
+R6/R7 暫不展開，先讓未參與開發者實際操作 R1–R5。
 
 ## M6｜完成的小作品 — Next
 
