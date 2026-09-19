@@ -8,13 +8,14 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v2.3 · G02-R7 指南技術完成（真人驗收待辦）**
+**v2.3 · G02-R7 + G03-R0｜模型語意登錄完成（G02 真人驗收仍待辦）**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
 - NASDAQ Composite：1D / 1W / 1M
 - 台股加權指數：1D / 1W / 1M
 - 7 個內建模型：Support Zone、Macro Bottom、Liquidity Sweep、Basin Mapper、Oscillation Field、Echo、Astrology Engine
+- Model Semantics Registry v1.0：七模型的研究類型、主張邊界、狀態語意、價格幾何與未來策略角色共用單一來源
 - Script Lab 自訂策略圖層
 - Echo 歷史相似型態搜尋、後續 MFE / MAE / 報酬回測與歷史 K 線跳轉
 - M4 Guided Research：7 個模型逐一回答「它在問什麼／開啟後看到什麼／別把它當成什麼」
@@ -205,3 +206,12 @@ M5 完成桌面／手機實際操作驗收後，才進入 **M6「完成的小作
 如果答案已經是肯定的，M6 的正確動作是停止擴張、修正阻礙與打磨體驗，而不是再堆功能。
 
 持久化 Research Database 仍不是前置條件；等實際研究量使重算成本成為真實瓶頸時再評估。
+
+
+## G03-R0 Model Semantics Registry
+
+G03 先不調參數，也不先做 equity curve，而是先固定「模型究竟聲稱什麼」。共享 `src/model-semantics.js` 把七模型分成 lifecycle / event / analogy / external-time 四種研究型態，並明確定義 normalized states、progression / confirmation / invalidation / exit、標準價格幾何、可用 cross-research relation 與 future Strategy Adapter 能力邊界。
+
+目前七模型全部維持 `directionalClaim=false`。Macro Candidate 不等於確認底部、Sweep event 不等於反轉成功、Echo Strong 不等於歷史重播、Astrology event 不代表價格因果。Condition Engine v1.3.0 已改讀共享 Registry，但 R02 的時間／價格關係與 anchor-centric sampling 沒有改變。
+
+完整 G03 後續順序與限制記錄於 [G03_ITERATION_GUIDE.md](G03_ITERATION_GUIDE.md)。R1 才會處理 Runner Observatory；Reliability、資料矩陣、寬鬆／平衡／嚴格 calibration、策略實驗與 Simulation Runner 都不得提前混進 R0。
