@@ -540,9 +540,20 @@ td:first-child,th:first-child{text-align:left}
   select,button,summary,label{touch-action:manipulation}
   .chart-tip{display:none!important}
 }
+
+/* G03-R1/R2｜Runner Observatory + gate-based Reliability：沿用既有單模型研究區，不新增主導航 */
+.runner-observatory{margin:9px 0;border:1px solid #334e6d;border-radius:10px;background:#0a1726;overflow:hidden}
+.runner-observatory>summary{padding:10px 11px;color:#b9cbe0;font-size:9.8px;cursor:pointer}
+.runner-lock{margin:0 10px 8px;padding:8px 9px;border-left:3px solid #607b9a;background:#0e2032;font-size:9.2px;line-height:1.45}.runner-lock b,.runner-lock span{display:block}.runner-lock span{color:#9eb1c8;margin-top:3px}
+.runner-meta{display:flex;gap:6px;flex-wrap:wrap;padding:0 10px 7px}.runner-meta span{padding:4px 6px;border:1px solid #2b435e;border-radius:7px;color:#9fb2c9;font-size:8.7px}
+.runner-phases{display:grid;gap:5px;padding:0 10px 10px}.runner-phase{display:flex;gap:7px;align-items:flex-start;padding:7px 8px;background:#0d1b2c;border-radius:8px}.runner-phase b,.runner-phase small{display:block}.runner-phase b{font-size:9.5px;color:#e4edf8}.runner-phase small{margin-top:2px;color:#91a6bf;font-size:8.8px;line-height:1.4}
+.reliability-card{margin:9px 0;padding:11px;border:1px solid #3a5879;border-radius:11px;background:#0b1828}.reliability-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.reliability-head small,.reliability-head b{display:block}.reliability-head small{color:#8ea4be;font-size:8.8px}.reliability-head b{font-size:15px;margin-top:1px}.reliability-head>span{font-size:9px;color:#a8bdd5}
+.reliability-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:9px}.reliability-grid>div{padding:7px;background:#0e2134;border-radius:8px}.reliability-grid span,.reliability-grid b{display:block}.reliability-grid span{font-size:8.3px;color:#8ea6bf}.reliability-grid b{font-size:11px;color:#e9f1fb;margin-top:2px}.reliability-note{margin-top:8px;color:#9fb3c9;font-size:9px;line-height:1.45}.reliability-card details{margin-top:8px;border-top:1px solid #243b54;padding-top:7px}.reliability-card summary{font-size:9.4px;color:#b7c9dc;cursor:pointer}.reliability-card ul{padding-left:17px;color:#9fb2c8;font-size:9px;line-height:1.5}.reliability-card code{font-size:8px}.reliability-card p{font-size:9px;color:#8fa4bc;line-height:1.45}
+.blind-validation{margin-top:9px;padding:9px;border:1px dashed #496785;border-radius:9px;background:#0c1c2d;color:#a9bdd3;font-size:9px;line-height:1.5}.blind-validation b{display:block;color:#e0eaf5}.blind-validation p{margin:3px 0 6px}.blind-validation button{margin-top:7px;min-height:32px}.blind-validation.revealed{border-style:solid}
+@media(max-width:650px){.reliability-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.blind-validation button{min-height:44px;width:100%}}
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.3 · G02-R7 裝置與流程硬化｜G03-R0 模型語意登錄</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.4 · G03-R2 Runner／可信度基礎｜v2.3 · G02-R7 裝置與流程硬化</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -753,7 +764,7 @@ state.prevSlow = slow;</textarea>
     <div class="param-note"><b>怎麼用：</b>參考設定驗證的是它是否真的比較敏感／平衡／挑剔，以及是否有足夠歷史樣本；不是挑歷史報酬最高的組合。</div>
     <div class="param-actions"><span id="paramRunStatus" class="param-run-status">選一個研究方式，或自己微調</span><div class="right"><button onclick="restoreParams()">恢復模型原本設定</button><button onclick="applyParams()">用這些參數重新找</button></div></div>
   </div>
-</div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script src="src/model-semantics.js"></script><script src="src/condition-engine.js"></script><script>
+</div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script src="src/model-semantics.js"></script><script src="src/reliability-engine.js"></script><script src="src/research-run.js"></script><script src="src/condition-engine.js"></script><script>
 window.addEventListener('error',function(e){var st=document.getElementById('status'),msg=document.getElementById('msg');if(st)st.textContent='程式錯誤';if(msg)msg.textContent='JS：'+e.message+' @ '+e.lineno;});
 const q=id=>document.getElementById(id);
 function setInfo(id,t){let e=q(id);if(e)e.textContent=t}
@@ -943,15 +954,20 @@ let FOCUSED_MODEL='support',
     CONDITION_STACK=[],
     SAVED_RESEARCH=[],
     ACTIVE_SAVED_RESEARCH_ID=null,
-    HANDOFF_NOTICE='';
+    HANDOFF_NOTICE='',
+    CURRENT_RUN_MANIFEST=null,
+    CURRENT_RELIABILITY=null,
+    REVEALED_VALIDATION_RUN_ID=null;
 let PINNED_RESEARCH=null,RESEARCH_DETAIL_OPEN=false,LAST_TOOLTIP_HIT=null;
-const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,MS=window.StrategyLabModelSemantics||null,CE=window.StrategyLabConditionEngine||null;
-if(!ME||!MP||!MS||!CE)throw new Error('Strategy Lab shared research modules failed to load');
-window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;window.__SL_MODEL_SEMANTICS__=MS;window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
+const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,MS=window.StrategyLabModelSemantics||null,REL=window.StrategyLabReliability||null,RR=window.StrategyLabResearchRun||null,CE=window.StrategyLabConditionEngine||null;
+if(!ME||!MP||!MS||!REL||!RR||!CE)throw new Error('Strategy Lab shared research modules failed to load');
+window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;window.__SL_MODEL_SEMANTICS__=MS;window.__SL_RELIABILITY__=REL;window.__SL_RESEARCH_RUN__=RR;window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
 window.__SL_SAVED_RESEARCH__=SAVED_RESEARCH;window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVALUATION__=EVALUATION;
 window.__SL_SINGLE_RESEARCH_CONTEXT__=SINGLE_RESEARCH_CONTEXT;
 window.__SL_COMBINATION_HANDOFF__=COMBINATION_HANDOFF_CONTEXT;
 window.__SL_CONDITION_STACK__=CONDITION_STACK;
+window.__SL_RUN_MANIFEST__=CURRENT_RUN_MANIFEST;
+window.__SL_CURRENT_RELIABILITY__=CURRENT_RELIABILITY;
 
 function resetEvidenceTimeline(){
   EVIDENCE=[];EVIDENCE_LOG=[];EVIDENCE_ERRORS=[];EVALUATION=null;
@@ -1094,10 +1110,25 @@ function zoneCalc(){
     echo:shouldRunModel('echo'),
     astro:shouldRunModel('astro')
   };
+  const snapshot={zone:cloneObj(ZONE),macro:cloneObj(MACRO),sweep:cloneObj(SWEEP),exp:cloneObj(EXP)},
+        fingerprint=ME.parameterFingerprint({...snapshot,enabled}),
+        models=Object.entries(enabled).filter(([,v])=>!!v).map(([k])=>k);
+  CURRENT_RUN_MANIFEST=RR.start(D,{
+    market:q('market').value,timeframe:tf,source:sourceNote,models,
+    preset:modelSettingLabel(FOCUSED_MODEL),parameterSnapshot:snapshot,parameterFingerprint:fingerprint,
+    modelVersion:ME.VERSION,kernelVersion:RK&&RK.VERSION,conditionEngineVersion:CE.VERSION,
+    semanticsVersion:MS.VERSION,reliabilityStandardVersion:REL.VERSION
+  });
+  window.__SL_RUN_MANIFEST__=CURRENT_RUN_MANIFEST;
+  REVEALED_VALIDATION_RUN_ID=null;
   const res=ME.run(D,{
     market:q('market').value,timeframe:tf,source:sourceNote,
     enabled,zone:ZONE,macro:MACRO,sweep:SWEEP,exp:EXP
   });
+  CURRENT_RUN_MANIFEST=RR.complete(CURRENT_RUN_MANIFEST,res,{
+    conditionEngineVersion:CE.VERSION,semanticsVersion:MS.VERSION,reliabilityStandardVersion:REL.VERSION
+  });
+  window.__SL_RUN_MANIFEST__=CURRENT_RUN_MANIFEST;
   applyModelEngineResult(res);
   safeDrawModels();renderCombinationWorkspace();
 }
@@ -1945,6 +1976,93 @@ function renderHandoffStatus(){
     box.innerHTML='<div class="single-handoff-ready">'+esc(HANDOFF_NOTICE)+'</div>'
   }else box.innerHTML=''
 }
+function presetLevelForModel(model){
+  let st=MODEL_SETTING_STATE[model];
+  if(st&&st.kind==='preset'){
+    let p=MP&&MP.get(model,st.id);
+    return p&&p.level?p.level:(st.id==='sensitive'?'loose':st.id==='selective'?'strict':st.id)
+  }
+  return null
+}
+function currentParameterStability(model){
+  if(!MP||!MP.validation)return null;
+  let st=MODEL_SETTING_STATE[model];
+  if(!st||st.kind!=='preset')return null;
+  let v=MP.validation(model,st.id);
+  return v&&v.parameterStability===true?true:v&&v.parameterStability===false?false:null
+}
+function currentReliability(model,state){
+  if(!D.length||!REL)return null;
+  try{
+    return REL.evaluateModelState(D,EVIDENCE_LOG,{
+      model,state,horizon:SINGLE_RESEARCH_HORIZON,
+      market:q('market')?q('market').value:'CUSTOM',
+      timeframe:tf,knownThrough:D.length-1,
+      marketCoverage:MARKET_COVERAGE,
+      parameterStability:currentParameterStability(model)
+    })
+  }catch(_){return null}
+}
+function runnerObservatoryHTML(){
+  let r=CURRENT_RUN_MANIFEST;
+  if(!r)return'';
+  let phases=(r.phases||[]).map(p=>'<div class="runner-phase"><span class="'+(p.status==='completed'?'good':'warn')+'">'+(p.status==='completed'?'✓':'•')+'</span><div><b>'+esc(p.label)+'</b><small>'+esc(p.education)+'</small></div></div>').join('');
+  return '<details class="runner-observatory"><summary>研究執行紀錄｜'+esc(r.runId)+' · '+(r.status==='completed'?'已完成':'執行中')+'</summary>'+
+    '<div class="runner-lock"><b>🔒 本次研究條件已鎖定</b><span>改市場、週期、模型或參數都會建立新的 Run ID；不會在同一份結果上原地改條件。</span></div>'+
+    '<div class="runner-meta"><span>市場 '+esc(r.market)+'</span><span>週期 '+esc(String(r.timeframe).toUpperCase())+'</span><span>K 棒 '+Number(r.dataRange&&r.dataRange.bars||0).toLocaleString()+'</span><span>Evidence '+Number(r.evidenceCount||0).toLocaleString()+'</span><span>錯誤 '+Number(r.evidenceErrors||0)+'</span></div>'+
+    '<div class="runner-meta"><span>Model '+esc(r.modelVersion||'—')+'</span><span>Kernel '+esc(r.kernelVersion||'—')+'</span><span>Semantics '+esc(r.semanticsVersion||'—')+'</span><span>Reliability '+esc(r.reliabilityStandardVersion||'—')+'</span></div>'+
+    '<div class="runner-phases">'+phases+'</div></details>'
+}
+function reliabilityLevelClass(level){
+  if(!level)return'';
+  return level.id==='robust'?'good':level.id==='researchable'?'good':level.id==='exploratory'?'warn':'err'
+}
+function reliabilityHTML(model,state){
+  let r=currentReliability(model,state);CURRENT_RELIABILITY=r;window.__SL_CURRENT_RELIABILITY__=r;
+  if(!r)return'';
+  let coverage=r.coverage||{},oos=r.oos&&r.oos.validation||{},integrity=r.integrity||{},
+      reasons=(r.reasons||[]).map(x=>'<li>'+esc(x)+'</li>').join(''),
+      weakness=(r.weaknessDetails||[]).map(x=>'<li><code>'+esc(x.code)+'</code> '+esc(x.text)+'</li>').join('');
+  return '<section class="reliability-card"><div class="reliability-head"><div><small>研究資料可信度</small><b class="'+reliabilityLevelClass(r.level)+'">'+esc(r.level.label)+'</b></div><span>'+esc(r.sampleBand.label)+'</span></div>'+
+    '<div class="reliability-grid">'+
+      '<div><span>同狀態總案例</span><b>'+r.counts.total+'</b></div>'+
+      '<div><span>完整觀察</span><b>'+r.counts.complete+'</b></div>'+
+      '<div><span>有效獨立案例</span><b>'+r.counts.nEff+'</b></div>'+
+      '<div><span>尚未完成</span><b>'+r.counts.incomplete+'</b></div>'+
+      '<div><span>OOS 完整案例</span><b>'+Number(oos.complete||0)+'</b></div>'+
+      '<div><span>案例時間跨度</span><b>'+Number(coverage.spanYears||0).toFixed(1)+' 年</b></div>'+
+    '</div>'+
+    '<div class="reliability-note">N_eff 不是把案例刪掉：'+esc(r.independence.explanation)+' 原始 N 與有效 N 會同時保留。</div>'+
+    '<details><summary>為什麼是「'+esc(r.level.label)+'」？</summary><ul>'+reasons+'</ul>'+
+      '<div class="reliability-integrity">'+(integrity.pass?'✓ 原始資料完整性 gate 通過':'⚠ 原始資料完整性 gate 未通過')+'</div>'+
+      (weakness?'<b>目前薄弱原因</b><ul>'+weakness+'</ul>':'<div class="good">目前沒有額外薄弱原因被觸發。</div>')+
+      '<p>'+esc(r.disclaimer)+'</p></details>'+
+    blindValidationHTML(model,state,r)+
+    '</section>'
+}
+function blindValidationHTML(model,state,reliability){
+  let r=reliability||currentReliability(model,state);if(!r)return'';
+  let revealed=CURRENT_RUN_MANIFEST&&REVEALED_VALIDATION_RUN_ID===CURRENT_RUN_MANIFEST.runId,
+      p=r.split||{},v=r.oos&&r.oos.validation||{};
+  if(!revealed){
+    return '<div class="blind-validation"><b>盲測區｜時間後段 '+Math.round((1-(p.fraction||.7))*100)+'%</b>'+
+      '<p>參數先固定，再看後段資料。這裡不使用 OOS 報酬去挑 preset。</p>'+
+      '<div>OOS 案例 '+Number(v.total||0)+' · 完整 '+Number(v.complete||0)+' · N_eff '+Number(v.nEff||0)+'</div>'+
+      '<button onclick="revealBlindValidation()">參數已固定，揭露 OOS 後續分布</button></div>'
+  }
+  let rows=REL.matchingEvidence(EVIDENCE_LOG,model,state,D.length-1).filter(e=>e.index>=(p.splitIndex||0)),
+      ev=RK.evaluateEvidence(D,rows,SINGLE_RESEARCH_HORIZON,D.length-1),
+      x=ev&&ev.summary;
+  return '<div class="blind-validation revealed"><b>OOS 已揭露｜只讀結果</b>'+
+    '<p>這份 Run 的參數快照已固定；若改參數會建立新 Run，這個揭露不會沿用。</p>'+
+    (x?'<div>完整 '+x.n+' · 歷史中位變化 '+pct(x.medianReturn)+' · 途中最大上漲幅度（MFE） '+pct(x.medianMFE)+' · 途中最大下跌幅度（MAE） '+pct(x.medianMAE)+'</div>':'<div>OOS 完整案例不足，沒有可摘要的後續分布。</div>')+
+    '<small>這是盲測時段的歷史分布，不是未來報酬預測。</small></div>'
+}
+function revealBlindValidation(){
+  if(!CURRENT_RUN_MANIFEST)return;
+  REVEALED_VALIDATION_RUN_ID=CURRENT_RUN_MANIFEST.runId;
+  renderSingleResearch()
+}
 function singleEvidenceCardHTML(model,ev,mode){
   let state=ev.state,stateLabel=stateDisplayLabel(model,state),
       displayDate=mode==='now'?(D.length?date(D[D.length-1].t):'—'):(D[ev.index]?date(D[ev.index].t):('bar '+ev.index)),
@@ -1962,6 +2080,7 @@ function singleEvidenceCardHTML(model,ev,mode){
     '<br>模型第一次能確認這個狀態：'+esc(firstKnown)+' · 歷史同狀態 '+n+' 次</div></article>'+
     safety+
     modelProofHTML(model,raw)+
+    reliabilityHTML(model,state)+
     (projectionOnly?astroHistoricalBridgeHTML():singleHorizonHTML(model,state))+
     (projectionOnly?'':singleHistoryHTML(model,state,ev,mode))+
     '<details class="single-advanced"><summary>進階｜這個狀態後來怎麼發展？</summary><div class="single-advanced-body">'+lifecycleHTML(model,state)+'</div></details>'+
@@ -1981,7 +2100,7 @@ function renderSingleResearch(){
       ev=mode==='history'?focusedEvidenceRecord():cur;
   let tabs=currentResearchIdentityHTML()+'<div class="single-context-tabs"><button class="'+(mode==='now'?'on':'')+'" onclick="viewSingleNow()">現在</button>'+
     '<button class="'+(mode==='history'?'on':'')+'" onclick="'+(hist?'viewLatestHistoricalCase()':'')+'" '+(hist?'':'disabled')+'>歷史案例</button></div>'+
-    modelSemanticsHeaderHTML(FOCUSED_MODEL);
+    modelSemanticsHeaderHTML(FOCUSED_MODEL)+runnerObservatoryHTML();
   if(mode==='now'&&!cur){
     body.innerHTML=tabs+'<article class="single-now-card empty"><div class="single-now-head"><div><small>現在</small><b>目前沒有形成可用 Evidence</b></div>'+
       '<span class="single-now-date">'+(D.length?esc(date(D[D.length-1].t)):'—')+'</span></div>'+
