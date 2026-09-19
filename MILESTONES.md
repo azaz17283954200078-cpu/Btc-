@@ -146,24 +146,34 @@ M4 的完成標準：
 
 > 第一次打開 Strategy Lab 的人，不需要先讀說明頁，就能從介面本身知道「我現在看到什麼、我可以做什麼、按下去會得到什麼、接下來還能研究什麼」。
 
-## M5｜Conditional Research｜條件式市場推論 — 🚧 In Progress
+## M5｜Conditional Research｜條件式市場推論 — ✅ Completed
 
-M5 研究的是「多一個 causal Evidence 之後，歷史分布發生了什麼變化」，不是把模型做成投票器。
+M5 研究的是「多一個 causal Evidence 之後，歷史分布發生了什麼變化」，而不是把模型做成投票器。
 
-核心契約：
+完成內容：
 
-- State Evidence（Support / Macro / Basin / Field）在下一個 lifecycle transition 前持續成立。
-- terminal transition（Broken / Exit）只視為當根事件，不永久留在市場狀態中。
-- Event Evidence（Sweep / Astrology）預設只在事件當根成立；可顯式設定「最近 N 根內發生」，窗口只向事件之後延伸，不使用未來資料。
-- Echo Observation 只使用當根實際觀察結果。
-- **Anchor-centric sampling**：第一個條件定義 baseline episode；每個 anchor episode 最多貢獻 1 個組合樣本，取「所有新增條件第一次同時成立」的時點，因此加入條件後 N 不會反而變大。
-- 每個組合都必須和 anchor 單一條件 baseline 並排比較。
-- 樣本閘門：N < 5 = 樣本不足；5–19 = 探索性；N ≥ 20 = 可比較。這只是樣本量提示，不代表預測可靠度。
-- M5 顯示條件分布、IQR、MFE / MAE 與失敗案例；不產生 BUY / SELL、模型投票或「最佳組合」排名。
-- Condition Engine 必須同時供 Lab UI 與 Research Runner 使用，並通過 prefix causality / no-lookahead tests。
+- 新增 Shared `src/condition-engine.js`，Lab UI 與 Research Runner 使用同一套條件語意與統計。
+- State Evidence（Support / Macro / Basin / Field）只從 `detectedAt` 起成立，並維持到下一個 lifecycle transition。
+- Broken / Exit 等 terminal transition 只當成當根事件，不永久殘留為市場狀態。
+- Sweep / Astrology 等 Event Evidence 預設只算當根，也可顯式設定最近 3 / 5 根窗口；窗口只從事件發生後向前延伸。
+- Echo 使用當根 Observation，不把未來 projection 混入條件。
+- 採 **anchor-centric sampling**：第一個條件定義 baseline episode；每個 anchor episode 最多只貢獻一個組合樣本，取新增條件第一次同時成立的時點，因此增加條件後 N 不會反而膨脹。
+- 條件組合永遠與 anchor 單一條件 baseline 並排，顯示 3 / 5 / 10 / 20 bars 的 N、Median Return、MFE、MAE 與 Return IQR。
+- 樣本閘門固定為 N < 5「樣本不足」、5–19「探索性」、N ≥ 20「可比較」；只描述樣本量，不當作預測可靠度分數。
+- Guided Conditional UI 直接嵌在 M4 Evidence Research：先看單一 Evidence，再加入第二／第三個歷史上曾同時存在的條件。
+- 最多同時研究 3 個條件，避免無限制疊條件造成極小樣本與資料挖掘。
+- 若目前只開一個模型，介面會帶使用者先替另一個模型選研究方式，不在背景偷偷啟用模型。
+- Research Runner 支援 `--conditions research/conditions.example.json`，可 headless 批次輸出相同 conditional result。
+- Condition Engine 通過 synthetic prefix causality、Runner parity、fixed-fixture 與 real-market audit。
+- Real-market audit 曾抓到一個真正的 future-Evidence causality leak：未來 transition 被 clamp 到 `knownThrough`；已修正為 Evidence 必須在當時真的已被偵測才可參與條件。
+- 第一次 audit 也暴露事件可能讓組合 episode 數反而高於 anchor；因此改成 anchor-centric sampling，再重新通過驗證。
+- 最終 real-market audit：BTC 1D 22 個 Support Candidate anchor 中 20 個與 Basin Forming 重疊；NASDAQ 1D 13 中 12 個與 Basin Landing 重疊；TAIEX 1D 15 中 15 個與 Field Forming 重疊。這些數字只驗證條件機制與樣本閘門，不代表模型優劣或未來報酬。
+- M5 不產生 BUY / SELL、模型投票、條件分數或「最佳組合」排名。
 
-目前已完成 Condition Semantics、Shared Condition Engine、Runner integration 與 Guided Conditional UI；最後以 real-market causality audit + regression gate 驗收。
+M5 完成標準：
 
-## M6｜完成的小作品
+> 使用者可以從一個 Evidence 出發，逐步加入其他「當時已知」的條件，看到樣本數如何縮小、歷史分布如何改變，並隨時知道資料是否只具探索價值；整個過程保持 causal、可追溯、可在 Runner 重現。
+
+## M6｜完成的小作品 — Next
 
 第一次使用者能很快開始探索；有經驗的研究者仍能得到值得研究的資訊。達到後停止為了規模而擴張。

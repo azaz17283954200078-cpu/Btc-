@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "validatedAt": "2026-09-19",
+  "conditionEngineVersion": "1.0.0",
+  "methodology": {
+    "sampling": "anchor-centric",
+    "note": "Each anchor episode contributes at most one combined sample at the first bar where all added conditions are simultaneously known.",
+    "causality": "Prefix evidence and full evidence restricted to the same knownThrough checkpoint must produce identical condition episodes.",
+    "purpose": "Mechanism and causality validation only; these results are not model rankings or return forecasts."
+  },
+  "contexts": [
+    {
+      "market": "BTC",
+      "timeframe": "1d",
+      "anchor": {
+        "model": "support",
+        "state": "candidate"
+      },
+      "companion": {
+        "model": "basin",
+        "state": "forming",
+        "windowBars": 0
+      },
+      "baselineEpisodes": 22,
+      "episodes": 20,
+      "gate": "comparable"
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1d",
+      "anchor": {
+        "model": "support",
+        "state": "candidate"
+      },
+      "companion": {
+        "model": "basin",
+        "state": "landing",
+        "windowBars": 0
+      },
+      "baselineEpisodes": 13,
+      "episodes": 12,
+      "gate": "exploratory"
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1d",
+      "anchor": {
+        "model": "support",
+        "state": "candidate"
+      },
+      "companion": {
+        "model": "field",
+        "state": "forming",
+        "windowBars": 0
+      },
+      "baselineEpisodes": 15,
+      "episodes": 15,
+      "gate": "exploratory"
+    }
+  ],
+  "regressionNotes": [
+    "Initial audit exposed future Evidence being clamped to knownThrough; fixed by filtering on detectedAt/index <= knownThrough.",
+    "Initial overlap sampling allowed multiple transient-event episodes inside one anchor state; replaced with anchor-centric sampling so combo N cannot exceed baseline anchor episodes."
+  ]
+}

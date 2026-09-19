@@ -110,6 +110,10 @@ GitHub Actions 會自動檢查：
 - M4 Guided Research desktop/mobile interaction contract
 - Validated model preset contract
 - M4 preset semantic-fit Research Runner gate
+- M5 Condition Engine semantics / prefix causality
+- M5 Runner conditional parity
+- M5 real-market causality audit（BTC / NASDAQ / TAIEX）
+- M5 Guided Conditional UI contract
 - protected Chart Core 是否被模型邏輯污染
 - 三層 Canvas 是否存在
 - Experimental models 是否維持預設關閉
@@ -138,10 +142,14 @@ M5 不把模型做成投票器。研究流程從一個 anchor Evidence 開始，
 
 Research Runner 可透過 `--conditions research/conditions.example.json` 使用相同的 Shared Condition Engine。
 
+M5 驗收時以 BTC / NASDAQ / TAIEX 1D 做 real-market prefix causality audit。這次 audit 實際抓到 future Evidence 被錯誤 clamp 到歷史 checkpoint 的問題，修正後再通過；也因此把 sampling 改成 anchor-centric，確保增加條件不會反而製造更多樣本。固定驗收紀錄保存在 `research/m5-condition-audit.json`。
+
 ## Direction
 
-M1「可信任的地基」、M2「市場記憶」、M3「自我驗證」、M3.5「Research Runner」與重新定義後的 M4「Guided Research」已完成。
+M1「可信任的地基」、M2「市場記憶」、M3「自我驗證」、M3.5「Research Runner」、M4「Guided Research」與 M5「Conditional Research」已完成。
 
-下一階段是 **M5「條件式市場推論」**：研究多個 causal Evidence 同時成立時的歷史條件分布、樣本數與不確定性，而不是把模型做成投票器或輸出不可追溯的單一買賣答案。
+下一階段是 **M6「完成的小作品」**。M6 不再以新增大型能力為目標，而是做產品完成度驗收：第一次使用者是否能在約 5 分鐘內發現一個值得研究的市場現象；有經驗的研究者是否能在約 30 分鐘內走完「模型 → Evidence → 歷史分布 → 條件比較 → 真實案例」而得到可追溯的研究結果。
 
-持久化 Research Database 仍不是前置條件；等批次研究量真的使重算成本過高時再評估。
+如果答案已經是肯定的，M6 的正確動作是停止擴張、修正阻礙與打磨體驗，而不是再堆功能。
+
+持久化 Research Database 仍不是前置條件；等實際研究量使重算成本成為真實瓶頸時再評估。
