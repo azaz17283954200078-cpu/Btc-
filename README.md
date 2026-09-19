@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v1.8 · G02-R2 研究安全（產品驗收中）**
+**v2.3 · G02-R7 指南技術完成（真人驗收待辦）**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -179,6 +179,22 @@ G02-R2 接續兩輪使用者走查，把「先避免錯誤研究結論」放在�
 固定 NASDAQ / TAIEX regression fixtures 的 safety audit 也刻意保留小樣本案例：NASDAQ Macro confirmed 10-bar outcome 只有 1 個完整案例，TAIEX 只有 3 個，證明介面不能把 1/1 或 2/3 的百分比單獨放大。
 
 本輪自動檢查通過不等於使用者驗收完成。依使用者指南，Macro 與 Astrology 仍需由未參與開發的人員在沒有口頭提示下完成阻斷項驗收。
+
+## G02-R3 → R7｜完整指南技術實作
+
+依 G02 使用者角度迭代指南，技術層已完成後續五階段：
+
+- **R3 全站一致性**：七個模型共用「同狀態總案例／完整觀察／尚未完成／可瀏覽案例」數量語言；百分比只描述完整觀察。
+- **R4 模型專屬證據**：單模型結果在統計前先展示可檢查 Evidence。Support 看區域與失效邊界、Macro 看觸發高點、Sweep 看舊低／刺破／收回、Basin 看下山與走平特徵、Field 看回合／貼合／幾何／破界、Echo 看相似度／門檻／最佳歷史區間、Astrology 看事件與時間假說。Echo Evidence 額外保存 causal best-match range 與 OHLC 相似拆解。
+- **R5 單模型保存與延續**：研究可保存為 local browser snapshot，保留 market / timeframe / model / state / Evidence / selected horizon / setting source / parameter snapshot / fingerprint / knownThrough。切模型或改參數後，保存內容不會被目前畫面偷偷覆寫。
+- **R6 組合研究入口**：組合研究成為獨立工作區；第一個條件直接接收單模型 handoff，不重新猜市場、週期、模型狀態或參數。第二／第三條件仍由 Shared Condition Engine 計算，保留 anchor-centric、known-through 與 sample-gate 語意。
+- **R7 裝置與流程硬化**：研究流程在介面上可感知為「選模型 → 看證據 → 查歷史 → 保存 → 延續」；桌面維持主圖＋側欄，<=1050px 堆疊；手機主要操作使用 44px touch target，模型 Evidence 不依賴 hover。
+
+Model Engine 升至 **1.2.0**；模型世界觀與既有判斷公式未因本輪改寫。新增 Echo 的 best-match trace 是 Evidence 可追溯性擴充，不改相似片段的排序公式。
+
+完整技術 gate 已通過，包括既有 Kernel / Model Engine / Condition Engine / Runner / causality / regression / presets，以及 G02 R2–R7 專屬契約和 final guide audit。
+
+**注意：技術完成不等於使用者驗收完成。** 指南要求最終由未參與開發的人員，在沒有口頭提示下完成桌面／手機任務；目前仍標記 pending。
 
 ## Direction
 
