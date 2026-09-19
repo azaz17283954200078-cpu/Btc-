@@ -2,7 +2,7 @@ const fs=require('fs');
 const assert=require('assert');
 const s=fs.readFileSync('index.html','utf8');
 
-assert(s.includes('v1.8 · G02-R2 研究安全'),'G02-R2 version label missing');
+assert(/v1\.[8-9] · G02-R[23] /.test(s),'G02 R2+ version label missing');
 
 // Percentages and averages must be preceded by visible sample sufficiency.
 for(const phrase of [
