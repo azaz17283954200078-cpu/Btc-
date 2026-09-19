@@ -3,7 +3,7 @@ const assert=require('assert');
 
 const s=fs.readFileSync('index.html','utf8');
 
-assert(/v1\.[2-9] · (?:M[45]|G01|G02-R[12]) /.test(s),'Guided Research version label missing');
+assert(/v1\.[2-9] · (?:M[45]|G01|G02-R[1-3]) /.test(s),'Guided Research version label missing');
 assert(s.includes('<script src="src/model-presets.js"></script>'),'shared validated presets are not loaded');
 
 for(const id of ['singleModelSelect','singleOverlayToggle','singleResearchBody','singleHandoffStatus','presetChoices','presetValidation','modelLibrary']){
