@@ -138,6 +138,27 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .model-status{margin-top:8px;padding:8px 3px 0;border-top:1px solid #263853;font-size:10.5px;line-height:1.5;color:#9aadc9}
 .model-status summary{cursor:pointer;font-size:11px;color:#adbed6;margin-bottom:4px}
 
+/* M4 Guided Research */
+.guided-start{margin:0 1px 10px;padding:11px 12px;border:1px solid #355478;border-radius:11px;background:#0d192a;font-size:11.5px;line-height:1.55;color:#c9d6e7}
+.guided-start b{display:block;color:#fff;font-size:13px;margin-bottom:2px}.guided-start span{color:#9fb2cd}
+.model-question{margin-top:7px;color:#edf4ff;font-weight:750;font-size:12.5px;line-height:1.5}
+.model-desc strong{color:#dce8f8}.model-caution{margin-top:6px;color:#8fa4c0;font-size:10.5px;line-height:1.5}
+.model-next{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.model-next button{min-height:32px;padding:5px 9px;font-size:11px}
+.model-next button:disabled{opacity:.45;cursor:not-allowed}.guide-btn{padding:4px 8px;min-height:30px;font-size:11px}
+.model-status{border-radius:8px}.model-status.has-now{background:#102137;padding:8px;border-top:0}.model-status b{color:#e9f2ff}
+.preset-lead{padding:11px 12px;margin-bottom:10px;border-radius:11px;background:#0b1423;border:1px solid #29415f;color:#cdd9e8;font-size:12px;line-height:1.55}
+.preset-lead b{display:block;color:#fff;font-size:14px;margin-bottom:2px}
+.preset-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:9px}
+.preset-choice{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-height:128px;padding:10px;text-align:left;background:#0d192a;border:1px solid #2b4667;border-radius:11px;color:#dce6f3}
+.preset-choice:hover{border-color:#5e83b2;background:#112039}.preset-choice.on{border-color:#8cbcff;background:#142844}
+.preset-choice b{font-size:12.5px;color:#fff}.preset-choice span{font-size:10.5px;line-height:1.45;color:#afbed2}.preset-choice small{display:block;font-size:9.5px;line-height:1.45;color:#8fa6c3}
+.preset-choice em{font-style:normal;font-size:9.5px;color:#9fd0b8;margin-top:auto}
+.preset-validation{margin:7px 0 12px;padding:8px 10px;border-left:3px solid #5b7ea8;background:#0b1525;color:#9fb2cc;font-size:10.5px;line-height:1.55}
+.advanced-params{border-top:1px solid #2a3d59;padding-top:11px}.advanced-params summary{cursor:pointer;color:#c9d8eb;font-size:12px;font-weight:700;margin-bottom:12px}
+.param-grid{margin-top:4px}.param-note b{color:#dce8f8}
+.metric-explain{margin:7px 0 9px;padding:8px 9px;border-radius:8px;background:#0e1a2b;color:#9fb2cc;font-size:10px;line-height:1.55}
+.metric-explain b{color:#dce7f6}.research-next{margin-top:12px;padding:9px 10px;border-radius:9px;background:#101e31;border:1px solid #304967;color:#b9c9dc;font-size:10.5px;line-height:1.55}
+.horizon-card .median-label{display:block;font-size:9.5px;color:#8fa5c1;margin-top:-1px}
 /* Parameter reading surface */
 .param-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(3,7,14,.74);backdrop-filter:blur(4px)}
 .param-modal.on{display:flex}
@@ -214,10 +235,13 @@ td:first-child,th:first-child{text-align:left}
   .param-head{cursor:default;position:sticky;top:-16px;z-index:4;background:#101a2b;padding:12px 0 9px}
   .param-close{min-width:44px;min-height:44px}
   .param-grid input,.param-grid select{min-height:44px;font-size:16px}
+  .preset-grid{grid-template-columns:1fr}
+  .preset-choice{min-height:0}
+  .model-next button,.guide-btn{min-height:44px}
 }
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.1 · M4 Progressive Research UI</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.2 · M4 Guided Research</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -248,22 +272,107 @@ td:first-child,th:first-child{text-align:left}
     </div>
 
     <div id="modelsPane" class="tabpane on">
-      <div class="panel-title"><b>模型實驗室</b><span class="muted">可疊加 · 可調參</span></div>
+      <div class="panel-title"><b>模型實驗室</b><span class="muted">先問問題，再看證據</span></div>
+      <div class="guided-start"><b>第一次用？先從「這個模型在問什麼」開始</b><span>Support 已先開啟。看圖上的結構、看卡片現在找到什麼，再用「選研究方式」比較不同參考設定。參考設定是研究起點，不是收益最佳化答案。</span></div>
       <div class="model-list"><div class="model-group-title">Core Models｜核心模型</div>
-        <div class="model-row"><div class="model-name"><label><input id="modSupport" type="checkbox" onchange="zoneCalc()"> Support Zone｜支撐區</label><span class="model-actions"><a href="model-guide.html#support" target="_blank">說明 ↗</a></span></div><div class="model-desc">價格反覆回到同一片區域，看看那裡是不是真的撐得住。</div><span class="model-tag">價格結構</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modMacro" type="checkbox" onchange="macroCalc()"> Macro Bottom｜宏觀底部</label><span class="model-actions"><a href="model-guide.html#macro" target="_blank">說明 ↗</a></span></div><div class="model-desc">市場已經跌得很深時，觀察它有沒有開始把失地收回來。</div><span class="model-tag">回撤＋波動</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modSweep" type="checkbox" onchange="bottomLabCalc()"> Liquidity Sweep｜流動性掃單</label><span class="model-actions"><a href="model-guide.html#sweep" target="_blank">說明 ↗</a></span></div><div class="model-desc">先跌破大家看得到的舊低點，再快速收回，找可能的假跌破。</div><span class="model-tag">跌破收回</span></div>
+
+        <div class="model-row" data-model-card="support">
+          <div class="model-name">
+            <label><input id="modSupport" type="checkbox" checked onchange="zoneCalc()"> Support Zone｜支撐區</label>
+            <span class="model-actions"><button class="guide-btn" onclick="openParams('support')">選研究方式</button><a href="model-guide.html#support" target="_blank">模型原理 ↗</a></span>
+          </div>
+          <div class="model-question">它在問：這裡以前撐住過嗎？</div>
+          <div class="model-desc"><strong>開啟後：</strong>圖上會畫出支撐帶，並區分剛出現、等待回踩、回踩守住與失效。</div>
+          <div class="model-caution">別把它當成：「看到支撐」就等於一定會反彈。它只描述價格結構有沒有形成與被驗證。</div>
+          <span class="model-tag">價格結構</span>
+          <div class="model-next"><button id="researchBtnSupport" onclick="openLatestResearch('support')" disabled>看看它現在找到什麼</button></div>
+          <div id="modelStatusSupport" class="model-status">正在載入支撐研究…</div>
+        </div>
+
+        <div class="model-row" data-model-card="macro">
+          <div class="model-name">
+            <label><input id="modMacro" type="checkbox" onchange="zoneCalc()"> Macro Bottom｜宏觀底部</label>
+            <span class="model-actions"><button class="guide-btn" onclick="openParams('macro')">選研究方式</button><a href="model-guide.html#macro" target="_blank">模型原理 ↗</a></span>
+          </div>
+          <div class="model-question">它在問：市場跌得夠深後，有沒有開始把失地收回？</div>
+          <div class="model-desc"><strong>開啟後：</strong>模型會先找深回撤＋波動擴張，再觀察價格是否在期限內突破觸發高點。</div>
+          <div class="model-caution">別把它當成：預測市場最低點。Candidate 只是候選，必須等後續確認。</div>
+          <span class="model-tag">回撤＋波動</span>
+          <div class="model-next"><button id="researchBtnMacro" onclick="openLatestResearch('macro')" disabled>看看它現在找到什麼</button></div>
+          <div id="modelStatusMacro" class="model-status">還沒開啟。先決定你想讓模型怎麼看市場。</div>
+        </div>
+
+        <div class="model-row" data-model-card="sweep">
+          <div class="model-name">
+            <label><input id="modSweep" type="checkbox" onchange="zoneCalc()"> Liquidity Sweep｜流動性掃單</label>
+            <span class="model-actions"><button class="guide-btn" onclick="openParams('sweep')">選研究方式</button><a href="model-guide.html#sweep" target="_blank">模型原理 ↗</a></span>
+          </div>
+          <div class="model-question">它在問：這次跌破舊低是真跌破，還是掃完又收回？</div>
+          <div class="model-desc"><strong>開啟後：</strong>符合「跌破舊低又收回」的 K 棒會標成事件，並可查看事件後的歷史分布。</div>
+          <div class="model-caution">別把它當成：每一次 Sweep 都會反轉。它是事件條件，不是方向結論。</div>
+          <span class="model-tag">跌破收回</span>
+          <div class="model-next"><button id="researchBtnSweep" onclick="openLatestResearch('sweep')" disabled>看看它現在找到什麼</button></div>
+          <div id="modelStatusSweep" class="model-status">還沒開啟。先決定你想讓模型怎麼看市場。</div>
+        </div>
 
         <div class="model-group-title">Experimental Lab｜實驗模型</div>
-        <div class="model-row"><div class="model-name"><label><input id="modBasin" type="checkbox" onchange="researchCalc()"> Basin Mapper｜盆地辨識</label><span class="model-actions"><button class="gear" onclick="openParams('basin')">⚙</button><a href="model-guide.html#basin" target="_blank">說明 ↗</a></span></div><div class="model-desc">不再用四個硬條件判定。模型會從多種時間尺度描述「下山後走平」的整體形狀，再給出盆地分數。</div><span class="model-tag">形態分數</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modSpring" type="checkbox" onchange="researchCalc()"> Oscillation Field｜震盪場</label><span class="model-actions"><button class="gear" onclick="openParams('spring')">⚙</button><a href="model-guide.html#spring" target="_blank">說明 ↗</a></span></div><div class="model-desc">震盪只負責讓形態框成形；成形後盒子會持續延伸，直到 K 棒實體出現確認破界才結束。</div><span class="model-tag">市場物理 / 場域</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modEcho" type="checkbox" onchange="researchCalc()"> Echo｜歷史回聲</label><span class="model-actions"><button class="gear" onclick="openParams('echo')">⚙</button><a href="model-guide.html#echo" target="_blank">說明 ↗</a></span></div><div class="model-desc">比較整段 K 線型態，統計相似歷史後續的報酬 / MFE / MAE；每個 Echo 都能直接跳回歷史 K 線查看。</div><span class="model-tag">形狀搜尋</span></div>
-        <div class="model-row"><div class="model-name"><label><input id="modAstro" type="checkbox" onchange="researchCalc()"> Astrology Engine｜占星盤</label><span class="model-actions"><button class="gear" onclick="openParams('astro')">⚙</button><a href="model-guide.html#astro" target="_blank">說明 ↗</a></span></div><div class="model-desc">直接採用西洋占星常見的行星、相位、逆行與入座，把天體事件疊到市場時間軸上。</div><span class="model-tag">外部時間系統</span></div>
+
+        <div class="model-row" data-model-card="basin">
+          <div class="model-name">
+            <label><input id="modBasin" type="checkbox" onchange="zoneCalc()"> Basin Mapper｜盆地辨識</label>
+            <span class="model-actions"><button class="guide-btn" onclick="openParams('basin')">選研究方式</button><a href="model-guide.html#basin" target="_blank">模型原理 ↗</a></span>
+          </div>
+          <div class="model-question">它在問：急跌之後，價格是不是開始真正走平？</div>
+          <div class="model-desc"><strong>開啟後：</strong>模型把「下山＋走平」拆成多個幾何特徵，依 Landing → Forming → Active 追蹤。</div>
+          <div class="model-caution">別把它當成：盆地形成後一定會上漲。它只描述下跌後的平盤結構。</div>
+          <span class="model-tag">形態分數</span>
+          <div class="model-next"><button id="researchBtnBasin" onclick="openLatestResearch('basin')" disabled>看看它現在找到什麼</button></div>
+          <div id="modelStatusBasin" class="model-status">還沒開啟。先決定你想讓模型怎麼看市場。</div>
+        </div>
+
+        <div class="model-row" data-model-card="field">
+          <div class="model-name">
+            <label><input id="modSpring" type="checkbox" onchange="zoneCalc()"> Oscillation Field｜震盪場</label>
+            <span class="model-actions"><button class="guide-btn" onclick="openParams('field')">選研究方式</button><a href="model-guide.html#spring" target="_blank">模型原理 ↗</a></span>
+          </div>
+          <div class="model-question">它在問：市場是不是進入一個有邊界的來回震盪區？</div>
+          <div class="model-desc"><strong>開啟後：</strong>圖上會畫出震盪盒；盒子成立後持續存在，直到 K 棒實體確認破界。</div>
+          <div class="model-caution">別把它當成：盒子會預測往哪個方向突破。它只描述場域與破界。</div>
+          <span class="model-tag">市場物理 / 場域</span>
+          <div class="model-next"><button id="researchBtnField" onclick="openLatestResearch('field')" disabled>看看它現在找到什麼</button></div>
+          <div id="modelStatusField" class="model-status">還沒開啟。先決定你想讓模型怎麼看市場。</div>
+        </div>
+
+        <div class="model-row" data-model-card="echo">
+          <div class="model-name">
+            <label><input id="modEcho" type="checkbox" onchange="zoneCalc()"> Echo｜歷史回聲</label>
+            <span class="model-actions"><button class="guide-btn" onclick="openParams('echo')">選研究方式</button><a href="model-guide.html#echo" target="_blank">模型原理 ↗</a></span>
+          </div>
+          <div class="model-question">它在問：現在這段 K 線，歷史上有沒有走過相似形狀？</div>
+          <div class="model-desc"><strong>開啟後：</strong>模型搜尋相似歷史片段，並統計那些片段後面的報酬、MFE、MAE。</div>
+          <div class="model-caution">別把它當成：相似歷史會原樣重演。Echo 只提供條件式歷史樣本。</div>
+          <span class="model-tag">形狀搜尋</span>
+          <div class="model-next"><button id="researchBtnEcho" onclick="openLatestResearch('echo')" disabled>看看它現在找到什麼</button></div>
+          <div id="modelStatusEcho" class="model-status">還沒開啟。先決定你想讓模型怎麼看市場。</div>
+        </div>
+
+        <div class="model-row" data-model-card="astro">
+          <div class="model-name">
+            <label><input id="modAstro" type="checkbox" onchange="zoneCalc()"> Astrology Engine｜占星盤</label>
+            <span class="model-actions"><button class="guide-btn" onclick="openParams('astro')">選研究方式</button><a href="model-guide.html#astro" target="_blank">模型原理 ↗</a></span>
+          </div>
+          <div class="model-question">它在問：外部天體時間事件，過去是否和市場分布一起出現？</div>
+          <div class="model-desc"><strong>開啟後：</strong>把常見行星相位、逆行與入座當成外部時間事件，放進同一套歷史檢驗。</div>
+          <div class="model-caution">別把它當成：天體事件證明價格因果。這裡只把它當可反駁的時間假說。</div>
+          <span class="model-tag">外部時間系統</span>
+          <div class="model-next"><button id="researchBtnAstro" onclick="openLatestResearch('astro')" disabled>看看它現在找到什麼</button></div>
+          <div id="modelStatusAstro" class="model-status">還沒開啟。先決定你想讓模型怎麼看市場。</div>
+        </div>
       </div>
       <div id="evidenceBackdrop" class="evidence-backdrop" onclick="closeEvidenceDock()"></div>
       <section id="evidenceDock" class="evidence-dock" aria-live="polite" aria-label="Evidence research">
         <div class="evidence-dock-head">
-          <div class="evidence-title"><b id="evidenceDockTitle">Evidence Research</b><span id="evidenceDockState" class="evidence-state">—</span></div>
+          <div class="evidence-title"><b id="evidenceDockTitle">看看以前發生過什麼</b><span id="evidenceDockState" class="evidence-state">—</span></div>
           <button class="evidence-close" onclick="closeEvidenceDock()" aria-label="關閉研究">×</button>
         </div>
         <div id="evidenceDockBody"></div>
@@ -289,56 +398,154 @@ state.prevSlow = slow;</textarea>
 <div id="paramModal" class="param-modal" onclick="if(event.target===this)closeParams()">
   <div id="paramCard" class="param-card">
     <div id="paramDragHandle" class="param-head" onpointerdown="startParamDrag(event)" onpointermove="moveParamDrag(event)" onpointerup="endParamDrag(event)" onpointercancel="endParamDrag(event)">
-      <b id="paramTitle">模型參數</b><button class="param-close" onclick="closeParams()">×</button>
+      <b id="paramTitle">選一種研究方式</b><button class="param-close" onclick="closeParams()" aria-label="關閉設定">×</button>
     </div>
-    <div id="paramBody" class="param-grid"></div>
-    <div class="param-note">先調整旋鈕，再按「執行」套用。模型只畫在自己的圖層，不會改動底層 K 線。</div>
-    <div class="param-actions"><span id="paramRunStatus" class="param-run-status">尚未修改</span><div class="right"><button onclick="restoreParams()">↺ 復原</button><button onclick="applyParams()">▶ 執行</button></div></div>
+    <div class="preset-lead"><b>先選你想讓模型怎麼看市場</b>下面是先用歷史資料跑過的研究起點。先用它理解「放寬／收緊」會發生什麼，再決定要不要自己微調。</div>
+    <div id="presetChoices" class="preset-grid"></div>
+    <div id="presetValidation" class="preset-validation"></div>
+    <details id="advancedParams" class="advanced-params">
+      <summary>想自己微調？打開每個參數的效果</summary>
+      <div id="paramBody" class="param-grid"></div>
+    </details>
+    <div class="param-note"><b>怎麼用：</b>參考設定驗證的是它是否真的比較敏感／平衡／挑剔，以及是否有足夠歷史樣本；不是挑歷史報酬最高的組合。</div>
+    <div class="param-actions"><span id="paramRunStatus" class="param-run-status">選一個研究方式，或自己微調</span><div class="right"><button onclick="restoreParams()">恢復模型原本設定</button><button onclick="applyParams()">用這些參數重新找</button></div></div>
   </div>
-</div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script>
+</div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script>
 window.addEventListener('error',function(e){var st=document.getElementById('status'),msg=document.getElementById('msg');if(st)st.textContent='程式錯誤';if(msg)msg.textContent='JS：'+e.message+' @ '+e.lineno;});
 const q=id=>document.getElementById(id);
 function setInfo(id,t){let e=q(id);if(e)e.textContent=t}
-let ACTIVE_PARAM_MODEL=null,PARAM_DRAFT=null,paramDrag=null;
+let ACTIVE_PARAM_MODEL=null,PARAM_DRAFT=null,paramDrag=null,ACTIVE_PRESET_ID=null;
 function cloneObj(x){return JSON.parse(JSON.stringify(x))}
+function deepAssign(target,patch){
+  if(!patch||typeof patch!=='object')return target;
+  for(const [k,v] of Object.entries(patch)){
+    if(v&&typeof v==='object'&&!Array.isArray(v)){
+      if(!target[k]||typeof target[k]!=='object'||Array.isArray(target[k]))target[k]={};
+      deepAssign(target[k],v)
+    }else target[k]=v
+  }
+  return target
+}
+function modelDefaultDraft(k){
+  if(k==='support')return cloneObj(ME.DEFAULT_ZONE);
+  if(k==='macro'){
+    let p=ME.DEFAULT_MACRO.p[tf]||ME.DEFAULT_MACRO.p['1d'];
+    return{hi:p.hi,low:p.low,ddPct:p.dd*100,atrX:p.atrX,confirm:p.confirm}
+  }
+  if(k==='sweep'){
+    let look=ME.DEFAULT_SWEEP.lookback[tf]||ME.DEFAULT_SWEEP.lookback['1d'];
+    return{lookback:look,minClosePct:ME.DEFAULT_SWEEP.minClosePosition*100}
+  }
+  if(k==='field')return cloneObj(ME.DEFAULT_EXP.spring);
+  return cloneObj(ME.DEFAULT_EXP[k])
+}
+function modelDraft(k){
+  if(k==='support')return cloneObj(ZONE);
+  if(k==='macro'){
+    let p=MACRO.p[tf]||MACRO.p['1d'];
+    return{hi:p.hi,low:p.low,ddPct:p.dd*100,atrX:p.atrX,confirm:p.confirm}
+  }
+  if(k==='sweep'){
+    let look=SWEEP.lookback[tf]||SWEEP.lookback['1d'];
+    return{lookback:look,minClosePct:SWEEP.minClosePosition*100}
+  }
+  if(k==='field')return cloneObj(EXP.spring);
+  return cloneObj(EXP[k])
+}
+function applyDraftToModel(k,d){
+  if(k==='support'){Object.assign(ZONE,{pivot:+d.pivot,atr:+d.atr,width:+d.width,breakAtr:+d.breakAtr});return}
+  if(k==='macro'){
+    let p=MACRO.p[tf]||(MACRO.p[tf]=cloneObj(ME.DEFAULT_MACRO.p['1d']));
+    Object.assign(p,{hi:Math.round(+d.hi),low:Math.round(+d.low),dd:+d.ddPct/100,atrX:+d.atrX,confirm:Math.round(+d.confirm)});return
+  }
+  if(k==='sweep'){SWEEP.lookback[tf]=Math.round(+d.lookback);SWEEP.minClosePosition=+d.minClosePct/100;return}
+  if(k==='field'){EXP.spring=cloneObj(d);return}
+  EXP[k]=cloneObj(d)
+}
+function modelCheckId(k){return({support:'modSupport',macro:'modMacro',sweep:'modSweep',basin:'modBasin',field:'modSpring',echo:'modEcho',astro:'modAstro'})[k]}
+function enableModel(k){let id=modelCheckId(k),el=id&&q(id);if(el)el.checked=true}
+function presetParamSummary(k,preset){
+  let c=cloneObj(preset.config||{});
+  if(k==='support'){let x=cloneObj(ME.DEFAULT_ZONE);deepAssign(x,c.zone||{});return '低點比較 '+x.pivot+' 根 · 區域寬 '+x.width+' ATR · 跌破容忍 '+x.breakAtr+' ATR'}
+  if(k==='macro'){let x=cloneObj(ME.DEFAULT_MACRO.p[tf]||ME.DEFAULT_MACRO.p['1d']);let pp=c.macro&&c.macro.p&&c.macro.p[tf];if(pp)deepAssign(x,pp);return '回撤至少 '+Math.round(x.dd*100)+'% · 波動 '+x.atrX+'× · '+x.confirm+' bars 內確認'}
+  if(k==='sweep'){let x={lookback:cloneObj(ME.DEFAULT_SWEEP.lookback),minClosePosition:ME.DEFAULT_SWEEP.minClosePosition};deepAssign(x,c.sweep||{});return '舊低回看 '+(x.lookback[tf]||x.lookback['1d'])+' bars · 收盤位置 ≥ '+Math.round(x.minClosePosition*100)+'%'}
+  if(k==='basin'){let x=cloneObj(ME.DEFAULT_EXP.basin);deepAssign(x,(c.exp&&c.exp.basin)||{});return '平盤 '+x.floorMin+'–'+x.floorMax+' bars · 下山回看 '+x.cliffMax+' · 分數門檻 '+x.threshold}
+  if(k==='field'){let x=cloneObj(ME.DEFAULT_EXP.spring);deepAssign(x,(c.exp&&c.exp.spring)||{});return '至少 '+x.minCycles+' 回合 · 貼合 ≥ '+x.minFitPct+'% · 破界確認 '+x.breakConfirmBars+' bars'}
+  if(k==='echo'){let x=cloneObj(ME.DEFAULT_EXP.echo);deepAssign(x,(c.exp&&c.exp.echo)||{});return '型態 '+x.length+' bars · 相似 ≥ '+Math.round(x.similarity*100)+'% · 搜尋 '+x.history+' bars'}
+  if(k==='astro'){let x=cloneObj(ME.DEFAULT_EXP.astro);deepAssign(x,(c.exp&&c.exp.astro)||{});return (x.planetSet==='modern'?'含三王星':'傳統七曜')+' · '+x.aspectSet+' · Orb '+x.orb+'°'+(x.retro==='on'?' · 逆行':'')+(x.ingress==='on'?' · 入座':'')}
+  return''
+}
+function renderPresetChoices(){
+  let k=ACTIVE_PARAM_MODEL,box=q('presetChoices'),note=q('presetValidation');if(!box||!MP)return;
+  let rows=MP.list(k),contextN=MP.VALIDATION&&MP.VALIDATION.contexts?MP.VALIDATION.contexts.length:0;
+  box.innerHTML=rows.map(p=>{
+    let v=MP.validation(k,p.id),selected=ACTIVE_PRESET_ID===p.id;
+    return '<button class="preset-choice '+(selected?'on':'')+'" onclick="applyPreset(\''+k+'\',\''+p.id+'\')">'+
+      '<b>'+esc(p.title)+'</b><span>'+esc(p.intent)+'</span><small>'+esc(presetParamSummary(k,p))+'</small>'+
+      '<em>'+(v?('已驗證 · 主要狀態 '+v.count+' 次 · 10 bars 完整 '+v.n10):'等待驗證')+'</em></button>'
+  }).join('');
+  if(note)note.innerHTML='這些設定已用 <b>BTC / NASDAQ / TAIEX</b> 的多個 1D / 1W / 1M 歷史情境驗證（共 '+contextN+' 個）。驗證的是設定名稱與樣本密度真的一致，且 Evidence errors = 0；<b>不是用報酬高低選參數</b>。'
+}
 function renderParamBody(){
   let k=ACTIVE_PARAM_MODEL,sc=PARAM_SCHEMA[k];if(!sc||!PARAM_DRAFT)return;
   let rows=sc.fields.map(f=>{
     let v=PARAM_DRAFT[f.k],control;
     if(f.type==='select'){
-      control='<select onchange="setParamDraft(\''+f.k+'\',this.value,true)">'+f.options.map(o=>'<option value="'+o[0]+'" '+(String(v)===String(o[0])?'selected':'')+'>'+o[1]+'</option>').join('')+'</select>';
+      control='<select onchange="setParamDraft(\''+f.k+'\',this.value,true)">'+f.options.map(o=>'<option value="'+o[0]+'" '+(String(v)===String(o[0])?'selected':'')+'>'+o[1]+'</option>').join('')+'</select>'
     }else{
-      control='<input type="number" value="'+v+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" onchange="setParamDraft(\''+f.k+'\',this.value,false)">';
+      control='<input type="number" value="'+v+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" onchange="setParamDraft(\''+f.k+'\',this.value,false)">'
     }
     let dirs=(f.low||f.high)?'<div class="param-direction">'+(f.low?'<span>← '+f.low+'</span>':'')+(f.high?'<span>'+f.high+' →</span>':'')+'</div>':'';
-    return '<div class="param-label">'+f.n+'</div><div>'+control+'</div><div class="param-help">'+(f.help||'')+dirs+'</div>';
+    return '<div class="param-label">'+f.n+'</div><div>'+control+'</div><div class="param-help">'+(f.help||'')+dirs+'</div>'
   }).join('');
-  q('paramBody').innerHTML='<div class="param-intro">'+sc.intro+'</div>'+rows;
+  q('paramBody').innerHTML='<div class="param-intro">'+sc.intro+'</div>'+rows
 }
 function openParams(k){
   let sc=PARAM_SCHEMA[k];if(!sc)return;
-  ACTIVE_PARAM_MODEL=k;PARAM_DRAFT=cloneObj(EXP[k]);q('paramTitle').textContent=sc.title;
-  renderParamBody();q('paramRunStatus').textContent='尚未修改';q('paramModal').classList.add('on');
+  ACTIVE_PARAM_MODEL=k;ACTIVE_PRESET_ID=null;PARAM_DRAFT=modelDraft(k);
+  q('paramTitle').textContent=sc.title;renderPresetChoices();renderParamBody();
+  q('paramRunStatus').textContent='先選一個研究方式，或展開下面自己微調';
+  let card=q('paramCard');card.style.position='';card.style.left='';card.style.top='';card.style.transform='';
+  q('paramModal').classList.add('on')
 }
 function closeParams(){q('paramModal').classList.remove('on');paramDrag=null}
-function setParamDraft(k,v,isText){if(!PARAM_DRAFT)return;PARAM_DRAFT[k]=isText?v:+v;q('paramRunStatus').textContent='有變更，尚未執行'}
-function restoreParams(){if(!ACTIVE_PARAM_MODEL)return;PARAM_DRAFT=cloneObj(DEFAULT_EXP[ACTIVE_PARAM_MODEL]);renderParamBody();q('paramRunStatus').textContent='已回到預設值，按執行套用'}
-function applyParams(){if(!ACTIVE_PARAM_MODEL||!PARAM_DRAFT)return;EXP[ACTIVE_PARAM_MODEL]=cloneObj(PARAM_DRAFT);if(D.length)researchCalc();q('paramRunStatus').textContent='已執行'}
+function setParamDraft(k,v,isText){if(!PARAM_DRAFT)return;PARAM_DRAFT[k]=isText?v:+v;ACTIVE_PRESET_ID=null;renderPresetChoices();q('paramRunStatus').textContent='你改了參數；按「用這些參數重新找」才會套用'}
+function restoreParams(){
+  if(!ACTIVE_PARAM_MODEL)return;PARAM_DRAFT=modelDefaultDraft(ACTIVE_PARAM_MODEL);ACTIVE_PRESET_ID=null;
+  renderPresetChoices();renderParamBody();q('paramRunStatus').textContent='已放回模型原本設定；按「用這些參數重新找」套用'
+}
+function applyParams(){
+  if(!ACTIVE_PARAM_MODEL||!PARAM_DRAFT)return;
+  applyDraftToModel(ACTIVE_PARAM_MODEL,PARAM_DRAFT);enableModel(ACTIVE_PARAM_MODEL);zoneCalc();
+  q('paramRunStatus').textContent='已用你目前看到的參數重新掃過歷史與現在'
+}
+function applyPreset(k,id){
+  let p=MP&&MP.get(k,id);if(!p)return;
+  let c=p.config||{};
+  if(c.zone)deepAssign(ZONE,c.zone);
+  if(c.macro)deepAssign(MACRO,c.macro);
+  if(c.sweep)deepAssign(SWEEP,c.sweep);
+  if(c.exp)deepAssign(EXP,c.exp);
+  enableModel(k);ACTIVE_PRESET_ID=id;PARAM_DRAFT=modelDraft(k);zoneCalc();
+  renderPresetChoices();renderParamBody();
+  q('paramRunStatus').textContent='已套用「'+p.title+'」並重新掃過；現在可回圖上比較結果'
+}
 function startParamDrag(e){
   if(isMobileUI()||e.target.closest('button'))return;let card=q('paramCard'),r=card.getBoundingClientRect();
   card.style.transform='none';card.style.position='fixed';card.style.left=r.left+'px';card.style.top=r.top+'px';
-  paramDrag={dx:e.clientX-r.left,dy:e.clientY-r.top};e.currentTarget.setPointerCapture(e.pointerId);
+  paramDrag={dx:e.clientX-r.left,dy:e.clientY-r.top};e.currentTarget.setPointerCapture(e.pointerId)
 }
 function moveParamDrag(e){
   if(!paramDrag)return;let card=q('paramCard'),r=card.getBoundingClientRect();
   let x=Math.max(8,Math.min(window.innerWidth-r.width-8,e.clientX-paramDrag.dx));
   let y=Math.max(8,Math.min(window.innerHeight-r.height-8,e.clientY-paramDrag.dy));
-  card.style.left=x+'px';card.style.top=y+'px';
+  card.style.left=x+'px';card.style.top=y+'px'
 }
-function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
+function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}
+function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
 let PINNED_RESEARCH=null;
-const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null;
-if(!ME)throw new Error('Strategy Lab Model Engine failed to load');
+const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null;
+if(!ME||!MP)throw new Error('Strategy Lab shared research modules failed to load');
 window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;
 window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVALUATION__=EVALUATION;
 
@@ -367,34 +574,50 @@ function applyModelEngineResult(res){
     parameterFingerprint:res.parameterFingerprint,market:res.market,timeframe:res.timeframe
   };
   for(const [id,msg] of Object.entries(res.info||{}))setInfo(id,msg);
+  renderModelGuides();
 }
 const ZONE=cloneObj(ME.DEFAULT_ZONE);
 const MACRO=cloneObj(ME.DEFAULT_MACRO);
+const SWEEP=cloneObj(ME.DEFAULT_SWEEP);
 const DEFAULT_EXP=cloneObj(ME.DEFAULT_EXP);
 const EXP=cloneObj(DEFAULT_EXP);
 const PARAM_SCHEMA={
-  basin:{title:'🏞️ Basin Mapper｜盆地辨識',intro:'現在不再問「四個條件有沒有全部通過」，而是把一段行情拆成多個幾何特徵：下山、平坦、方向、波動、中心穩定與持續時間，再綜合成 0–100 的盆地分數。之後你提供人工標註樣本時，就能用那些樣本重新學習權重。',fields:[
-    {k:'floorMin',n:'最短平盤尺度',min:5,max:60,step:1,help:'模型會自動試很多種平盤長度，這裡只決定最短要從幾根 K 棒開始找。',low:'小：可找短盆',high:'大：忽略短暫盤整'},
-    {k:'floorMax',n:'最長平盤尺度',min:20,max:240,step:5,help:'自動尺度搜尋的上限。像週線的大型盆地，可以把這個值拉長。',low:'短：看小結構',high:'長：看大結構'},
-    {k:'cliffMax',n:'下山最多回看多久',min:10,max:180,step:5,help:'平盤前最多往回找多長的下降段。模型會在範圍內自己選最像「下山」的尺度。',low:'近：只看急跌',high:'遠：也看長下跌'},
-    {k:'threshold',n:'幾分才標成盆地',min:50,max:95,step:1,help:'Basin Score 達到這個分數才畫在圖上。分數來自多個特徵，不是單一條件。',low:'低：較寬鬆',high:'高：較挑剔'}]},
-  spring:{title:'🌀 Oscillation Field｜震盪場',intro:'先用震盪證據讓形態框「誕生」，之後只追蹤這個框有沒有被真正破壞。來回次數只決定能不能成形，不會讓已成立的盒子自己消失。',fields:[
-    {k:'minCycles',n:'至少震盪幾回合',min:1,max:8,step:.5,help:'至少完成多少次上下來回，形態框才有資格成立。成立之後不再用這個條件決定生死。',low:'少：較早成形',high:'多：證據更充分'},
-    {k:'maxCoreShiftPct',n:'盒子可以斜多少',min:10,max:150,step:5,help:'用盒子高度當尺。50% 代表從左到右，中心線最多移動約半個盒子高度。',low:'小：接近水平盒子',high:'大：容許斜向整理'},
-    {k:'maxShapeChangePct',n:'盒子可以變形多少',min:10,max:120,step:5,help:'限制盒子從左到右可以收窄或放寬多少。50% 代表右端寬度最多比左端改變約 50%。',low:'小：接近等寬',high:'大：容許明顯收斂或擴張'},
-    {k:'minFitPct',n:'最低貼合度',min:60,max:98,step:1,help:'形態成立前，至少多少比例的 K 棒實體要合理落在候選外框裡。',low:'低：較寬鬆',high:'高：外框要更貼合'},
-    {k:'breakConfirmBars',n:'破界確認幾根',min:1,max:6,step:1,help:'形態成立後，K 棒實體要連續越過外框幾根，才正式宣告失效。影線可以刺出去，不算破界。',low:'少：破界反應快',high:'多：避免單根假突破'}]},
-  echo:{title:'📻 Echo｜歷史回聲',intro:'比較整段 K 線型態，並把每個歷史回聲後面的行情一起拿來做條件回測。你也可以直接跳回那段歷史 K 線查看。',fields:[
-    {k:'length',n:'聲音有多長',min:12,max:100,step:2,help:'用最近多少根 K 棒組成這一次要搜尋的價格形狀。',low:'短：短句',high:'長：完整段落'},
-    {k:'history',n:'往多久以前喊',min:200,max:5000,step:100,help:'往回搜尋多長的歷史資料。',low:'近：只聽近代',high:'遠：找更久以前'},
-    {k:'similarity',n:'多像才算強回聲',min:.55,max:.98,step:.01,help:'超過這個門檻才列為 STRONG；最新 K 就算低於門檻，仍會顯示最接近的歷史。',low:'低：強回聲較多',high:'高：K線要非常像'},
-    {k:'followBars',n:'後續觀察幾根 K',min:3,max:60,step:1,help:'歷史回聲結束後，再往後看幾根 K 棒，計算期末漲跌、最大上漲 MFE 與最大下跌 MAE。',low:'短：看立即反應',high:'長：看後續路徑'}]},
-  astro:{title:'🔮 Astrology Engine｜占星盤',intro:'採用西洋占星常見的行星與主要相位：合相、六合、刑、拱、沖。這裡把它當外部時間系統來做市場實驗。',fields:[
-    {k:'planetSet',n:'使用哪些星體',type:'select',options:[['classic','傳統七曜'],['modern','七曜＋天王／海王／冥王']],help:'傳統七曜包含日、月、水、金、火、木、土；Modern 再加入三王星。'},
-    {k:'aspectSet',n:'觀察哪些相位',type:'select',options:[['major','主要相位：合／六合／刑／拱／沖'],['hard','緊張相位：合／刑／沖'],['harmony','和諧相位：六合／拱']],help:'直接使用西洋占星常見相位角度，不自創日期規則。'},
-    {k:'orb',n:'Orb 容許幾度',min:.5,max:10,step:.5,help:'距離精確相位角多少度以內，仍算同一個相位。',low:'窄：要求精準',high:'寬：事件較多'},
-    {k:'retro',n:'加入逆行事件',type:'select',options:[['off','不加入'],['on','加入逆行開始']],help:'開啟後，行星從順行轉成逆行時也會產生占星事件。'},
-    {k:'ingress',n:'加入入座事件',type:'select',options:[['off','不加入'],['on','加入進入新星座']],help:'開啟後，行星跨過每 30° 星座邊界時也會產生事件。'}]}
+  support:{title:'Support Zone｜你想多容易把一個低點當成支撐？',intro:'支撐不是一條神奇水平線。模型先找「相對新低」，再看價格有沒有離開區域、回來測試、最後守住或跌破。',fields:[
+    {k:'pivot',n:'低點要跟前面幾根比較',min:2,max:30,step:1,help:'新低必須低於前面這麼多根 K。',low:'少：小結構也看得到',high:'多：只留更明顯低點'},
+    {k:'atr',n:'波動尺看幾根',min:5,max:50,step:1,help:'用多少根 K 估計 ATR，作為區域寬度與跌破容忍的共同尺。',low:'短：跟最近波動走',high:'長：波動尺較平滑'},
+    {k:'width',n:'支撐區有多厚（ATR）',min:.3,max:2,step:.05,help:'不是只畫一條價格，而是以 ATR 建立一個帶狀區域。',low:'窄：位置要求精準',high:'寬：容許更大片區域'},
+    {k:'breakAtr',n:'跌破要多深才算失效（ATR）',min:.1,max:1.5,step:.05,help:'收盤跌到支撐區下方後，還要超過多少 ATR 才正式判定 broken。',low:'小：較快失效',high:'大：給更多容忍'}]},
+  macro:{title:'Macro Bottom｜你想多早開始觀察深跌後的收復？',intro:'它先問「跌得夠深、波動有擴張嗎？」再等價格突破候選 K 的高點。下面參數只調目前時間框架 '+tf.toUpperCase()+'。',fields:[
+    {k:'hi',n:'高點往回看幾根',min:12,max:360,step:1,help:'回撤深度要相對於多長時間內的高點來衡量。',low:'短：看近期回撤',high:'長：看更大週期跌幅'},
+    {k:'low',n:'新低往回看幾根',min:4,max:100,step:1,help:'候選低點要低於前面多少根 K 的低點。',low:'少：候選較多',high:'多：只留更明顯低點'},
+    {k:'ddPct',n:'至少回撤多少 %',min:5,max:60,step:1,help:'從回看高點到目前價格至少跌多少，才開始考慮宏觀底部候選。',low:'低：較早開始看',high:'高：要求更深跌幅'},
+    {k:'atrX',n:'波動至少放大幾倍',min:1,max:2,step:.05,help:'目前 ATR / 價格要高於近期平均的多少倍。',low:'低：候選較多',high:'高：要求更明顯波動'},
+    {k:'confirm',n:'給幾根 K 等確認',min:2,max:60,step:1,help:'候選出現後，價格要在這段時間內突破觸發高點才算 active。',low:'短：確認期限嚴格',high:'長：給更多時間'}]},
+  sweep:{title:'Liquidity Sweep｜你想把什麼程度的假跌破算進研究？',intro:'事件必須先跌破「看得到的舊低」，再收回舊低之上。你可以改舊低的尺度與收回強度。',fields:[
+    {k:'lookback',n:'舊低往回看幾根',min:5,max:120,step:1,help:'用前面多少根 K 的最低點作為「大家看得到的舊低」。',low:'短：小掃低也會出現',high:'長：只看更重要低點'},
+    {k:'minClosePct',n:'收盤至少在 K 棒的幾 %',min:30,max:95,step:1,help:'0% 是收在最低、100% 是收在最高。收得越高，代表跌破後拉回越明顯。',low:'低：收回要求寬鬆',high:'高：要求強勢收回'}]},
+  basin:{title:'Basin Mapper｜你想找多大的「下山後走平」？',intro:'模型不是硬找某個圖形，而是把下跌深度、平坦程度、斜率、波動、中心穩定與持續時間綜合成分數。',fields:[
+    {k:'floorMin',n:'最短平盤尺度',min:5,max:60,step:1,help:'模型會自動試很多種平盤長度，這裡決定最短從幾根開始。',low:'小：短整理也看',high:'大：忽略短暫盤整'},
+    {k:'floorMax',n:'最長平盤尺度',min:20,max:240,step:5,help:'自動尺度搜尋的上限。',low:'短：看小結構',high:'長：也看大型底部整理'},
+    {k:'cliffMax',n:'下山最多回看多久',min:10,max:180,step:5,help:'平盤前最多往回找多長的下降段。',low:'近：偏急跌',high:'遠：也看長下跌'},
+    {k:'threshold',n:'幾分才算 Active',min:45,max:90,step:1,help:'Basin Score 達到這個分數才進入 Active。',low:'低：較容易成立',high:'高：更挑剔'}]},
+  field:{title:'Oscillation Field｜你想多嚴格地定義一個震盪盒？',intro:'來回震盪負責讓盒子出生；盒子成立後，不再靠來回次數續命，只看 K 棒實體是否確認破界。',fields:[
+    {k:'minCycles',n:'至少震盪幾回合',min:1,max:8,step:.5,help:'至少完成多少次上下來回，盒子才有資格成立。',low:'少：較早成形',high:'多：證據更充分'},
+    {k:'maxCoreShiftPct',n:'盒子可以斜多少',min:10,max:150,step:5,help:'用盒子高度當尺，限制中心線從左到右可移動多少。',low:'小：接近水平',high:'大：容許斜向整理'},
+    {k:'maxShapeChangePct',n:'盒子可以變形多少',min:10,max:120,step:5,help:'限制盒子從左到右可以收窄或放寬多少。',low:'小：接近等寬',high:'大：容許收斂／擴張'},
+    {k:'minFitPct',n:'最低貼合度 %',min:60,max:98,step:1,help:'成立前，至少多少比例的 K 棒實體要落在候選外框裡。',low:'低：較寬鬆',high:'高：外框要更貼合'},
+    {k:'breakConfirmBars',n:'破界確認幾根',min:1,max:6,step:1,help:'成立後，K 棒實體要連續越界幾根才宣告 broken。影線刺出不算。',low:'少：反應快',high:'多：減少單根假突破'}]},
+  echo:{title:'Echo｜你想用多長、多像的歷史來比較？',intro:'Echo 比較整段 K 線形狀。參數會直接改變「一句話有多長」「要多像」「往回找多久」以及「看後續幾根」。',fields:[
+    {k:'length',n:'型態有多長',min:12,max:100,step:2,help:'用最近多少根 K 組成現在要搜尋的形狀。',low:'短：短句、樣本較多',high:'長：完整段落、條件更細'},
+    {k:'history',n:'往回搜尋多久',min:200,max:5000,step:100,help:'最多往回找多少根歷史 K。',low:'近：只聽近代',high:'遠：找更多年代'},
+    {k:'similarity',n:'多像才叫 Strong',min:.55,max:.98,step:.01,help:'超過這個相似度才列為 Strong；低於門檻仍可顯示最近似者。',low:'低：Strong 較多',high:'高：形狀要更接近'},
+    {k:'followBars',n:'後續觀察幾根',min:3,max:60,step:1,help:'歷史相似片段結束後，再往後看幾根來算報酬、MFE、MAE。',low:'短：看立即反應',high:'長：看更完整路徑'}]},
+  astro:{title:'Astrology Engine｜你想把哪些天體時間事件拿來檢驗？',intro:'這裡不把占星當價格答案，而是把一套外部時間事件定義清楚後，交給同一套歷史統計檢驗。',fields:[
+    {k:'planetSet',n:'使用哪些星體',type:'select',options:[['classic','傳統七曜'],['modern','七曜＋天王／海王／冥王']],help:'增加星體會增加可形成事件的組合。'},
+    {k:'aspectSet',n:'觀察哪些相位',type:'select',options:[['major','主要相位：合／六合／刑／拱／沖'],['hard','緊張相位：合／刑／沖'],['harmony','和諧相位：六合／拱']],help:'選擇要視為事件的相位角度集合。'},
+    {k:'orb',n:'Orb 容許幾度',min:.5,max:10,step:.5,help:'距離精確相位角多少度內仍算同一事件。',low:'窄：事件較少',high:'寬：事件較多'},
+    {k:'retro',n:'加入逆行事件',type:'select',options:[['off','不加入'],['on','加入逆行開始']],help:'是否把順行轉逆行也當成事件。'},
+    {k:'ingress',n:'加入入座事件',type:'select',options:[['off','不加入'],['on','加入進入新星座']],help:'是否把跨過每 30° 星座邊界也當成事件。'}]}
 };
 const BTC_D='https://raw.githubusercontent.com/alessiostomeo/btc-cycle-data/main/bitstamp/1day/BTCUSD_bitstamp_daily_2012-2026.csv';
 const LOCAL={IXIC:'data/nasdaq_daily.csv',TWII:'data/taiex_daily.csv'};
@@ -423,7 +646,7 @@ function zoneCalc(){
   };
   const res=ME.run(D,{
     market:q('market').value,timeframe:tf,source:sourceNote,
-    enabled,zone:ZONE,macro:MACRO,exp:EXP
+    enabled,zone:ZONE,macro:MACRO,sweep:SWEEP,exp:EXP
   });
   applyModelEngineResult(res);
   safeDrawModels();
@@ -533,7 +756,7 @@ const STATE_PLAIN={
 
 function isMobileUI(){return window.matchMedia&&window.matchMedia('(max-width:650px)').matches}
 function isCoarsePointer(){return window.matchMedia&&window.matchMedia('(pointer: coarse)').matches}
-function interactionHint(){return isMobileUI()?'點一下模型固定資訊，按「展開研究」看統計；單指拖曳、雙指縮放。':'移到模型看摘要，點擊固定完整研究；拖曳平移、滾輪縮放。'}
+function interactionHint(){return isMobileUI()?'先看模型卡在問什麼；點圖上模型可固定研究，單指拖曳、雙指縮放。':'先看右側模型卡在問什麼；移到圖上看摘要，點擊固定研究，拖曳平移、滾輪縮放。'}
 function pct(v,d=1){return v==null||!Number.isFinite(v)?'—':(v*100).toFixed(d)+'%'}
 function conf(v){return v==null||!Number.isFinite(v)?'—':Math.round(v)+'%'}
 function normHitState(model,state){
@@ -589,6 +812,50 @@ function resolveResearchHit(hit){
 function evalState(model,state){return EVALUATION&&EVALUATION.models&&EVALUATION.models[model]&&EVALUATION.models[model].states?EVALUATION.models[model].states[state]:null}
 function lifeState(model,state){return EVALUATION&&EVALUATION.lifecycle&&EVALUATION.lifecycle.models&&EVALUATION.lifecycle.models[model]&&EVALUATION.lifecycle.models[model].states?EVALUATION.lifecycle.models[model].states[state]:null}
 function plainResearch(model,state){return STATE_PLAIN[model+'|'+state]||((MODEL_TITLES[model]||model)+' 目前狀態為 '+(STATE_LABELS[state]||state)+'。')}
+const MODEL_UI={
+  support:{check:'modSupport',status:'modelStatusSupport',button:'researchBtnSupport'},
+  macro:{check:'modMacro',status:'modelStatusMacro',button:'researchBtnMacro'},
+  sweep:{check:'modSweep',status:'modelStatusSweep',button:'researchBtnSweep'},
+  basin:{check:'modBasin',status:'modelStatusBasin',button:'researchBtnBasin'},
+  field:{check:'modSpring',status:'modelStatusField',button:'researchBtnField'},
+  echo:{check:'modEcho',status:'modelStatusEcho',button:'researchBtnEcho'},
+  astro:{check:'modAstro',status:'modelStatusAstro',button:'researchBtnAstro'}
+};
+function currentEvidenceForModel(model){
+  let rows=EVIDENCE.filter(e=>e.model===model);
+  return rows.length?rows[rows.length-1]:null
+}
+function lastHistoricalEvidence(model){
+  let rows=EVIDENCE_LOG.filter(e=>e.model===model&&e.kind!=='projection');
+  return rows.length?rows[rows.length-1]:null
+}
+function modelSampleText(model,state){
+  let st=evalState(model,state);return st?('歷史同狀態 '+st.count+' 次'):'目前沒有足夠的同狀態統計'
+}
+function renderModelGuides(){
+  if(!D.length)return;
+  for(const [model,ui] of Object.entries(MODEL_UI)){
+    let check=q(ui.check),box=q(ui.status),btn=q(ui.button);if(!check||!box||!btn)continue;
+    if(!check.checked){
+      box.classList.remove('has-now');box.textContent='還沒開啟。先按「選研究方式」看三組參考設定，或直接勾選用目前設定開始。';
+      btn.disabled=true;btn.textContent='看看它現在找到什麼';continue
+    }
+    let cur=currentEvidenceForModel(model),hist=lastHistoricalEvidence(model),e=cur||hist;
+    if(!e){
+      box.classList.remove('has-now');box.textContent='已經掃過目前資料，但還沒有找到符合條件的結構／事件。可以換一組較敏感的研究方式再比較。';
+      btn.disabled=true;btn.textContent='目前沒有可研究案例';continue
+    }
+    let isNow=!!cur,when=D[e.index]?date(D[e.index].t):('bar '+e.index),sample=modelSampleText(model,e.state);
+    box.classList.toggle('has-now',isNow);
+    box.innerHTML=(isNow?'<b>目前：</b>':'<b>最近一次：</b>')+esc(plainResearch(model,e.state))+'<br><span>'+esc(sample)+' · '+esc(when)+'</span>';
+    btn.disabled=false;btn.textContent=isNow?'看看這個狀態以前發生什麼':'回到最近一次案例'
+  }
+}
+function openLatestResearch(model){
+  let e=currentEvidenceForModel(model)||lastHistoricalEvidence(model);if(!e)return;
+  pinResearch({model,state:e.state,i:e.index,label:MODEL_TITLES[model]||model,detail:''})
+}
+
 function quickResearchHTML(hit){
   let r=resolveResearchHit(hit);if(!r)return'';
   let st=evalState(r.model,r.state),n=st?st.count:0,
@@ -639,33 +906,36 @@ function failureExamples(model,state,limit=5){
 function evidenceFieldsHTML(e){
   if(!e)return'<div class="research-empty">找不到對應的 Evidence 記錄。</div>';
   let rows=[
-    ['detectedAt',Number.isInteger(e.detectedAt)&&D[e.detectedAt]?date(D[e.detectedAt].t):String(e.detectedAt??'—')],
-    ['evidenceStart',Number.isInteger(e.evidenceStart)&&D[e.evidenceStart]?date(D[e.evidenceStart].t):String(e.evidenceStart??'—')],
-    ['confidence',conf(e.confidence)],['kind',e.kind||'—']
+    ['模型第一次能確定這個狀態（detectedAt）',Number.isInteger(e.detectedAt)&&D[e.detectedAt]?date(D[e.detectedAt].t):String(e.detectedAt??'—')],
+    ['這段結構最早從哪裡開始（evidenceStart）',Number.isInteger(e.evidenceStart)&&D[e.evidenceStart]?date(D[e.evidenceStart].t):String(e.evidenceStart??'—')],
+    ['證據強度（confidence）',conf(e.confidence)],['這筆資料的種類（kind）',e.kind||'—']
   ];
   for(const [k,v] of Object.entries(e.evidence||{})){
     if(v==null||typeof v==='object')continue;
     rows.push([k,typeof v==='number'?(Number.isInteger(v)?String(v):String(Math.round(v*1000)/1000)):String(v)]);
     if(rows.length>=9)break
   }
-  return'<dl class="evidence-fields">'+rows.map(x=>'<dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd>').join('')+'</dl>'
+  return'<div class="metric-explain"><b>最深一層：</b>這裡保留模型當時真正知道的內容，方便你檢查它是不是事後才補上答案。</div><dl class="evidence-fields">'+rows.map(x=>'<dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd>').join('')+'</dl>'
 }
 function horizonsHTML(st){
-  if(!st||!st.horizons)return'<div class="research-empty">這個狀態目前沒有可完成的 forward evaluation。</div>';
-  return'<div class="horizon-grid">'+[3,5,10,20].map(h=>{
-    let x=st.horizons[h];if(!x)return'';
-    return'<div class="horizon-card"><span class="hz">'+h+' bars · N '+x.n+(x.incomplete?' · 未完成 '+x.incomplete:'')+'</span>'+
-      '<b>'+pct(x.medianReturn)+'</b><div class="horizon-meta">中位報酬<br>MFE '+pct(x.medianMFE)+' · MAE '+pct(x.medianMAE)+'<br>上 / 下 '+pct(x.upRate,0)+' / '+pct(x.downRate,0)+'</div></div>'
-  }).join('')+'</div>'
+  if(!st||!st.horizons)return'<div class="research-empty">這個狀態目前還沒有足夠樣本走完整個後續觀察期。</div>';
+  return'<div class="metric-explain"><b>怎麼讀：</b>N 是真的走完這段時間的歷史樣本；中位數是把結果排好後站在中間的那一個，不是「現在會漲多少」的預測。MFE 是途中曾向上走到多遠，MAE 是途中曾向下走到多遠。</div>'+
+    '<div class="horizon-grid">'+[3,5,10,20].map(h=>{
+      let x=st.horizons[h];if(!x)return'';
+      return'<div class="horizon-card"><span class="hz">'+h+' 根 K 之後 · N '+x.n+(x.incomplete?' · 還沒走完 '+x.incomplete:'')+'</span>'+
+        '<b>'+pct(x.medianReturn)+'</b><span class="median-label">歷史中位結果</span>'+
+        '<div class="horizon-meta">途中最好 MFE '+pct(x.medianMFE)+'<br>途中最差 MAE '+pct(x.medianMAE)+'<br>最後上 / 下 '+pct(x.upRate,0)+' / '+pct(x.downRate,0)+'</div></div>'
+    }).join('')+'</div>'
 }
 function lifecycleHTML(model,state){
-  let x=lifeState(model,state);if(!x)return'<div class="research-empty">這個模型／狀態不是 lifecycle progression 評估節點。</div>';
+  let x=lifeState(model,state);if(!x)return'<div class="research-empty">這個狀態不是「往下一階段發展」的 lifecycle 節點，所以沒有 progression 統計。</div>';
   let cells=[];
   if(x.progressionTargets&&x.progressionTargets.length){
-    cells.push(['進展率',pct(x.progressionRate)],['進展前失敗率',pct(x.failureRate)],['進展中位時間',x.medianBarsToProgression==null?'—':x.medianBarsToProgression+' bars']);
+    cells.push(['後來進到下一階段',pct(x.progressionRate)],['還沒進展就先失效',pct(x.failureRate)],['進展通常等多久',x.medianBarsToProgression==null?'—':x.medianBarsToProgression+' bars'])
   }
-  cells.push(['狀態出現',String(x.occurrences)],['下一步未解決',String(x.unresolvedNext)]);
-  return'<div class="life-grid">'+cells.map(c=>'<div class="life-cell"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b></div>').join('')+'</div>'
+  cells.push(['歷史中出現',String(x.occurrences)+' 次'],['資料結束時還沒走完',String(x.unresolvedNext)+' 次']);
+  return'<div class="metric-explain"><b>這裡在問：</b>模型看到這個狀態後，它後來有沒有真的走到下一階段？失敗率不是「價格會跌的機率」，而是這個模型自己的結構生命週期。</div>'+
+    '<div class="life-grid">'+cells.map(c=>'<div class="life-cell"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b></div>').join('')+'</div>'
 }
 function casesHTML(model,state){
   let rows=historyCases(model,state);
@@ -674,7 +944,7 @@ function casesHTML(model,state){
 }
 function failuresHTML(model,state){
   let rows=failureExamples(model,state);
-  if(!rows.length)return'<div class="research-empty">這個狀態目前沒有可列出的「進展前先失效」案例，或它不是 lifecycle 失敗節點。</div>';
+  if(!rows.length)return'<div class="research-empty">目前沒有可列出的「還沒進到下一階段就先失效」案例；也可能這個狀態本來就不是 lifecycle 失敗節點。</div>';
   return'<div class="case-list">'+rows.map(x=>'<button class="case-link" onclick="jumpToEvidence('+x.failed.index+')"><span>'+esc(D[x.from.index]?date(D[x.from.index].t):('bar '+x.from.index))+' → '+esc(STATE_LABELS[x.failed.state]||x.failed.state)+'</span><small>'+(x.failed.index-x.from.index)+' bars ↗</small></button>').join('')+'</div>'
 }
 function renderEvidenceDock(){
@@ -682,24 +952,26 @@ function renderEvidenceDock(){
   if(!PINNED_RESEARCH){dock.classList.remove('on');if(back)back.classList.remove('on');return}
   let r=PINNED_RESEARCH,st=evalState(r.model,r.state),ev=nearestEvidence(r.model,r.state,r.index),
       stateLabel=STATE_LABELS[r.state]||String(r.state||'—'),n=st?st.count:0;
-  q('evidenceDockTitle').textContent=MODEL_TITLES[r.model]||r.label||r.model;
+  q('evidenceDockTitle').textContent=(MODEL_TITLES[r.model]||r.label||r.model)+'｜看看以前發生過什麼';
   q('evidenceDockState').textContent=stateLabel+' · '+(D[r.index]?date(D[r.index].t):('bar '+r.index));
   let html='<div class="research-plain">'+esc(plainResearch(r.model,r.state))+'</div>'+
-    '<div class="research-sample"><span class="research-chip">'+(st?'歷史樣本 '+n:'沒有已完成樣本統計')+'</span>'+
-    '<span class="research-chip">Evidence '+esc(r.state||'—')+'</span></div>';
+    '<div class="research-sample"><span class="research-chip">'+(st?'過去同狀態 '+n+' 次':'目前沒有已完成的同狀態統計')+'</span>'+
+    '<span class="research-chip">模型內部名稱 '+esc(r.state||'—')+'</span></div>'+
+    '<div class="metric-explain"><b>先記住：</b>這裡是在看「這個條件以前發生時，結果怎麼分布」，不是替現在行情下買賣結論。</div>';
   if(!r.expanded){
-    html+='<div class="research-actions"><button onclick="toggleResearchDepth()">展開研究 ↓</button></div>'
+    html+='<div class="research-actions"><button onclick="toggleResearchDepth()">看看以前發生過什麼 ↓</button><button onclick="openParams(\''+r.model+'\')">換一種研究方式</button></div>'
   }else{
-    html+='<div class="research-actions"><button onclick="toggleResearchDepth()">收起細節 ↑</button></div>'+
-      '<section class="research-section"><h4>3 / 5 / 10 / 20 bars</h4>'+horizonsHTML(st)+'</section>'+
-      '<section class="research-section"><h4>Lifecycle</h4>'+lifecycleHTML(r.model,r.state)+'</section>'+
-      '<section class="research-section"><h4>歷史案例</h4>'+casesHTML(r.model,r.state)+'</section>'+
-      '<section class="research-section"><h4>失敗案例</h4>'+failuresHTML(r.model,r.state)+'</section>'+
-      '<section class="research-section"><h4>Evidence</h4>'+evidenceFieldsHTML(ev)+'</section>'
+    html+='<div class="research-actions"><button onclick="toggleResearchDepth()">先收起研究 ↑</button><button onclick="openParams(\''+r.model+'\')">換一種研究方式</button></div>'+
+      '<section class="research-section"><h4>之後市場通常怎麼走？</h4>'+horizonsHTML(st)+'</section>'+
+      '<section class="research-section"><h4>這個狀態後來怎麼發展？</h4>'+lifecycleHTML(r.model,r.state)+'</section>'+
+      '<section class="research-section"><h4>回到幾個真實歷史案例</h4>'+casesHTML(r.model,r.state)+'</section>'+
+      '<section class="research-section"><h4>看看它失效時長什麼樣</h4>'+failuresHTML(r.model,r.state)+'</section>'+
+      '<section class="research-section"><h4>模型當時其實知道什麼？</h4>'+evidenceFieldsHTML(ev)+'</section>'+
+      '<div class="research-next"><b>接下來可以做什麼：</b>點一個歷史案例回到圖上看當時 K 線；或按「換一種研究方式」套另一組已驗證參考設定，再比較樣本數與結果分布怎麼變。</div>'
   }
   q('evidenceDockBody').innerHTML=html;
   dock.classList.add('on');
-  if(back)back.classList.toggle('on',isMobileUI());
+  if(back)back.classList.toggle('on',isMobileUI())
 }
 function pinResearch(hit){
   let r=resolveResearchHit(hit);if(!r)return false;
@@ -1039,7 +1311,11 @@ c.onpointerdown=e=>{
 c.onpointermove=e=>{
   if(e.pointerType==='touch'&&!e.isPrimary)return;
   let r=c.getBoundingClientRect(),coarse=e.pointerType==='touch'||isCoarsePointer();
-  if(!coarse)mousePos={x:e.clientX-r.left,y:e.clientY-r.top,clientX:e.clientX,clientY:e.clientY};
+  if(!coarse){
+    mousePos={x:e.clientX-r.left,y:e.clientY-r.top,clientX:e.clientX,clientY:e.clientY};
+    let liveHit=hitAtPoint(mousePos.x,mousePos.y);
+    c.style.cursor=liveHit&&liveHit.model?'pointer':(drag?'grabbing':'crosshair')
+  }
   if(drag){
     let sp=drag[2]-drag[1],dx=(e.clientX-drag[0])/c.clientWidth*sp,
         moved=Math.hypot(e.clientX-drag[0],e.clientY-drag[4]);
@@ -1068,6 +1344,7 @@ c.onpointerup=e=>{
 };
 c.onwheel=e=>{e.preventDefault();zoomAt(e.clientX,e.deltaY>0?1.18:.84)};
 c.onpointerleave=e=>{
+  c.style.cursor='crosshair';
   if(isCoarsePointer())return;
   let tip=q('chartTip');
   if(e.relatedTarget&&(e.relatedTarget===tip||tip.contains(e.relatedTarget)))return;
