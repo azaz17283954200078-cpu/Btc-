@@ -753,11 +753,13 @@ function renderParamBody(){
 }
 function openParams(k){
   let sc=PARAM_SCHEMA[k];if(!sc)return;
+  let focusChanged=FOCUSED_MODEL!==k;
   FOCUSED_MODEL=k;FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
   let sel=q('singleModelSelect');if(sel)sel.value=k;
   ACTIVE_PARAM_MODEL=k;ACTIVE_PRESET_ID=null;PARAM_DRAFT=modelDraft(k);
   q('paramTitle').textContent=sc.title;renderPresetChoices();renderParamBody();
   q('paramRunStatus').textContent='先選一個研究方式，或展開下面自己微調';
+  if(focusChanged&&D.length)zoneCalc();else renderSingleResearch();
   let card=q('paramCard');card.style.position='';card.style.left='';card.style.top='';card.style.transform='';
   q('paramModal').classList.add('on')
 }
