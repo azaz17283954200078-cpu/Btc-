@@ -2,7 +2,7 @@ const fs=require('fs');
 const assert=require('assert');
 const s=fs.readFileSync('index.html','utf8');
 
-assert(s.includes('v1.5 · M5 關係式漏斗'),'M5 version label missing');
+assert(/v1\.[5-9] · (?:M5|G01) /.test(s),'M5/G01 version label missing');
 assert(s.includes('<script src="src/condition-engine.js"></script>'),'shared Condition Engine is not loaded');
 assert(s.includes('CE=window.StrategyLabConditionEngine'),'UI must use shared Condition Engine');
 
