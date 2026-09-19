@@ -686,6 +686,7 @@ function zoneCalc(){
   });
   applyModelEngineResult(res);
   safeDrawModels();
+  if(PINNED_RESEARCH)renderEvidenceDock();
 }
 function macroCalc(){zoneCalc()}
 function bottomLabCalc(){zoneCalc()}
