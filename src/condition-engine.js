@@ -118,9 +118,25 @@
     if(!list.length)return[];
     const known=Math.max(0,Math.round(options.knownThrough==null?inferKnownThrough(evidence):options.knownThrough)),
           layers=list.map(c=>buildPresence(evidence,c,{knownThrough:known}).present),
-          both=Array(known+1).fill(false);
-    for(let i=0;i<=known;i++)both[i]=layers.every(a=>!!a[i]);
-    return episodesFromPresence(both);
+          anchorEpisodes=episodesFromPresence(layers[0]);
+    if(list.length===1)return anchorEpisodes;
+
+    // Anchor-centric sampling: each episode of the first condition contributes at
+    // most one combined sample, at the first bar where every added condition is
+    // simultaneously known. This prevents a long anchor state with many transient
+    // events from being counted many times and guarantees combo N <= baseline N.
+    const out=[];
+    for(const anchor of anchorEpisodes){
+      let start=null;
+      for(let i=anchor.index;i<=anchor.end;i++){
+        if(layers.every(a=>!!a[i])){start=i;break}
+      }
+      if(start==null)continue;
+      let end=start;
+      while(end+1<=anchor.end&&layers.every(a=>!!a[end+1]))end++;
+      out.push({index:start,end,length:end-start+1});
+    }
+    return out;
   }
   function quantile(a,q){
     const b=(a||[]).filter(Number.isFinite).slice().sort((x,y)=>x-y);
