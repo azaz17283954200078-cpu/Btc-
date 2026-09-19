@@ -182,6 +182,10 @@ M5 研究的是「多一個 causal Evidence 之後，歷史分布發生了什麼
 - 歷史結果一次只看一個 horizon；歷史案例使用上一個／下一個瀏覽，主圖與右側 Evidence 同步。
 - 單模型研究可封裝為 `SINGLE_RESEARCH_CONTEXT`，並建立可延續到未來組合研究的 `COMBINATION_HANDOFF_CONTEXT`，其中包含市場、週期、模型狀態、Evidence reference、參數快照／fingerprint 與 knownThrough。
 - 舊 R02 Condition Engine 與關係語意保留；但直接漏斗不再佔據單模型第一層，等待後續獨立組合研究工作區。
+- G02-R2 研究安全：任何單模型 forward result 都先顯示總案例、已完成、未完成與樣本可靠度，再顯示百分比與中位數。
+- Macro 把候選、完成模型確認、確認前失效／過期與未結束案例放在同一脈絡；候選不得被等同於已確認底部。
+- Astrology 明確標示為可否證的外部時間假說；「未來」相對於資料截止日，事件案例數不等於互相獨立證據，projection 不可直接 seed 組合研究。
+- G02-R2 的 automated gate 已通過；依使用者驗收指南，阻斷項仍需未參與開發者的受測者在無口頭提示下實際完成任務後才算產品通過。
 
 M5 產品驗收標準：
 
