@@ -191,6 +191,21 @@ M5 產品驗收標準：
 
 > 使用者可以從一個 Evidence 出發，逐步加入其他「當時已知」的條件，看到樣本數如何縮小、歷史分布如何改變，並隨時知道資料是否只具探索價值；整個過程保持 causal、可追溯、可在 Runner 重現。\n\nShared Condition Engine 已通過技術／研究驗證；但在正式桌面與手機介面完成條件磚塊、逐步樣本縮減、樣本不足原因與實際使用者操作驗收前，不再把 M5 稱為產品驗收完成。\n\nUI-R01 將側欄第一層改為「研究條件組」；UI-R02 再把真正可操作的漏斗移到第一層，並加入明確的價格關係。這些仍屬產品驗收中的互動架構調整，不宣告 M5 已完成。
 
+## G03｜Research Reliability & Strategy Experimentation — 🚧 In progress
+
+G03 不以「更多功能」為目標，而是建立資料可信度、Runner 可觀測性、preset 校準與受限制策略模擬的研究紀律。完整順序見 `G03_ITERATION_GUIDE.md`。
+
+### G03-R0｜Model Semantics Registry — ✅ Technical complete
+- 七模型正式分類為 lifecycle / event / analogy / external-time。
+- 模型狀態進展／失效與後續價格漲跌分離。
+- 七模型目前皆無方向性主張。
+- Shared Condition Engine 改讀 Registry，保留既有 R02 時間／價格關係與 anchor-centric semantics。
+- 單模型研究器顯示「研究型態／模型主張」，不新增主導航或大面板。
+- 預先定義 future Strategy Adapter 能力邊界，但尚未實作策略模擬。
+- PR CI run `35434017722` 全綠；所有既有 M4/M5/G01/G02 gates 同時通過。
+
+Next: **G03-R1 Runner Observatory**。不得跳過 R1 直接用 outcome 調 preset。
+
 ## M6｜完成的小作品 — Next
 
 第一次使用者能很快開始探索；有經驗的研究者仍能得到值得研究的資訊。達到後停止為了規模而擴張。

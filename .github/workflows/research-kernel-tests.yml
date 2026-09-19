@@ -72,6 +72,8 @@ jobs:
         run: node tests/g02-r7-device-contract.test.js
       - name: G02 final guide technical audit
         run: node scripts/g02-final-guide-audit.js
+      - name: G03-R0 model semantics contract
+        run: node tests/g03-r0-model-semantics-contract.test.js
       - name: Validated model preset contract
         run: node tests/model-presets.test.js
       - name: M4 validated preset semantic gate
