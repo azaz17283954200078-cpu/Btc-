@@ -91,3 +91,46 @@
 - **最後技術 audit**：固定 IXIC 1D 產生 1476 Evidence（Astro 945 / Support 181 / Field 107 / Basin 76 / Sweep 21 / Echo 143 / Macro 2）；固定 TWII 1D 產生 1473 Evidence（Astro 944 / Support 198 / Field 87 / Echo 143 / Basin 70 / Sweep 14 / Macro 16）。Audit 實際命中 failure=true、incomplete=true、smallSample=true、echoTrace=true、noEvent=true。這些是 coverage 證據，不是模型績效排名。
 - **CI**：branch final technical run `35431231619` success。Research Kernel、Model Engine、Condition Engine、Runner、conditional parity、real-market causality、market data、pre-M4 regression、architecture、M4、M5、G01、G02-R1/R2/R3/R4/R5/R6/R7、final guide audit、preset 全部成功。
 - **未完成的只有真人驗收**：指南要求未參與開發者在沒有口頭提示下操作；本輪無法用自動測試冒充這項人因證據。因此技術層標記完成，產品／真人驗收仍 pending。
+
+
+## 2026-09-19｜G03-R0 Model Semantics Registry
+
+### 發現什麼
+G02 已讓 Evidence 可讀、可追溯，但下一階段若直接做資料可信度、preset 補樣本或策略回測，會先遇到一個更基礎的語意問題：Support / Macro / Sweep / Echo / Astrology 並不是同一種主張，不能共用「成功／失敗」語言，也不能讓策略層自己重新解釋模型。
+
+### 為什麼選它
+依 `CONSTITUTION.md` 第十八條，一輪只處理一個大型問題。使用者已批准 G03 詳細指南，而所有後續 Reliability / Runner / Strategy Adapter 都依賴一份穩定 Model Semantics Registry，因此 R0 必須先完成，且本輪不調 preset、不建立 Reliability 分數、不改 Script 主流程。
+
+### 改了什麼
+- 新增 `src/model-semantics.js` v1.0.0。
+- 七模型登錄 research type、primary question、claim boundary、normalized states、progression / confirmation / invalidation / exit、standardized price geometry、allowed relation、directional claim、future strategy roles。
+- Condition Engine 升至 v1.3.0，state/event/observation/terminal classification 改由 Registry 提供；原 R02 relation behavior 保持。
+- Browser 載入共享 Registry，並透過 `window.__SL_MODEL_SEMANTICS__` 可檢查。
+- 現有單模型研究區增加「研究型態／模型主張」兩行教育資訊；沒有新增 Tab、Dashboard 或主工作流。
+- 建立 `tests/g03-r0-model-semantics-contract.test.js` 並加入主 CI。
+- 把完整 G03 已批准方向保存為 `G03_ITERATION_GUIDE.md`。
+
+### 測試結果
+PR workflow `35434017722`：success。
+- Research Kernel / Model Engine / Condition Engine
+- Runner parity / M5 conditional parity
+- real-market causality audit
+- market-data / regression
+- M4 / M5 / G01 / G02 contracts
+- G03-R0 model semantics contract
+- preset validation / semantic gate
+
+全部同時通過。
+
+### 本輪沒有做
+- 不改模型公式或 worldview。
+- 不更改 Chart Core。
+- 不改 Evidence schema / detectedAt。
+- 不重新校準 preset。
+- 不建立 Reliability Matrix。
+- 不建立 Runner Observatory。
+- 不重構 Script／策略實驗。
+- 不宣告 G02 真人驗收完成。
+
+### 下一個最值得研究的問題
+**G03-R1 Runner Observatory**：讓背景 Runner 可觀察且可教育，但 active run 不可被中途修改；任何市場／週期／preset／參數變更必須形成新的 Run ID。
