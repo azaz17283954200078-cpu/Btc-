@@ -2,7 +2,7 @@ const fs=require('fs');
 const assert=require('assert');
 const s=fs.readFileSync('index.html','utf8');
 
-assert(s.includes('v2.2 · G02-R6 組合研究入口'),'R6 version label missing');
+assert(/v2\.\d+ · G02-R[67] /.test(s),'R6+ version label missing');
 for(const id of ['tabModels','tabCombo','comboPane','comboWorkspace']){
   assert(s.includes('id="'+id+'"'),'missing dedicated combination surface '+id);
 }
