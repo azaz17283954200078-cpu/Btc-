@@ -4,7 +4,7 @@
 
 - Repository: `azaz17283954200078-cpu/Btc-`
 - Default branch: `main`
-- Current milestone: M5 product acceptance hardening — G01 single-model guidance
+- Current milestone: G02-R1 single-model research architecture — product acceptance
 - M4 Guided Research: completed
 - M5 Shared Condition Engine: technical/research validation passed
 - M5 product acceptance: not complete until desktop/mobile use is tested by the user
@@ -54,3 +54,15 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - Historical cases are promoted to a larger 12-case browser before lifecycle/raw Evidence.
 - Conditional research semantics, Chart Core, Model Engine, Evidence, causality, data sources and sample gates are unchanged.
 - G01 is not M5 completion. User desktop/mobile acceptance is still required.
+
+## G02-R1 single-model research architecture
+- User approved a major information-architecture change before implementation under Constitution Article 23.
+- The primary Research sidebar is now one inline single-model inspector. Active-model bricks, the direct funnel, and Evidence Dock are retired from the single-model primary DOM.
+- Research focus and chart visibility are separate: `FOCUSED_MODEL` controls what the inspector studies; the existing model checkboxes control what overlays are visible. `shouldRunModel()` lets a focused hidden model still compute Evidence without forcing the overlay on.
+- `FOCUSED_EVIDENCE` explicitly distinguishes `now` from `history`. Opening a model always starts at now; no-current-Evidence never silently falls back to a historical case.
+- One selected `SINGLE_RESEARCH_HORIZON` controls the outcome view; 3/5/10/20 are not rendered as four competing result cards.
+- Historical navigation changes both the selected Evidence and chart viewport, so the graph and explanation refer to the same case.
+- Single-model research and conditional research state are decoupled: `SINGLE_RESEARCH_CONTEXT`, `COMBINATION_HANDOFF_CONTEXT`, and `CONDITION_STACK` are explicit separate state domains. Legacy `PINNED_RESEARCH` remains dormant only for the not-yet-rebuilt M5 combination UI helpers.
+- A handoff captures market, timeframe, model/state, Evidence reference, selected horizon, setting source, parameter snapshot/fingerprint, engine/kernel version, knownThrough, and data source. Parameter changes invalidate a prepared handoff.
+- Shared Model Engine, Research Kernel, Condition Engine v1.2, Evidence schema, causality, sample gates, Runner parity, Chart Core and data sources are unchanged.
+- G02-R1 does not complete product acceptance; desktop/mobile user validation is still required before building the dedicated combination workspace.
