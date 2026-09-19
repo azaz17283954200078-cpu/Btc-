@@ -416,6 +416,24 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .condition-empty{margin-top:8px;padding:9px;border-radius:8px;background:#101b2b;color:#9fb2ca;font-size:10.5px;line-height:1.55}
 .condition-add-models{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.condition-add-models button{font-size:10.5px}
 .condition-note{margin-top:8px;color:#839ab8;font-size:9.8px;line-height:1.5}
+/* G03 小改版｜參數直接顯示在單模型研究區，不再需要先開設定視窗 */
+.inline-param-hint{color:#7f97b4;font-size:9.5px}
+.inline-params{margin:10px 0 0;padding:12px;border:1px solid #355472;border-radius:12px;background:#0b1727}
+.inline-param-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}
+.inline-param-head small,.inline-param-head b{display:block}.inline-param-head small{color:#8298b4;font-size:8.8px}.inline-param-head b{margin-top:2px;color:#edf5ff;font-size:13px;line-height:1.35}
+.inline-param-head>span{max-width:145px;color:#8298b4;font-size:8.8px;line-height:1.4;text-align:right}
+.inline-params .preset-lead{margin-bottom:8px;padding:8px 9px;font-size:10px}.inline-params .preset-lead b{font-size:11px}
+.inline-params .preset-grid{gap:6px;margin-bottom:7px}.inline-params .preset-choice{min-height:0;padding:8px}.inline-params .preset-choice b{font-size:11.5px}.inline-params .preset-choice span{font-size:9.4px}.inline-params .preset-choice small,.inline-params .preset-choice em{font-size:8.6px}
+.inline-params .preset-validation{margin:6px 0 10px;padding:7px 8px;font-size:9.2px}
+.inline-param-subhead{display:flex;justify-content:space-between;gap:8px;align-items:end;margin:4px 0 8px;padding-top:9px;border-top:1px solid #29415c}
+.inline-param-subhead b{font-size:11px;color:#e8f1fb}.inline-param-subhead span{font-size:8.8px;color:#839ab6;text-align:right}
+.inline-params .param-intro{padding:8px 9px;margin-bottom:9px;font-size:10px}
+.inline-params .param-grid{grid-template-columns:minmax(0,1fr) 112px;gap:6px 9px}
+.inline-params .param-label{font-size:10.5px}.inline-params .param-help{font-size:9.2px;line-height:1.5;padding-bottom:6px}
+.inline-params .param-grid input,.inline-params .param-grid select{font-size:11px;min-height:34px}
+.inline-params .param-note{font-size:9.2px;margin-top:9px;padding-top:8px}
+.inline-params .param-actions{align-items:flex-start;margin-top:9px;padding-top:9px}.inline-params .param-run-status{font-size:9px;line-height:1.45}.inline-params .param-actions .right button{min-height:32px;font-size:9.5px}
+
 /* Parameter reading surface */
 .param-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(3,7,14,.74);backdrop-filter:blur(4px)}
 .param-modal.on{display:flex}
@@ -517,6 +535,17 @@ td:first-child,th:first-child{text-align:left}
   .single-model-tools{align-items:stretch}
   .single-model-tools button,.single-overlay-toggle{min-height:44px}
   .single-overlay-toggle{padding:0 8px;border:1px solid #2f4967;border-radius:9px;background:#0c1828}
+  .inline-param-hint{display:flex;align-items:center}
+  .inline-params{padding:11px}
+  .inline-param-head{display:block}
+  .inline-param-head>span{display:block;max-width:none;margin-top:3px;text-align:left}
+  .inline-params .param-grid{grid-template-columns:1fr}
+  .inline-params .param-help{grid-column:1}
+  .inline-params .param-grid input,.inline-params .param-grid select{min-height:44px;font-size:16px}
+  .inline-params .param-actions{display:block}
+  .inline-params .param-actions .right{margin-top:8px;display:grid;grid-template-columns:1fr 1fr}
+  .inline-params .param-actions .right button{min-height:44px}
+
   .single-context-tabs button,.single-horizon-tabs button,.single-history-controls button{min-height:44px}
   .single-guide-row{grid-template-columns:1fr;gap:2px}
   .single-horizon-result .split{grid-template-columns:1fr}
@@ -556,7 +585,7 @@ td:first-child,th:first-child{text-align:left}
 @media(max-width:650px){.reliability-matrix button{min-height:44px;width:100%}}
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.5 · G03-R5 Runner／可信度／Preset／盲測｜v2.3 · G02-R7 裝置與流程硬化</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.6 · G03 參數直接顯示｜v2.3 · G02-R7 裝置與流程硬化</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -605,13 +634,27 @@ td:first-child,th:first-child{text-align:left}
           </label>
           <div class="single-model-tools">
             <label class="single-overlay-toggle"><input id="singleOverlayToggle" type="checkbox" onchange="toggleFocusedOverlay(this.checked)"> 顯示在圖上</label>
-            <button onclick="openFocusedModelParams()">調整模型</button>
+            <span class="inline-param-hint">研究設定直接顯示在下方</span>
           </div>
           <div class="single-caution">全站數量都用同一套讀法：同狀態總案例 → 完整觀察 → 尚未完成 → 可瀏覽案例。百分比永遠只描述完整觀察的那一部分。</div>
           <div class="research-flow" aria-label="單模型研究流程">
             <span><b>1</b> 選模型</span><span><b>2</b> 看證據</span><span><b>3</b> 查歷史</span><span><b>4</b> 保存</span><span><b>5</b> 延續</span>
           </div>
         </div>
+
+        <section id="inlineParams" class="inline-params" aria-label="目前模型研究設定">
+          <div class="inline-param-head">
+            <div><small>研究設定</small><b id="paramTitle">目前模型參數</b></div>
+            <span>直接調整，不需開啟設定視窗</span>
+          </div>
+          <div class="preset-lead"><b>寬鬆／平衡／嚴格</b>先選研究條件的寬嚴；三者只代表 Evidence 密度，不代表哪個比較準。</div>
+          <div id="presetChoices" class="preset-grid"></div>
+          <div id="presetValidation" class="preset-validation"></div>
+          <div class="inline-param-subhead"><b>手動參數</b><span>需要時直接改數值，再重新掃描。</span></div>
+          <div id="paramBody" class="param-grid"></div>
+          <div class="param-note"><b>怎麼用：</b>三種正式設定是「寬鬆／平衡／嚴格」。它們只代表條件寬嚴與 Evidence 密度；嚴格不代表比較準。Preset 不用歷史報酬排名挑選。</div>
+          <div class="param-actions"><span id="paramRunStatus" class="param-run-status">目前使用模型原本設定</span><div class="right"><button onclick="restoreParams()">恢復模型原本設定</button><button onclick="applyParams()">用這些參數重新找</button></div></div>
+        </section>
 
         <div id="singleResearchBody" class="single-research-body" aria-live="polite">
           <div class="single-loading">正在整理單一模型研究…</div>
@@ -630,7 +673,7 @@ td:first-child,th:first-child{text-align:left}
             <div class="model-row" data-model-card="support">
               <div class="model-name">
                 <label><input id="modSupport" type="checkbox" checked onchange="zoneCalc()"> <span>支撐區<small>Support Zone</small></span></label>
-                <span class="model-actions"><button class="guide-btn" onclick="openParams('support')">調整研究設定</button><a href="model-guide.html#support" target="_blank">原理 ↗</a></span>
+                <span class="model-actions"><a href="model-guide.html#support" target="_blank">原理 ↗</a></span>
               </div>
               <div class="model-question">它在問：這裡以前撐住過嗎？</div>
               <details class="library-more"><summary>這個模型會看什麼？</summary>
@@ -644,7 +687,7 @@ td:first-child,th:first-child{text-align:left}
             <div class="model-row" data-model-card="macro">
               <div class="model-name">
                 <label><input id="modMacro" type="checkbox" onchange="zoneCalc()"> <span>宏觀底部<small>Macro Bottom</small></span></label>
-                <span class="model-actions"><button class="guide-btn" onclick="openParams('macro')">調整研究設定</button><a href="model-guide.html#macro" target="_blank">原理 ↗</a></span>
+                <span class="model-actions"><a href="model-guide.html#macro" target="_blank">原理 ↗</a></span>
               </div>
               <div class="model-question">它在問：市場跌得夠深後，有沒有開始把失地收回？</div>
               <details class="library-more"><summary>這個模型會看什麼？</summary>
@@ -658,7 +701,7 @@ td:first-child,th:first-child{text-align:left}
             <div class="model-row" data-model-card="sweep">
               <div class="model-name">
                 <label><input id="modSweep" type="checkbox" onchange="zoneCalc()"> <span>流動性掃單<small>Liquidity Sweep</small></span></label>
-                <span class="model-actions"><button class="guide-btn" onclick="openParams('sweep')">調整研究設定</button><a href="model-guide.html#sweep" target="_blank">原理 ↗</a></span>
+                <span class="model-actions"><a href="model-guide.html#sweep" target="_blank">原理 ↗</a></span>
               </div>
               <div class="model-question">它在問：這次跌破舊低是真跌破，還是掃完又收回？</div>
               <details class="library-more"><summary>這個模型會看什麼？</summary>
@@ -674,7 +717,7 @@ td:first-child,th:first-child{text-align:left}
             <div class="model-row" data-model-card="basin">
               <div class="model-name">
                 <label><input id="modBasin" type="checkbox" onchange="zoneCalc()"> <span>盆地辨識<small>Basin Mapper</small></span></label>
-                <span class="model-actions"><button class="guide-btn" onclick="openParams('basin')">調整研究設定</button><a href="model-guide.html#basin" target="_blank">原理 ↗</a></span>
+                <span class="model-actions"><a href="model-guide.html#basin" target="_blank">原理 ↗</a></span>
               </div>
               <div class="model-question">它在問：急跌之後，價格是不是開始真正走平？</div>
               <details class="library-more"><summary>這個模型會看什麼？</summary>
@@ -688,7 +731,7 @@ td:first-child,th:first-child{text-align:left}
             <div class="model-row" data-model-card="field">
               <div class="model-name">
                 <label><input id="modSpring" type="checkbox" onchange="zoneCalc()"> <span>震盪場<small>Oscillation Field</small></span></label>
-                <span class="model-actions"><button class="guide-btn" onclick="openParams('field')">調整研究設定</button><a href="model-guide.html#spring" target="_blank">原理 ↗</a></span>
+                <span class="model-actions"><a href="model-guide.html#spring" target="_blank">原理 ↗</a></span>
               </div>
               <div class="model-question">它在問：市場是不是進入一個有邊界的來回震盪區？</div>
               <details class="library-more"><summary>這個模型會看什麼？</summary>
@@ -702,7 +745,7 @@ td:first-child,th:first-child{text-align:left}
             <div class="model-row" data-model-card="echo">
               <div class="model-name">
                 <label><input id="modEcho" type="checkbox" onchange="zoneCalc()"> <span>歷史回聲<small>Echo</small></span></label>
-                <span class="model-actions"><button class="guide-btn" onclick="openParams('echo')">調整研究設定</button><a href="model-guide.html#echo" target="_blank">原理 ↗</a></span>
+                <span class="model-actions"><a href="model-guide.html#echo" target="_blank">原理 ↗</a></span>
               </div>
               <div class="model-question">它在問：現在這段 K 線，歷史上有沒有走過相似形狀？</div>
               <details class="library-more"><summary>這個模型會看什麼？</summary>
@@ -716,7 +759,7 @@ td:first-child,th:first-child{text-align:left}
             <div class="model-row" data-model-card="astro">
               <div class="model-name">
                 <label><input id="modAstro" type="checkbox" onchange="zoneCalc()"> <span>占星時間事件<small>Astrology Engine</small></span></label>
-                <span class="model-actions"><button class="guide-btn" onclick="openParams('astro')">調整研究設定</button><a href="model-guide.html#astro" target="_blank">原理 ↗</a></span>
+                <span class="model-actions"><a href="model-guide.html#astro" target="_blank">原理 ↗</a></span>
               </div>
               <div class="model-question">它在問：外部天體時間事件，過去是否和市場分布一起出現？</div>
               <details class="library-more"><summary>這個模型會看什麼？</summary>
@@ -752,22 +795,7 @@ state.prevSlow = slow;</textarea>
     </div>
   </aside>
 </div>
-<div id="paramModal" class="param-modal" onclick="if(event.target===this)closeParams()">
-  <div id="paramCard" class="param-card">
-    <div id="paramDragHandle" class="param-head" onpointerdown="startParamDrag(event)" onpointermove="moveParamDrag(event)" onpointerup="endParamDrag(event)" onpointercancel="endParamDrag(event)">
-      <b id="paramTitle">選一種研究方式</b><button class="param-close" onclick="closeParams()" aria-label="關閉設定">×</button>
-    </div>
-    <div class="preset-lead"><b>先選你想讓模型怎麼看市場</b>下面是先用歷史資料跑過的研究起點。先用它理解「放寬／收緊」會發生什麼，再決定要不要自己微調。</div>
-    <div id="presetChoices" class="preset-grid"></div>
-    <div id="presetValidation" class="preset-validation"></div>
-    <details id="advancedParams" class="advanced-params">
-      <summary>想自己微調？打開每個參數的效果</summary>
-      <div id="paramBody" class="param-grid"></div>
-    </details>
-    <div class="param-note"><b>怎麼用：</b>三種正式設定是「寬鬆／平衡／嚴格」。它們只代表條件寬嚴與 Evidence 密度；嚴格不代表比較準。Preset 不用歷史報酬排名挑選。</div>
-    <div class="param-actions"><span id="paramRunStatus" class="param-run-status">選一個研究方式，或自己微調</span><div class="right"><button onclick="restoreParams()">恢復模型原本設定</button><button onclick="applyParams()">用這些參數重新找</button></div></div>
-  </div>
-</div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script src="src/model-semantics.js"></script><script src="src/reliability-engine.js"></script><script src="src/research-run.js"></script><script src="src/condition-engine.js"></script><script>
+</main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script src="src/model-semantics.js"></script><script src="src/reliability-engine.js"></script><script src="src/research-run.js"></script><script src="src/condition-engine.js"></script><script>
 window.addEventListener('error',function(e){var st=document.getElementById('status'),msg=document.getElementById('msg');if(st)st.textContent='程式錯誤';if(msg)msg.textContent='JS：'+e.message+' @ '+e.lineno;});
 const q=id=>document.getElementById(id);
 function setInfo(id,t){let e=q(id);if(e)e.textContent=t}
@@ -885,19 +913,27 @@ function renderParamBody(){
   }).join('');
   q('paramBody').innerHTML='<div class="param-intro">'+sc.intro+'</div>'+rows
 }
+function refreshInlineParams(k){
+  let sc=PARAM_SCHEMA[k],panel=q('inlineParams');if(!sc||!panel)return;
+  ACTIVE_PARAM_MODEL=k;
+  let setting=MODEL_SETTING_STATE[k];
+  ACTIVE_PRESET_ID=setting&&setting.kind==='preset'?setting.id:null;
+  PARAM_DRAFT=modelDraft(k);
+  q('paramTitle').textContent=sc.title;
+  renderPresetChoices();renderParamBody();
+  let status=q('paramRunStatus');
+  if(status)status.textContent='目前：'+modelSettingLabel(k)
+}
 function openParams(k){
   let sc=PARAM_SCHEMA[k];if(!sc)return;
   let focusChanged=FOCUSED_MODEL!==k;
   FOCUSED_MODEL=k;FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
   let sel=q('singleModelSelect');if(sel)sel.value=k;
-  ACTIVE_PARAM_MODEL=k;ACTIVE_PRESET_ID=null;PARAM_DRAFT=modelDraft(k);
-  q('paramTitle').textContent=sc.title;renderPresetChoices();renderParamBody();
-  q('paramRunStatus').textContent='先選一個研究方式，或展開下面自己微調';
+  refreshInlineParams(k);
   if(focusChanged&&D.length)zoneCalc();else renderSingleResearch();
-  let card=q('paramCard');card.style.position='';card.style.left='';card.style.top='';card.style.transform='';
-  q('paramModal').classList.add('on')
+  setTimeout(()=>{let panel=q('inlineParams');if(panel)panel.scrollIntoView({behavior:'smooth',block:'nearest'})},0)
 }
-function closeParams(){q('paramModal').classList.remove('on');paramDrag=null}
+function closeParams(){paramDrag=null}
 function setParamDraft(k,v,isText){if(!PARAM_DRAFT)return;ACTIVE_SAVED_RESEARCH_ID=null;PARAM_DRAFT[k]=isText?v:+v;ACTIVE_PRESET_ID=null;renderPresetChoices();q('paramRunStatus').textContent='你改了參數；按「用這些參數重新找」才會套用'}
 function restoreParams(){
   if(!ACTIVE_PARAM_MODEL)return;PARAM_DRAFT=modelDefaultDraft(ACTIVE_PARAM_MODEL);ACTIVE_PRESET_ID=null;
@@ -1447,6 +1483,7 @@ function focusSingleModel(model){
   FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
   SINGLE_RESEARCH_HORIZON=10;
   let sel=q('singleModelSelect');if(sel)sel.value=model;
+  refreshInlineParams(model);
   if(D.length)zoneCalc();else renderSingleResearch()
 }
 function viewSingleNow(){
@@ -2165,6 +2202,7 @@ function singleEvidenceCardHTML(model,ev,mode){
 }
 function renderSingleResearch(){
   let body=q('singleResearchBody');if(!body)return;
+  if(ACTIVE_PARAM_MODEL!==FOCUSED_MODEL||!PARAM_DRAFT)refreshInlineParams(FOCUSED_MODEL);
   let sel=q('singleModelSelect'),toggle=q('singleOverlayToggle');
   if(sel&&sel.value!==FOCUSED_MODEL)sel.value=FOCUSED_MODEL;
   if(toggle)toggle.checked=isModelVisible(FOCUSED_MODEL);
@@ -2181,7 +2219,7 @@ function renderSingleResearch(){
       '<span class="single-now-date">'+(D.length?esc(date(D[D.length-1].t)):'—')+'</span></div>'+
       '<div class="single-now-summary">模型已經掃過目前資料，但最新市場沒有符合這個模型的狀態／事件。這不是看多或看空，只代表目前沒有這類證據。</div>'+
       '<div class="single-empty-actions">'+(hist?'<button onclick="viewLatestHistoricalCase()">查看最近一次歷史案例 →</button>':'')+
-      '<button onclick="openFocusedModelParams()">調整模型設定</button></div></article>';
+      '</div><div class="single-model-first">研究設定已直接顯示在上方；你可以立刻切換寬鬆／平衡／嚴格，或直接改手動參數。</div></article>';
     SINGLE_RESEARCH_CONTEXT=null;window.__SL_SINGLE_RESEARCH_CONTEXT__=null;
     renderHandoffStatus();renderSavedResearch();return
   }
