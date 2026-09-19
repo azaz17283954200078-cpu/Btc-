@@ -105,17 +105,26 @@ async function buildMatrix(options={}){
       }
     }
   }
+  const aggregateMonotonic=Object.fromEntries(Object.entries(byModelPreset).map(([model,presets])=>{
+    const order=['loose','balanced','strict'].map(level=>Object.values(presets).find(x=>x.level===level)),
+          counts=order.map(x=>x?x.aggregate.total:0),
+          pass=order.every(Boolean)&&counts[0]>=counts[1]&&counts[1]>=counts[2]&&counts[0]>counts[2];
+    return[model,{counts,pass}]
+  }));
   const report={
     schemaVersion:1,
     reliabilityStandardVersion:REL.VERSION,
     presetVersion:Presets.VERSION,
     generatedAt:new Date().toISOString(),
     selectionBasis:'Evidence density, N_eff, lifecycle coverage, time coverage and OOS counts only. No return/up-rate/MFE/MAE metric participates in preset selection.',
+    monotonicRule:'Aggregate preset density must be loose >= balanced >= strict. Per-context lifecycle episode counts are audited as warnings because looser state thresholds can merge adjacent episodes instead of creating more transition records.',
     contexts,
     cells,
     byModelPreset,
+    aggregateMonotonic,
     monotonic,
-    allMonotonic:monotonic.every(x=>x.pass)
+    cellMonotonicWarnings:monotonic.filter(x=>!x.pass),
+    allMonotonic:Object.values(aggregateMonotonic).every(x=>x.pass)
   };
   return report
 }
@@ -126,7 +135,8 @@ async function main(){
     presetVersion:report.presetVersion,
     allMonotonic:report.allMonotonic,
     byModelPreset:report.byModelPreset,
-    monotonicFailures:report.monotonic.filter(x=>!x.pass),
+    aggregateMonotonic:report.aggregateMonotonic,
+    cellMonotonicWarnings:report.cellMonotonicWarnings,
     weakCounts:Object.fromEntries(Object.keys(PRIMARY).map(model=>[
       model,
       Object.fromEntries(Presets.list(model).map(p=>[
