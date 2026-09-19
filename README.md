@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v1.7 · G02-R1 單模型研究架構（產品驗收中）**
+**v1.8 · G02-R2 研究安全（產品驗收中）**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -163,6 +163,22 @@ G01 證明「文字能看懂」不等於「操作很順」。G02-R1 因此不再
 - 歷史案例使用上一個／下一個瀏覽，點案例時主圖與右側 Evidence 同步。
 - `SINGLE_RESEARCH_CONTEXT` 保存單模型研究成果；「準備組合研究」會建立可追溯的 `COMBINATION_HANDOFF_CONTEXT` 與第一個 `CONDITION_STACK` 條件，保留 market / timeframe / state / Evidence / parameter snapshot / fingerprint / knownThrough。
 - G02-R1 **不實作新的組合研究 UI**。它只確保單模型研究乾淨，且研究成果不會在未來進組合時重做一次。
+
+## G02-R2 研究安全
+
+G02-R2 接續兩輪使用者走查，把「先避免錯誤研究結論」放在擴充多模型之前。
+
+- 所有單模型 horizon 結果先顯示符合狀態總數、已走完、未完成與研究可靠度，再顯示百分比／中位數。
+- 共用樣本門檻：N < 5「樣本不足，只能當案例看」；5–19「探索性」；N ≥ 20「較可比較」。這些只描述樣本量，不代表預測可靠度。
+- Macro 額外把「歷史候選 → 完成模型確認 → 確認前失效／過期 → 資料尾端未結束」放在同一研究脈絡；候選不再能被誤讀成已確認底部。
+- Astrology 第一層直接說明它是可否證的外部時間假說，不是價格因果；「未來」明確定義為資料截止日之後，而不是自動等於現實今天之後。
+- Astrology 顯示事件 K 棒數、底層事件數、同一 K 多事件數，並明說重疊後續窗口使樣本不一定互相獨立。
+- Astrology 的 future projection 不能直接 seed 組合研究條件；只能用已發生 Evidence。
+- 歷史案例區分「總案例」與「目前可瀏覽數／載入上限」，避免把 UI 顯示上限誤認成研究總樣本。
+
+固定 NASDAQ / TAIEX regression fixtures 的 safety audit 也刻意保留小樣本案例：NASDAQ Macro confirmed 10-bar outcome 只有 1 個完整案例，TAIEX 只有 3 個，證明介面不能把 1/1 或 2/3 的百分比單獨放大。
+
+本輪自動檢查通過不等於使用者驗收完成。依使用者指南，Macro 與 Astrology 仍需由未參與開發的人員在沒有口頭提示下完成阻斷項驗收。
 
 ## Direction
 
