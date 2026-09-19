@@ -134,3 +134,59 @@ PR workflow `35434017722`：success。
 
 ### 下一個最值得研究的問題
 **G03-R1 Runner Observatory**：讓背景 Runner 可觀察且可教育，但 active run 不可被中途修改；任何市場／週期／preset／參數變更必須形成新的 Run ID。
+
+
+## 2026-09-19｜G03-R1 → R5｜Runner、可信度、資料矩陣、Preset 校準與盲測
+
+### R1｜Runner Observatory
+- 新增 immutable Run Manifest；同一組條件重跑也產生新的 Run ID。
+- browser 與 headless Runner 都記錄 market/timeframe/source/data cutoff/knownThrough/model+kernel+condition+semantics+reliability versions/parameter snapshot/fingerprint。
+- 現有單模型區用 details 顯示研究階段與教育說明；active run 不提供原地改參數入口。
+
+### R2｜Reliability Standard v1
+- 新增 `src/reliability-engine.js`。
+- 研究等級只用「不足／探索／可研究／較穩健」，不製造 82/100 這種假精確。
+- N_eff 第一版用 forward observation overlap clustering；raw N 不刪除，兩者並列。
+- 加入 data integrity、time coverage、lifecycle/counterexample、chronological OOS、parameter stability gates。
+- weak-reason taxonomy 固定為 DATA_SHORTAGE / NATURALLY_RARE / PARAMETER_TOO_STRICT / OVERLAP_HEAVY / OOS_SHORTAGE / LIFECYCLE_IMBALANCE / MODEL_LIMITATION。
+
+### R3｜Reliability Matrix
+- 建立 headless matrix audit 與現有單模型區的按需矩陣。
+- 第一次 audit 抓到「把每個 context transition count 都要求嚴格單調」會誤判 lifecycle 模型：較寬 Basin 可能把相鄰 Active 區段合成較少 episode。
+- 修正原則不是扭曲 Basin，而是：aggregate Evidence density 為 preset strictness hard gate；per-context lifecycle transition-count 例外保留 warning。
+- 矩陣不使用 return/up-rate/MFE/MAE 排名。
+
+### R4｜Preset Calibration
+- 正式公開名稱統一為寬鬆／平衡／嚴格；legacy preset IDs 保留以相容 saved snapshots。
+- Sweep 固定同一 old-low lookback，只調 reclaim strength。
+- Basin 固定 floor/cliff scale，只調 threshold。
+- Echo 固定 length/history/followBars，只調 similarity threshold。
+- 其餘模型保留原 worldview，只讓三層設定具有清楚寬嚴語意。
+- Blind calibration across 8 contexts：
+  - Support 415 / 332 / 222
+  - Macro 85 / 52 / 39
+  - Sweep 150 / 133 / 111
+  - Basin 68 / 57 / 52
+  - Field 246 / 140 / 25
+  - Echo 220 / 98 / 22
+  - Astrology 7977 / 6836 / 3436
+- 21 presets 的 local parameter-neighborhood stability 全部通過。
+- 上述數字是 Evidence density，不是模型績效排名。
+
+### R5｜Blind / OOS
+- 每個 context 依時間切 70% calibration / 30% validation；不 random shuffle。
+- 先 freeze parameter snapshot + fingerprint，再允許揭露 validation outcome。
+- 所有 21 presets：fingerprint freeze=true、parameter stability=true、至少一個 OOS context=true。
+- 特別保留兩個教育案例：
+  - Macro 嚴格設定 aggregate OOS complete 10、N_eff 7，代表稀有事件即使完整歷史仍可能薄。
+  - Astrology raw OOS 可達數千，但 aggregate OOS N_eff 只有約 8–11；大量事件不等於大量獨立證據。
+- Compact publication record：`research/g03-preset-validation.json`。
+
+### 憲法／保護區
+- 本次依使用者明確要求連續執行 R1–R5，但每個 R 仍以獨立 commit / gate 處理。
+- 沒有新增主 Tab / Dashboard；新資訊都放入已存在的單模型研究與參數 surface。
+- 不改 Chart Core、Evidence schema、detectedAt/no-lookahead 或 Model Engine worldview。
+- R6 Cross Reliability / R7 Strategy Adapter 暫停，先交給外部使用者測試。
+
+### 下一步
+未參與開發者進行 desktop + mobile no-hint testing；收集他們是否能自行理解 Run lock、N vs N_eff、弱點診斷、寬鬆／平衡／嚴格與 OOS reveal。技術通過不能替代真人驗收。
