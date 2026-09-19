@@ -16,5 +16,5 @@
 - **Changes**: raise BTC 1H research target from 20,000 to 30,000 bars; keep 4H at 20,000; make paginated Binance fetch resilient after partial success; expose requested/returned bars, target reached, history exhausted and fetch interruption; surface coverage reason inside M5 diagnostics.
 - **Research semantics**: no change to Evidence, condition sampling, baseline, horizons or sample gates.
 - **Pre-commit validation**: modified inline JavaScript compiles; market-data contract extended.
-- **CI**: pending branch run.
+- **CI**: GitHub Actions `Research Kernel checks` run `35416124373` — success. Market-data, kernel/model/runner, M5 causality, regression, M4/M5 UI and preset gates all passed.
 - **Completion layer**: data/technical hardening; product acceptance remains pending.
