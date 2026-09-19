@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "validatedAt": "2026-09-19",
-  "conditionEngineVersion": "1.0.0",
+  "conditionEngineVersion": "1.1.0",
   "methodology": {
     "sampling": "anchor-centric",
     "note": "Each anchor episode contributes at most one combined sample at the first bar where all added conditions are simultaneously known.",
@@ -60,6 +60,7 @@
   ],
   "regressionNotes": [
     "Initial audit exposed future Evidence being clamped to knownThrough; fixed by filtering on detectedAt/index <= knownThrough.",
-    "Initial overlap sampling allowed multiple transient-event episodes inside one anchor state; replaced with anchor-centric sampling so combo N cannot exceed baseline anchor episodes."
+    "Initial overlap sampling allowed multiple transient-event episodes inside one anchor state; replaced with anchor-centric sampling so combo N cannot exceed baseline anchor episodes.",
+    "v1.1 adds cumulative Sample Funnel/coverage diagnostics without changing anchor-centric sampling semantics."
   ]
 }

@@ -7,7 +7,7 @@ assert(s.includes('<script src="src/condition-engine.js"></script>'),'shared Con
 assert(s.includes('CE=window.StrategyLabConditionEngine'),'UI must use shared Condition Engine');
 
 for(const fn of [
-  'function conditionalExplorerHTML(','function conditionalStatsHTML(','function addCondition(',
+  'function conditionalExplorerHTML(','function conditionalStatsHTML(','function conditionBricksHTML(','function sampleFunnelHTML(','function sampleDiagnosisHTML(','function addCondition(',
   'function removeCondition(','function setConditionWindow(','function conditionGateText('
 ])assert(s.includes(fn),'missing M5 guided conditional function '+fn);
 
@@ -20,7 +20,11 @@ for(const phrase of [
   '可比較樣本',
   '差值只描述歷史分布差異',
   '目前最多同時研究 3 個條件',
-  '窗口只往事件發生後延伸'
+  '窗口只往事件發生後延伸',
+  'Sample Funnel｜每加一個條件，N 怎麼縮',
+  '這一步縮最多',
+  '調整模型',
+  '為什麼 N 會小？'
 ])assert(s.includes(phrase),'missing M5 guidance: '+phrase);
 
 assert(s.includes('CE.evaluateConditions(D,EVIDENCE_LOG,conditions'),'M5 UI must evaluate through shared Condition Engine');
@@ -35,3 +39,7 @@ const a=s.lastIndexOf('<script>'),b=s.lastIndexOf('</script>');
 assert(a>=0&&b>a,'inline app script missing');
 new Function(s.slice(a+8,b));
 console.log('m5-ui-contract.test.js: OK');
+
+assert(s.includes('condition-brick'),'M5 must render condition bricks');
+assert(s.includes('sample-funnel'),'M5 must render a visible Sample Funnel');
+assert(s.includes("@media(max-width:650px)"),'M5 mobile breakpoint missing');

@@ -9,7 +9,7 @@
   'use strict';
   if(!RK)throw new Error('Condition Engine requires Research Kernel');
 
-  const VERSION='1.0.0';
+  const VERSION='1.1.0';
   const STATE_MODELS=new Set(['support','macro','basin','field']);
   const EVENT_MODELS=new Set(['sweep','astro']);
   const OBSERVATION_MODELS=new Set(['echo']);
@@ -138,6 +138,33 @@
     }
     return out;
   }
+  function sampleFunnel(evidence,conditions,options){
+    options=options||{};
+    const list=(conditions||[]).map(normalizeCondition);
+    if(!list.length)return[];
+    const known=Math.max(0,Math.round(options.knownThrough==null?inferKnownThrough(evidence):options.knownThrough)),
+          stages=[];
+    let previous=null;
+    for(let i=0;i<list.length;i++){
+      const partial=list.slice(0,i+1),
+            episodes=episodesForConditions(evidence,partial,{knownThrough:known}),
+            count=episodes.length,
+            prev=previous==null?count:previous,
+            removed=Math.max(0,prev-count);
+      stages.push({
+        index:i,
+        addedCondition:list[i],
+        conditions:partial,
+        episodeCount:count,
+        previousEpisodeCount:prev,
+        removed,
+        retainedRate:i===0?1:(prev>0?count/prev:(count===0?1:0)),
+        gate:sampleGate(count)
+      });
+      previous=count;
+    }
+    return stages;
+  }
   function quantile(a,q){
     const b=(a||[]).filter(Number.isFinite).slice().sort((x,y)=>x-y);
     if(!b.length)return null;
@@ -217,7 +244,13 @@
         gate:sampleGate(baselineEpisodes.length),
         stats:baselineStats
       },
-      comparison:compareHorizons(stats,baselineStats,horizons)
+      comparison:compareHorizons(stats,baselineStats,horizons),
+      funnel:sampleFunnel(evidence,list,{knownThrough:known}),
+      coverage:{
+        bars:Array.isArray(data)?data.length:0,
+        firstTimestamp:Array.isArray(data)&&data.length?data[0].t:null,
+        lastTimestamp:Array.isArray(data)&&data.length?data[data.length-1].t:null
+      }
     };
   }
   function candidateConditions(evidence,options){
@@ -268,7 +301,7 @@
   return{
     VERSION,STATE_MODELS,EVENT_MODELS,OBSERVATION_MODELS,TERMINAL_STATES,
     normalizeCondition,conditionKey,semantics,buildPresence,episodesFromPresence,
-    episodesForConditions,quantile,evaluateEpisodes,sampleGate,evaluateConditions,
+    episodesForConditions,sampleFunnel,quantile,evaluateEpisodes,sampleGate,evaluateConditions,
     candidateConditions,discoverCompanions,conditionsAtIndex
   };
 });

@@ -146,7 +146,7 @@ M4 的完成標準：
 
 > 第一次打開 Strategy Lab 的人，不需要先讀說明頁，就能從介面本身知道「我現在看到什麼、我可以做什麼、按下去會得到什麼、接下來還能研究什麼」。
 
-## M5｜Conditional Research｜條件式市場推論 — ✅ Completed
+## M5｜Conditional Research｜條件式市場推論 — 🧪 Engine validated / Product acceptance
 
 M5 研究的是「多一個 causal Evidence 之後，歷史分布發生了什麼變化」，而不是把模型做成投票器。
 
@@ -170,9 +170,9 @@ M5 研究的是「多一個 causal Evidence 之後，歷史分布發生了什麼
 - 最終 real-market audit：BTC 1D 22 個 Support Candidate anchor 中 20 個與 Basin Forming 重疊；NASDAQ 1D 13 中 12 個與 Basin Landing 重疊；TAIEX 1D 15 中 15 個與 Field Forming 重疊。這些數字只驗證條件機制與樣本閘門，不代表模型優劣或未來報酬。
 - M5 不產生 BUY / SELL、模型投票、條件分數或「最佳組合」排名。
 
-M5 完成標準：
+M5 產品驗收標準：
 
-> 使用者可以從一個 Evidence 出發，逐步加入其他「當時已知」的條件，看到樣本數如何縮小、歷史分布如何改變，並隨時知道資料是否只具探索價值；整個過程保持 causal、可追溯、可在 Runner 重現。
+> 使用者可以從一個 Evidence 出發，逐步加入其他「當時已知」的條件，看到樣本數如何縮小、歷史分布如何改變，並隨時知道資料是否只具探索價值；整個過程保持 causal、可追溯、可在 Runner 重現。\n\nShared Condition Engine 已通過技術／研究驗證；但在正式桌面與手機介面完成條件磚塊、逐步 Sample Funnel、樣本不足原因與實際使用者操作驗收前，不再把 M5 稱為產品驗收完成。
 
 ## M6｜完成的小作品 — Next
 

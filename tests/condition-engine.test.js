@@ -20,7 +20,7 @@ const evidence=[
   e('support','broken',12,'transition','support:a')
 ];
 
-assert.equal(CE.VERSION,'1.0.0');
+assert.equal(CE.VERSION,'1.1.0');
 assert.equal(CE.semantics({model:'support',state:'candidate'}),'state');
 assert.equal(CE.semantics({model:'support',state:'broken'}),'transition_event');
 assert.equal(CE.semantics({model:'sweep',state:'event'}),'event');
@@ -59,6 +59,26 @@ assert(Number.isFinite(result.stats[3].returnP25));
 assert.equal(CE.sampleGate(4).level,'insufficient');
 assert.equal(CE.sampleGate(5).level,'exploratory');
 assert.equal(CE.sampleGate(20).level,'comparable');
+
+const funnelEvidence=[
+  e('support','candidate',2,'transition','support:a'),
+  e('support','validated',6,'transition','support:a'),
+  e('support','candidate',10,'transition','support:b'),
+  e('support','validated',14,'transition','support:b'),
+  e('field','active',3,'transition','field:a'),
+  e('field','broken',4,'transition','field:a'),
+  e('field','active',12,'transition','field:b'),
+  e('field','broken',13,'transition','field:b'),
+  e('sweep','event',3,'event','sweep:3')
+];
+const funnel=CE.sampleFunnel(funnelEvidence,[
+  {model:'support',state:'candidate'},
+  {model:'field',state:'active'},
+  {model:'sweep',state:'event'}
+],{knownThrough:20});
+assert.deepEqual(funnel.map(x=>x.episodeCount),[2,2,1]);
+assert.deepEqual(funnel.map(x=>x.removed),[0,0,1]);
+assert(funnel.every((x,i)=>i===0||x.episodeCount<=funnel[i-1].episodeCount),'sample funnel must be monotonic');
 
 const companions=CE.discoverCompanions(evidence,{model:'support',state:'candidate'},{knownThrough:14,maxResults:10});
 assert(companions.some(x=>x.condition.model==='field'&&x.condition.state==='active'));

@@ -162,9 +162,25 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 /* M5 Conditional Research */
 .condition-box{margin-top:12px;padding:11px;border:1px solid #365577;border-radius:11px;background:#0b1627}
 .condition-box h4{margin:0 0 4px;font-size:12px;color:#dfeaff}.condition-intro{font-size:10.5px;line-height:1.55;color:#9fb1c9}
-.condition-selected{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
-.condition-chip{display:flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid #365273;border-radius:9px;background:#101e31;font-size:10.5px;color:#d7e3f3}
-.condition-chip.anchor{border-color:#7195c1}.condition-chip button{padding:1px 5px;min-height:22px;font-size:10px}.condition-chip select{font-size:10px;min-height:26px;padding:2px 4px}
+.condition-stack{display:grid;gap:0;margin-top:10px}
+.condition-link{display:flex;align-items:center;justify-content:center;gap:6px;min-height:28px;color:#8fa7c5;font-size:9.5px}
+.condition-link span{padding:2px 7px;border:1px solid #395574;border-radius:999px;background:#0e1b2d;color:#c9d9ed;font-weight:800;letter-spacing:.3px}
+.condition-brick{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px;border:1px solid #365273;border-radius:11px;background:#101e31;color:#d7e3f3}
+.condition-brick.anchor{border-color:#7195c1;background:#112238}.condition-brick.bottleneck{border-color:#8a6540}
+.condition-brick-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.condition-step{font-size:9px;color:#8fa8c7;text-transform:uppercase;letter-spacing:.45px}
+.condition-brick-title{font-size:11px;font-weight:800;color:#eef5ff}.condition-mode{font-size:9px;color:#8fa7c4}
+.condition-brick-meta{margin-top:5px;color:#9eb1ca;font-size:9.5px;line-height:1.45}.condition-brick-meta strong{color:#e7eef9}
+.condition-brick-actions{display:flex;align-items:flex-start;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.condition-brick button{padding:3px 7px;min-height:30px;font-size:9.5px}.condition-brick select{font-size:10px;min-height:30px;padding:3px 5px}
+.condition-bottleneck{display:inline-block;margin-left:4px;color:#e8c58f;font-size:9px;font-weight:750}
+.sample-funnel{margin-top:9px;border:1px solid #2d4665;border-radius:10px;background:#0d1929;overflow:hidden}
+.sample-funnel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:8px 9px;border-bottom:1px solid #263c59}
+.sample-funnel-head b{font-size:10.5px}.sample-funnel-head span{color:#8fa4c0;font-size:9px;text-align:right}
+.sample-funnel-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 9px;border-top:1px solid #1e314b;font-size:9.5px}
+.sample-funnel-row:first-of-type{border-top:0}.sample-funnel-row b{color:#dce8f7}.sample-funnel-row small{display:block;color:#849ab8;margin-top:1px}
+.sample-funnel-row .n{font-variant-numeric:tabular-nums;color:#eef5ff;font-weight:800;white-space:nowrap}.sample-funnel-row.bottleneck{background:#211b14}
+.sample-diagnosis{margin-top:8px;padding:8px 9px;border:1px dashed #36506f;border-radius:8px;background:#0d1928;color:#9eb1ca;font-size:9.8px;line-height:1.55}
+.sample-diagnosis b{color:#dce7f5}
 .sample-gate{margin-top:9px;padding:8px 9px;border-radius:8px;font-size:10.5px;line-height:1.5}
 .sample-gate.insufficient{background:#2a191d;border:1px solid #693942;color:#e5b2b8}
 .sample-gate.exploratory{background:#2b2515;border:1px solid #6a5a31;color:#e6d29b}
@@ -255,6 +271,9 @@ td:first-child,th:first-child{text-align:left}
   .param-grid input,.param-grid select{min-height:44px;font-size:16px}
   .preset-grid{grid-template-columns:1fr}
   .condition-grid{grid-template-columns:1fr}
+  .condition-brick{grid-template-columns:1fr}
+  .condition-brick-actions{justify-content:flex-start}
+  .sample-funnel-row{grid-template-columns:1fr auto}
   .preset-choice{min-height:0}
   .model-next button,.guide-btn{min-height:44px}
 }
@@ -1003,23 +1022,68 @@ function researchConditions(r){
 function enabledModelKeys(){
   return Object.entries(MODEL_UI).filter(([k,ui])=>q(ui.check)&&q(ui.check).checked).map(([k])=>k)
 }
-function conditionChipsHTML(r){
-  return researchConditions(r).map((c,i)=>{
-    let mode=CE.semantics(c),window='';
+function conditionModeLabel(c){
+  let mode=CE.semantics(c);
+  if(mode==='state')return '狀態持續';
+  if(mode==='event')return '事件';
+  if(mode==='transition_event')return '狀態轉折事件';
+  if(mode==='observation')return '當根觀察';
+  return mode
+}
+function conditionBricksHTML(r,funnel){
+  let conditions=researchConditions(r),worst=Math.max(0,...funnel.slice(1).map(x=>x.removed||0));
+  return '<div class="condition-stack">'+conditions.map((c,i)=>{
+    let mode=CE.semantics(c),stage=funnel[i]||{},prev=stage.previousEpisodeCount??stage.episodeCount??0,
+        n=stage.episodeCount??0,removed=stage.removed||0,
+        retained=i===0?100:(prev?Math.round(n/prev*100):100),
+        bottleneck=i>0&&removed>0&&removed===worst,window='';
     if(i>0&&(mode==='event'||mode==='transition_event')){
       window='<select onchange="setConditionWindow('+i+',this.value)" aria-label="事件窗口">'+
         [[0,'當根'],[3,'最近 3 根內'],[5,'最近 5 根內']].map(x=>'<option value="'+x[0]+'" '+(Number(c.windowBars||0)===x[0]?'selected':'')+'>'+x[1]+'</option>').join('')+
         '</select>'
     }
-    return '<div class="condition-chip '+(i===0?'anchor':'')+'"><span>'+(i===0?'基準 · ':'')+esc(conditionLabel(c))+'</span>'+window+
-      (i===0?'':'<button onclick="removeCondition('+i+')" aria-label="移除條件">×</button>')+'</div>'
-  }).join('')
+    let meta=i===0?'基準樣本 <strong>N '+n+'</strong>':
+      '加入後 <strong>N '+prev+' → '+n+'</strong> · 減少 '+removed+' · 保留 '+retained+'%'+(bottleneck?'<span class="condition-bottleneck">這一步縮最多</span>':'');
+    return (i?'<div class="condition-link"><span>AND</span><small>同時成立</small></div>':'')+
+      '<div class="condition-brick '+(i===0?'anchor ':'')+(bottleneck?'bottleneck':'')+'">'+
+        '<div><div class="condition-brick-head"><span class="condition-step">'+(i===0?'基準條件':'條件 '+(i+1))+'</span>'+
+        '<span class="condition-brick-title">'+esc(conditionLabel(c))+'</span><span class="condition-mode">'+esc(conditionModeLabel(c))+'</span></div>'+
+        '<div class="condition-brick-meta">'+meta+'</div></div>'+
+        '<div class="condition-brick-actions">'+window+
+          '<button onclick="openParams(\''+c.model+'\')">調整模型</button>'+
+          (i===0?'':'<button onclick="removeCondition('+i+')" aria-label="移除條件">移除</button>')+
+        '</div></div>'
+  }).join('')+'</div>'
+}
+function sampleFunnelHTML(x){
+  let stages=x.funnel||[],worst=Math.max(0,...stages.slice(1).map(s=>s.removed||0));
+  return '<div class="sample-funnel"><div class="sample-funnel-head"><b>Sample Funnel｜每加一個條件，N 怎麼縮</b><span>AND 疊加 · 每個 anchor episode 最多算一次</span></div>'+
+    stages.map((s,i)=>{
+      let prev=s.previousEpisodeCount??s.episodeCount,n=s.episodeCount||0,removed=s.removed||0,
+          retained=i===0?100:(prev?Math.round(n/prev*100):100),bottleneck=i>0&&removed>0&&removed===worst;
+      return '<div class="sample-funnel-row '+(bottleneck?'bottleneck':'')+'"><div><b>'+(i===0?'基準｜':'＋ ')+esc(conditionLabel(s.addedCondition))+'</b>'+
+        '<small>'+(i===0?'起始 anchor episodes':'這一步減少 '+removed+' · 保留 '+retained+'%')+(bottleneck?' · 主要縮減來源':'')+'</small></div>'+
+        '<div class="n">N '+n+'</div></div>'
+    }).join('')+'</div>'
+}
+function sampleDiagnosisHTML(x){
+  let stages=x.funnel||[],baseline=stages.length?stages[0].episodeCount:x.baseline.episodeCount,notes=[],
+      worst=stages.slice(1).sort((a,b)=>(b.removed||0)-(a.removed||0))[0];
+  if(x.episodeCount<20){
+    if(baseline<20)notes.push('基準條件在目前這段歷史中本來就只有 N '+baseline+'；樣本少不是後面條件才造成。');
+    else if(worst&&worst.removed>0)notes.push('主要樣本縮減來自「'+conditionLabel(worst.addedCondition)+'」：N '+worst.previousEpisodeCount+' → '+worst.episodeCount+'。');
+    else notes.push('目前條件樣本低於 20；請把結果視為探索性案例，不當成穩定分布。')
+  }
+  let incomplete=x.horizons.map(h=>[h,x.stats[h]&&x.stats[h].incomplete||0]).filter(v=>v[1]>0);
+  if(incomplete.length)notes.push('未完成未來觀察：'+incomplete.map(v=>v[0]+' 根 K 有 '+v[1]+' 個').join('、')+'。這些 episode 仍存在，只是尚未走完 horizon。');
+  if(x.coverage&&x.coverage.bars)notes.push('資料覆蓋：'+x.coverage.bars.toLocaleString()+' 根 K'+(D.length?(' · '+date(D[0].t)+' → '+date(D[D.length-1].t)):'')+'。');
+  return notes.length?'<div class="sample-diagnosis"><b>為什麼 N 會小？</b><br>'+notes.map(esc).join('<br>')+'</div>':''
 }
 function conditionalStatsHTML(x){
   let cards=x.horizons.map(h=>{
     let a=x.stats[h],b=x.baseline.stats[h],d=x.comparison[h];
     return '<div class="condition-stat"><span class="hz">'+h+' 根 K · 組合 N '+a.n+' / 單一 N '+b.n+'</span>'+
-      '<b>'+pct(a.medianReturn)+'</b><small>組合中位結果 · 單一條件 '+pct(b.medianReturn)+
+      '<b>'+pct(a.medianReturn)+'</b><small>組合中位結果 · 單一條件 '+pct(b.medianReturn)+(a.incomplete?' · 組合未走完 '+a.incomplete:'')+
       '<br>差值 '+pct(d.deltaMedianReturn)+' · IQR '+pct(a.returnP25)+' ～ '+pct(a.returnP75)+
       '<br>MFE '+pct(a.medianMFE)+' · MAE '+pct(a.medianMAE)+'</small></div>'
   }).join('');
@@ -1034,9 +1098,11 @@ function conditionalExplorerHTML(r){
   let conditions=researchConditions(r),enabled=enabledModelKeys(),
       x=CE.evaluateConditions(D,EVIDENCE_LOG,conditions,{knownThrough:D.length-1}),
       html='<div class="condition-box"><h4>再加一個條件，歷史分布有沒有變？</h4>'+
-        '<div class="condition-intro">這裡不讓模型投票。每次只問：在基準條件之外，再加一個當時真的已知的 Evidence，歷史結果分布怎麼改變？連續重疊的一整段只算 1 個 episode。</div>'+
-        '<div class="condition-selected">'+conditionChipsHTML(r)+'</div>'+
-        '<div class="sample-gate '+x.gate.level+'">'+esc(conditionGateText(x.gate))+'</div>';
+        '<div class="condition-intro">這裡不讓模型投票。條件磚塊由上往下用 AND 疊加：每加一顆，就立刻看到 N 從多少縮到多少。每顆磚都能回去調整該模型；連續重疊的一整段只算 1 個 episode。</div>'+
+        conditionBricksHTML(r,x.funnel||[])+
+        sampleFunnelHTML(x)+
+        '<div class="sample-gate '+x.gate.level+'">'+esc(conditionGateText(x.gate))+'</div>'+
+        sampleDiagnosisHTML(x);
   if(conditions.length>1){
     html+='<div class="metric-explain"><b>比較方式：</b>「單一」永遠是第一個基準條件；「組合」是上面所有條件同時成立的 episode。差值只描述歷史分布差異，不代表多一個條件就比較好。</div>'+
       conditionalStatsHTML(x)
@@ -1047,7 +1113,7 @@ function conditionalExplorerHTML(r){
     let companions=CE.discoverCompanions(EVIDENCE_LOG,conditions,{knownThrough:D.length-1,maxResults:6,minEpisodes:1});
     if(companions.length){
       html+='<div class="research-section"><h4>歷史上還有哪些 Evidence 曾一起存在？</h4><div class="companion-list">'+
-        companions.map(c=>'<button class="companion-btn" onclick="addCondition(\''+c.condition.model+'\',\''+c.condition.state+'\')"><span>＋ '+esc(conditionLabel(c.condition))+'</span><small>'+c.episodeCount+' episodes · '+esc(c.gate.label)+'</small></button>').join('')+
+        companions.map(c=>{let drop=Math.max(0,x.episodeCount-c.episodeCount);return '<button class="companion-btn" onclick="addCondition(\''+c.condition.model+'\',\''+c.condition.state+'\')"><span>＋ '+esc(conditionLabel(c.condition))+'</span><small>N '+x.episodeCount+' → '+c.episodeCount+' · 減少 '+drop+' · '+esc(c.gate.label)+'</small></button>'}).join('')+
         '</div></div>'
     }else if(enabled.length<2){
       html+='<div class="condition-empty">目前只有 '+enabled.length+' 個模型在產生 Evidence，所以還沒有跨模型條件可以比較。先選另一個模型的研究方式：</div>'+disabledModelButtons()
