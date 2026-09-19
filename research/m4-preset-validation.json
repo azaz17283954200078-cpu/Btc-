@@ -1,0 +1,2284 @@
+{
+  "schemaVersion": 1,
+  "presetVersion": "0.6.0-candidate",
+  "contexts": [
+    {
+      "market": "BTC",
+      "timeframe": "1d",
+      "bars": 1800
+    },
+    {
+      "market": "BTC",
+      "timeframe": "1w",
+      "bars": 700
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1d",
+      "bars": 1800
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1d",
+      "bars": 1800
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1w",
+      "bars": 700
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1w",
+      "bars": 700
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1m",
+      "bars": 300
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1m",
+      "bars": 300
+    }
+  ],
+  "models": {
+    "support": {
+      "primaryState": "potential",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          415,
+          332,
+          222
+        ],
+        "pass": true
+      },
+      "adequate": true,
+      "byPreset": {
+        "sensitive": {
+          "title": "較早看見",
+          "intent": "縮短低點比較範圍，讓較小的支撐結構也能進入研究。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 73,
+              "n10": 73,
+              "incomplete10": 0,
+              "median10": 0.007114598224674973,
+              "errors": 0,
+              "fingerprint": "fnv1a-ebed71cc"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 31,
+              "n10": 31,
+              "incomplete10": 0,
+              "median10": 0.08617424242424243,
+              "errors": 0,
+              "fingerprint": "fnv1a-ebed71cc"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 96,
+              "n10": 96,
+              "incomplete10": 0,
+              "median10": 0.017832475548846594,
+              "errors": 0,
+              "fingerprint": "fnv1a-ebed71cc"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 112,
+              "n10": 111,
+              "incomplete10": 1,
+              "median10": 0.010524692508787847,
+              "errors": 0,
+              "fingerprint": "fnv1a-ebed71cc"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 33,
+              "n10": 33,
+              "incomplete10": 0,
+              "median10": 0.041581134603439596,
+              "errors": 0,
+              "fingerprint": "fnv1a-ebed71cc"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 38,
+              "n10": 37,
+              "incomplete10": 1,
+              "median10": 0.03024268133005248,
+              "errors": 0,
+              "fingerprint": "fnv1a-ebed71cc"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 16,
+              "n10": 15,
+              "incomplete10": 1,
+              "median10": 0.2063330500643259,
+              "errors": 0,
+              "fingerprint": "fnv1a-ebed71cc"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 16,
+              "n10": 16,
+              "incomplete10": 0,
+              "median10": 0.04958519476935663,
+              "errors": 0,
+              "fingerprint": "fnv1a-ebed71cc"
+            }
+          ],
+          "aggregate": {
+            "count": 415,
+            "n10": 412,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "balanced": {
+          "title": "平衡觀察",
+          "intent": "保留目前模型的預設尺度，適合作為第一個研究起點。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 63,
+              "n10": 62,
+              "incomplete10": 1,
+              "median10": 0.003761037620073515,
+              "errors": 0,
+              "fingerprint": "fnv1a-b7bb88a4"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 25,
+              "n10": 25,
+              "incomplete10": 0,
+              "median10": 0.06902899217671421,
+              "errors": 0,
+              "fingerprint": "fnv1a-b7bb88a4"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 79,
+              "n10": 79,
+              "incomplete10": 0,
+              "median10": 0.014253829461087886,
+              "errors": 0,
+              "fingerprint": "fnv1a-b7bb88a4"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 86,
+              "n10": 85,
+              "incomplete10": 1,
+              "median10": 0.013699129948989697,
+              "errors": 0,
+              "fingerprint": "fnv1a-b7bb88a4"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 28,
+              "n10": 26,
+              "incomplete10": 2,
+              "median10": 0.03948711225861401,
+              "errors": 0,
+              "fingerprint": "fnv1a-b7bb88a4"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 27,
+              "n10": 26,
+              "incomplete10": 1,
+              "median10": 0.0350251091142314,
+              "errors": 0,
+              "fingerprint": "fnv1a-b7bb88a4"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 11,
+              "n10": 10,
+              "incomplete10": 1,
+              "median10": 0.10489413340494791,
+              "errors": 0,
+              "fingerprint": "fnv1a-b7bb88a4"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 13,
+              "n10": 13,
+              "incomplete10": 0,
+              "median10": 0.1567931753320393,
+              "errors": 0,
+              "fingerprint": "fnv1a-b7bb88a4"
+            }
+          ],
+          "aggregate": {
+            "count": 332,
+            "n10": 326,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "selective": {
+          "title": "只看明顯支撐",
+          "intent": "要求低點相對更長的過去區間成立，減少短促支撐候選。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 44,
+              "n10": 44,
+              "incomplete10": 0,
+              "median10": 0.004101525000557604,
+              "errors": 0,
+              "fingerprint": "fnv1a-41c5e218"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 14,
+              "n10": 14,
+              "incomplete10": 0,
+              "median10": 0.014801275826975324,
+              "errors": 0,
+              "fingerprint": "fnv1a-41c5e218"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 53,
+              "n10": 53,
+              "incomplete10": 0,
+              "median10": 0.012036113054585185,
+              "errors": 0,
+              "fingerprint": "fnv1a-41c5e218"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 56,
+              "n10": 56,
+              "incomplete10": 0,
+              "median10": 0.0226256931717137,
+              "errors": 0,
+              "fingerprint": "fnv1a-41c5e218"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 20,
+              "n10": 19,
+              "incomplete10": 1,
+              "median10": 0.06424405813349843,
+              "errors": 0,
+              "fingerprint": "fnv1a-41c5e218"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 20,
+              "n10": 19,
+              "incomplete10": 1,
+              "median10": 0.012650406634056477,
+              "errors": 0,
+              "fingerprint": "fnv1a-41c5e218"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 9,
+              "n10": 9,
+              "incomplete10": 0,
+              "median10": 0.24530595993001247,
+              "errors": 0,
+              "fingerprint": "fnv1a-41c5e218"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 6,
+              "n10": 6,
+              "incomplete10": 0,
+              "median10": 0.032107920791741074,
+              "errors": 0,
+              "fingerprint": "fnv1a-41c5e218"
+            }
+          ],
+          "aggregate": {
+            "count": 222,
+            "n10": 220,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        }
+      }
+    },
+    "macro": {
+      "primaryState": "candidate",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          85,
+          52,
+          39
+        ],
+        "pass": true
+      },
+      "adequate": true,
+      "byPreset": {
+        "sensitive": {
+          "title": "較早觀察",
+          "intent": "降低回撤與波動門檻，讓更多深跌後的候選進入觀察。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 25,
+              "n10": 25,
+              "incomplete10": 0,
+              "median10": 0.029737615725505595,
+              "errors": 0,
+              "fingerprint": "fnv1a-f1bc5945"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 19,
+              "n10": 19,
+              "incomplete10": 0,
+              "median10": 0.05912697701911185,
+              "errors": 0,
+              "fingerprint": "fnv1a-f1bc5945"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 13,
+              "n10": 13,
+              "incomplete10": 0,
+              "median10": -0.010382094788118579,
+              "errors": 0,
+              "fingerprint": "fnv1a-f1bc5945"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 16,
+              "n10": 16,
+              "incomplete10": 0,
+              "median10": 0.020307356592067283,
+              "errors": 0,
+              "fingerprint": "fnv1a-f1bc5945"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": 0.1244042284384097,
+              "errors": 0,
+              "fingerprint": "fnv1a-f1bc5945"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.1401925928016835,
+              "errors": 0,
+              "fingerprint": "fnv1a-f1bc5945"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": 0.01163115435405837,
+              "errors": 0,
+              "fingerprint": "fnv1a-f1bc5945"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 4,
+              "n10": 4,
+              "incomplete10": 0,
+              "median10": 0.1973194086142872,
+              "errors": 0,
+              "fingerprint": "fnv1a-f1bc5945"
+            }
+          ],
+          "aggregate": {
+            "count": 85,
+            "n10": 85,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "balanced": {
+          "title": "平衡確認",
+          "intent": "使用目前預設的回撤、波動與確認期限。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 16,
+              "n10": 16,
+              "incomplete10": 0,
+              "median10": 0.006541443920139889,
+              "errors": 0,
+              "fingerprint": "fnv1a-1d1aa9d4"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 15,
+              "n10": 15,
+              "incomplete10": 0,
+              "median10": 0.019926748870711775,
+              "errors": 0,
+              "fingerprint": "fnv1a-1d1aa9d4"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 4,
+              "n10": 4,
+              "incomplete10": 0,
+              "median10": 0.005296481539960485,
+              "errors": 0,
+              "fingerprint": "fnv1a-1d1aa9d4"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 9,
+              "n10": 9,
+              "incomplete10": 0,
+              "median10": 0.018065080504732878,
+              "errors": 0,
+              "fingerprint": "fnv1a-1d1aa9d4"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.25192102558550333,
+              "errors": 0,
+              "fingerprint": "fnv1a-1d1aa9d4"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": 0.1028527688378813,
+              "errors": 0,
+              "fingerprint": "fnv1a-1d1aa9d4"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.1380120865469161,
+              "errors": 0,
+              "fingerprint": "fnv1a-1d1aa9d4"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": 0.28454292674569004,
+              "errors": 0,
+              "fingerprint": "fnv1a-1d1aa9d4"
+            }
+          ],
+          "aggregate": {
+            "count": 52,
+            "n10": 52,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "selective": {
+          "title": "嚴格確認",
+          "intent": "要求更深回撤與更明顯的波動擴張，只留下較少候選。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 12,
+              "n10": 12,
+              "incomplete10": 0,
+              "median10": 0.04928214689042676,
+              "errors": 0,
+              "fingerprint": "fnv1a-f8e7a091"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 14,
+              "n10": 14,
+              "incomplete10": 0,
+              "median10": 0.035161502005322975,
+              "errors": 0,
+              "fingerprint": "fnv1a-f8e7a091"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": -0.04031632595840684,
+              "errors": 0,
+              "fingerprint": "fnv1a-f8e7a091"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 5,
+              "n10": 5,
+              "incomplete10": 0,
+              "median10": 0.05346318964899632,
+              "errors": 0,
+              "fingerprint": "fnv1a-f8e7a091"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": 0.1244042284384097,
+              "errors": 0,
+              "fingerprint": "fnv1a-f8e7a091"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-f8e7a091"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.22234784461461377,
+              "errors": 0,
+              "fingerprint": "fnv1a-f8e7a091"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.3194801046709457,
+              "errors": 0,
+              "fingerprint": "fnv1a-f8e7a091"
+            }
+          ],
+          "aggregate": {
+            "count": 39,
+            "n10": 39,
+            "errors": 0,
+            "contextsWithSamples": 7
+          }
+        }
+      }
+    },
+    "sweep": {
+      "primaryState": "event",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          212,
+          133,
+          82
+        ],
+        "pass": true
+      },
+      "adequate": true,
+      "byPreset": {
+        "sensitive": {
+          "title": "小幅掃低也看",
+          "intent": "縮短舊低點回看範圍，並降低收盤位置要求，事件會比較多。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 62,
+              "n10": 62,
+              "incomplete10": 0,
+              "median10": -0.005947152497199348,
+              "errors": 0,
+              "fingerprint": "fnv1a-7dd7d2f5"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 19,
+              "n10": 19,
+              "incomplete10": 0,
+              "median10": 0.1751553852703278,
+              "errors": 0,
+              "fingerprint": "fnv1a-7dd7d2f5"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 51,
+              "n10": 51,
+              "incomplete10": 0,
+              "median10": 0.01347708746571441,
+              "errors": 0,
+              "fingerprint": "fnv1a-7dd7d2f5"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 25,
+              "n10": 25,
+              "incomplete10": 0,
+              "median10": 0.009106545438307911,
+              "errors": 0,
+              "fingerprint": "fnv1a-7dd7d2f5"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 19,
+              "n10": 18,
+              "incomplete10": 1,
+              "median10": 0.07213496007037545,
+              "errors": 0,
+              "fingerprint": "fnv1a-7dd7d2f5"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 16,
+              "n10": 16,
+              "incomplete10": 0,
+              "median10": 0.05336880171711844,
+              "errors": 0,
+              "fingerprint": "fnv1a-7dd7d2f5"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 12,
+              "n10": 12,
+              "incomplete10": 0,
+              "median10": 0.14018126540661124,
+              "errors": 0,
+              "fingerprint": "fnv1a-7dd7d2f5"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 8,
+              "n10": 8,
+              "incomplete10": 0,
+              "median10": 0.047958133469463315,
+              "errors": 0,
+              "fingerprint": "fnv1a-7dd7d2f5"
+            }
+          ],
+          "aggregate": {
+            "count": 212,
+            "n10": 211,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "balanced": {
+          "title": "典型掃單",
+          "intent": "使用目前的回看尺度與 55% 收盤位置門檻。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 40,
+              "n10": 40,
+              "incomplete10": 0,
+              "median10": -0.008193933904623751,
+              "errors": 0,
+              "fingerprint": "fnv1a-ca1136fa"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 13,
+              "n10": 13,
+              "incomplete10": 0,
+              "median10": 0.20669676987767582,
+              "errors": 0,
+              "fingerprint": "fnv1a-ca1136fa"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 32,
+              "n10": 32,
+              "incomplete10": 0,
+              "median10": 0.01937096719793263,
+              "errors": 0,
+              "fingerprint": "fnv1a-ca1136fa"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 18,
+              "n10": 18,
+              "incomplete10": 0,
+              "median10": 0.01832091059997787,
+              "errors": 0,
+              "fingerprint": "fnv1a-ca1136fa"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 13,
+              "n10": 13,
+              "incomplete10": 0,
+              "median10": 0.07383925723908735,
+              "errors": 0,
+              "fingerprint": "fnv1a-ca1136fa"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 7,
+              "n10": 7,
+              "incomplete10": 0,
+              "median10": 0.06089174799042629,
+              "errors": 0,
+              "fingerprint": "fnv1a-ca1136fa"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 6,
+              "n10": 6,
+              "incomplete10": 0,
+              "median10": 0.22916098584333866,
+              "errors": 0,
+              "fingerprint": "fnv1a-ca1136fa"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 4,
+              "n10": 4,
+              "incomplete10": 0,
+              "median10": 0.13102602846551592,
+              "errors": 0,
+              "fingerprint": "fnv1a-ca1136fa"
+            }
+          ],
+          "aggregate": {
+            "count": 133,
+            "n10": 133,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "selective": {
+          "title": "只看明顯假跌破",
+          "intent": "回看更久的低點，並要求 K 棒收回到更高位置。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 25,
+              "n10": 25,
+              "incomplete10": 0,
+              "median10": 0.0016784155756965902,
+              "errors": 0,
+              "fingerprint": "fnv1a-a3e72094"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 5,
+              "n10": 5,
+              "incomplete10": 0,
+              "median10": 0.23109403076663715,
+              "errors": 0,
+              "fingerprint": "fnv1a-a3e72094"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 19,
+              "n10": 19,
+              "incomplete10": 0,
+              "median10": -0.009574611334508543,
+              "errors": 0,
+              "fingerprint": "fnv1a-a3e72094"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 14,
+              "n10": 14,
+              "incomplete10": 0,
+              "median10": 0.014604397709270467,
+              "errors": 0,
+              "fingerprint": "fnv1a-a3e72094"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 9,
+              "n10": 9,
+              "incomplete10": 0,
+              "median10": 0.12508430603057574,
+              "errors": 0,
+              "fingerprint": "fnv1a-a3e72094"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 5,
+              "n10": 5,
+              "incomplete10": 0,
+              "median10": 0.036375269390993115,
+              "errors": 0,
+              "fingerprint": "fnv1a-a3e72094"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.3410368568673019,
+              "errors": 0,
+              "fingerprint": "fnv1a-a3e72094"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": 0.10525888159899255,
+              "errors": 0,
+              "fingerprint": "fnv1a-a3e72094"
+            }
+          ],
+          "aggregate": {
+            "count": 82,
+            "n10": 82,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        }
+      }
+    },
+    "basin": {
+      "primaryState": "active",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          109,
+          57,
+          43
+        ],
+        "pass": true
+      },
+      "adequate": true,
+      "byPreset": {
+        "sensitive": {
+          "title": "短期整理",
+          "intent": "較短的平盤也能被研究，門檻較寬鬆，候選通常較多。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 46,
+              "n10": 46,
+              "incomplete10": 0,
+              "median10": 0.0010137919485749824,
+              "errors": 0,
+              "fingerprint": "fnv1a-85c6479b"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 20,
+              "n10": 20,
+              "incomplete10": 0,
+              "median10": 0.041814131484979256,
+              "errors": 0,
+              "fingerprint": "fnv1a-85c6479b"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 17,
+              "n10": 17,
+              "incomplete10": 0,
+              "median10": 0.03589189276090643,
+              "errors": 0,
+              "fingerprint": "fnv1a-85c6479b"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 11,
+              "n10": 11,
+              "incomplete10": 0,
+              "median10": 0.030765501298244402,
+              "errors": 0,
+              "fingerprint": "fnv1a-85c6479b"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 4,
+              "n10": 4,
+              "incomplete10": 0,
+              "median10": 0.05895094869856332,
+              "errors": 0,
+              "fingerprint": "fnv1a-85c6479b"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 5,
+              "n10": 5,
+              "incomplete10": 0,
+              "median10": 0.08382368253680306,
+              "errors": 0,
+              "fingerprint": "fnv1a-85c6479b"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.22803677964564395,
+              "errors": 0,
+              "fingerprint": "fnv1a-85c6479b"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 4,
+              "n10": 4,
+              "incomplete10": 0,
+              "median10": 0.18754968324527732,
+              "errors": 0,
+              "fingerprint": "fnv1a-85c6479b"
+            }
+          ],
+          "aggregate": {
+            "count": 109,
+            "n10": 109,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "balanced": {
+          "title": "平衡盆地",
+          "intent": "兼顧短期與較完整的下山後走平結構。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 25,
+              "n10": 25,
+              "incomplete10": 0,
+              "median10": 0.0028655034665305834,
+              "errors": 0,
+              "fingerprint": "fnv1a-f591f60a"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 17,
+              "n10": 17,
+              "incomplete10": 0,
+              "median10": -0.16921184666645384,
+              "errors": 0,
+              "fingerprint": "fnv1a-f591f60a"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": 0.03452586662692192,
+              "errors": 0,
+              "fingerprint": "fnv1a-f591f60a"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 5,
+              "n10": 5,
+              "incomplete10": 0,
+              "median10": 0.045658732002380686,
+              "errors": 0,
+              "fingerprint": "fnv1a-f591f60a"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.09547268865156633,
+              "errors": 0,
+              "fingerprint": "fnv1a-f591f60a"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": 0.07317775920733016,
+              "errors": 0,
+              "fingerprint": "fnv1a-f591f60a"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": 0.1832326636917858,
+              "errors": 0,
+              "fingerprint": "fnv1a-f591f60a"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": 0.25566950549915846,
+              "errors": 0,
+              "fingerprint": "fnv1a-f591f60a"
+            }
+          ],
+          "aggregate": {
+            "count": 57,
+            "n10": 57,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "selective": {
+          "title": "大型盆地",
+          "intent": "忽略較短整理，要求更長的平盤尺度；分數門檻維持可研究範圍。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 22,
+              "n10": 22,
+              "incomplete10": 0,
+              "median10": 0.009514675162258679,
+              "errors": 0,
+              "fingerprint": "fnv1a-734670e6"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 14,
+              "n10": 14,
+              "incomplete10": 0,
+              "median10": -0.06889968124805934,
+              "errors": 0,
+              "fingerprint": "fnv1a-734670e6"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 4,
+              "n10": 4,
+              "incomplete10": 0,
+              "median10": 0.05594851425847491,
+              "errors": 0,
+              "fingerprint": "fnv1a-734670e6"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.04516315511611657,
+              "errors": 0,
+              "fingerprint": "fnv1a-734670e6"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": 0.11346592297593383,
+              "errors": 0,
+              "fingerprint": "fnv1a-734670e6"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-734670e6"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-734670e6"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-734670e6"
+            }
+          ],
+          "aggregate": {
+            "count": 43,
+            "n10": 43,
+            "errors": 0,
+            "contextsWithSamples": 5
+          }
+        }
+      }
+    },
+    "field": {
+      "primaryState": "active",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          246,
+          140,
+          25
+        ],
+        "pass": true
+      },
+      "adequate": true,
+      "byPreset": {
+        "sensitive": {
+          "title": "容易成形",
+          "intent": "允許較少震盪回合與較寬幾何變化，較早產生場域。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 71,
+              "n10": 70,
+              "incomplete10": 1,
+              "median10": 0.004384852961392682,
+              "errors": 0,
+              "fingerprint": "fnv1a-789dc342"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 20,
+              "n10": 19,
+              "incomplete10": 1,
+              "median10": -0.008973532435399223,
+              "errors": 0,
+              "fingerprint": "fnv1a-789dc342"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 55,
+              "n10": 54,
+              "incomplete10": 1,
+              "median10": 0.009210595572253788,
+              "errors": 0,
+              "fingerprint": "fnv1a-789dc342"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 39,
+              "n10": 39,
+              "incomplete10": 0,
+              "median10": 0.008454736798883422,
+              "errors": 0,
+              "fingerprint": "fnv1a-789dc342"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 22,
+              "n10": 22,
+              "incomplete10": 0,
+              "median10": 0.027915960732424305,
+              "errors": 0,
+              "fingerprint": "fnv1a-789dc342"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 26,
+              "n10": 26,
+              "incomplete10": 0,
+              "median10": 0.017289358036498226,
+              "errors": 0,
+              "fingerprint": "fnv1a-789dc342"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 8,
+              "n10": 8,
+              "incomplete10": 0,
+              "median10": 0.0748817896567,
+              "errors": 0,
+              "fingerprint": "fnv1a-789dc342"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 5,
+              "n10": 5,
+              "incomplete10": 0,
+              "median10": -0.022589748128459153,
+              "errors": 0,
+              "fingerprint": "fnv1a-789dc342"
+            }
+          ],
+          "aggregate": {
+            "count": 246,
+            "n10": 243,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "balanced": {
+          "title": "平衡場域",
+          "intent": "使用目前預設的震盪、貼合與幾何限制。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 41,
+              "n10": 40,
+              "incomplete10": 1,
+              "median10": 0.017934880043391388,
+              "errors": 0,
+              "fingerprint": "fnv1a-5f19f962"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 10,
+              "n10": 9,
+              "incomplete10": 1,
+              "median10": 0.05506936641939153,
+              "errors": 0,
+              "fingerprint": "fnv1a-5f19f962"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 39,
+              "n10": 38,
+              "incomplete10": 1,
+              "median10": 0.0031191784713786586,
+              "errors": 0,
+              "fingerprint": "fnv1a-5f19f962"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 26,
+              "n10": 26,
+              "incomplete10": 0,
+              "median10": 0.013283476423850193,
+              "errors": 0,
+              "fingerprint": "fnv1a-5f19f962"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 6,
+              "n10": 6,
+              "incomplete10": 0,
+              "median10": 0.04476721803452044,
+              "errors": 0,
+              "fingerprint": "fnv1a-5f19f962"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 14,
+              "n10": 14,
+              "incomplete10": 0,
+              "median10": 0.013680055005046876,
+              "errors": 0,
+              "fingerprint": "fnv1a-5f19f962"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.08756602599638746,
+              "errors": 0,
+              "fingerprint": "fnv1a-5f19f962"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": -0.049577772403439524,
+              "errors": 0,
+              "fingerprint": "fnv1a-5f19f962"
+            }
+          ],
+          "aggregate": {
+            "count": 140,
+            "n10": 137,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "selective": {
+          "title": "高純度震盪",
+          "intent": "要求更多來回、更高貼合、較小幾何變形，場域會更少。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 10,
+              "n10": 10,
+              "incomplete10": 0,
+              "median10": 0.0376742780914755,
+              "errors": 0,
+              "fingerprint": "fnv1a-b33f559b"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": 0.05506936641939153,
+              "errors": 0,
+              "fingerprint": "fnv1a-b33f559b"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 6,
+              "n10": 5,
+              "incomplete10": 1,
+              "median10": 0.008967597158498153,
+              "errors": 0,
+              "fingerprint": "fnv1a-b33f559b"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 5,
+              "n10": 5,
+              "incomplete10": 0,
+              "median10": 0.006523608598493658,
+              "errors": 0,
+              "fingerprint": "fnv1a-b33f559b"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-b33f559b"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": -0.03879937279532342,
+              "errors": 0,
+              "fingerprint": "fnv1a-b33f559b"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-b33f559b"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-b33f559b"
+            }
+          ],
+          "aggregate": {
+            "count": 25,
+            "n10": 24,
+            "errors": 0,
+            "contextsWithSamples": 5
+          }
+        }
+      }
+    },
+    "echo": {
+      "primaryState": "strong",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          519,
+          20,
+          14
+        ],
+        "pass": true
+      },
+      "adequate": true,
+      "byPreset": {
+        "sensitive": {
+          "title": "短型態・較多回聲",
+          "intent": "用較短 K 線片段與較低相似門檻，增加強回聲樣本。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 95,
+              "n10": 94,
+              "incomplete10": 1,
+              "median10": 0.008493795334570509,
+              "errors": 0,
+              "fingerprint": "fnv1a-d1f6bbdc"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 28,
+              "n10": 28,
+              "incomplete10": 0,
+              "median10": 0.0025034214991037085,
+              "errors": 0,
+              "fingerprint": "fnv1a-d1f6bbdc"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 127,
+              "n10": 127,
+              "incomplete10": 0,
+              "median10": 0.013454143232110916,
+              "errors": 0,
+              "fingerprint": "fnv1a-d1f6bbdc"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 142,
+              "n10": 140,
+              "incomplete10": 2,
+              "median10": 0.009830623408594197,
+              "errors": 0,
+              "fingerprint": "fnv1a-d1f6bbdc"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 46,
+              "n10": 46,
+              "incomplete10": 0,
+              "median10": 0.03948711225861401,
+              "errors": 0,
+              "fingerprint": "fnv1a-d1f6bbdc"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 42,
+              "n10": 40,
+              "incomplete10": 2,
+              "median10": 0.035731968949069715,
+              "errors": 0,
+              "fingerprint": "fnv1a-d1f6bbdc"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 24,
+              "n10": 22,
+              "incomplete10": 2,
+              "median10": 0.12403524227723361,
+              "errors": 0,
+              "fingerprint": "fnv1a-d1f6bbdc"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 15,
+              "n10": 13,
+              "incomplete10": 2,
+              "median10": 0.03661971411949794,
+              "errors": 0,
+              "fingerprint": "fnv1a-d1f6bbdc"
+            }
+          ],
+          "aggregate": {
+            "count": 519,
+            "n10": 510,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "balanced": {
+          "title": "平衡回聲",
+          "intent": "用 32 根 K 線與 82% 強回聲門檻，保留目前預設作為中間尺度。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": -0.02020760750299555,
+              "errors": 0,
+              "fingerprint": "fnv1a-171a5ff8"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": 0.9275382016416109,
+              "errors": 0,
+              "fingerprint": "fnv1a-171a5ff8"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": 0.009099122884424382,
+              "errors": 0,
+              "fingerprint": "fnv1a-171a5ff8"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 4,
+              "n10": 4,
+              "incomplete10": 0,
+              "median10": 0.018202406965528217,
+              "errors": 0,
+              "fingerprint": "fnv1a-171a5ff8"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": 0.018511836520355374,
+              "errors": 0,
+              "fingerprint": "fnv1a-171a5ff8"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 4,
+              "n10": 4,
+              "incomplete10": 0,
+              "median10": 0.1299039675849224,
+              "errors": 0,
+              "fingerprint": "fnv1a-171a5ff8"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 3,
+              "n10": 3,
+              "incomplete10": 0,
+              "median10": 0.0779050566884254,
+              "errors": 0,
+              "fingerprint": "fnv1a-171a5ff8"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-171a5ff8"
+            }
+          ],
+          "aggregate": {
+            "count": 20,
+            "n10": 20,
+            "errors": 0,
+            "contextsWithSamples": 7
+          }
+        },
+        "selective": {
+          "title": "長型態・高相似",
+          "intent": "拉長型態並維持較高相似要求，只留下比平衡設定更少但仍可研究的強回聲。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": -0.0009541593138260307,
+              "errors": 0,
+              "fingerprint": "fnv1a-ff72a826"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": 0.6106436533621,
+              "errors": 0,
+              "fingerprint": "fnv1a-ff72a826"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 2,
+              "n10": 2,
+              "incomplete10": 0,
+              "median10": 0.026128117617862934,
+              "errors": 0,
+              "fingerprint": "fnv1a-ff72a826"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 9,
+              "n10": 9,
+              "incomplete10": 0,
+              "median10": 0.024189822734381528,
+              "errors": 0,
+              "fingerprint": "fnv1a-ff72a826"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-ff72a826"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-ff72a826"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 1,
+              "n10": 1,
+              "incomplete10": 0,
+              "median10": -0.23758529348216684,
+              "errors": 0,
+              "fingerprint": "fnv1a-ff72a826"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 0,
+              "n10": 0,
+              "incomplete10": 0,
+              "median10": null,
+              "errors": 0,
+              "fingerprint": "fnv1a-ff72a826"
+            }
+          ],
+          "aggregate": {
+            "count": 14,
+            "n10": 14,
+            "errors": 0,
+            "contextsWithSamples": 5
+          }
+        }
+      }
+    },
+    "astro": {
+      "primaryState": "event",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          7977,
+          6836,
+          3436
+        ],
+        "pass": true
+      },
+      "adequate": true,
+      "byPreset": {
+        "selective": {
+          "title": "主要緊張事件",
+          "intent": "只看傳統七曜的合、刑、沖，並縮小 Orb，事件較少。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 609,
+              "n10": 606,
+              "incomplete10": 3,
+              "median10": 0.0028146741408812126,
+              "errors": 0,
+              "fingerprint": "fnv1a-ef60c74a"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 375,
+              "n10": 370,
+              "incomplete10": 5,
+              "median10": 0.013411139188292842,
+              "errors": 0,
+              "fingerprint": "fnv1a-ef60c74a"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 668,
+              "n10": 666,
+              "incomplete10": 2,
+              "median10": 0.012038116135704824,
+              "errors": 0,
+              "fingerprint": "fnv1a-ef60c74a"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 674,
+              "n10": 671,
+              "incomplete10": 3,
+              "median10": 0.009085951131713177,
+              "errors": 0,
+              "fingerprint": "fnv1a-ef60c74a"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 375,
+              "n10": 371,
+              "incomplete10": 4,
+              "median10": 0.03849858461603417,
+              "errors": 0,
+              "fingerprint": "fnv1a-ef60c74a"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 375,
+              "n10": 371,
+              "incomplete10": 4,
+              "median10": 0.021374300443100402,
+              "errors": 0,
+              "fingerprint": "fnv1a-ef60c74a"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 180,
+              "n10": 174,
+              "incomplete10": 6,
+              "median10": 0.10588801661537284,
+              "errors": 0,
+              "fingerprint": "fnv1a-ef60c74a"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 180,
+              "n10": 174,
+              "incomplete10": 6,
+              "median10": 0.08151646718692374,
+              "errors": 0,
+              "fingerprint": "fnv1a-ef60c74a"
+            }
+          ],
+          "aggregate": {
+            "count": 3436,
+            "n10": 3403,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "balanced": {
+          "title": "傳統主要相位",
+          "intent": "使用傳統七曜與主要相位，維持目前預設事件密度。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 1368,
+              "n10": 1361,
+              "incomplete10": 7,
+              "median10": 0.0027638448152318418,
+              "errors": 0,
+              "fingerprint": "fnv1a-3f2b36ca"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 671,
+              "n10": 662,
+              "incomplete10": 9,
+              "median10": 0.04346608501746341,
+              "errors": 0,
+              "fingerprint": "fnv1a-3f2b36ca"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 1435,
+              "n10": 1427,
+              "incomplete10": 8,
+              "median10": 0.012326416397998141,
+              "errors": 0,
+              "fingerprint": "fnv1a-3f2b36ca"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 1429,
+              "n10": 1421,
+              "incomplete10": 8,
+              "median10": 0.010291171665361531,
+              "errors": 0,
+              "fingerprint": "fnv1a-3f2b36ca"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 671,
+              "n10": 662,
+              "incomplete10": 9,
+              "median10": 0.04042365211802734,
+              "errors": 0,
+              "fingerprint": "fnv1a-3f2b36ca"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 670,
+              "n10": 661,
+              "incomplete10": 9,
+              "median10": 0.02407675287287958,
+              "errors": 0,
+              "fingerprint": "fnv1a-3f2b36ca"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 296,
+              "n10": 286,
+              "incomplete10": 10,
+              "median10": 0.13272860663879582,
+              "errors": 0,
+              "fingerprint": "fnv1a-3f2b36ca"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 296,
+              "n10": 286,
+              "incomplete10": 10,
+              "median10": 0.08001368958091593,
+              "errors": 0,
+              "fingerprint": "fnv1a-3f2b36ca"
+            }
+          ],
+          "aggregate": {
+            "count": 6836,
+            "n10": 6766,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        },
+        "sensitive": {
+          "title": "較廣事件集",
+          "intent": "加入三王星、較寬 Orb、逆行與入座事件，事件會更多。",
+          "rows": [
+            {
+              "market": "BTC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 1746,
+              "n10": 1737,
+              "incomplete10": 9,
+              "median10": 0.0027638448152318418,
+              "errors": 0,
+              "fingerprint": "fnv1a-eeedd2ff"
+            },
+            {
+              "market": "BTC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 700,
+              "n10": 690,
+              "incomplete10": 10,
+              "median10": 0.044405872167226135,
+              "errors": 0,
+              "fingerprint": "fnv1a-eeedd2ff"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 1764,
+              "n10": 1754,
+              "incomplete10": 10,
+              "median10": 0.012550142348812132,
+              "errors": 0,
+              "fingerprint": "fnv1a-eeedd2ff"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1d",
+              "bars": 1800,
+              "count": 1767,
+              "n10": 1757,
+              "incomplete10": 10,
+              "median10": 0.010464023338066397,
+              "errors": 0,
+              "fingerprint": "fnv1a-eeedd2ff"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 700,
+              "n10": 690,
+              "incomplete10": 10,
+              "median10": 0.04053655681398649,
+              "errors": 0,
+              "fingerprint": "fnv1a-eeedd2ff"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1w",
+              "bars": 700,
+              "count": 700,
+              "n10": 690,
+              "incomplete10": 10,
+              "median10": 0.02409367857071143,
+              "errors": 0,
+              "fingerprint": "fnv1a-eeedd2ff"
+            },
+            {
+              "market": "IXIC",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 300,
+              "n10": 290,
+              "incomplete10": 10,
+              "median10": 0.13272860663879582,
+              "errors": 0,
+              "fingerprint": "fnv1a-eeedd2ff"
+            },
+            {
+              "market": "TWII",
+              "timeframe": "1m",
+              "bars": 300,
+              "count": 300,
+              "n10": 290,
+              "incomplete10": 10,
+              "median10": 0.08151646718692374,
+              "errors": 0,
+              "fingerprint": "fnv1a-eeedd2ff"
+            }
+          ],
+          "aggregate": {
+            "count": 7977,
+            "n10": 7898,
+            "errors": 0,
+            "contextsWithSamples": 8
+          }
+        }
+      }
+    }
+  },
+  "allRuntimeClean": true,
+  "allSemanticFit": true,
+  "note": "Validation checks semantic sensitivity ordering, sample coverage, completed 10-bar outcomes and zero Evidence errors. It intentionally does not rank presets by historical return."
+}
