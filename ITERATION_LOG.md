@@ -78,3 +78,16 @@
 - **實際資料 audit**：固定 IXIC 1D fixture 的 Macro candidate=1、confirmed=1、confirmed 10-bar N=1，upRate=100%；固定 TWII 1D fixture candidate=7、confirmed=3、failed-before-confirm=4、confirmed 10-bar N=3，upRate=66.7%。這正是小樣本高百分比需要被攔截的案例，不是績效宣稱。Astrology 分別有 945 / 944 個 event bars 與各 1 筆 upcoming projection；projection 未進 Evaluation。
 - **CI 過程**：初次 code run `35429567409` 因既有 M4 版本標籤契約未接受 v1.8 失敗；後續 runs 依序暴露舊 G01/M4 文案契約仍鎖定 G02-R1 用語。這些屬刻意 UI wording/architecture 變更的契約同步，不是引擎錯誤。更新 inherited contracts 與新增 G02-R2 UI/data safety gates 後，run `35429780000` 全綠，包含 Kernel、Model Engine、Condition Engine、Runner、causality、market data、regression、M4/M5/G01/G02-R1/G02-R2、preset。
 - **產品驗收**：尚未通過第一階段。依 Work 指南，Macro 與 Astrology 阻斷任務仍需要未參與開發的使用者，在沒有口頭提示下實際操作桌面／手機才能關閉。
+
+## G02-R3 → R7 — 完整指南技術執行
+
+- **使用者指令**：把 Work 產生的 G02 使用者角度迭代指南完整跑完；全程受 Strategy Lab 開發憲法約束。後續另明確指定「先把技術層面跑完」。
+- **R3 全站一致性**：統一單模型研究數量詞彙為「同狀態總案例 → 完整觀察 → 尚未完成 → 可瀏覽案例」，並在 UI 說明百分比只取完整觀察的分母。Sweep / Echo / Astrology 額外解釋一個案例代表什麼。
+- **R4 模型專屬證據**：新增 model-specific proof presenter。Support 顯示支撐帶與失效邊界；Macro 顯示候選帶、觸發高點與確認階段；Sweep 顯示舊低／最低／收盤／收盤位置；Basin 顯示下跌、平盤、中心穩定與尺度；Field 顯示回合、貼合、幾何與破界確認；Echo 顯示相似度、門檻、Strong 數與最佳歷史區間；Astrology 顯示事件摘要與無因果主張。Support/Macro/Field 可直接跳失效案例，Basin 可跳離開案例。
+- **Echo Evidence**：Model Engine 1.2.0 在既有相似排序不變的前提下，把最佳歷史片段 start/end/timestamp 及 O/C/H/L similarity parts 寫進 Evidence。所有 best-match 都必須結束於目前 pattern 開始之前。
+- **R5 保存與延續**：新增最多 30 筆 browser-local saved research。保存 market/timeframe/model/state/Evidence/horizon/setting/parameter snapshot/fingerprint/versions/knownThrough/source。保存快照與目前研究分離；載入保存研究會先還原 market/timeframe/params，再重新找 Evidence；若原 Evidence 已不存在，明確回到現在而不假裝成功。
+- **R6 組合入口**：新增獨立「組合研究」Tab。單模型 handoff seed 第一條件，直接顯示 inherited market/timeframe/condition/setting/Evidence。第二、第三條件由 Condition Engine candidateConditions / suggestRelation / availableRelations / evaluateConditions 產生；Astrology upcoming 保持禁止作為歷史條件。
+- **R7 裝置與流程**：介面明示五步「選模型 → 看證據 → 查歷史 → 保存 → 延續」。Desktop 不使用遮蓋 Chart Core 的固定 Evidence panel；<=1050px 版面堆疊；<=650px 隱藏 hover tooltip 並使用 tap/click 進 Evidence，核心按鈕與 select 維持 touch target。
+- **最後技術 audit**：固定 IXIC 1D 產生 1476 Evidence（Astro 945 / Support 181 / Field 107 / Basin 76 / Sweep 21 / Echo 143 / Macro 2）；固定 TWII 1D 產生 1473 Evidence（Astro 944 / Support 198 / Field 87 / Echo 143 / Basin 70 / Sweep 14 / Macro 16）。Audit 實際命中 failure=true、incomplete=true、smallSample=true、echoTrace=true、noEvent=true。這些是 coverage 證據，不是模型績效排名。
+- **CI**：branch final technical run `35431231619` success。Research Kernel、Model Engine、Condition Engine、Runner、conditional parity、real-market causality、market data、pre-M4 regression、architecture、M4、M5、G01、G02-R1/R2/R3/R4/R5/R6/R7、final guide audit、preset 全部成功。
+- **未完成的只有真人驗收**：指南要求未參與開發者在沒有口頭提示下操作；本輪無法用自動測試冒充這項人因證據。因此技術層標記完成，產品／真人驗收仍 pending。
