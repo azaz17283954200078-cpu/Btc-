@@ -4,7 +4,7 @@
   root.StrategyLabModelPresets=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  const VERSION='0.3.0-candidate';
+  const VERSION='0.4.0-candidate';
   const PRESETS={
     support:[
       {id:'sensitive',title:'較早看見',intent:'縮短低點比較範圍，讓較小的支撐結構也能進入研究。',config:{zone:{pivot:3,atr:14,width:.72,breakAtr:.42}}},
@@ -30,7 +30,7 @@
     basin:[
       {id:'sensitive',title:'短期整理',intent:'較短的平盤也能被研究，門檻較寬鬆，候選通常較多。',config:{exp:{basin:{floorMin:6,floorMax:50,cliffMax:40,threshold:56}}}},
       {id:'balanced',title:'平衡盆地',intent:'兼顧短期與較完整的下山後走平結構。',config:{exp:{basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:60}}}},
-      {id:'selective',title:'大型盆地',intent:'忽略較短整理，要求更長平盤與較高盆地分數，但仍保留可研究樣本。',config:{exp:{basin:{floorMin:14,floorMax:120,cliffMax:90,threshold:62}}}}
+      {id:'selective',title:'大型盆地',intent:'忽略較短整理，要求更長平盤與較高盆地分數，但仍保留可研究樣本。',config:{exp:{basin:{floorMin:13,floorMax:120,cliffMax:90,threshold:61}}}}
     ],
     field:[
       {id:'sensitive',title:'容易成形',intent:'允許較少震盪回合與較寬幾何變化，較早產生場域。',config:{exp:{spring:{minCycles:1.5,maxCoreShiftPct:90,maxShapeChangePct:85,minFitPct:72,breakConfirmBars:2}}}},
@@ -40,7 +40,7 @@
     echo:[
       {id:'sensitive',title:'短型態・較多回聲',intent:'用較短 K 線片段與較低相似門檻，增加強回聲樣本。',config:{exp:{echo:{length:20,history:1000,similarity:.72,followBars:12}}}},
       {id:'balanced',title:'平衡回聲',intent:'用 32 根 K 線與 82% 強回聲門檻，保留目前預設作為中間尺度。',config:{exp:{echo:{length:32,history:1000,similarity:.82,followBars:12}}}},
-      {id:'selective',title:'長型態・高相似',intent:'拉長型態並提高相似要求，只留下比平衡設定更少但仍可研究的強回聲。',config:{exp:{echo:{length:40,history:1500,similarity:.84,followBars:12}}}}
+      {id:'selective',title:'長型態・高相似',intent:'拉長型態並維持較高相似要求，只留下比平衡設定更少但仍可研究的強回聲。',config:{exp:{echo:{length:40,history:1500,similarity:.82,followBars:12}}}}
     ],
     astro:[
       {id:'selective',title:'主要緊張事件',intent:'只看傳統七曜的合、刑、沖，並縮小 Orb，事件較少。',config:{exp:{astro:{planetSet:'classic',aspectSet:'hard',orb:2,retro:'off',ingress:'off'}}}},
