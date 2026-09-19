@@ -4,7 +4,7 @@
 
 - Repository: `azaz17283954200078-cpu/Btc-`
 - Default branch: `main`
-- Current milestone: G03-R0 Model Semantics Registry technical implementation complete — G02 independent user acceptance remains pending
+- Current milestone: G03-R1→R5 technical implementation complete — ready for external human testing; G02/G03 human acceptance remains pending
 - M4 Guided Research: completed
 - M5 Shared Condition Engine: technical/research validation passed
 - M5 product acceptance: not complete until desktop/mobile use is tested by the user
@@ -100,3 +100,16 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - Future strategy capability is recorded but not implemented yet: Echo and Astrology have no standalone Entry; Macro Candidate is not an Entry state; 3+ model simulation remains a future engine-level prohibition per G03 guide.
 - G03-R0 CI contract is wired into the main Research Kernel workflow and passed together with all pre-existing M4/M5/G01/G02 gates on PR run `35434017722`.
 - R0 does not recalibrate presets, add Reliability scoring, build Runner Observatory, or modify Script/strategy simulation. Those remain later G03 iterations.
+
+
+## G03-R1 through R5 reliability and blind validation
+- R1: every browser/Runner research run gets an immutable Run ID and manifest. Changed market/timeframe/model/preset/params starts a new run; the previous run is not mutated.
+- R2: `src/reliability-engine.js` v1.0.0 adds gate-based Reliability: 不足 / 探索 / 可研究 / 較穩健. It uses data integrity, complete N, overlap-clustered N_eff, temporal coverage, semantic lifecycle/counterexamples, chronological OOS and parameter stability.
+- R3: Reliability Matrix diagnoses `DATA_SHORTAGE`, `NATURALLY_RARE`, `PARAMETER_TOO_STRICT`, `OVERLAP_HEAVY`, `OOS_SHORTAGE`, `LIFECYCLE_IMBALANCE`, `MODEL_LIMITATION`. Per-context lifecycle transition-count exceptions are warnings; aggregate Evidence density is the monotonic preset gate.
+- R4: official preset vocabulary is now 寬鬆 / 平衡 / 嚴格 while legacy IDs sensitive/balanced/selective remain for saved-snapshot compatibility. Preset selection cannot use return/up-rate/MFE/MAE/equity ranking.
+- R4 calibration across 8 contexts passed aggregate loose >= balanced >= strict for all seven models and passed local parameter-neighborhood stability.
+- R5: chronological 70% calibration / 30% blind validation. Parameter fingerprint must remain frozen before OOS reveal. All 21 presets have OOS coverage; all frozen-fingerprint checks passed.
+- Published audit artifact: `research/g03-preset-validation.json`.
+- Notable reliability findings are intentionally preserved rather than optimized away: Macro remains naturally rare; Astrology has very large raw N but very small N_eff because events and forward windows cluster.
+- No Strategy Adapter / simulation work is included in R1-R5. Chart Core, Evidence schema, model worldview and no-lookahead remain protected.
+- External desktop/mobile no-hint use is the next product evidence. Technical pass is not human acceptance.
