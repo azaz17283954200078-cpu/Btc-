@@ -238,6 +238,22 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .saved-research-stale{margin-top:6px;padding:6px 7px;border-left:3px solid #7b654f;background:#1c1812;color:#c7b69d;font-size:9px;line-height:1.45}
 .saved-research-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.saved-research-actions button{min-height:32px;font-size:9px;padding:4px 7px}
 .current-research-label{padding:7px 9px;border:1px solid #335575;border-radius:9px;background:#0d1d30;color:#a8bdd6;font-size:9.6px;line-height:1.45}
+/* G02-R6｜組合研究是獨立工作區，但延續同一份 Evidence */
+.combo-workspace{display:grid;gap:9px;overflow:auto}
+.combo-empty{padding:13px;border:1px dashed #3a5675;border-radius:11px;background:#0b1726;color:#a5b8cf;font-size:10px;line-height:1.58}
+.combo-seed{padding:12px 13px;border:1px solid #45698f;border-radius:11px;background:#0e1d30}
+.combo-seed b{color:#eff6ff;font-size:12px}.combo-seed p{margin:4px 0 8px;color:#9fb3cb;font-size:9.8px;line-height:1.52}
+.combo-stack{display:grid;gap:6px}
+.combo-condition{padding:10px 11px;border:1px solid #35516f;border-radius:10px;background:#0b1727}
+.combo-condition.anchor{border-color:#6483a6}
+.combo-condition-head{display:flex;justify-content:space-between;gap:8px}.combo-condition-head b{color:#edf5ff;font-size:11px}.combo-condition-head span{color:#8298b5;font-size:9px}
+.combo-condition-meta{margin-top:4px;color:#9fb3cc;font-size:9.5px;line-height:1.48}
+.combo-relation{padding:7px 9px;border-left:2px solid #526f90;color:#9fb2c9;font-size:9.3px;line-height:1.45}
+.combo-add{padding:11px;border:1px solid #2f4a67;border-radius:10px;background:#091522}
+.combo-add select{width:100%;min-height:38px;margin-top:6px}.combo-add button{width:100%;min-height:38px;margin-top:6px}
+.combo-result{padding:12px;border:1px solid #395a7d;border-radius:11px;background:#0e1d30}
+.combo-result b{color:#f0f6ff}.combo-result p{margin:5px 0 0;color:#aebfd3;font-size:9.8px;line-height:1.55}
+.combo-actions{display:flex;gap:6px;flex-wrap:wrap}.combo-actions button{min-height:34px;font-size:9.5px}
 /* Sidebar */
 .side{min-height:0;padding:10px;display:grid;grid-template-rows:auto 1fr}
 .tabs{display:flex;gap:7px;margin-bottom:10px}
@@ -504,9 +520,11 @@ td:first-child,th:first-child{text-align:left}
 @media(max-width:650px){.model-proof-grid{grid-template-columns:1fr}.model-proof-actions button{min-height:44px;flex:1 1 42%}}
 
 @media(max-width:650px){.saved-research-actions button{min-height:44px;flex:1 1 40%}.saved-research-head{display:block}.saved-research-head small{display:block;margin-top:3px}}
+
+@media(max-width:650px){.combo-add select,.combo-add button,.combo-actions button{min-height:44px}.combo-actions button{flex:1 1 42%}}
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.1 · G02-R5 研究保存與延續</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.2 · G02-R6 組合研究入口</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -532,7 +550,8 @@ td:first-child,th:first-child{text-align:left}
 
   <aside class="box side">
     <div class="tabs">
-      <button id="tabModels" class="tabbtn on" onclick="switchLabTab('models')">研究</button>
+      <button id="tabModels" class="tabbtn on" onclick="switchLabTab('models')">模型研究</button>
+      <button id="tabCombo" class="tabbtn" onclick="switchLabTab('combo')">組合研究</button>
       <button id="tabScript" class="tabbtn" onclick="switchLabTab('script')">腳本</button>
     </div>
 
@@ -675,6 +694,12 @@ td:first-child,th:first-child{text-align:left}
           </div>
         </details>
       </div>
+    </div>
+
+    <div id="comboPane" class="tabpane">
+      <div class="panel-title"><b>組合研究</b><span class="muted">單模型成果從這裡繼續，不重新猜第一個條件</span></div>
+      <div id="comboWorkspace" class="combo-workspace" aria-live="polite"></div>
+    </div>
 
     <div id="scriptPane" class="tabpane">
       <div class="panel-title"><b>Strategy Script｜腳本圖層</b><div class="panel-actions"><label class="layer-toggle"><input id="scriptVisible" type="checkbox" checked onchange="toggleScriptLayer()"> 顯示</label><span id="scriptStatus" class="muted">尚未執行</span></div></div>
@@ -877,7 +902,7 @@ function moveParamDrag(e){
   card.style.left=x+'px';card.style.top=y+'px'
 }
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}
-function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',MARKET_COVERAGE={provider:null,requestedBars:null,returnedBars:0,targetReached:true,historyExhausted:false,fetchInterrupted:false,reason:''},HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
+function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('comboPane').classList.toggle('on',x==='combo');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabCombo').classList.toggle('on',x==='combo');q('tabScript').classList.toggle('on',x==='script');if(x==='combo')renderCombinationWorkspace();setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',MARKET_COVERAGE={provider:null,requestedBars:null,returnedBars:0,targetReached:true,historyExhausted:false,fetchInterrupted:false,reason:''},HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
 let FOCUSED_MODEL='support',
     FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null},
     SINGLE_RESEARCH_HORIZON=10,
@@ -1042,7 +1067,7 @@ function zoneCalc(){
     enabled,zone:ZONE,macro:MACRO,sweep:SWEEP,exp:EXP
   });
   applyModelEngineResult(res);
-  safeDrawModels();
+  safeDrawModels();renderCombinationWorkspace();
 }
 function macroCalc(){zoneCalc()}
 function bottomLabCalc(){zoneCalc()}
@@ -1869,7 +1894,7 @@ function prepareCombinationHandoff(){
   HANDOFF_NOTICE='';
   window.__SL_COMBINATION_HANDOFF__=COMBINATION_HANDOFF_CONTEXT;
   window.__SL_CONDITION_STACK__=CONDITION_STACK;
-  renderHandoffStatus()
+  renderHandoffStatus();renderCombinationWorkspace()
 }
 function clearCombinationHandoff(reason=''){
   COMBINATION_HANDOFF_CONTEXT=null;CONDITION_STACK=[];HANDOFF_NOTICE=reason||'';
@@ -1882,8 +1907,8 @@ function renderHandoffStatus(){
     let x=COMBINATION_HANDOFF_CONTEXT;
     box.innerHTML='<div class="single-handoff-ready"><b>已準備給組合研究：</b> '+esc(conditionLabel(x.condition))+
       '<br>'+esc((q('market')?q('market').selectedOptions[0].text:x.market)+' · '+String(x.timeframe||'').toUpperCase()+' · '+modelSettingLabel(x.model))+
-      '<br>G02 組合研究會直接從這個研究單位開始，不需要重新選模型、狀態或參數。'+
-      '<br><button onclick="clearCombinationHandoff()">清除這個準備</button></div>'
+      '<br>組合研究會直接從這個研究單位開始，不需要重新選模型、狀態或參數。'+
+      '<br><button onclick="goToCombinationResearch()">下一步：前往組合研究 →</button> <button onclick="clearCombinationHandoff()">清除這個準備</button></div>'
   }else if(HANDOFF_NOTICE){
     box.innerHTML='<div class="single-handoff-ready">'+esc(HANDOFF_NOTICE)+'</div>'
   }else box.innerHTML=''
@@ -1952,6 +1977,104 @@ function openModelLibrary(){
   let lib=q('modelLibrary');if(!lib)return;
   lib.open=true;
   setTimeout(()=>lib.scrollIntoView({behavior:'smooth',block:'nearest'}),0)
+}
+
+function goToCombinationResearch(){
+  if(!COMBINATION_HANDOFF_CONTEXT){
+    let ctx=buildSingleResearchContext();
+    if(ctx&&canPrepareCombination(focusedEvidenceRecord()))prepareCombinationHandoff()
+  }
+  switchLabTab('combo');renderCombinationWorkspace()
+}
+function comboCandidateConditions(){
+  if(!CE||!CE.candidateConditions)return[];
+  let rows=CE.candidateConditions(EVIDENCE_LOG)||[],used=new Set(CONDITION_STACK.map(c=>c.model+'|'+c.state));
+  return rows.filter(c=>!used.has(c.model+'|'+c.state)&&!(c.model==='astro'&&c.state==='upcoming'))
+}
+function comboCandidateOptionsHTML(){
+  let rows=comboCandidateConditions();
+  if(!rows.length)return'<option value="">沒有其他可用歷史條件</option>';
+  return '<option value="">選擇要加入的模型狀態…</option>'+rows.map(c=>{
+    let n=CE.episodesForConditions(EVIDENCE_LOG,[c],{knownThrough:D.length-1}).length;
+    return '<option value="'+esc(c.model+'|'+c.state)+'">'+esc(conditionLabel(c))+' · 歷史 '+n+' 次</option>'
+  }).join('')
+}
+function parseComboCandidate(v){
+  let a=String(v||'').split('|');return a.length===2?{model:a[0],state:a[1],windowBars:0,relation:'time'}:null
+}
+function addCombinationCondition(){
+  let sel=q('comboCandidateSelect'),c=parseComboCandidate(sel&&sel.value);if(!c||CONDITION_STACK.length>=MAX_CONDITIONS)return;
+  c.relation=CE.suggestRelation(EVIDENCE_LOG,CONDITION_STACK,c,{knownThrough:D.length-1})||'time';
+  CONDITION_STACK.push(c);
+  window.__SL_CONDITION_STACK__=CONDITION_STACK;
+  renderCombinationWorkspace()
+}
+function removeCombinationCondition(i){
+  i=Math.round(Number(i));if(i<=0||i>=CONDITION_STACK.length)return;
+  CONDITION_STACK.splice(i,1);window.__SL_CONDITION_STACK__=CONDITION_STACK;renderCombinationWorkspace()
+}
+function setComboRelation(i,v){
+  i=Math.round(Number(i));if(i<=0||i>=CONDITION_STACK.length)return;
+  let c={...CONDITION_STACK[i],relation:v||'time'};
+  CONDITION_STACK.splice(i,1,c);window.__SL_CONDITION_STACK__=CONDITION_STACK;renderCombinationWorkspace()
+}
+function setComboWindow(i,v){
+  i=Math.round(Number(i));if(i<=0||i>=CONDITION_STACK.length)return;
+  let c={...CONDITION_STACK[i],windowBars:Math.max(0,Math.round(Number(v)||0))};
+  CONDITION_STACK.splice(i,1,c);window.__SL_CONDITION_STACK__=CONDITION_STACK;renderCombinationWorkspace()
+}
+function comboRelationControl(i){
+  if(i<=0)return'';
+  let c=CONDITION_STACK[i],available=CE.availableRelations(EVIDENCE_LOG,CONDITION_STACK.slice(0,i),c,{knownThrough:D.length-1})||['time'];
+  if(!available.includes(c.relation||'time'))available.push(c.relation||'time');
+  let relation='<select onchange="setComboRelation('+i+',this.value)">'+available.map(v=>'<option value="'+v+'" '+((c.relation||'time')===v?'selected':'')+'>'+esc(relationLabel(v))+'</option>').join('')+'</select>',
+      semantics=CE.semantics(c),window='';
+  if(semantics==='event'||semantics==='transition_event'){
+    window='<select onchange="setComboWindow('+i+',this.value)">'+[[0,'事件當根'],[3,'事件後 3 根內'],[5,'事件後 5 根內']].map(x=>'<option value="'+x[0]+'" '+(Number(c.windowBars||0)===x[0]?'selected':'')+'>'+x[1]+'</option>').join('')+'</select>'
+  }
+  return relation+window
+}
+function comboResultHTML(result){
+  if(!result)return'';
+  let h=SINGLE_RESEARCH_HORIZON,x=result.stats&&result.stats[h],gate=result.gate||sampleGate(result.episodeCount);
+  let rel=sampleReliability(result.episodeCount),txt=conditionGateText(gate);
+  return '<section class="combo-result"><b>組合後剩 '+result.episodeCount+' 個基準案例</b><p>'+esc(txt)+'</p>'+
+    (x?'<p>'+esc(horizonHuman(h))+'：完整觀察 '+x.n+' 次 · 尚未完成 '+x.incomplete+' 次 · 歷史中位變化 '+pct(x.medianReturn)+'。這不是成功率或預測。</p>':'')+
+    '<p>'+esc(rel.detail)+'</p></section>'
+}
+function renderCombinationWorkspace(){
+  let box=q('comboWorkspace');if(!box)return;
+  if(!COMBINATION_HANDOFF_CONTEXT||!CONDITION_STACK.length){
+    let ctx=buildSingleResearchContext(),eligible=ctx&&canPrepareCombination(focusedEvidenceRecord());
+    box.innerHTML='<div class="combo-empty"><b>先從一份單模型研究開始。</b><br>組合研究不會替你猜第一個條件。先在「模型研究」確認一個已發生 Evidence，再把那份市場、週期、狀態與參數完整帶過來。'+
+      (eligible?'<br><br><button onclick="prepareCombinationHandoff();goToCombinationResearch()">用目前單模型研究開始 →</button>':'')+'</div>';return
+  }
+  let result=null;
+  try{result=CE.evaluateConditions(D,EVIDENCE_LOG,CONDITION_STACK,{knownThrough:D.length-1})}catch(_){result=null}
+  let funnel=result&&result.funnel||[];
+  let seed=COMBINATION_HANDOFF_CONTEXT,html='<section class="combo-seed"><b>第一個條件來自已完成的單模型研究</b>'+
+    '<p>'+esc(savedDisplayMarket(seed))+' · '+esc(String(seed.timeframe||'').toUpperCase())+' · '+esc(conditionLabel(seed.condition))+
+    ' · '+esc(seed.settingSource&&seed.settingSource.kind==='preset'?'參考設定 '+String(seed.settingSource.id||''):seed.settingSource&&seed.settingSource.kind==='custom'?'自訂參數':'參數快照')+
+    '<br>Evidence：'+esc(seed.focus&&seed.focus.evidenceId||'—')+'</p></section>'+
+    '<div class="combo-stack">';
+  html+=CONDITION_STACK.map((c,i)=>{
+    let stage=funnel[i],n=stage?stage.episodeCount:CE.episodesForConditions(EVIDENCE_LOG,CONDITION_STACK.slice(0,i+1),{knownThrough:D.length-1}).length,
+        prev=i&&funnel[i-1]?funnel[i-1].episodeCount:null;
+    return (i?'<div class="combo-relation">'+esc(relationLabel(c.relation||'time'))+'｜'+esc(relationHelp(c.relation||'time'))+'</div>':'')+
+      '<article class="combo-condition '+(i===0?'anchor':'')+'"><div class="combo-condition-head"><b>'+(i===0?'基準｜':'條件 '+(i+1)+'｜')+
+      esc(conditionLabel(c))+'</b><span>'+n+' 次</span></div>'+
+      '<div class="combo-condition-meta">'+(i===0?'完整保留單模型 handoff；不重新選第一個條件。':('加入後 '+(prev==null?'—':prev)+' → '+n+' 次。'))+'</div>'+
+      (i>0?'<div class="combo-actions">'+comboRelationControl(i)+'<button onclick="removeCombinationCondition('+i+')">移除</button></div>':'')+
+      '</article>'
+  }).join('')+'</div>';
+  if(CONDITION_STACK.length<MAX_CONDITIONS){
+    html+='<section class="combo-add"><b>加入下一個模型條件</b><div class="single-caution">條件越多不代表越準；每加一個條件都先看樣本縮減與剩餘 N。</div>'+
+      '<select id="comboCandidateSelect">'+comboCandidateOptionsHTML()+'</select><button onclick="addCombinationCondition()">加入這個條件</button></section>'
+  }
+  html+=comboResultHTML(result)+
+    '<div class="combo-actions"><button onclick="switchLabTab(\'models\')">← 回單模型研究</button>'+
+    '<button onclick="clearCombinationHandoff();renderCombinationWorkspace()">重新開始組合</button></div>';
+  box.innerHTML=html
 }
 function relationLabel(v){
   if(v==='price_overlap')return '價格區域重疊';
