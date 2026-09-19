@@ -49,4 +49,5 @@
 - **歷史後續**：把 3 / 5 / 10 / 20 K 翻成人類時間；明確定義起點為模型確認該狀態的 K 棒收盤、終點為第 N 根未來 K 收盤。MFE / MAE 放在白話路徑描述之後。
 - **真實案例**：案例入口從 7 個增為最多 12 個，使用更大的案例按鈕；研究面板保持固定，主圖可直接跳到不同歷史案例比較。
 - **保護區**：Chart Core、三層 Canvas、Shared Model Engine、Condition Engine v1.2、Evidence schema、known-through、anchor-centric sampling、sample gates、資料來源均不改。
+- **CI 紀錄**：UI 前兩個中間 commits 的 runs `35425623322`、`35425663646` 都只因 M4 契約仍要求舊的 `M4/M5` 版本標籤而失敗；核心引擎與前置回歸均未顯示新增失敗。更新 M4 契約後 run `35425727233` 再因 M5 UI 契約仍鎖定 v1.5 標籤而失敗。同步 M5 契約並新增 G01 永久契約後，runs `35425741161` 與 `35425743357` 全部通過；最終 run 包含 Research Kernel、Model Engine、Condition Engine、Runner、real-market causality、data、regression、M4、M5、G01、preset 全部成功。
 - **產品驗收**：pending；CI 只證明程式與契約沒有破壞，不等於桌面／手機實際閱讀已被使用者接受。
