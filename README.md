@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v2.3 · G02-R7 + G03-R0｜模型語意登錄完成（G02 真人驗收仍待辦）**
+**v2.5 · G03-R5｜Runner 可觀測、研究可信度、資料矩陣、寬鬆／平衡／嚴格與盲測已完成技術實作（外部實測待辦）**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -19,8 +19,8 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 - Script Lab 自訂策略圖層
 - Echo 歷史相似型態搜尋、後續 MFE / MAE / 報酬回測與歷史 K 線跳轉
 - M4 Guided Research：7 個模型逐一回答「它在問什麼／開啟後看到什麼／別把它當成什麼」
-- 每個模型都有 3 套已驗證的參考研究設定，可再展開手動參數微調
-- 參考設定已用 Research Runner 跑過 BTC / NASDAQ / TAIEX 的 8 個市場×週期情境；驗證敏感度順序、樣本覆蓋與 Evidence error，不用歷史報酬排名選參數
+- 每個模型都有 3 套正式研究設定：**寬鬆／平衡／嚴格**；名稱只代表條件寬嚴，不代表預測準確度
+- Preset 已用 BTC / NASDAQ / TAIEX 的 8 個市場×週期情境做 blind calibration、N_eff、參數鄰域穩定與 chronological 70/30 OOS 驗證；不使用歷史報酬排名選參數
 - 單模型研究器：主圖＋同一個右側研究區；現在／歷史案例明確分開，3/5/10/20 K 一次只看一個 horizon，歷史案例與主圖同步
 - N / Median Return / MFE / MAE / progression / failure 都附白話解讀與下一步操作
 
@@ -215,3 +215,19 @@ G03 先不調參數，也不先做 equity curve，而是先固定「模型究竟
 目前七模型全部維持 `directionalClaim=false`。Macro Candidate 不等於確認底部、Sweep event 不等於反轉成功、Echo Strong 不等於歷史重播、Astrology event 不代表價格因果。Condition Engine v1.3.0 已改讀共享 Registry，但 R02 的時間／價格關係與 anchor-centric sampling 沒有改變。
 
 完整 G03 後續順序與限制記錄於 [G03_ITERATION_GUIDE.md](G03_ITERATION_GUIDE.md)。R1 才會處理 Runner Observatory；Reliability、資料矩陣、寬鬆／平衡／嚴格 calibration、策略實驗與 Simulation Runner 都不得提前混進 R0。
+
+
+## G03-R1 → R5｜研究可信度與盲測
+
+G03-R1 到 R5 把原本「背景跑完後只看到結果」的研究流程變成可追溯、可解釋但不鼓勵中途干預的研究紀錄。
+
+- **R1 Runner Observatory**：每次研究都有 immutable Run ID / Run Manifest。市場、週期、模型、參數、fingerprint、資料截止點與版本被鎖定；修改條件會建立新 Run，不在原結果上偷改。
+- **R2 Reliability Standard v1**：研究資料可信度採 gate-based 等級「不足／探索／可研究／較穩健」，不使用 0–100 分數。除了完整 N，也計算重疊觀察窗口去重後的 **N_eff**、時間覆蓋、資料完整性、生命周期反例與 OOS。
+- **R3 Reliability Matrix**：可在單模型研究裡按需建立目前市場／週期的三 preset 矩陣，顯示完整 N、N_eff、OOS N 與薄弱原因。矩陣是診斷，不是模型排名。
+- **R4 Preset Calibration**：公開設定正式統一為「寬鬆／平衡／嚴格」。Sweep、Basin、Echo 特別修正成更可比較的 nested strictness；calibration 不看 forward return / up-rate / MFE / MAE。
+- **R5 Blind OOS**：每個 context 依時間切成前 70% calibration、後 30% blind validation；parameter snapshot / fingerprint 先固定，之後才允許揭露 OOS 歷史分布。改參數會建立新 Run 並重新鎖住 OOS。
+- 正式 compact validation record：`research/g03-preset-validation.json`。
+
+重要案例：Astrology 的 raw event N 可達數千，但重疊 clustering 後 N_eff 仍很低；介面因此不會把「事件很多」誤寫成高可信度。Macro 則保留稀有事件本質，不為了補 N 而把模型調成另一種世界觀。
+
+目前適合進入外部真人測試；但 **G02 / G03 真人產品驗收仍不能由 CI 代替**。R6 交叉研究 Reliability 與 R7 策略實驗尚未開始。
