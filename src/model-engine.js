@@ -10,7 +10,7 @@
 
   if(!RK)throw new Error('Strategy Lab Model Engine requires Research Kernel');
 
-  const VERSION='1.1.0';
+  const VERSION='1.2.0';
   const DEFAULT_ZONE={
   "pivot": 5,
   "atr": 14,
@@ -443,7 +443,20 @@ function candleShapeSimilarity(a,b){
   }
   let rms=Math.sqrt(sum/Math.max(1,a.length));
   return clamp(1-rms/.45,0,1)
-}function echoForwardStats(end,horizon,knownThrough=D.length-1){
+}
+function candleShapeSimilarityParts(a,b){
+  if(!a||!b||a.length!==b.length)return null;
+  const keys=['o','c','h','l'],weights={o:.30,c:.30,h:.20,l:.20},out={};
+  for(const k of keys){
+    let sum=0;
+    for(let i=0;i<a.length;i++){let d=a[i][k]-b[i][k];sum+=d*d}
+    let rms=Math.sqrt(sum/Math.max(1,a.length));
+    out[k]=clamp(1-rms/.45,0,1)
+  }
+  out.weighted=keys.reduce((z,k)=>z+out[k]*weights[k],0);
+  return out
+}
+function echoForwardStats(end,horizon,knownThrough=D.length-1){
   horizon=Math.max(1,Math.round(horizon));
   if(RK){
     let o=RK.forwardOutcome(D,end,horizon,knownThrough);
@@ -1191,12 +1204,23 @@ function researchCalc(){
           btSource=strong.length?strong:all.slice(0,Math.min(10,all.length)),
           backtest=echoBacktest(btSource,follow);
 
+      let bestMatch=all[0],
+          bestParts=bestMatch?candleShapeSimilarityParts(cur,bestMatch.shape):null;
       rememberEvidence({
         id:'echo:'+i+':observation',entityId:'echo:'+i,kind:'observation',
         model:'echo',family:'analogy',index:i,timestamp:D[i].t,
         state:strength.toLowerCase(),confidence:best*100,
         detectedAt:i,evidenceStart:i-L+1,
-        evidence:{length:L,threshold:sim,strongCount:strong.length,bestSim:best},
+        evidence:{
+          length:L,threshold:sim,strongCount:strong.length,bestSim:best,
+          bestMatch:bestMatch?{
+            start:bestMatch.start,end:bestMatch.end,
+            startTimestamp:D[bestMatch.start]?D[bestMatch.start].t:null,
+            endTimestamp:D[bestMatch.end]?D[bestMatch.end].t:null,
+            similarity:bestMatch.sim,
+            parts:bestParts
+          }:null
+        },
         projection:backtest?{
           kind:'historical_distribution',horizon:backtest.horizon,
           sampleMode:strong.length?'strong':'nearest',n:backtest.n
