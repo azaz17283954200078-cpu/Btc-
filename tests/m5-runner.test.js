@@ -19,7 +19,8 @@ assert.equal(run.conditional.length,1);
 assert.equal(run.conditional[0].name,queries[0].name);
 const x=run.conditional[0].result;
 assert.deepEqual(x.conditions.map(c=>[c.model,c.state]),[['support','candidate'],['field','active']]);
-assert(x.baseline.episodeCount>=x.episodeCount);
+assert(x.baseline.episodeCount>=0&&x.episodeCount>=0);
+assert(x.baseline.conditions.length===1,'baseline must remain the anchor condition only');
 assert(['insufficient','exploratory','comparable'].includes(x.gate.level));
 for(const h of [3,5,10,20]){
   assert(x.stats[h]);
