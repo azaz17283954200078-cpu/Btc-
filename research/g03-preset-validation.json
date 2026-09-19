@@ -1,0 +1,361 @@
+{
+  "schemaVersion": 1,
+  "publishedAt": "2026-09-19",
+  "stage": "G03-R4-R5",
+  "presetVersion": "2.0.0-g03-calibrated",
+  "modelVersion": "1.2.0",
+  "reliabilityStandardVersion": "1.0.0",
+  "conditionEngineVersion": "1.3.0",
+  "contexts": [
+    {
+      "market": "BTC",
+      "timeframe": "1d",
+      "bars": 1800
+    },
+    {
+      "market": "BTC",
+      "timeframe": "1w",
+      "bars": 700
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1d",
+      "bars": 1800
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1d",
+      "bars": 1800
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1w",
+      "bars": 700
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1w",
+      "bars": 700
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1m",
+      "bars": 300
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1m",
+      "bars": 300
+    }
+  ],
+  "protocol": {
+    "calibration": "Chronological first 70% of each context. Preset selection uses Evidence density, effective independent sample count, lifecycle/time coverage and parameter-neighborhood stability.",
+    "validation": "Chronological final 30% of each context. No random shuffle.",
+    "freezeRule": "Parameter snapshot and parameter fingerprint are frozen before OOS outcome reveal.",
+    "outcomeLeakageRule": "Forward return, up-rate, MFE, MAE and equity metrics do not select or rank presets.",
+    "monotonicRule": "Aggregate Evidence density across the validation contexts must satisfy loose >= balanced >= strict. Per-context lifecycle transition-count exceptions are audited rather than forcing model-worldview changes.",
+    "effectiveSampleRule": "Overlapping forward-observation windows are clustered; raw N and N_eff are both retained."
+  },
+  "gates": {
+    "allAggregateMonotonic": true,
+    "allParameterStable": true,
+    "allFrozenFingerprints": true,
+    "allPresetsHaveOOS": true
+  },
+  "models": {
+    "support": {
+      "primaryState": "potential",
+      "levels": {
+        "loose": {
+          "id": "sensitive",
+          "total": 415,
+          "complete": 412,
+          "nEff": 319,
+          "calibrationComplete": 286,
+          "calibrationNEff": 220,
+          "oosComplete": 121,
+          "oosNEff": 94,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        },
+        "balanced": {
+          "id": "balanced",
+          "total": 332,
+          "complete": 326,
+          "nEff": 276,
+          "calibrationComplete": 227,
+          "calibrationNEff": 191,
+          "oosComplete": 92,
+          "oosNEff": 80,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        },
+        "strict": {
+          "id": "selective",
+          "total": 222,
+          "complete": 220,
+          "nEff": 196,
+          "calibrationComplete": 157,
+          "calibrationNEff": 138,
+          "oosComplete": 59,
+          "oosNEff": 55,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        }
+      },
+      "limitation": "Strictness changes support-structure selectivity; it does not represent forecast accuracy."
+    },
+    "macro": {
+      "primaryState": "candidate",
+      "levels": {
+        "loose": {
+          "id": "sensitive",
+          "total": 85,
+          "complete": 85,
+          "nEff": 63,
+          "calibrationComplete": 63,
+          "calibrationNEff": 46,
+          "oosComplete": 22,
+          "oosNEff": 17,
+          "contextsWithOos": 7,
+          "parameterStability": true
+        },
+        "balanced": {
+          "id": "balanced",
+          "total": 52,
+          "complete": 52,
+          "nEff": 35,
+          "calibrationComplete": 35,
+          "calibrationNEff": 25,
+          "oosComplete": 17,
+          "oosNEff": 10,
+          "contextsWithOos": 7,
+          "parameterStability": true
+        },
+        "strict": {
+          "id": "selective",
+          "total": 39,
+          "complete": 39,
+          "nEff": 29,
+          "calibrationComplete": 28,
+          "calibrationNEff": 21,
+          "oosComplete": 10,
+          "oosNEff": 7,
+          "contextsWithOos": 4,
+          "parameterStability": true
+        }
+      },
+      "limitation": "Macro is naturally rare. Complete market history can still leave small effective and OOS samples."
+    },
+    "sweep": {
+      "primaryState": "event",
+      "levels": {
+        "loose": {
+          "id": "sensitive",
+          "total": 150,
+          "complete": 150,
+          "nEff": 96,
+          "calibrationComplete": 100,
+          "calibrationNEff": 65,
+          "oosComplete": 46,
+          "oosNEff": 28,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        },
+        "balanced": {
+          "id": "balanced",
+          "total": 133,
+          "complete": 133,
+          "nEff": 94,
+          "calibrationComplete": 89,
+          "calibrationNEff": 64,
+          "oosComplete": 40,
+          "oosNEff": 27,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        },
+        "strict": {
+          "id": "selective",
+          "total": 111,
+          "complete": 111,
+          "nEff": 84,
+          "calibrationComplete": 73,
+          "calibrationNEff": 57,
+          "oosComplete": 34,
+          "oosNEff": 24,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        }
+      },
+      "limitation": "Preset comparison keeps the old-low horizon fixed and changes reclaim strength; event occurrence is not a directional conclusion."
+    },
+    "basin": {
+      "primaryState": "active",
+      "levels": {
+        "loose": {
+          "id": "sensitive",
+          "total": 68,
+          "complete": 68,
+          "nEff": 63,
+          "calibrationComplete": 46,
+          "calibrationNEff": 43,
+          "oosComplete": 20,
+          "oosNEff": 18,
+          "contextsWithOos": 7,
+          "parameterStability": true
+        },
+        "balanced": {
+          "id": "balanced",
+          "total": 57,
+          "complete": 57,
+          "nEff": 50,
+          "calibrationComplete": 36,
+          "calibrationNEff": 34,
+          "oosComplete": 20,
+          "oosNEff": 15,
+          "contextsWithOos": 5,
+          "parameterStability": true
+        },
+        "strict": {
+          "id": "selective",
+          "total": 52,
+          "complete": 50,
+          "nEff": 40,
+          "calibrationComplete": 32,
+          "calibrationNEff": 26,
+          "oosComplete": 17,
+          "oosNEff": 13,
+          "contextsWithOos": 3,
+          "parameterStability": true
+        }
+      },
+      "limitation": "Per-context Active transition counts can be locally non-monotonic because looser thresholds can merge adjacent lifecycle episodes. Aggregate density is the formal monotonic gate."
+    },
+    "field": {
+      "primaryState": "active",
+      "levels": {
+        "loose": {
+          "id": "sensitive",
+          "total": 246,
+          "complete": 243,
+          "nEff": 165,
+          "calibrationComplete": 164,
+          "calibrationNEff": 111,
+          "oosComplete": 79,
+          "oosNEff": 54,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        },
+        "balanced": {
+          "id": "balanced",
+          "total": 140,
+          "complete": 137,
+          "nEff": 102,
+          "calibrationComplete": 95,
+          "calibrationNEff": 73,
+          "oosComplete": 41,
+          "oosNEff": 28,
+          "contextsWithOos": 5,
+          "parameterStability": true
+        },
+        "strict": {
+          "id": "selective",
+          "total": 25,
+          "complete": 24,
+          "nEff": 24,
+          "calibrationComplete": 16,
+          "calibrationNEff": 16,
+          "oosComplete": 8,
+          "oosNEff": 8,
+          "contextsWithOos": 3,
+          "parameterStability": true
+        }
+      },
+      "limitation": "Strict Field is intentionally sparse in several contexts; strict does not mean more predictive."
+    },
+    "echo": {
+      "primaryState": "strong",
+      "levels": {
+        "loose": {
+          "id": "sensitive",
+          "total": 220,
+          "complete": 214,
+          "nEff": 102,
+          "calibrationComplete": 125,
+          "calibrationNEff": 65,
+          "oosComplete": 84,
+          "oosNEff": 37,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        },
+        "balanced": {
+          "id": "balanced",
+          "total": 98,
+          "complete": 96,
+          "nEff": 59,
+          "calibrationComplete": 49,
+          "calibrationNEff": 34,
+          "oosComplete": 43,
+          "oosNEff": 23,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        },
+        "strict": {
+          "id": "selective",
+          "total": 22,
+          "complete": 22,
+          "nEff": 19,
+          "calibrationComplete": 7,
+          "calibrationNEff": 7,
+          "oosComplete": 14,
+          "oosNEff": 11,
+          "contextsWithOos": 5,
+          "parameterStability": true
+        }
+      },
+      "limitation": "Preset comparison fixes pattern length/history/follow-up and changes similarity threshold only. Strong similarity is not directional prediction."
+    },
+    "astro": {
+      "primaryState": "event",
+      "levels": {
+        "loose": {
+          "id": "sensitive",
+          "total": 7977,
+          "complete": 7898,
+          "nEff": 8,
+          "calibrationComplete": 5529,
+          "calibrationNEff": 8,
+          "oosComplete": 2291,
+          "oosNEff": 8,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        },
+        "balanced": {
+          "id": "balanced",
+          "total": 6836,
+          "complete": 6766,
+          "nEff": 8,
+          "calibrationComplete": 4741,
+          "calibrationNEff": 8,
+          "oosComplete": 1952,
+          "oosNEff": 8,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        },
+        "strict": {
+          "id": "selective",
+          "total": 3436,
+          "complete": 3403,
+          "nEff": 23,
+          "calibrationComplete": 2372,
+          "calibrationNEff": 20,
+          "oosComplete": 989,
+          "oosNEff": 11,
+          "contextsWithOos": 8,
+          "parameterStability": true
+        }
+      },
+      "limitation": "Raw event counts are extremely large but effective independent samples remain small because events cluster and observation windows overlap. There is no causal or directional claim."
+    }
+  }
+}
