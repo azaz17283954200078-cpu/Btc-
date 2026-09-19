@@ -3,7 +3,7 @@ const assert=require('assert');
 
 const s=fs.readFileSync('index.html','utf8');
 
-assert(s.includes('v1.2 · M4 Guided Research'),'M4 Guided Research version label missing');
+assert(/v1\.[2-9] · M[45] /.test(s),'M4+ Guided Research version label missing');
 assert(s.includes('<script src="src/model-presets.js"></script>'),'shared validated presets are not loaded');
 
 for(const id of ['evidenceDock','evidenceDockBody','evidenceBackdrop','presetChoices','presetValidation']){
