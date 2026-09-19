@@ -4,7 +4,7 @@
 
 - Repository: `azaz17283954200078-cpu/Btc-`
 - Default branch: `main`
-- Current milestone: G02 guide technical implementation complete — independent user acceptance pending
+- Current milestone: G03-R0 Model Semantics Registry technical implementation complete — G02 independent user acceptance remains pending
 - M4 Guided Research: completed
 - M5 Shared Condition Engine: technical/research validation passed
 - M5 product acceptance: not complete until desktop/mobile use is tested by the user
@@ -89,3 +89,14 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - Final guide audit on fixed IXIC/TWII fixtures exercised all seven models and confirmed failure states, incomplete observations, small-N cases, causal Echo trace, and an explicit no-Macro/no-Sweep flat-market scenario.
 - Latest branch technical run before documentation: `35431231619` success. All existing M4/M5/G01/G02 contracts, regression, causality, data, model presets and G02 final audit passed.
 - Independent human acceptance remains pending because the guide explicitly requires an evaluator who did not participate in development and receives no verbal hints.
+
+
+## G03-R0 Model Semantics Registry
+- Approved G03 direction is stored in `G03_ITERATION_GUIDE.md`; G03 remains subordinate to the Constitution and is executed one major problem per iteration.
+- New shared `src/model-semantics.js` v1.0.0 defines the seven models' research type, primary question, claim boundary, normalized states, progression/confirmation/invalidation/exit semantics, standardized price geometry, allowed cross-research relations, directional-claim flag and future Strategy Adapter role boundaries.
+- All seven current models explicitly keep `directionalClaim=false`. Model lifecycle/event/analogy/external-time semantics must not be relabelled as future-price success/failure.
+- Condition Engine v1.3.0 now reads state/event/observation/terminal classification from the shared registry. Protected R02 behavior remains unchanged: Support/Macro/Basin can use standardized zone overlap; Sweep can use event-range price touch; Field/Echo/Astrology remain time-only.
+- The existing single-model research surface now shows the model's research type and claim boundary without adding a new main panel or navigation layer.
+- Future strategy capability is recorded but not implemented yet: Echo and Astrology have no standalone Entry; Macro Candidate is not an Entry state; 3+ model simulation remains a future engine-level prohibition per G03 guide.
+- G03-R0 CI contract is wired into the main Research Kernel workflow and passed together with all pre-existing M4/M5/G01/G02 gates on PR run `35434017722`.
+- R0 does not recalibrate presets, add Reliability scoring, build Runner Observatory, or modify Script/strategy simulation. Those remain later G03 iterations.
