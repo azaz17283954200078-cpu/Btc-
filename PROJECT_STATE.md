@@ -4,7 +4,7 @@
 
 - Repository: `azaz17283954200078-cpu/Btc-`
 - Default branch: `main`
-- Current milestone: G02-R1 single-model research architecture — product acceptance
+- Current milestone: G02-R2 research safety — user acceptance pending
 - M4 Guided Research: completed
 - M5 Shared Condition Engine: technical/research validation passed
 - M5 product acceptance: not complete until desktop/mobile use is tested by the user
@@ -66,3 +66,16 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - A handoff captures market, timeframe, model/state, Evidence reference, selected horizon, setting source, parameter snapshot/fingerprint, engine/kernel version, knownThrough, and data source. Parameter changes invalidate a prepared handoff.
 - Shared Model Engine, Research Kernel, Condition Engine v1.2, Evidence schema, causality, sample gates, Runner parity, Chart Core and data sources are unchanged.
 - G02-R1 does not complete product acceptance; desktop/mobile user validation is still required before building the dedicated combination workspace.
+
+## G02-R2 research safety
+- Source: two G02-R1 user walkthroughs using a high-school social-studies student acceptance role. The product direction remains single-model-first; multi-model expansion is intentionally deferred.
+- Global single-model outcomes now show total state cases, completed horizon cases, incomplete cases and sample sufficiency before return percentages.
+- Safety labels reuse the existing M5 thresholds: N < 5 insufficient, 5–19 exploratory, N >= 20 comparable. They never mean prediction confidence.
+- Macro primary research now displays candidate, confirmed, failed/expired-before-confirmation and unresolved counts together. Macro active is labelled as completed model confirmation rather than an unqualified bottom verdict.
+- Astrology primary research explicitly distinguishes external-time hypothesis from price causality; upcoming dates are relative to the loaded data cutoff and compared with the browser current date.
+- Astrology exposes event-bar count vs underlying event count and warns that overlapping follow-up windows are not independent evidence.
+- Astrology projections are blocked from combination handoff. Historical event Evidence remains eligible.
+- Historical case UI distinguishes total cases from the current browse cap.
+- Fixed-fixture safety audit: IXIC has Macro candidate=1, confirmed=1, confirmed 10-bar N=1 with upRate=100%; TWII candidate=7, confirmed=3, failed-before-confirm=4, confirmed 10-bar N=3 with upRate=66.7%. These are intentionally treated as insufficient-sample demonstrations, not model performance claims.
+- Fixed-fixture Astrology audit found 945 IXIC and 944 TWII event bars plus one upcoming projection record in each run; projection Evidence remains excluded from historical Evaluation.
+- Automated safety gates are green, but the Work acceptance guide requires an uninvolved human to complete the blocker tasks without verbal help. Therefore stage-1 product acceptance remains pending.
