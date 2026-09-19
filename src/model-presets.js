@@ -49,307 +49,85 @@
     ]
   };
   const VALIDATION={
-  "validatedAt": "2026-09-19",
-  "basis": "Research Runner semantic-fit validation; counts are primary-state occurrences, n10 is completed 10-bar outcomes. Presets were not selected by return ranking.",
-  "contexts": [
-    {
-      "market": "BTC",
-      "timeframe": "1d",
-      "bars": 1800
-    },
-    {
-      "market": "BTC",
-      "timeframe": "1w",
-      "bars": 700
-    },
-    {
-      "market": "IXIC",
-      "timeframe": "1d",
-      "bars": 1800
-    },
-    {
-      "market": "TWII",
-      "timeframe": "1d",
-      "bars": 1800
-    },
-    {
-      "market": "IXIC",
-      "timeframe": "1w",
-      "bars": 700
-    },
-    {
-      "market": "TWII",
-      "timeframe": "1w",
-      "bars": 700
-    },
-    {
-      "market": "IXIC",
-      "timeframe": "1m",
-      "bars": 300
-    },
-    {
-      "market": "TWII",
-      "timeframe": "1m",
-      "bars": 300
+    validatedAt:'2026-09-19',
+    basis:'G03 calibration uses Evidence density, effective independent N, lifecycle/time coverage, parameter-neighborhood stability and chronological OOS counts. Presets are not selected by return ranking.',
+    contexts:[
+      {market:'BTC',timeframe:'1d',bars:1800},{market:'BTC',timeframe:'1w',bars:700},
+      {market:'IXIC',timeframe:'1d',bars:1800},{market:'TWII',timeframe:'1d',bars:1800},
+      {market:'IXIC',timeframe:'1w',bars:700},{market:'TWII',timeframe:'1w',bars:700},
+      {market:'IXIC',timeframe:'1m',bars:300},{market:'TWII',timeframe:'1m',bars:300}
+    ],
+    models:{
+      support:{primaryState:'potential',ordering:{ids:['sensitive','balanced','selective'],values:[415,332,222],pass:true},presets:{
+        sensitive:{count:415,n10:412,nEff:319,oosComplete:121,oosNEff:94,contextsWithSamples:8,errors:0,parameterStability:true},
+        balanced:{count:332,n10:326,nEff:276,oosComplete:92,oosNEff:80,contextsWithSamples:8,errors:0,parameterStability:true},
+        selective:{count:222,n10:220,nEff:196,oosComplete:59,oosNEff:55,contextsWithSamples:8,errors:0,parameterStability:true}
+      }},
+      macro:{primaryState:'candidate',ordering:{ids:['sensitive','balanced','selective'],values:[85,52,39],pass:true},presets:{
+        sensitive:{count:85,n10:85,nEff:63,oosComplete:22,oosNEff:17,contextsWithSamples:8,errors:0,parameterStability:true},
+        balanced:{count:52,n10:52,nEff:35,oosComplete:17,oosNEff:10,contextsWithSamples:8,errors:0,parameterStability:true},
+        selective:{count:39,n10:39,nEff:29,oosComplete:10,oosNEff:7,contextsWithSamples:7,errors:0,parameterStability:true}
+      }},
+      sweep:{primaryState:'event',ordering:{ids:['sensitive','balanced','selective'],values:[150,133,111],pass:true},presets:{
+        sensitive:{count:150,n10:150,nEff:96,oosComplete:46,oosNEff:28,contextsWithSamples:8,errors:0,parameterStability:true},
+        balanced:{count:133,n10:133,nEff:94,oosComplete:40,oosNEff:27,contextsWithSamples:8,errors:0,parameterStability:true},
+        selective:{count:111,n10:111,nEff:84,oosComplete:34,oosNEff:24,contextsWithSamples:8,errors:0,parameterStability:true}
+      }},
+      basin:{primaryState:'active',ordering:{ids:['sensitive','balanced','selective'],values:[68,57,52],pass:true},presets:{
+        sensitive:{count:68,n10:68,nEff:63,oosComplete:20,oosNEff:18,contextsWithSamples:8,errors:0,parameterStability:true},
+        balanced:{count:57,n10:57,nEff:50,oosComplete:20,oosNEff:15,contextsWithSamples:8,errors:0,parameterStability:true},
+        selective:{count:52,n10:50,nEff:40,oosComplete:17,oosNEff:13,contextsWithSamples:4,errors:0,parameterStability:true}
+      }},
+      field:{primaryState:'active',ordering:{ids:['sensitive','balanced','selective'],values:[246,140,25],pass:true},presets:{
+        sensitive:{count:246,n10:243,nEff:165,oosComplete:79,oosNEff:54,contextsWithSamples:8,errors:0,parameterStability:true},
+        balanced:{count:140,n10:137,nEff:102,oosComplete:41,oosNEff:28,contextsWithSamples:8,errors:0,parameterStability:true},
+        selective:{count:25,n10:24,nEff:24,oosComplete:8,oosNEff:8,contextsWithSamples:5,errors:0,parameterStability:true}
+      }},
+      echo:{primaryState:'strong',ordering:{ids:['sensitive','balanced','selective'],values:[220,98,22],pass:true},presets:{
+        sensitive:{count:220,n10:214,nEff:102,oosComplete:84,oosNEff:37,contextsWithSamples:8,errors:0,parameterStability:true},
+        balanced:{count:98,n10:96,nEff:59,oosComplete:43,oosNEff:23,contextsWithSamples:8,errors:0,parameterStability:true},
+        selective:{count:22,n10:22,nEff:19,oosComplete:14,oosNEff:11,contextsWithSamples:6,errors:0,parameterStability:true}
+      }},
+      astro:{primaryState:'event',ordering:{ids:['sensitive','balanced','selective'],values:[7977,6836,3436],pass:true},presets:{
+        sensitive:{count:7977,n10:7898,nEff:8,oosComplete:2291,oosNEff:8,contextsWithSamples:8,errors:0,parameterStability:true},
+        balanced:{count:6836,n10:6766,nEff:8,oosComplete:1952,oosNEff:8,contextsWithSamples:8,errors:0,parameterStability:true},
+        selective:{count:3436,n10:3403,nEff:23,oosComplete:989,oosNEff:11,contextsWithSamples:8,errors:0,parameterStability:true}
+      }}
     }
-  ],
-  "models": {
-    "support": {
-      "primaryState": "potential",
-      "ordering": {
-        "ids": [
-          "sensitive",
-          "balanced",
-          "selective"
-        ],
-        "values": [
-          415,
-          332,
-          222
-        ],
-        "pass": true
-      },
-      "presets": {
-        "sensitive": {
-          "count": 415,
-          "n10": 412,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "balanced": {
-          "count": 332,
-          "n10": 326,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "selective": {
-          "count": 222,
-          "n10": 220,
-          "contextsWithSamples": 8,
-          "errors": 0
-        }
-      }
-    },
-    "macro": {
-      "primaryState": "candidate",
-      "ordering": {
-        "ids": [
-          "sensitive",
-          "balanced",
-          "selective"
-        ],
-        "values": [
-          85,
-          52,
-          39
-        ],
-        "pass": true
-      },
-      "presets": {
-        "sensitive": {
-          "count": 85,
-          "n10": 85,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "balanced": {
-          "count": 52,
-          "n10": 52,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "selective": {
-          "count": 39,
-          "n10": 39,
-          "contextsWithSamples": 7,
-          "errors": 0
-        }
-      }
-    },
-    "sweep": {
-      "primaryState": "event",
-      "ordering": {
-        "ids": [
-          "sensitive",
-          "balanced",
-          "selective"
-        ],
-        "values": [
-          212,
-          133,
-          82
-        ],
-        "pass": true
-      },
-      "presets": {
-        "sensitive": {
-          "count": 212,
-          "n10": 211,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "balanced": {
-          "count": 133,
-          "n10": 133,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "selective": {
-          "count": 82,
-          "n10": 82,
-          "contextsWithSamples": 8,
-          "errors": 0
-        }
-      }
-    },
-    "basin": {
-      "primaryState": "active",
-      "ordering": {
-        "ids": [
-          "sensitive",
-          "balanced",
-          "selective"
-        ],
-        "values": [
-          109,
-          57,
-          43
-        ],
-        "pass": true
-      },
-      "presets": {
-        "sensitive": {
-          "count": 109,
-          "n10": 109,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "balanced": {
-          "count": 57,
-          "n10": 57,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "selective": {
-          "count": 43,
-          "n10": 43,
-          "contextsWithSamples": 5,
-          "errors": 0
-        }
-      }
-    },
-    "field": {
-      "primaryState": "active",
-      "ordering": {
-        "ids": [
-          "sensitive",
-          "balanced",
-          "selective"
-        ],
-        "values": [
-          246,
-          140,
-          25
-        ],
-        "pass": true
-      },
-      "presets": {
-        "sensitive": {
-          "count": 246,
-          "n10": 243,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "balanced": {
-          "count": 140,
-          "n10": 137,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "selective": {
-          "count": 25,
-          "n10": 24,
-          "contextsWithSamples": 5,
-          "errors": 0
-        }
-      }
-    },
-    "echo": {
-      "primaryState": "strong",
-      "ordering": {
-        "ids": [
-          "sensitive",
-          "balanced",
-          "selective"
-        ],
-        "values": [
-          519,
-          20,
-          14
-        ],
-        "pass": true
-      },
-      "presets": {
-        "sensitive": {
-          "count": 519,
-          "n10": 510,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "balanced": {
-          "count": 20,
-          "n10": 20,
-          "contextsWithSamples": 7,
-          "errors": 0
-        },
-        "selective": {
-          "count": 14,
-          "n10": 14,
-          "contextsWithSamples": 5,
-          "errors": 0
-        }
-      }
-    },
-    "astro": {
-      "primaryState": "event",
-      "ordering": {
-        "ids": [
-          "sensitive",
-          "balanced",
-          "selective"
-        ],
-        "values": [
-          7977,
-          6836,
-          3436
-        ],
-        "pass": true
-      },
-      "presets": {
-        "selective": {
-          "count": 3436,
-          "n10": 3403,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "balanced": {
-          "count": 6836,
-          "n10": 6766,
-          "contextsWithSamples": 8,
-          "errors": 0
-        },
-        "sensitive": {
-          "count": 7977,
-          "n10": 7898,
-          "contextsWithSamples": 8,
-          "errors": 0
-        }
-      }
+  };
+  const PUBLICATION={
+    version:'g03-r5-2026-09-19',
+    split:'chronological 70% calibration / 30% blind validation',
+    freezeRule:'parameter snapshot and fingerprint are fixed before OOS outcome reveal',
+    selectionBasis:'Evidence density / N_eff / lifecycle & time coverage / parameter stability. OOS return metrics never choose a preset.',
+    limitations:{
+      support:'Strictness mainly changes structure selectivity; reliability still depends on market/timeframe coverage.',
+      macro:'Macro is naturally rare. Full history can still leave small OOS and effective samples.',
+      sweep:'Event samples are more independent than dense state observations, but OOS remains context-dependent.',
+      basin:'Lifecycle episode counts can locally be non-monotonic because looser states may merge adjacent episodes; aggregate density is audited instead.',
+      field:'Strict Field is intentionally sparse in several contexts; strict does not mean more predictive.',
+      echo:'Strict Strong-Echo remains relatively thin; similarity is analogy, not directional prediction.',
+      astro:'Raw event counts are very large but N_eff is extremely small because events cluster and follow-up windows overlap; no causal claim.'
     }
-  }
-};
+  };
   function list(model){return (PRESETS[model]||[]).map(x=>JSON.parse(JSON.stringify(x)))}
   function get(model,id){return list(model).find(x=>x.id===id)||null}
-  function validation(model,id){return VALIDATION.models[model]&&VALIDATION.models[model].presets[id]?JSON.parse(JSON.stringify(VALIDATION.models[model].presets[id])):null}
-  return{VERSION,PRESETS,VALIDATION,list,get,validation};
+  function validation(model,id){
+    let x=VALIDATION.models[model]&&VALIDATION.models[model].presets[id];
+    return x?JSON.parse(JSON.stringify(x)):null
+  }
+  function publication(model,id){
+    let p=get(model,id),v=validation(model,id);
+    if(!p||!v)return null;
+    return JSON.parse(JSON.stringify({
+      publicationVersion:PUBLICATION.version,
+      model,presetId:id,level:p.level,title:p.title,
+      primaryState:VALIDATION.models[model].primaryState,
+      calibration:{count:v.count,complete:v.n10,nEff:v.nEff,parameterStability:v.parameterStability},
+      validation:{complete:v.oosComplete,nEff:v.oosNEff},
+      split:PUBLICATION.split,freezeRule:PUBLICATION.freezeRule,selectionBasis:PUBLICATION.selectionBasis,
+      limitation:PUBLICATION.limitations[model]||''
+    }))
+  }
+  return{VERSION,PRESETS,VALIDATION,PUBLICATION,list,get,validation,publication};
 });
