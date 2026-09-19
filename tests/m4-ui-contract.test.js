@@ -3,7 +3,7 @@ const assert=require('assert');
 
 const s=fs.readFileSync('index.html','utf8');
 
-assert(/v1\.[2-9] · M[45] /.test(s),'M4+ Guided Research version label missing');
+assert(/v1\.[2-9] · (?:M[45]|G01) /.test(s),'Guided Research version label missing');
 assert(s.includes('<script src="src/model-presets.js"></script>'),'shared validated presets are not loaded');
 
 for(const id of ['evidenceDock','evidenceDockBody','evidenceBackdrop','presetChoices','presetValidation','activeModelStack','researchStackSummary','modelLibrary']){
@@ -43,12 +43,14 @@ assert(s.includes('enabled,zone:ZONE,macro:MACRO,sweep:SWEEP,exp:EXP'),'Sweep se
 
 // Result education and next-step guidance.
 for(const phrase of [
-  '不是替現在行情下買賣結論',
-  '中位數是把結果排好後站在中間的那一個',
-  '途中最大上漲幅度（MFE）',
+  '現在看到什麼？',
+  '為什麼模型會這樣判斷？',
+  '接下來觀察什麼？',
+  '這不是目前行情的預測值',
+  '途中最大上漲幅度 MFE',
   '失敗率不是「價格會跌的機率」',
-  '回到幾個真實歷史案例',
-  '換一種研究方式'
+  '直接回到真實歷史案例',
+  '換一種模型設定'
 ]){
   assert(s.includes(phrase),'missing result guidance: '+phrase);
 }
@@ -58,7 +60,7 @@ assert(s.includes("window.matchMedia('(pointer: coarse)')"),'coarse-pointer cont
 assert(s.includes("e.pointerType==='touch'"),'touch pointer contract missing');
 assert(s.includes("if(isMobileUI()||e.target.closest('button'))return"),'mobile parameter sheet must not use desktop dragging');
 assert(s.includes('.param-modal{align-items:flex-end;justify-content:stretch;padding:0}'),'mobile parameter bottom-sheet CSS missing');
-assert(s.includes('.evidence-dock{display:none;position:fixed;left:0;right:0;bottom:0'),'mobile evidence bottom-sheet CSS missing');
+assert(s.includes('.evidence-dock{display:none;position:fixed;inset:0'),'mobile evidence full-screen research CSS missing');
 assert(s.includes('if(hit&&hit.model)pinResearch(hit)'),'chart tap/click must pin model research');
 assert(s.includes("if(!tip||isCoarsePointer()||!mousePos||drag)"),'mobile must not depend on hover tooltip');
 
@@ -80,6 +82,6 @@ console.log('m4-ui-contract.test.js: OK');
 
 const modelLibrary=s.match(/<details id="modelLibrary"[^>]*>/);
 assert(modelLibrary&&!/\bopen\b/.test(modelLibrary[0]),'model library must be collapsed by default');
-assert(s.includes('研究條件組'),'primary research surface must be Chinese-first');
+assert(s.includes('模型研究'),'primary research surface must be Chinese-first');
 assert(s.includes('data-active-model'),'active research models must render as bricks');
 assert(s.includes('MODEL_SETTING_STATE'),'each model brick must retain its UI research-setting source');
