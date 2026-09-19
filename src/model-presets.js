@@ -40,7 +40,7 @@
     echo:[
       {id:'sensitive',level:'loose',title:'寬鬆',intent:'固定 32 根型態與相同搜尋歷史，只降低相似門檻，讓三層 Strong Evidence 可直接比較。',config:{exp:{echo:{length:32,history:1200,similarity:.74,followBars:12}}}},
       {id:'balanced',level:'balanced',title:'平衡',intent:'固定相同型態長度與搜尋歷史，以 78% 作為 Strong 的中間門檻。',config:{exp:{echo:{length:32,history:1200,similarity:.78,followBars:12}}}},
-      {id:'selective',level:'strict',title:'嚴格',intent:'固定相同型態長度與搜尋歷史，只提高 Strong 門檻到 82%；相似不等於歷史重演。',config:{exp:{echo:{length:32,history:1200,similarity:.82,followBars:12}}}}
+      {id:'selective',level:'strict',title:'嚴格',intent:'固定相同型態長度與搜尋歷史，只提高 Strong 門檻到 82%；嚴格不代表更準，相似也不等於歷史重演。',config:{exp:{echo:{length:32,history:1200,similarity:.82,followBars:12}}}}
     ],
     astro:[
       {id:'sensitive',level:'loose',title:'寬鬆',intent:'納入較廣事件集合；事件數很多也不代表有更多獨立證據或因果。',config:{exp:{astro:{planetSet:'modern',aspectSet:'major',orb:6,retro:'on',ingress:'on'}}}},
