@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v1.1 · M4 Progressive Research UI**
+**v1.2 · M4 Guided Research**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -17,7 +17,11 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 - 7 個內建模型：Support Zone、Macro Bottom、Liquidity Sweep、Basin Mapper、Oscillation Field、Echo、Astrology Engine
 - Script Lab 自訂策略圖層
 - Echo 歷史相似型態搜尋、後續 MFE / MAE / 報酬回測與歷史 K 線跳轉
-- M4 Evidence Research：Desktop Hover / Click、Mobile Tap / Bottom Sheet、3/5/10/20 bars Evaluation、Lifecycle、Historical Cases、Failure Examples
+- M4 Guided Research：7 個模型逐一回答「它在問什麼／開啟後看到什麼／別把它當成什麼」
+- 每個模型都有 3 套已驗證的參考研究設定，可再展開手動參數微調
+- 參考設定已用 Research Runner 跑過 BTC / NASDAQ / TAIEX 的 8 個市場×週期情境；驗證敏感度順序、樣本覆蓋與 Evidence error，不用歷史報酬排名選參數
+- Evidence Research：Desktop Hover / Click、Mobile Tap / Bottom Sheet、3/5/10/20 bars Evaluation、Lifecycle、Historical Cases、Failure Examples
+- N / Median Return / MFE / MAE / progression / failure 都附白話解讀與下一步操作
 
 ## Architecture
 
@@ -79,6 +83,22 @@ node scripts/research-runner.js --compare old.json,new.json --out research/compa
 
 Runner 不含另一份模型邏輯；它直接呼叫與 Strategy Lab UI 相同的 `src/model-engine.js`。研究輸出包含 Evidence Timeline、M3 Evaluation、model/kernel version、parameter fingerprint 與資料來源。
 
+## M4 Guided Research
+
+M4 的目標不是再加一個「教學模式」，而是讓原本的 Lab 本身會帶人研究。模型卡先用市場問題開場；開啟後告訴你圖上會看到什麼、哪些解讀不能直接推出；再往下才進入狀態、歷史分布與原始 Evidence。
+
+每個模型都有三套「參考研究設定」。名稱描述的是模型看市場的方式，例如較敏感、平衡、較挑剔，而不是「高勝率」或「最佳參數」。設定與 Runner 共用 `src/model-presets.js`，沒有 UI 私藏的另一份參數。
+
+正式公開前，這些設定先由 Research Runner 在 8 個歷史情境驗證：BTC 1D / 1W、NASDAQ 1D / 1W / 1M、TAIEX 1D / 1W / 1M。驗證條件包括：
+
+- Sensitive → Balanced → Selective 的主要狀態樣本數確實依序下降
+- 每套設定都有可研究的歷史樣本與完成的 10-bar outcomes
+- 至少跨多個市場／週期情境有樣本
+- Evidence errors = 0
+- **不使用 Median Return 或其他報酬排名挑選哪套參數**
+
+完整驗證結果保存在 `research/m4-preset-validation.json`，CI 也會重新跑 semantic-fit gate，避免日後模型修改後，參考設定的名字和實際行為悄悄失去一致性。
+
 ## Automated checks
 
 GitHub Actions 會自動檢查：
@@ -87,6 +107,9 @@ GitHub Actions 會自動檢查：
 - Research Runner 與 Lab Engine 的 Evidence / Evaluation parity
 - NASDAQ / TAIEX market-data completeness / freshness
 - Pre-M4 fixed-fixture behavior regression（NASDAQ 1D + TAIEX 1D）
+- M4 Guided Research desktop/mobile interaction contract
+- Validated model preset contract
+- M4 preset semantic-fit Research Runner gate
 - protected Chart Core 是否被模型邏輯污染
 - 三層 Canvas 是否存在
 - Experimental models 是否維持預設關閉
@@ -104,8 +127,8 @@ GitHub Actions 會自動檢查：
 
 ## Direction
 
-M1「可信任的地基」、M2「市場記憶」、M3「自我驗證」、M3.5「Research Runner」與 M4「一眼懂，點下去很深」已完成。
+M1「可信任的地基」、M2「市場記憶」、M3「自我驗證」、M3.5「Research Runner」與重新定義後的 M4「Guided Research」已完成。
 
-下一階段是 **M5「條件式市場推論」**：研究多個 causal Evidence 同時成立時的歷史條件分布與不確定性，而不是輸出不可追溯的單一買賣答案。
+下一階段是 **M5「條件式市場推論」**：研究多個 causal Evidence 同時成立時的歷史條件分布、樣本數與不確定性，而不是把模型做成投票器或輸出不可追溯的單一買賣答案。
 
-持久化 Research Database 不是當前前置條件；等批次研究量真的使重算成本過高時再評估。
+持久化 Research Database 仍不是前置條件；等批次研究量真的使重算成本過高時再評估。

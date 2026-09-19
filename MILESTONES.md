@@ -116,32 +116,35 @@ M3.5 把模型從 `index.html` 大幅搬到 Shared Model Engine 後，進 M4 前
 
 本次 audit 也發現市場資料更新曾留下未完成的最新 K；Updater 已改為先驗證並 drop incomplete OHLC，再原子替換資料檔，避免壞資料覆蓋既有歷史。
 
-## M4｜Guided Research｜介面自己帶人研究 — 🚧 Reopened
+## M4｜Guided Research｜介面自己帶人研究 — ✅ Completed
 
-M4 不再只代表「Evidence 可以點開」，而是要求第一次進入 Strategy Lab 的人不必先讀教學頁，也能從介面本身知道：
+M4 最終不是「把統計打開來看」，而是讓 Strategy Lab 的主介面本身帶使用者完成一段研究。
 
-- 這個模型在問市場什麼問題
-- 開啟後會在圖上看到什麼
-- 現在模型看到什麼狀態
-- 每個按鈕按下去會得到什麼
-- 每個參數改大／改小會改變什麼
-- 統計數字代表什麼、不能代表什麼
-- 下一步可以看哪個歷史案例或失敗案例
+完成內容：
 
-### M4 Guided Research 完成條件
+- 7 個模型卡都先回答「它在問市場什麼問題」
+- 每張卡都說明「開啟後圖上會看到什麼」與「不能直接把它解讀成什麼」
+- Support 預設開啟，讓第一次進站就能看到模型層；實驗模型仍維持 opt-in
+- 卡片直接顯示目前 Evidence；沒有當前 Evidence 時，會帶使用者回最近歷史案例或建議比較較敏感設定
+- 每個模型都有 3 套 shared 參考研究設定，設定來源只有一份 `src/model-presets.js`
+- 參考設定顯示實際參數與「調寬／調嚴」會改變什麼；使用者仍可展開每個參數自行微調
+- 所有參考設定先經 Research Runner 驗證，並把驗證結果保存到 `research/m4-preset-validation.json`
+- 驗證涵蓋 8 個歷史情境：BTC 1D/1W、NASDAQ 1D/1W/1M、TAIEX 1D/1W/1M
+- 7 個模型都通過 Sensitive ≥ Balanced ≥ Selective 的主要狀態樣本密度檢查
+- 每套設定都有完成的 10-bar outcomes、跨情境樣本覆蓋，且 Evidence errors = 0
+- 參考設定**不是**依歷史報酬高低挑選；Median Return 不參與 preset ranking
+- N、Median Return、MFE、MAE 都有當下白話說明；Median 明確標示不是當前報酬預測
+- Lifecycle progression / failure 明確解釋成「模型自己的狀態發展」，不是價格漲跌機率
+- 歷史案例、失敗案例、detectedAt / evidenceStart 都保留可追溯入口
+- 每個研究層級都有下一步：回歷史 K、換研究設定、展開更深 Evidence
+- Desktop：Hover 增強 + Click pin；Mobile：Tap + Bottom Sheet，不依賴 Hover
+- Mobile 參數介面採 Bottom Sheet；Desktop 保留 draggable modal
+- M4 UI 只讀 M2 Evidence / M3 Evaluation，不自行呼叫 `evaluateTimeline()` 重算另一份答案
+- CI 永久保護 Guided Research interaction contract、validated preset contract 與 preset semantic-fit gate
 
-1. **7 個模型逐一引導**：每張模型卡都用市場問題開場，不以術語作為理解起點。
-2. **狀態翻譯**：Potential / Candidate / Active / Strong 等狀態先翻成市場現象，再保留術語作名稱。
-3. **按鈕結果導向**：例如「看看以前發生過什麼」「用這組設定重新找」，避免只寫工程功能名稱。
-4. **參考研究配方**：每個模型提供數套有語意的參考設定，並說明會讓模型更敏感、較平衡或更挑剔。
-5. **配方必須先驗證**：所有參考設定必須用 Research Runner 在多市場／多週期歷史資料上先跑過；驗證的是設定是否真的符合其宣稱的敏感度、樣本量與模型語意，不以歷史報酬最高作為挑選標準。
-6. **參數教學**：使用者可以從配方看到實際參數，並理解每個參數調整的方向效果。
-7. **結果教學**：N、Median Return、MFE、MAE、progression / failure 都要附當下語境的白話解讀。
-8. **下一步引導**：每一層研究結果都提供自然的下一個動作，而不是讓使用者自己猜。
-9. **Desktop / Mobile 各自成立**：Desktop 可用 Hover 增強；Mobile 不依賴 Hover，使用 Tap / Bottom Sheet。
-10. **同一研究真相**：UI 只讀 M2 Evidence / M3 Evaluation；參考配方由 Lab 與 Runner 共用，不允許 UI 另藏一套參數。
+M4 的完成標準：
 
-M4 完成前不進入 M5。
+> 第一次打開 Strategy Lab 的人，不需要先讀說明頁，就能從介面本身知道「我現在看到什麼、我可以做什麼、按下去會得到什麼、接下來還能研究什麼」。
 
 ## M5｜條件式市場推論 — Next
 
