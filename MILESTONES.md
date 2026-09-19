@@ -156,7 +156,7 @@ M5 研究的是「多一個 causal Evidence 之後，歷史分布發生了什麼
 - terminal transition（Broken / Exit）只視為當根事件，不永久留在市場狀態中。
 - Event Evidence（Sweep / Astrology）預設只在事件當根成立；可顯式設定「最近 N 根內發生」，窗口只向事件之後延伸，不使用未來資料。
 - Echo Observation 只使用當根實際觀察結果。
-- 多條件連續重疊的一整段只算 **1 個 episode**，避免一個長狀態被重複算成很多獨立樣本。
+- **Anchor-centric sampling**：第一個條件定義 baseline episode；每個 anchor episode 最多貢獻 1 個組合樣本，取「所有新增條件第一次同時成立」的時點，因此加入條件後 N 不會反而變大。
 - 每個組合都必須和 anchor 單一條件 baseline 並排比較。
 - 樣本閘門：N < 5 = 樣本不足；5–19 = 探索性；N ≥ 20 = 可比較。這只是樣本量提示，不代表預測可靠度。
 - M5 顯示條件分布、IQR、MFE / MAE 與失敗案例；不產生 BUY / SELL、模型投票或「最佳組合」排名。
