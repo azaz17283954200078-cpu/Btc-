@@ -227,6 +227,17 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .model-proof-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.model-proof-actions button{min-height:34px;font-size:9.5px}
 .model-proof-diff{margin-top:7px;padding:8px 9px;border-radius:8px;background:#0e2034;color:#9fb5cf;font-size:9.5px;line-height:1.5}
 .param-impact{margin-top:8px;padding:8px 9px;border-left:3px solid #496b8c;background:#0b1625;color:#a9bad0;font-size:9.7px;line-height:1.52}
+/* G02-R5｜目前研究與已保存研究明確分離 */
+.saved-research-shelf{margin-top:12px;padding-top:11px;border-top:1px solid #263c58}
+.saved-research-list{display:grid;gap:7px}
+.saved-research-empty{padding:10px 11px;border:1px dashed #334d6b;border-radius:10px;color:#8fa4bd;font-size:9.8px;line-height:1.5}
+.saved-research-card{padding:10px 11px;border:1px solid #355474;border-radius:10px;background:#0b1727}
+.saved-research-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.saved-research-head b{color:#edf5ff;font-size:11px}.saved-research-head small{color:#8298b4;font-size:8.8px;white-space:nowrap}
+.saved-research-meta{margin-top:5px;color:#9fb3cc;font-size:9.5px;line-height:1.5}
+.saved-research-stale{margin-top:6px;padding:6px 7px;border-left:3px solid #7b654f;background:#1c1812;color:#c7b69d;font-size:9px;line-height:1.45}
+.saved-research-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.saved-research-actions button{min-height:32px;font-size:9px;padding:4px 7px}
+.current-research-label{padding:7px 9px;border:1px solid #335575;border-radius:9px;background:#0d1d30;color:#a8bdd6;font-size:9.6px;line-height:1.45}
 /* Sidebar */
 .side{min-height:0;padding:10px;display:grid;grid-template-rows:auto 1fr}
 .tabs{display:flex;gap:7px;margin-bottom:10px}
@@ -491,9 +502,11 @@ td:first-child,th:first-child{text-align:left}
 }
 
 @media(max-width:650px){.model-proof-grid{grid-template-columns:1fr}.model-proof-actions button{min-height:44px;flex:1 1 42%}}
+
+@media(max-width:650px){.saved-research-actions button{min-height:44px;flex:1 1 40%}.saved-research-head{display:block}.saved-research-head small{display:block;margin-top:3px}}
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.0 · G02-R4 模型證據</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.1 · G02-R5 研究保存與延續</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -550,6 +563,10 @@ td:first-child,th:first-child{text-align:left}
           <div class="single-loading">正在整理單一模型研究…</div>
         </div>
         <div id="singleHandoffStatus" class="single-handoff-status" aria-live="polite"></div>
+        <section class="saved-research-shelf">
+          <div class="panel-title"><b>已保存研究</b><span class="muted">保存的是當時快照，不會跟著目前設定偷偷改變</span></div>
+          <div id="savedResearchList" class="saved-research-list"></div>
+        </section>
 
         <details id="modelLibrary" class="model-library">
           <summary>模型庫與圖層｜勾選只控制主圖顯示</summary>
@@ -758,6 +775,7 @@ function modelSettingLabel(k){
     let p=MP&&MP.get(k,s.id);return p?('參考設定：'+p.title):'參考設定'
   }
   if(s&&s.kind==='custom')return '自訂參數';
+  if(s&&s.kind==='saved')return '已保存參數快照';
   return '模型原本設定'
 }
 function presetParamSummary(k,preset){
@@ -809,13 +827,13 @@ function openParams(k){
   q('paramModal').classList.add('on')
 }
 function closeParams(){q('paramModal').classList.remove('on');paramDrag=null}
-function setParamDraft(k,v,isText){if(!PARAM_DRAFT)return;PARAM_DRAFT[k]=isText?v:+v;ACTIVE_PRESET_ID=null;renderPresetChoices();q('paramRunStatus').textContent='你改了參數；按「用這些參數重新找」才會套用'}
+function setParamDraft(k,v,isText){if(!PARAM_DRAFT)return;ACTIVE_SAVED_RESEARCH_ID=null;PARAM_DRAFT[k]=isText?v:+v;ACTIVE_PRESET_ID=null;renderPresetChoices();q('paramRunStatus').textContent='你改了參數；按「用這些參數重新找」才會套用'}
 function restoreParams(){
   if(!ACTIVE_PARAM_MODEL)return;PARAM_DRAFT=modelDefaultDraft(ACTIVE_PARAM_MODEL);ACTIVE_PRESET_ID=null;
   renderPresetChoices();renderParamBody();q('paramRunStatus').textContent='已放回模型原本設定；按「用這些參數重新找」套用'
 }
 function applyParams(){
-  if(!ACTIVE_PARAM_MODEL||!PARAM_DRAFT)return;
+  if(!ACTIVE_PARAM_MODEL||!PARAM_DRAFT)return;ACTIVE_SAVED_RESEARCH_ID=null;
   applyDraftToModel(ACTIVE_PARAM_MODEL,PARAM_DRAFT);MODEL_SETTING_STATE[ACTIVE_PARAM_MODEL]={kind:'custom'};clearCombinationHandoff('模型設定已變更；若要進組合研究，請重新確認並準備一次。');zoneCalc();
   q('paramRunStatus').textContent='已用你目前看到的參數重新掃過歷史與現在'
 }
@@ -836,7 +854,7 @@ function resetModelSettings(k){
   if(ME.DEFAULT_EXP[k])EXP[k]=cloneObj(ME.DEFAULT_EXP[k])
 }
 function applyPreset(k,id){
-  let p=MP&&MP.get(k,id);if(!p)return;
+  let p=MP&&MP.get(k,id);if(!p)return;ACTIVE_SAVED_RESEARCH_ID=null;
   let c=p.config||{};
   resetModelSettings(k);
   if(c.zone)deepAssign(ZONE,c.zone);
@@ -866,12 +884,14 @@ let FOCUSED_MODEL='support',
     SINGLE_RESEARCH_CONTEXT=null,
     COMBINATION_HANDOFF_CONTEXT=null,
     CONDITION_STACK=[],
+    SAVED_RESEARCH=[],
+    ACTIVE_SAVED_RESEARCH_ID=null,
     HANDOFF_NOTICE='';
 let PINNED_RESEARCH=null,RESEARCH_DETAIL_OPEN=false,LAST_TOOLTIP_HIT=null;
 const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,CE=window.StrategyLabConditionEngine||null;
 if(!ME||!MP||!CE)throw new Error('Strategy Lab shared research modules failed to load');
 window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
-window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVALUATION__=EVALUATION;
+window.__SL_SAVED_RESEARCH__=SAVED_RESEARCH;window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVALUATION__=EVALUATION;
 window.__SL_SINGLE_RESEARCH_CONTEXT__=SINGLE_RESEARCH_CONTEXT;
 window.__SL_COMBINATION_HANDOFF__=COMBINATION_HANDOFF_CONTEXT;
 window.__SL_CONDITION_STACK__=CONDITION_STACK;
@@ -1327,6 +1347,7 @@ function syncFocusedEvidenceAfterRun(){
 }
 function focusSingleModel(model){
   if(!MODEL_UI[model])return;
+  if(model!==FOCUSED_MODEL)ACTIVE_SAVED_RESEARCH_ID=null;
   FOCUSED_MODEL=model;
   FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
   SINGLE_RESEARCH_HORIZON=10;
@@ -1706,6 +1727,110 @@ function singleHistoryHTML(model,state,ev,mode){
 function modelParameterSnapshot(model){
   try{return cloneObj(modelDraft(model))}catch(_){return null}
 }
+
+const SAVED_RESEARCH_KEY='strategy-lab:saved-research:v1';
+function loadSavedResearch(){
+  try{
+    let raw=localStorage.getItem(SAVED_RESEARCH_KEY),rows=raw?JSON.parse(raw):[];
+    SAVED_RESEARCH=Array.isArray(rows)?rows.slice(0,30):[]
+  }catch(_){SAVED_RESEARCH=[]}
+  window.__SL_SAVED_RESEARCH__=SAVED_RESEARCH;
+  renderSavedResearch()
+}
+function persistSavedResearch(){
+  try{localStorage.setItem(SAVED_RESEARCH_KEY,JSON.stringify(SAVED_RESEARCH.slice(0,30)))}catch(_){}
+  window.__SL_SAVED_RESEARCH__=SAVED_RESEARCH
+}
+function savedResearchId(){
+  return 'saved-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7)
+}
+function sameParamSnapshot(a,b){
+  try{return JSON.stringify(a||null)===JSON.stringify(b||null)}catch(_){return false}
+}
+function saveCurrentResearch(){
+  let ctx=buildSingleResearchContext();
+  if(!ctx){HANDOFF_NOTICE='目前沒有可保存的模型 Evidence。先選一個有證據的現在狀態或歷史案例。';renderHandoffStatus();return}
+  let item={id:savedResearchId(),savedAt:new Date().toISOString(),context:cloneObj(ctx)};
+  SAVED_RESEARCH.unshift(item);SAVED_RESEARCH=SAVED_RESEARCH.slice(0,30);
+  ACTIVE_SAVED_RESEARCH_ID=item.id;
+  persistSavedResearch();
+  HANDOFF_NOTICE='已保存目前研究快照。之後切換模型或改參數，這份保存內容仍維持原設定。';
+  renderHandoffStatus();renderSavedResearch()
+}
+function deleteSavedResearch(id){
+  SAVED_RESEARCH=SAVED_RESEARCH.filter(x=>x.id!==id);
+  if(ACTIVE_SAVED_RESEARCH_ID===id)ACTIVE_SAVED_RESEARCH_ID=null;
+  persistSavedResearch();renderSavedResearch()
+}
+function savedDisplayMarket(x){
+  if(!x)return'—';
+  if(x.market==='BTC')return'BTC';
+  if(x.market==='IXIC')return'NASDAQ';
+  if(x.market==='TWII')return'台股加權';
+  return x.market||'—'
+}
+function savedEvidenceDate(x){
+  let f=x&&x.focus||{};
+  if(Number.isInteger(f.index)&&D[f.index]&&q('market')&&q('market').value===x.market&&tf===x.timeframe)return date(D[f.index].t);
+  return Number.isFinite(f.timestamp)?date(f.timestamp):'Evidence index '+String(f.index??'—')
+}
+function currentDiffersFromSaved(item){
+  let x=item&&item.context;if(!x)return false;
+  if((q('market')&&q('market').value)!==x.market||tf!==x.timeframe||FOCUSED_MODEL!==x.model)return true;
+  return !sameParamSnapshot(modelParameterSnapshot(x.model),x.parameterSnapshot)
+}
+function renderSavedResearch(){
+  let box=q('savedResearchList');if(!box)return;
+  if(!SAVED_RESEARCH.length){
+    box.innerHTML='<div class="saved-research-empty">還沒有保存研究。保存後，市場、週期、模型、狀態與參數會保留成一份快照。</div>';return
+  }
+  box.innerHTML=SAVED_RESEARCH.map(item=>{
+    let x=item.context||{},state=stateDisplayLabel(x.model,x.state),
+        stale=currentDiffersFromSaved(item),
+        active=ACTIVE_SAVED_RESEARCH_ID===item.id,
+        when=item.savedAt?new Date(item.savedAt).toLocaleString():'—';
+    return '<article class="saved-research-card"><div class="saved-research-head"><b>'+esc((MODEL_TITLES[x.model]||x.model||'研究').split('｜')[0])+
+      ' · '+esc(state)+'</b><small>'+esc(when)+'</small></div>'+
+      '<div class="saved-research-meta">'+esc(savedDisplayMarket(x))+' · '+esc(String(x.timeframe||'').toUpperCase())+
+      ' · '+esc(x.settingSource&&x.settingSource.kind==='preset'?'參考設定 '+String(x.settingSource.id||''):x.settingSource&&x.settingSource.kind==='custom'?'自訂參數':'模型設定快照')+
+      '<br>保存 Evidence：'+esc(x.focus&&x.focus.evidenceId||'—')+'</div>'+
+      (stale?'<div class="saved-research-stale"><b>目前畫面已不同。</b> 這份保存仍保留當時的市場／週期／參數；載入它才會回到那份研究。</div>':'')+
+      '<div class="saved-research-actions"><button onclick="openSavedResearch(\''+item.id+'\')">'+(active?'重新載入保存研究':'載入這份研究')+'</button>'+
+      '<button class="quiet" onclick="deleteSavedResearch(\''+item.id+'\')">刪除</button></div></article>'
+  }).join('')
+}
+async function openSavedResearch(id){
+  let item=SAVED_RESEARCH.find(x=>x.id===id);if(!item||!item.context)return;
+  let x=cloneObj(item.context),marketEl=q('market');
+  ACTIVE_SAVED_RESEARCH_ID=id;
+  if(marketEl&&x.market)marketEl.value=x.market;
+  if(x.timeframe)tf=x.timeframe;
+  setTFs();
+  if(x.model&&x.parameterSnapshot){
+    applyDraftToModel(x.model,cloneObj(x.parameterSnapshot));
+    MODEL_SETTING_STATE[x.model]={kind:'saved',savedId:id}
+  }
+  FOCUSED_MODEL=x.model||FOCUSED_MODEL;
+  clearCombinationHandoff('');
+  await load();
+  FOCUSED_MODEL=x.model||FOCUSED_MODEL;
+  let sel=q('singleModelSelect');if(sel)sel.value=FOCUSED_MODEL;
+  let f=x.focus||{};
+  if(f.mode==='history'){
+    let e=EVIDENCE_LOG.find(e=>e.model===FOCUSED_MODEL&&f.evidenceId&&e.id===f.evidenceId)||
+      EVIDENCE_LOG.find(e=>e.model===FOCUSED_MODEL&&e.index===f.index&&e.state===x.state);
+    if(e){FOCUSED_EVIDENCE={mode:'history',id:e.id,index:e.index,state:e.state};jumpToEvidence(e.index)}
+    else{FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};HANDOFF_NOTICE='保存的歷史 Evidence 在目前資料版本中找不到；已載入相同市場／週期／參數並回到現在。'}
+  }else FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
+  SINGLE_RESEARCH_HORIZON=[3,5,10,20].includes(x.selectedHorizon)?x.selectedHorizon:10;
+  zoneCalc();renderSavedResearch()
+}
+function currentResearchIdentityHTML(){
+  let model=(MODEL_TITLES[FOCUSED_MODEL]||FOCUSED_MODEL).split('｜')[0],
+      market=q('market')?q('market').selectedOptions[0].text:'—';
+  return '<div class="current-research-label"><b>目前研究：</b> '+esc(market)+' · '+esc(tf.toUpperCase())+' · '+esc(model)+
+    ' · '+esc(modelSettingLabel(FOCUSED_MODEL))+(ACTIVE_SAVED_RESEARCH_ID?'（曾從保存研究載入；後續修改不會回寫保存快照）':'')+'</div>'
+}
 function buildSingleResearchContext(){
   let ev=focusedEvidenceRecord();
   if(!FOCUSED_MODEL||!ev)return null;
@@ -1721,6 +1846,7 @@ function buildSingleResearchContext(){
     focus:{
       mode:FOCUSED_EVIDENCE&&FOCUSED_EVIDENCE.mode||'now',
       evidenceId:ev.id||null,index:Number.isInteger(ev.index)?ev.index:null,
+      timestamp:Number.isFinite(ev.timestamp)?ev.timestamp:(Number.isInteger(ev.index)&&D[ev.index]?D[ev.index].t:null),
       detectedAt:Number.isInteger(ev.detectedAt)?ev.detectedAt:null,
       evidenceStart:Number.isInteger(ev.evidenceStart)?ev.evidenceStart:null,
       kind:ev.kind||null
@@ -1783,6 +1909,7 @@ function singleEvidenceCardHTML(model,ev,mode){
     (projectionOnly?'':singleHistoryHTML(model,state,ev,mode))+
     '<details class="single-advanced"><summary>進階｜這個狀態後來怎麼發展？</summary><div class="single-advanced-body">'+lifecycleHTML(model,state)+'</div></details>'+
     '<details class="single-advanced"><summary>進階｜模型當時真正記錄了什麼？</summary><div class="single-advanced-body">'+evidenceFieldsHTML(raw)+'</div></details>'+
+    '<div class="single-handoff"><b>要保留這份單模型研究嗎？</b><p>保存會固定當下市場、週期、模型狀態與參數快照。之後你可以放心切模型或改設定。</p><button onclick="saveCurrentResearch()">保存這份研究</button></div>'+
     singleHandoffHTML(ev)
 }
 function renderSingleResearch(){
@@ -1795,7 +1922,7 @@ function renderSingleResearch(){
       cur=currentEvidenceForModel(FOCUSED_MODEL),
       hist=lastHistoricalEvidence(FOCUSED_MODEL),
       ev=mode==='history'?focusedEvidenceRecord():cur;
-  let tabs='<div class="single-context-tabs"><button class="'+(mode==='now'?'on':'')+'" onclick="viewSingleNow()">現在</button>'+
+  let tabs=currentResearchIdentityHTML()+'<div class="single-context-tabs"><button class="'+(mode==='now'?'on':'')+'" onclick="viewSingleNow()">現在</button>'+
     '<button class="'+(mode==='history'?'on':'')+'" onclick="'+(hist?'viewLatestHistoricalCase()':'')+'" '+(hist?'':'disabled')+'>歷史案例</button></div>';
   if(mode==='now'&&!cur){
     body.innerHTML=tabs+'<article class="single-now-card empty"><div class="single-now-head"><div><small>現在</small><b>目前沒有形成可用 Evidence</b></div>'+
@@ -1804,7 +1931,7 @@ function renderSingleResearch(){
       '<div class="single-empty-actions">'+(hist?'<button onclick="viewLatestHistoricalCase()">查看最近一次歷史案例 →</button>':'')+
       '<button onclick="openFocusedModelParams()">調整模型設定</button></div></article>';
     SINGLE_RESEARCH_CONTEXT=null;window.__SL_SINGLE_RESEARCH_CONTEXT__=null;
-    renderHandoffStatus();return
+    renderHandoffStatus();renderSavedResearch();return
   }
   if(mode==='history'&&!ev){
     FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};renderSingleResearch();return
@@ -1812,7 +1939,7 @@ function renderSingleResearch(){
   SINGLE_RESEARCH_CONTEXT=buildSingleResearchContext();
   window.__SL_SINGLE_RESEARCH_CONTEXT__=SINGLE_RESEARCH_CONTEXT;
   body.innerHTML=tabs+singleEvidenceCardHTML(FOCUSED_MODEL,ev,mode);
-  renderHandoffStatus()
+  renderHandoffStatus();renderSavedResearch()
 }
 function resetSingleResearchForMarketChange(){
   FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
@@ -2742,5 +2869,5 @@ c.ondblclick=()=>resetView();
 c.ontouchstart=e=>{if(e.touches.length===2)touch0={d:Math.abs(e.touches[0].clientX-e.touches[1].clientX),span:V[1]-V[0],mid:(V[0]+V[1])/2}};
 c.ontouchmove=e=>{if(e.touches.length===2&&touch0){e.preventDefault();let d=Math.abs(e.touches[0].clientX-e.touches[1].clientX)||1,ns=Math.max(20,Math.min(R.length-1,touch0.span*touch0.d/d));V=[touch0.mid-ns/2,touch0.mid+ns/2];if(V[0]<0){V[1]-=V[0];V[0]=0}if(V[1]>R.length-1){let z=V[1]-R.length+1;V[0]-=z;V[1]=R.length-1}draw()}};
 c.ontouchend=()=>touch0=null;
-window.onresize=draw;try{setTFs();load()}catch(e){q('status').textContent='啟動錯誤';q('msg').textContent=e.message}
+window.onresize=draw;try{setTFs();loadSavedResearch();load()}catch(e){q('status').textContent='啟動錯誤';q('msg').textContent=e.message}
 </script></body></html>
