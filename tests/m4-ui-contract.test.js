@@ -45,7 +45,7 @@ assert(s.includes('enabled,zone:ZONE,macro:MACRO,sweep:SWEEP,exp:EXP'),'Sweep se
 for(const phrase of [
   '不是替現在行情下買賣結論',
   '中位數是把結果排好後站在中間的那一個',
-  'MFE 是途中曾向上走到多遠',
+  '途中最大上漲幅度（MFE）',
   '失敗率不是「價格會跌的機率」',
   '回到幾個真實歷史案例',
   '換一種研究方式'
