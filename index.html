@@ -1848,7 +1848,6 @@ function renderSavedResearch(){
 async function openSavedResearch(id){
   let item=SAVED_RESEARCH.find(x=>x.id===id);if(!item||!item.context)return;
   let x=cloneObj(item.context),marketEl=q('market');
-  ACTIVE_SAVED_RESEARCH_ID=id;
   if(marketEl&&x.market)marketEl.value=x.market;
   if(x.timeframe)tf=x.timeframe;
   setTFs();
