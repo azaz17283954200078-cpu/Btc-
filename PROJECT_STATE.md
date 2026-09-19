@@ -4,7 +4,7 @@
 
 - Repository: `azaz17283954200078-cpu/Btc-`
 - Default branch: `main`
-- Current milestone: M5 Conditional Research product acceptance hardening — UI-R02 relationship funnel
+- Current milestone: M5 product acceptance hardening — G01 single-model guidance
 - M4 Guided Research: completed
 - M5 Shared Condition Engine: technical/research validation passed
 - M5 product acceptance: not complete until desktop/mobile use is tested by the user
@@ -43,3 +43,14 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - The primary sidebar now owns the operable funnel; Evidence Dock is deeper analysis, not a prerequisite for filtering.
 - Closing Evidence details must not clear the active funnel.
 - M5 product acceptance remains pending user desktop/mobile testing.
+
+## M5-G01 single-model guidance
+- User feedback showed the prerequisite problem comes before the funnel: a person still had to understand model jargon and small research panels before conditional research became useful.
+- Primary action is now 「看懂這個模型」; combination research is secondary.
+- A pinned model opens a large fixed research workspace on desktop and a full-screen research view on mobile.
+- Each model state is explained in a fixed order: 現在看到什麼 → 為什麼模型會這樣判斷 → 接下來觀察什麼.
+- 3 / 5 / 10 / 20 K horizons are translated into human time for the active timeframe and explicitly define the comparison as state-confirmation close → Nth future K close.
+- MFE / MAE remain available but are explained after plain-language path descriptions.
+- Historical cases are promoted to a larger 12-case browser before lifecycle/raw Evidence.
+- Conditional research semantics, Chart Core, Model Engine, Evidence, causality, data sources and sample gates are unchanged.
+- G01 is not M5 completion. User desktop/mobile acceptance is still required.
