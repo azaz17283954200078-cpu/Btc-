@@ -519,9 +519,26 @@ function applyParams(){
   applyDraftToModel(ACTIVE_PARAM_MODEL,PARAM_DRAFT);enableModel(ACTIVE_PARAM_MODEL);zoneCalc();
   q('paramRunStatus').textContent='已用你目前看到的參數重新掃過歷史與現在'
 }
+function resetModelSettings(k){
+  if(k==='support'){
+    for(const key of Object.keys(ZONE))delete ZONE[key];
+    deepAssign(ZONE,cloneObj(ME.DEFAULT_ZONE));return
+  }
+  if(k==='macro'){
+    for(const key of Object.keys(MACRO))delete MACRO[key];
+    deepAssign(MACRO,cloneObj(ME.DEFAULT_MACRO));return
+  }
+  if(k==='sweep'){
+    for(const key of Object.keys(SWEEP))delete SWEEP[key];
+    deepAssign(SWEEP,cloneObj(ME.DEFAULT_SWEEP));return
+  }
+  if(k==='field'){EXP.spring=cloneObj(ME.DEFAULT_EXP.spring);return}
+  if(ME.DEFAULT_EXP[k])EXP[k]=cloneObj(ME.DEFAULT_EXP[k])
+}
 function applyPreset(k,id){
   let p=MP&&MP.get(k,id);if(!p)return;
   let c=p.config||{};
+  resetModelSettings(k);
   if(c.zone)deepAssign(ZONE,c.zone);
   if(c.macro)deepAssign(MACRO,c.macro);
   if(c.sweep)deepAssign(SWEEP,c.sweep);

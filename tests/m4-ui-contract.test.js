@@ -3,16 +3,57 @@ const assert=require('assert');
 
 const s=fs.readFileSync('index.html','utf8');
 
-assert(s.includes('v1.1 · M4 Progressive Research UI'),'M4 version label missing');
-for(const id of ['evidenceDock','evidenceDockBody','evidenceBackdrop']){
-  assert(s.includes('id="'+id+'"'),'missing M4 research surface '+id);
+assert(s.includes('v1.2 · M4 Guided Research'),'M4 Guided Research version label missing');
+assert(s.includes('<script src="src/model-presets.js"></script>'),'shared validated presets are not loaded');
+
+for(const id of ['evidenceDock','evidenceDockBody','evidenceBackdrop','presetChoices','presetValidation']){
+  assert(s.includes('id="'+id+'"'),'missing M4 guided research surface '+id);
+}
+
+for(const model of ['support','macro','sweep','basin','field','echo','astro']){
+  assert(s.includes('data-model-card="'+model+'"'),'missing guided card for '+model);
+}
+for(const phrase of ['它在問：','開啟後：','別把它當成：','選研究方式','看看它現在找到什麼']){
+  assert(s.includes(phrase),'missing guided copy: '+phrase);
 }
 for(const fn of [
   'function quickResearchHTML(','function pinResearch(','function renderEvidenceDock(',
-  'function historyCases(','function failureExamples(','function jumpToEvidence('
+  'function historyCases(','function failureExamples(','function jumpToEvidence(',
+  'function renderModelGuides(','function openLatestResearch(','function renderPresetChoices(',
+  'function applyPreset(','function resetModelSettings(','function presetParamSummary(',
+  'function applyDraftToModel('
 ]){
-  assert(s.includes(fn),'missing M4 research function '+fn);
+  assert(s.includes(fn),'missing M4 Guided Research function '+fn);
 }
+
+// First-use discoverability: one core model starts visible; experimental models stay opt-in.
+const support=s.match(/id="modSupport"[^>]*>/);
+assert(support&&/\bchecked\b/.test(support[0]),'Support should be visible on first load');
+for(const id of ['modBasin','modSpring','modEcho','modAstro']){
+  const m=s.match(new RegExp('id="'+id+'"[^>]*>'));
+  assert(m&&!/\bchecked\b/.test(m[0]),id+' must remain default OFF');
+}
+
+// Validated recipes are shared with Runner/engine, not hard-coded only in UI.
+assert(s.includes('MP=window.StrategyLabModelPresets'),'shared preset module missing');
+assert(s.includes('MP.validation(k,p.id)'),'preset validation metadata must be shown in UI');
+assert(s.includes('resetModelSettings(k);'),'switching recipes must reset that model before applying the new recipe');
+assert(s.includes('const SWEEP=cloneObj(ME.DEFAULT_SWEEP)'),'Sweep UI settings must share engine defaults');
+assert(s.includes('enabled,zone:ZONE,macro:MACRO,sweep:SWEEP,exp:EXP'),'Sweep settings must reach shared Model Engine');
+
+// Result education and next-step guidance.
+for(const phrase of [
+  '不是替現在行情下買賣結論',
+  '中位數是把結果排好後站在中間的那一個',
+  'MFE 是途中曾向上走到多遠',
+  '失敗率不是「價格會跌的機率」',
+  '回到幾個真實歷史案例',
+  '換一種研究方式'
+]){
+  assert(s.includes(phrase),'missing result guidance: '+phrase);
+}
+
+// Desktop/mobile interaction contract.
 assert(s.includes("window.matchMedia('(pointer: coarse)')"),'coarse-pointer contract missing');
 assert(s.includes("e.pointerType==='touch'"),'touch pointer contract missing');
 assert(s.includes("if(isMobileUI()||e.target.closest('button'))return"),'mobile parameter sheet must not use desktop dragging');
@@ -21,15 +62,12 @@ assert(s.includes('.evidence-dock{display:none;position:fixed;left:0;right:0;bot
 assert(s.includes('if(hit&&hit.model)pinResearch(hit)'),'chart tap/click must pin model research');
 assert(s.includes("if(!tip||isCoarsePointer()||!mousePos||drag)"),'mobile must not depend on hover tooltip');
 
-// UI consumes the existing M2/M3 products; it must not create another evaluation engine.
+// M4 consumes the existing M2/M3 products; no second evaluation engine in UI.
 assert(s.includes('EVIDENCE_LOG.filter'),'M4 historical cases must read M2 timeline');
 assert(s.includes('EVALUATION&&EVALUATION.models'),'M4 stats must read M3 Evaluation');
 assert(!s.includes('RK.evaluateTimeline('),'index UI must not recalculate M3 evaluation');
 
-// The research targets must identify the model/state they represent.
-for(const token of [
-  "model:'support'","model:'macro'","model:'sweep'","model:'basin'","model:'field'"
-]){
+for(const token of ["model:'support'","model:'macro'","model:'sweep'","model:'basin'","model:'field'"]){
   assert(s.includes(token),'missing model-aware chart hit '+token);
 }
 assert(s.includes('model=signalModel(z),state=normHitState(model,signalState(z))'),'research signals lack model/state mapping');
