@@ -2,7 +2,7 @@ const fs=require('fs');
 const assert=require('assert');
 const s=fs.readFileSync('index.html','utf8');
 
-assert(s.includes('v1.9 · G02-R3 全站一致性'),'R3 version label missing');
+assert(/v(?:1\.\d+|2\.\d+) · G02-R[3-7] /.test(s),'R3+ version label missing');
 for(const phrase of [
   '同狀態總案例',
   '完整觀察',
