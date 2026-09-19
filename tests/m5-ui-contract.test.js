@@ -2,7 +2,7 @@ const fs=require('fs');
 const assert=require('assert');
 const s=fs.readFileSync('index.html','utf8');
 
-assert(/v1\.[5-9] · (?:M5|G01) /.test(s),'M5/G01 version label missing');
+assert(/v1\.[5-9] · (?:M5|G01|G02-R1) /.test(s),'M5/G02 version label missing');
 assert(s.includes('<script src="src/condition-engine.js"></script>'),'shared Condition Engine is not loaded');
 assert(s.includes('CE=window.StrategyLabConditionEngine'),'UI must use shared Condition Engine');
 
@@ -45,21 +45,17 @@ assert(s.includes('condition-brick'),'M5 must render condition bricks');
 assert(s.includes('sample-funnel'),'M5 must render a visible Sample Funnel');
 assert(s.includes("@media(max-width:650px)"),'M5 mobile breakpoint missing');
 
-assert(s.includes('id="activeModelStack"'),'M5 primary sidebar must use research stack architecture');
-assert(s.includes('＋ 加入模型'),'M5 must expose model library from the research stack');
-for(const phrase of ['漏斗式篩選','同時成立','價格區域重疊','掃單價格進入區域','價格尺｜最近一個符合案例']){
-  assert(s.includes(phrase),'missing R02 relationship-funnel surface: '+phrase);
+// R02 engine/UI helpers remain available for the future dedicated combination workspace,
+// but G02-R1 removes the funnel from the single-model primary surface.
+assert(!s.includes('id="activeModelStack"'),'single-model architecture must not use active model bricks');
+assert(!s.includes('id="researchFunnel"'),'single-model architecture must not render the funnel');
+assert(!s.includes('id="evidenceDock"'),'single-model architecture must not depend on Evidence Dock');
+for(const phrase of ['同時成立','價格區域重疊','掃單價格進入區域','價格尺｜最近一個符合案例']){
+  assert(s.includes(phrase),'R02 relationship semantics/helper copy must remain available: '+phrase);
 }
-assert(s.includes('CE.availableRelations(EVIDENCE_LOG'),'R02 relationship controls must come from shared Condition Engine');
-assert(s.includes('CE.suggestRelation(EVIDENCE_LOG'),'R02 default relationship must come from shared Condition Engine');
-assert(s.includes('CE.episodesForConditions(EVIDENCE_LOG'),'prospective relationship counts must use shared Condition Engine');
+assert(s.includes('CE.availableRelations(EVIDENCE_LOG'),'R02 relationship controls must still come from shared Condition Engine');
+assert(s.includes('CE.suggestRelation(EVIDENCE_LOG'),'R02 default relationship must still come from shared Condition Engine');
+assert(s.includes('CE.episodesForConditions(EVIDENCE_LOG'),'prospective relationship counts must still use shared Condition Engine');
+assert(s.includes('COMBINATION_HANDOFF_CONTEXT'),'G02-R1 must preserve a handoff boundary into future combination research');
+assert(s.includes('CONDITION_STACK=[]'),'single-model and condition-stack state must be separate');
 assert(!s.includes('Sample Funnel｜'),'English-first Sample Funnel label must not remain visible');
-
-const funnelPos=s.indexOf('id="researchFunnel"'),dockPos=s.indexOf('id="evidenceBackdrop"');
-assert(funnelPos>=0&&dockPos>funnelPos,'direct research funnel must live in the primary sidebar before the evidence detail drawer');
-assert(s.includes('RESEARCH_DETAIL_OPEN=false'),'detail drawer state must be separate from funnel state');
-const closeStart=s.indexOf('function closeEvidenceDock(redraw=true){');
-const closeEnd=s.indexOf('function jumpToEvidence(',closeStart);
-assert(closeStart>=0&&closeEnd>closeStart,'closeEvidenceDock block missing');
-assert(!s.slice(closeStart,closeEnd).includes('PINNED_RESEARCH=null'),'closing details must not erase the direct funnel');
-assert(s.includes('.funnel-relation select{min-height:44px;width:100%}'),'mobile relationship selector touch target missing');
