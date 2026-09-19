@@ -6,6 +6,9 @@ const path=require('path');
 const ME=require('../src/model-engine.js');
 const RK=require('../src/research-kernel.js');
 const CE=require('../src/condition-engine.js');
+const MS=require('../src/model-semantics.js');
+const REL=require('../src/reliability-engine.js');
+const RR=require('../src/research-run.js');
 
 const SUPPORTED={
   BTC:['1h','4h','1d','1w'],
@@ -213,6 +216,24 @@ function evaluateConditionQueries(data,evidence,raw){
     })
   }));
 }
+function evaluateReliability(data,res,spec){
+  const out={};
+  const models=res&&res.evaluation&&res.evaluation.models||{};
+  for(const [model,m] of Object.entries(models)){
+    out[model]={};
+    for(const state of Object.keys(m.states||{})){
+      out[model][state]=REL.evaluateModelState(data,res.evidenceLog,{
+        model,state,horizon:10,
+        market:spec.market||res.market,
+        timeframe:spec.timeframe||res.timeframe,
+        knownThrough:data.length-1,
+        marketCoverage:spec.marketCoverage||null,
+        parameterStability:spec.parameterStability
+      });
+    }
+  }
+  return out
+}
 function runResearch(data,spec={}){
   const enabled=spec.enabled||enabledFromModels(spec.models);
   const res=ME.run(data,{
@@ -225,6 +246,18 @@ function runResearch(data,spec={}){
     sweep:spec.sweep||{},
     exp:spec.exp||{}
   });
+  const params={zone:res.params.zone,macro:res.params.macro,sweep:res.params.sweep,exp:res.params.exp};
+  const reliability=evaluateReliability(data,res,spec);
+  const runManifest=RR.createCompleted(data,res,{
+    market:res.market,timeframe:res.timeframe,source:res.source,
+    models:Object.entries(res.params.enabled||{}).filter(([,v])=>!!v).map(([k])=>k),
+    preset:spec.parameterSet||'default',
+    parameterSnapshot:params,
+    parameterFingerprint:res.parameterFingerprint,
+    conditionEngineVersion:CE.VERSION,
+    semanticsVersion:MS.VERSION,
+    reliabilityStandardVersion:REL.VERSION
+  });
   return{
     schemaVersion:1,
     market:res.market,
@@ -232,18 +265,22 @@ function runResearch(data,spec={}){
     source:res.source,
     modelVersion:res.engineVersion,
     kernelVersion:res.kernelVersion,
+    semanticsVersion:MS.VERSION,
+    reliabilityStandardVersion:REL.VERSION,
     parameterSet:spec.parameterSet||'default',
     parameterFingerprint:res.parameterFingerprint,
     enabled:res.params.enabled,
-    params:{zone:res.params.zone,macro:res.params.macro,sweep:res.params.sweep,exp:res.params.exp},
+    params,
     range:{
       bars:data.length,
       start:data.length?data[0].t:null,
       end:data.length?data[data.length-1].t:null
     },
+    runManifest,
     evidence:res.evidenceLog,
     evidenceErrors:res.evidenceErrors,
     evaluation:res.evaluation,
+    reliability,
     summary:summarizeEvaluation(res.evaluation),
     conditionEngineVersion:CE.VERSION,
     conditional:evaluateConditionQueries(data,res.evidenceLog,spec.conditionQueries)
@@ -289,6 +326,9 @@ async function runBatch(config={}){
     generatedAt:new Date().toISOString(),
     engineVersion:ME.VERSION,
     kernelVersion:RK.VERSION,
+    semanticsVersion:MS.VERSION,
+    reliabilityStandardVersion:REL.VERSION,
+    researchRunVersion:RR.VERSION,
     runCount:runs.length,
     runs,
     comparison:summarizeRuns(runs)
@@ -399,6 +439,6 @@ if(require.main===module){
 
 module.exports={
   SUPPORTED,MODEL_KEYS,parseArgs,parseCSV,aggregate,loadMarketData,
-  enabledFromModels,normalizeParamSets,normalizeConditionQueries,evaluateConditionQueries,runResearch,runBatch,
+  enabledFromModels,normalizeParamSets,normalizeConditionQueries,evaluateConditionQueries,evaluateReliability,runResearch,runBatch,
   summarizeRuns,compareDatasets,main
 };
