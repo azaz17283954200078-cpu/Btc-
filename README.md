@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v1.6 · G01 單一模型引導（產品驗收中）**
+**v1.7 · G02-R1 單模型研究架構（產品驗收中）**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -20,7 +20,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 - M4 Guided Research：7 個模型逐一回答「它在問什麼／開啟後看到什麼／別把它當成什麼」
 - 每個模型都有 3 套已驗證的參考研究設定，可再展開手動參數微調
 - 參考設定已用 Research Runner 跑過 BTC / NASDAQ / TAIEX 的 8 個市場×週期情境；驗證敏感度順序、樣本覆蓋與 Evidence error，不用歷史報酬排名選參數
-- Evidence Research：Desktop Hover / Click、Mobile Tap / Bottom Sheet、3/5/10/20 bars Evaluation、Lifecycle、Historical Cases、Failure Examples
+- 單模型研究器：主圖＋同一個右側研究區；現在／歷史案例明確分開，3/5/10/20 K 一次只看一個 horizon，歷史案例與主圖同步
 - N / Median Return / MFE / MAE / progression / failure 都附白話解讀與下一步操作
 
 ## Architecture
@@ -142,7 +142,7 @@ M5 不把模型做成投票器。研究流程從一個 anchor Evidence 開始，
 - N < 5 顯示樣本不足；5–19 顯示探索性；N ≥ 20 才標示可比較。這些標籤只描述樣本量。
 - 每組條件都和第一個 anchor 的單一條件 baseline 並排，不輸出 BUY / SELL、模型投票或最佳組合排名。
 
-UI-R01 將「研究條件組」作為側欄第一層；UI-R02 再把真正可操作的漏斗放到第一層。使用者可直接設基準、加入第二／第三條件，並逐層選擇「同時成立」、「價格區域重疊」或「掃單價格進入區域」，立即看到歷史案例如何縮減。價格關係由 Shared Condition Engine v1.2 計算，Runner 與 UI 共用同一語意。\n\nResearch Runner 可透過 `--conditions research/conditions.example.json` 使用相同的 Shared Condition Engine。
+UI-R01 / UI-R02 曾把條件磚與漏斗放在側欄第一層；G02-R1 已將這些多模型操作從**單模型研究主介面**移出。R02 的 Shared Condition Engine v1.2、時間／價格關係與 Runner parity 仍保留，等獨立的組合研究工作區接續使用。\n\nResearch Runner 可透過 `--conditions research/conditions.example.json` 使用相同的 Shared Condition Engine。
 
 M5 驗收時以 BTC / NASDAQ / TAIEX 1D 做 real-market prefix causality audit。這次 audit 實際抓到 future Evidence 被錯誤 clamp 到歷史 checkpoint 的問題，修正後再通過；也因此把 sampling 改成 anchor-centric，確保增加條件不會反而製造更多樣本。固定驗收紀錄保存在 `research/m5-condition-audit.json`。
 
@@ -151,6 +151,18 @@ M5 驗收時以 BTC / NASDAQ / TAIEX 1D 做 real-market prefix causality audit�
 目前產品驗收先暫停擴張漏斗展示，回到更前置的單一模型理解問題。模型磚的第一動作是「看懂這個模型」；固定研究區依序回答「現在看到什麼／為什麼／接下來看什麼」，之後才顯示歷史後續與真實案例。
 
 3 / 5 / 10 / 20 根 K 的統計公式沒有改變；介面會依目前週期翻成約幾小時、幾天、交易日、幾週或幾個月，並明說比較的是「模型確認當下收盤 → 第 N 根未來 K 收盤」。桌面研究區改為大型固定面板，手機則使用全螢幕研究頁。
+
+## G02-R1 單模型研究架構
+
+G01 證明「文字能看懂」不等於「操作很順」。G02-R1 因此不再增加說明卡，而是重做資訊架構：
+
+- 右側永遠只有一個研究焦點；不再同時顯示模型磚、漏斗與 Evidence Dock。
+- 「研究哪個模型」和「圖上顯示哪些模型」正式分離；聚焦的模型即使圖層隱藏仍可研究。
+- 「現在」不再偷偷 fallback 到最近歷史案例。最新市場沒有 Evidence 時就直接說沒有，再由使用者明確進歷史。
+- 3 / 5 / 10 / 20 K 改成單一 horizon 選擇，一次只閱讀一個結果。
+- 歷史案例使用上一個／下一個瀏覽，點案例時主圖與右側 Evidence 同步。
+- `SINGLE_RESEARCH_CONTEXT` 保存單模型研究成果；「準備組合研究」會建立可追溯的 `COMBINATION_HANDOFF_CONTEXT` 與第一個 `CONDITION_STACK` 條件，保留 market / timeframe / state / Evidence / parameter snapshot / fingerprint / knownThrough。
+- G02-R1 **不實作新的組合研究 UI**。它只確保單模型研究乾淨，且研究成果不會在未來進組合時重做一次。
 
 ## Direction
 
