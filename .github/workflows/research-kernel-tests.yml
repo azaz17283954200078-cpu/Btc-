@@ -54,6 +54,8 @@ jobs:
         run: node tests/m5-ui-contract.test.js
       - name: G01 single-model guidance contract
         run: node tests/g01-guidance-contract.test.js
+      - name: G02-R1 single-model architecture contract
+        run: node tests/g02-r1-single-model-contract.test.js
       - name: Validated model preset contract
         run: node tests/model-presets.test.js
       - name: M4 validated preset semantic gate
