@@ -193,6 +193,40 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .model-library .model-question{margin-top:6px;font-size:11px}.model-library .model-status{font-size:9.8px;margin-top:7px}
 .library-more{margin-top:6px}.library-more summary{cursor:pointer;color:#8fa6c3;font-size:9.5px}
 .library-more .model-desc,.library-more .model-caution{font-size:9.8px}
+/* M5 UI-R02｜關係式漏斗：在主側欄直接調整時間／價格關係 */
+.research-funnel{margin-top:10px}
+.direct-funnel{border:1px solid #385777;border-radius:12px;background:#0a1626;overflow:hidden}
+.direct-funnel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:10px 11px;border-bottom:1px solid #29415f}
+.direct-funnel-head>div{display:grid;gap:2px}.direct-funnel-head b{font-size:13px;color:#edf5ff}.direct-funnel-head span{font-size:9.8px;color:#8fa5c2}
+.direct-funnel-head .actions{display:flex;gap:5px}.direct-funnel-head button{min-height:30px;padding:4px 8px;font-size:9.5px}
+.direct-funnel-empty{padding:12px 11px;color:#9eb1c9;font-size:10.5px;line-height:1.6}
+.funnel-flow{padding:9px}
+.funnel-filter-step{padding:9px 10px;border:1px solid #33506f;border-radius:10px;background:#0f1c2e}
+.funnel-filter-step.anchor{border-color:#6d92bd;background:#112238}
+.funnel-step-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:start}
+.funnel-step-no{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;border:1px solid #496887;color:#b8cae1;font-size:9px;font-weight:800}
+.funnel-step-title b{display:block;color:#eef5ff;font-size:11.5px}.funnel-step-title small{display:block;color:#869cb9;font-size:9px;margin-top:1px}
+.funnel-step-count{text-align:right;white-space:nowrap}.funnel-step-count b{display:block;color:#eef5ff;font-size:12px}.funnel-step-count small{display:block;color:#8da3bf;font-size:8.8px;margin-top:1px}
+.funnel-step-tools{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.funnel-step-tools button,.funnel-step-tools select{min-height:30px;padding:4px 7px;font-size:9.5px}
+.funnel-relation{display:grid;gap:4px;justify-items:center;padding:7px 4px;color:#90a8c5}
+.funnel-relation select{min-height:34px;max-width:100%;font-size:10.5px;font-weight:750;background:#101f32;border-color:#456787;color:#dce9f8}
+.funnel-relation small{text-align:center;font-size:8.8px;line-height:1.4;color:#7f96b3}
+.funnel-add{display:grid;gap:5px;padding:0 9px 9px}.funnel-add-label{font-size:9.5px;color:#8ea4bf}
+.funnel-add-buttons{display:flex;gap:5px;flex-wrap:wrap}.funnel-add-buttons button{min-height:34px;padding:5px 8px;text-align:left;font-size:9.8px}
+.funnel-add-buttons button small{display:block;margin-top:1px;color:#8096b1;font-size:8.5px}
+.funnel-result{margin:0 9px 9px;padding:9px 10px;border:1px solid #304b69;border-radius:9px;background:#0d1a2b;font-size:10px;line-height:1.5;color:#a8bad0}
+.funnel-result b{color:#eef5ff}.funnel-result button{margin-top:7px;min-height:34px;font-size:10px}
+.price-ruler{margin-top:8px;padding:8px;border:1px solid #2d4867;border-radius:9px;background:#0b1728}
+.price-ruler-head{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:8.8px;color:#8299b7}
+.price-ruler-head b{font-size:9.5px;color:#cbd9ea}
+.price-ruler-body{display:grid;grid-template-columns:58px minmax(0,1fr);gap:7px;min-height:98px}
+.price-ruler-axis{position:relative;height:76px;border-right:1px solid #45617f;color:#8ba1bc;font-size:8px;font-variant-numeric:tabular-nums}
+.price-ruler-axis .hi{position:absolute;right:5px;top:-2px}.price-ruler-axis .lo{position:absolute;right:5px;bottom:-2px}
+.price-ruler-tracks{display:grid;gap:5px;height:98px}
+.price-ruler-track{position:relative;height:76px;border-left:1px dashed #263d5a;border-right:1px dashed #263d5a}
+.price-ruler-band{position:absolute;left:18%;right:18%;min-height:3px;border:1px solid #6c91bd;border-radius:5px;background:rgba(93,132,177,.26)}
+.price-ruler-track.focus .price-ruler-band{border-width:2px;background:rgba(144,174,207,.34)}
+.price-ruler-track small{position:absolute;left:0;right:0;top:79px;text-align:center;font-size:7.8px;line-height:1.25;color:#8298b4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* M5 Conditional Research */
 .condition-box{margin-top:12px;padding:11px;border:1px solid #365577;border-radius:11px;background:#0b1627}
 .condition-box h4{margin:0 0 4px;font-size:12px;color:#dfeaff}.condition-intro{font-size:10.5px;line-height:1.55;color:#9fb1c9}
@@ -308,6 +342,10 @@ td:first-child,th:first-child{text-align:left}
   .condition-brick{grid-template-columns:1fr}
   .active-model-brick{padding:12px}
   .active-model-actions button{flex:1;min-width:120px}
+  .funnel-step-tools button,.funnel-step-tools select{min-height:44px}
+  .funnel-relation select{min-height:44px;width:100%}
+  .funnel-add-buttons button{min-height:44px;flex:1}
+  .direct-funnel-head button{min-height:44px}
   .research-stack-head{align-items:flex-start}
   .research-stack-head button{min-height:44px}
   .model-library>summary{min-height:44px;display:flex;align-items:center}
@@ -318,7 +356,7 @@ td:first-child,th:first-child{text-align:left}
 }
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.4 · M5 研究條件組</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.5 · M5 關係式漏斗</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -339,7 +377,7 @@ td:first-child,th:first-child{text-align:left}
   <section class="box chartbox">
     <div id="ohlc" class="muted">移動游標或點選 K 棒查看：日期 · OHLC · 漲跌幅 · Volume</div>
     <div class="chart-stage"><canvas id="c"></canvas><canvas id="modelCanvas" class="model-overlay"></canvas><canvas id="scriptCanvas" class="script-overlay"></canvas></div><div id="chartTip" class="chart-tip"></div>
-    <div id="msg" class="muted">桌面：移到模型看摘要、點擊固定研究；手機：點模型固定資訊、再展開研究。滾輪／雙指縮放 · 拖曳移動。</div>
+    <div id="msg" class="muted">先在右側把模型放進漏斗，直接選時間或價格關係；點圖上標記可查看該證據細節。滾輪／雙指縮放 · 拖曳移動。</div>
   </section>
 
   <aside class="box side">
@@ -359,6 +397,7 @@ td:first-child,th:first-child{text-align:left}
         </div>
         <div id="researchStackSummary" class="research-stack-summary" aria-live="polite">正在整理目前研究條件…</div>
         <div id="activeModelStack" class="active-model-stack" aria-live="polite"></div>
+        <div id="researchFunnel" class="research-funnel" aria-live="polite"></div>
 
         <details id="modelLibrary" class="model-library">
           <summary>模型庫｜選擇、關閉或了解模型</summary>
@@ -565,8 +604,8 @@ function applyDraftToModel(k,d){
 function modelCheckId(k){return({support:'modSupport',macro:'modMacro',sweep:'modSweep',basin:'modBasin',field:'modSpring',echo:'modEcho',astro:'modAstro'})[k]}
 function enableModel(k){let id=modelCheckId(k),el=id&&q(id);if(el)el.checked=true}
 function disableModel(k){
-  // 如果目前條件研究正在使用這個模型，先關閉研究抽屜，避免留下已失效的條件引用。
-  if(PINNED_RESEARCH&&researchConditions(PINNED_RESEARCH).some(c=>c.model===k))closeEvidenceDock(false);
+  // 正在漏斗中的模型被關閉時，整組條件不再有效；直接清空，避免留下看似可研究但實際已停用的條件。
+  if(PINNED_RESEARCH&&researchConditions(PINNED_RESEARCH).some(c=>c.model===k))clearResearchFunnel(false);
   let id=modelCheckId(k),el=id&&q(id);if(el)el.checked=false;
   zoneCalc()
 }
@@ -674,7 +713,7 @@ function moveParamDrag(e){
 }
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}
 function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',MARKET_COVERAGE={provider:null,requestedBars:null,returnedBars:0,targetReached:true,historyExhausted:false,fetchInterrupted:false,reason:''},HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
-let PINNED_RESEARCH=null;
+let PINNED_RESEARCH=null,RESEARCH_DETAIL_OPEN=false;
 const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,CE=window.StrategyLabConditionEngine||null;
 if(!ME||!MP||!CE)throw new Error('Strategy Lab shared research modules failed to load');
 window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
@@ -1004,6 +1043,127 @@ function openModelLibrary(){
   lib.open=true;
   setTimeout(()=>lib.scrollIntoView({behavior:'smooth',block:'nearest'}),0)
 }
+function relationLabel(v){
+  if(v==='price_overlap')return '價格區域重疊';
+  if(v==='price_touch')return '掃單價格進入區域';
+  return '同時成立'
+}
+function relationHelp(v){
+  if(v==='price_overlap')return '同一時間有效，而且兩個結構的價格區域真的有交集。';
+  if(v==='price_touch')return 'Sweep 的「最低價～被掃舊低」區間有進入前面共同價格區。';
+  return '只要求同一時間有效，不要求兩個模型落在相同價位。'
+}
+function relationOptionsHTML(conditions,i){
+  if(i<=0)return'';
+  let c=conditions[i],available=CE.availableRelations(EVIDENCE_LOG,conditions.slice(0,i),c,{knownThrough:D.length-1}),
+      rows=available.slice();
+  if(c.relation&&!rows.includes(c.relation))rows.push(c.relation);
+  return '<select onchange="setConditionRelation('+i+',this.value)" aria-label="條件關係">'+
+    rows.map(v=>'<option value="'+v+'" '+((c.relation||'time')===v?'selected':'')+'>'+esc(relationLabel(v))+'</option>').join('')+
+    '</select>'
+}
+function priceRulerHTML(example){
+  if(!example||!example.match)return'';
+  let items=(example.components||[]).filter(x=>x.geometry&&Number.isFinite(x.geometry.low)&&Number.isFinite(x.geometry.high)).map(x=>({
+        label:conditionLabel(x.condition),g:x.geometry,focus:false
+      })),
+      focus=example.lastOverlap||example.region;
+  if(focus&&Number.isFinite(focus.low)&&Number.isFinite(focus.high))items.push({label:'實際交集',g:focus,focus:true});
+  if(items.length<2)return'';
+  let lo=Math.min(...items.map(x=>x.g.low)),hi=Math.max(...items.map(x=>x.g.high)),
+      span=Math.max(1e-9,hi-lo),pad=span*.06;
+  lo-=pad;hi+=pad;span=hi-lo;
+  let tracks=items.map(x=>{
+    let top=Math.max(0,Math.min(97,(hi-x.g.high)/span*100)),
+        bottom=Math.max(0,Math.min(97,(hi-x.g.low)/span*100)),
+        height=Math.max(3,bottom-top);
+    return '<div class="price-ruler-track '+(x.focus?'focus':'')+'"><span class="price-ruler-band" style="top:'+top.toFixed(2)+'%;height:'+height.toFixed(2)+'%"></span>'+
+      '<small title="'+esc(x.label+' '+fmt(x.g.low)+'–'+fmt(x.g.high))+'">'+esc(x.label)+'</small></div>'
+  }).join('');
+  return '<div class="price-ruler"><div class="price-ruler-head"><b>價格尺｜最近一個符合案例</b><span>'+
+    (D[example.index]?esc(date(D[example.index].t)):'歷史案例')+'</span></div>'+
+    '<div class="price-ruler-body"><div class="price-ruler-axis"><span class="hi">'+esc(fmt(hi))+'</span><span class="lo">'+esc(fmt(lo))+'</span></div>'+
+    '<div class="price-ruler-tracks" style="grid-template-columns:repeat('+items.length+',minmax(0,1fr))">'+tracks+'</div></div></div>'
+}
+function funnelCandidateCondition(model){
+  let e=currentEvidenceForModel(model)||lastHistoricalEvidence(model);
+  return e?{model,state:e.state,windowBars:0,relation:'time'}:null
+}
+function startResearchFunnel(model){
+  let e=currentEvidenceForModel(model)||lastHistoricalEvidence(model);if(!e)return;
+  PINNED_RESEARCH={
+    model,state:e.state,index:e.index,label:MODEL_TITLES[model]||model,detail:'',expanded:false,
+    conditions:[{model,state:e.state,windowBars:0,relation:'time'}]
+  };
+  RESEARCH_DETAIL_OPEN=false;
+  let dock=q('evidenceDock'),back=q('evidenceBackdrop');
+  if(dock)dock.classList.remove('on');if(back)back.classList.remove('on');
+  renderResearchStack()
+}
+function addModelToFunnel(model){
+  if(!PINNED_RESEARCH){startResearchFunnel(model);return}
+  let a=researchConditions(PINNED_RESEARCH).slice(),c=funnelCandidateCondition(model);
+  if(!c||a.length>=MAX_CONDITIONS||a.some(x=>x.model===model))return;
+  c.relation=CE.suggestRelation(EVIDENCE_LOG,a,c,{knownThrough:D.length-1});
+  a.push(c);PINNED_RESEARCH.conditions=a;
+  renderResearchStack();if(RESEARCH_DETAIL_OPEN)renderEvidenceDock()
+}
+function clearResearchFunnel(redraw=true){
+  PINNED_RESEARCH=null;RESEARCH_DETAIL_OPEN=false;
+  let dock=q('evidenceDock'),back=q('evidenceBackdrop');
+  if(dock)dock.classList.remove('on');if(back)back.classList.remove('on');
+  renderResearchStack();if(redraw&&R.length)draw()
+}
+function openFunnelEvidence(){
+  if(!PINNED_RESEARCH)return;
+  RESEARCH_DETAIL_OPEN=true;PINNED_RESEARCH.expanded=true;renderEvidenceDock()
+}
+function renderDirectFunnel(conditions,result,enabled){
+  let box=q('researchFunnel');if(!box)return;
+  if(!PINNED_RESEARCH||!conditions.length||!result){
+    box.innerHTML='<section class="direct-funnel"><div class="direct-funnel-head"><div><b>漏斗式篩選</b><span>時間關係與價格關係都直接在這裡調</span></div></div>'+
+      '<div class="direct-funnel-empty">先在任一模型按「設為基準」。之後每加入一個模型，這裡會直接顯示歷史案例從多少縮到多少，不必先進入詳細證據頁。</div></section>';
+    return
+  }
+  let stages=result.funnel||[],html='<section class="direct-funnel"><div class="direct-funnel-head"><div><b>漏斗式篩選</b><span>直接改關係，歷史案例即時重算</span></div>'+
+    '<div class="actions"><button onclick="openFunnelEvidence()">看歷史結果</button><button onclick="clearResearchFunnel()">清空</button></div></div><div class="funnel-flow">';
+
+  conditions.forEach((c,i)=>{
+    let stage=stages[i]||{},prev=stage.previousEpisodeCount??stage.episodeCount??0,n=stage.episodeCount??0,
+        mode=CE.semantics(c),window='';
+    if(i>0){
+      html+='<div class="funnel-relation">'+relationOptionsHTML(conditions,i)+'<small>'+esc(relationHelp(c.relation||'time'))+'</small></div>'
+    }
+    if(i>0&&(mode==='event'||mode==='transition_event')){
+      window='<select onchange="setConditionWindow('+i+',this.value)" aria-label="事件時間範圍">'+
+        [[0,'事件當根'],[3,'事件後 3 根內'],[5,'事件後 5 根內']].map(x=>'<option value="'+x[0]+'" '+(Number(c.windowBars||0)===x[0]?'selected':'')+'>'+x[1]+'</option>').join('')+'</select>'
+    }
+    html+='<div class="funnel-filter-step '+(i===0?'anchor':'')+'"><div class="funnel-step-head">'+
+      '<span class="funnel-step-no">'+(i+1)+'</span><div class="funnel-step-title"><b>'+esc(conditionLabel(c))+'</b><small>'+esc(conditionModeLabel(c))+'</small></div>'+
+      '<div class="funnel-step-count"><b>'+n+' 次</b><small>'+(i===0?'基準歷史案例':esc(prev+' → '+n+' · 減少 '+(stage.removed||0)))+'</small></div></div>'+
+      (stage.example?priceRulerHTML(stage.example):'')+
+      '<div class="funnel-step-tools">'+window+'<button onclick="openParams(\''+c.model+'\')">調整模型</button>'+
+      (i===0?'':'<button onclick="removeCondition('+i+')">移除</button>')+'</div></div>'
+  });
+  html+='</div>';
+
+  if(conditions.length<MAX_CONDITIONS){
+    let candidates=enabled.filter(model=>!conditions.some(c=>c.model===model)).map(model=>({model,c:funnelCandidateCondition(model)})).filter(x=>x.c);
+    if(candidates.length){
+      html+='<div class="funnel-add"><div class="funnel-add-label">加入下一層篩選</div><div class="funnel-add-buttons">'+candidates.map(x=>{
+        let rel=CE.suggestRelation(EVIDENCE_LOG,conditions,x.c,{knownThrough:D.length-1});
+        return '<button onclick="addModelToFunnel(\''+x.model+'\')">＋ '+esc(conditionLabel(x.c))+'<small>預設：'+esc(relationLabel(rel))+'</small></button>'
+      }).join('')+'</div></div>'
+    }else{
+      html+='<div class="funnel-add"><div class="funnel-add-label">要再加入條件，可先用上方「＋ 加入模型」開啟另一個模型。</div></div>'
+    }
+  }
+
+  html+='<div class="funnel-result"><b>目前剩 '+result.episodeCount+' 個歷史案例｜'+esc(result.gate.label)+'</b><br>'+
+    '每個基準案例最多只算一次；價格關係只使用當時已知的 Evidence，不把後來才形成的區域回填到過去。'+
+    '<br><button onclick="openFunnelEvidence()">查看 3 / 5 / 10 / 20 根 K 的歷史分布與案例</button></div></section>';
+  box.innerHTML=html
+}
 function renderResearchStack(){
   let box=q('activeModelStack'),summary=q('researchStackSummary');if(!box||!summary)return;
   let enabled=Object.entries(MODEL_UI).filter(([k,x])=>q(x.check)&&q(x.check).checked).map(([k])=>k),
@@ -1013,34 +1173,38 @@ function renderResearchStack(){
     try{result=CE.evaluateConditions(D,EVIDENCE_LOG,conditions,{knownThrough:D.length-1})}catch(_){result=null}
   }
   if(PINNED_RESEARCH&&result){
-    summary.innerHTML='<strong>目前條件研究：</strong>'+conditions.map(c=>esc(conditionLabel(c))).join(' ＋ ')+
-      ' · 歷史案例 '+result.episodeCount+' 次 · '+esc(result.gate.label)
+    summary.innerHTML='<strong>目前漏斗：</strong>'+conditions.map(c=>esc(conditionLabel(c))).join(' → ')+
+      ' · 最後剩 '+result.episodeCount+' 次 · '+esc(result.gate.label)
   }else{
-    summary.innerHTML='<strong>先選一個模型證據開始：</strong>點模型磚的「研究這個證據」，再逐步加入第二、第三個條件。'
+    summary.innerHTML='<strong>從一個模型開始：</strong>先設成基準，再直接加入下一個模型；每一步都會顯示篩掉多少歷史案例。'
   }
   if(!enabled.length){
-    box.innerHTML='<div class="active-model-empty">目前沒有開啟任何模型。按「＋ 加入模型」從一個你看得懂的市場問題開始。</div>';return
+    box.innerHTML='<div class="active-model-empty">目前沒有開啟任何模型。按「＋ 加入模型」從一個你看得懂的市場問題開始。</div>';
+    renderDirectFunnel(conditions,result,enabled);return
   }
   box.innerHTML=enabled.map(model=>{
     let current=currentEvidenceForModel(model),e=current||lastHistoricalEvidence(model),
         idx=conditionIndex.has(model)?conditionIndex.get(model):-1,
         stage=result&&idx>=0&&result.funnel?result.funnel[idx]:null,
         st=e?evalState(model,e.state):null,title=(MODEL_TITLES[model]||model).split('｜'),
-        role=idx===0?'基準條件':idx>0?('條件 '+(idx+1)):'已開啟',
-        conditionMeta=stage?(idx===0?('基準歷史案例 '+stage.episodeCount+' 次'):('加入後剩 '+stage.episodeCount+' 次')):'',
-        sample=st?('同狀態歷史 '+st.count+' 次'):(e?'目前沒有完整統計':'尚無可研究案例');
+        role=idx===0?'基準條件':idx>0?('漏斗第 '+(idx+1)+' 層'):'已開啟',
+        conditionMeta=stage?(idx===0?('基準 '+stage.episodeCount+' 次'):('篩到 '+stage.episodeCount+' 次')):'',
+        sample=st?('同狀態歷史 '+st.count+' 次'):(e?'目前沒有完整統計':'尚無可研究案例'),
+        action=!PINNED_RESEARCH?'設為基準':idx>=0?'查看證據':conditions.length<MAX_CONDITIONS?'加入漏斗':'漏斗已滿',
+        fn=!PINNED_RESEARCH?'startResearchFunnel(\''+model+'\')':idx>=0?'openFunnelEvidence()':conditions.length<MAX_CONDITIONS?'addModelToFunnel(\''+model+'\')':'';
     return '<article class="active-model-brick '+(idx>=0?'in-condition':'')+'" data-active-model="'+model+'">'+
       '<div class="active-model-brick-head"><div class="active-model-title"><b>'+esc(title[0])+'</b><small>'+esc(title[1]||'')+'</small></div>'+
       '<span class="active-model-role">'+esc(role)+'</span></div>'+
       '<div class="active-model-state">'+(e?(current?'目前：':'最近一次：'):'')+esc(e?plainResearch(model,e.state):'目前還沒有找到符合條件的市場證據。')+'</div>'+
       '<div class="active-model-meta"><span>'+esc(modelSettingLabel(model))+'</span><span>'+esc(sample)+'</span>'+
       (conditionMeta?'<span>'+esc(conditionMeta)+'</span>':'')+'</div>'+
-      '<div class="active-model-actions">'+
-      '<button '+(e?'':'disabled')+' onclick="openLatestResearch(\''+model+'\')">'+(e?'研究這個證據':'目前沒有案例')+'</button>'+
+      '<div class="active-model-actions"><button '+(e&&fn?'onclick="'+fn+'"':'disabled')+'>'+esc(e?action:'目前沒有案例')+'</button>'+
       '<button onclick="openParams(\''+model+'\')">調整設定</button>'+
       '<button class="quiet" onclick="disableModel(\''+model+'\')">關閉模型</button></div></article>'
-  }).join('')
+  }).join('');
+  renderDirectFunnel(conditions,result,enabled)
 }
+
 function currentEvidenceForModel(model){
   let rows=EVIDENCE.filter(e=>e.model===model);
   return rows.length?rows[rows.length-1]:null
@@ -1181,7 +1345,7 @@ function conditionGateText(g){
   return '歷史案例 '+g.n+' 次｜可比較樣本：可以開始比較分布，但這不代表預測可靠度。'
 }
 function researchConditions(r){
-  if(!r.conditions||!r.conditions.length)r.conditions=[{model:r.model,state:r.state,windowBars:0}];
+  if(!r.conditions||!r.conditions.length)r.conditions=[{model:r.model,state:r.state,windowBars:0,relation:'time'}];
   return r.conditions
 }
 function enabledModelKeys(){
@@ -1209,12 +1373,12 @@ function conditionBricksHTML(r,funnel){
     }
     let meta=i===0?'基準歷史案例 <strong>'+n+' 次</strong>':
       '加入後 <strong>'+prev+' → '+n+' 次</strong> · 減少 '+removed+' · 保留 '+retained+'%'+(bottleneck?'<span class="condition-bottleneck">這一步縮最多</span>':'');
-    return (i?'<div class="condition-link"><span>同時符合</span><small>加入下一個條件</small></div>':'')+
+    return (i?'<div class="condition-link"><span>'+esc(relationLabel(c.relation||'time'))+'</span><small>'+esc(relationHelp(c.relation||'time'))+'</small></div>':'')+
       '<div class="condition-brick '+(i===0?'anchor ':'')+(bottleneck?'bottleneck':'')+'">'+
         '<div><div class="condition-brick-head"><span class="condition-step">'+(i===0?'基準條件':'條件 '+(i+1))+'</span>'+
         '<span class="condition-brick-title">'+esc(conditionLabel(c))+'</span><span class="condition-mode">'+esc(conditionModeLabel(c))+'</span></div>'+
         '<div class="condition-brick-meta">'+meta+'</div></div>'+
-        '<div class="condition-brick-actions">'+window+
+        '<div class="condition-brick-actions">'+(i>0?relationOptionsHTML(conditions,i):'')+window+
           '<button onclick="openParams(\''+c.model+'\')">調整模型</button>'+
           (i===0?'':'<button onclick="removeCondition('+i+')" aria-label="移除條件">移除</button>')+
         '</div></div>'
@@ -1222,7 +1386,7 @@ function conditionBricksHTML(r,funnel){
 }
 function sampleFunnelHTML(x){
   let stages=x.funnel||[],worst=Math.max(0,...stages.slice(1).map(s=>s.removed||0));
-  return '<div class="sample-funnel"><div class="sample-funnel-head"><b>樣本縮減流程｜每加一個條件，歷史案例怎麼縮</b><span>條件需同時符合 · 每個基準案例最多算一次</span></div>'+
+  return '<div class="sample-funnel"><div class="sample-funnel-head"><b>樣本縮減流程｜每加一個條件，歷史案例怎麼縮</b><span>每一步可選時間或價格關係 · 每個基準案例最多算一次</span></div>'+
     stages.map((s,i)=>{
       let prev=s.previousEpisodeCount??s.episodeCount,n=s.episodeCount||0,removed=s.removed||0,
           retained=i===0?100:(prev?Math.round(n/prev*100):100),bottleneck=i>0&&removed>0&&removed===worst;
@@ -1265,7 +1429,7 @@ function conditionalExplorerHTML(r){
   let conditions=researchConditions(r),enabled=enabledModelKeys(),
       x=CE.evaluateConditions(D,EVIDENCE_LOG,conditions,{knownThrough:D.length-1}),
       html='<div class="condition-box"><h4>再加一個條件，歷史分布有沒有變？</h4>'+
-        '<div class="condition-intro">這裡不讓模型投票。條件磚塊由上往下以「同時符合」疊加：每加一顆，就立刻看到歷史案例從多少縮到多少。每顆磚都能回去調整該模型；連續重疊的一整段只算 1 個歷史案例。</div>'+
+        '<div class="condition-intro">這裡不讓模型投票。每加入一個條件，都要明確說是「同時成立」、「價格區域重疊」或「掃單價格進入區域」；每一步都直接看到歷史案例縮減。連續成立的一整段仍只算 1 個基準案例。</div>'+
         conditionBricksHTML(r,x.funnel||[])+
         sampleFunnelHTML(x)+
         '<div class="sample-gate '+x.gate.level+'">'+esc(conditionGateText(x.gate))+'</div>'+
@@ -1280,7 +1444,13 @@ function conditionalExplorerHTML(r){
     let companions=CE.discoverCompanions(EVIDENCE_LOG,conditions,{knownThrough:D.length-1,maxResults:6,minEpisodes:1});
     if(companions.length){
       html+='<div class="research-section"><h4>歷史上還有哪些 Evidence 曾一起存在？</h4><div class="companion-list">'+
-        companions.map(c=>{let drop=Math.max(0,x.episodeCount-c.episodeCount);return '<button class="companion-btn" onclick="addCondition(\''+c.condition.model+'\',\''+c.condition.state+'\')"><span>＋ '+esc(conditionLabel(c.condition))+'</span><small>N '+x.episodeCount+' → '+c.episodeCount+' · 減少 '+drop+' · '+esc(c.gate.label)+'</small></button>'}).join('')+
+        companions.map(c=>{
+          let relation=CE.suggestRelation(EVIDENCE_LOG,conditions,c.condition,{knownThrough:D.length-1}),
+              next={...c.condition,relation},
+              count=CE.episodesForConditions(EVIDENCE_LOG,[...conditions,next],{knownThrough:D.length-1}).length,
+              drop=Math.max(0,x.episodeCount-count);
+          return '<button class="companion-btn" onclick="addCondition(\''+c.condition.model+'\',\''+c.condition.state+'\')"><span>＋ '+esc(conditionLabel(c.condition))+'</span><small>'+esc(relationLabel(relation))+' · '+x.episodeCount+' → '+count+' 次 · 減少 '+drop+'</small></button>'
+        }).join('')+
         '</div></div>'
     }else if(enabled.length<2){
       html+='<div class="condition-empty">目前只有 '+enabled.length+' 個模型在產生 Evidence，所以還沒有跨模型條件可以比較。先選另一個模型的研究方式：</div>'+disabledModelButtons()
@@ -1295,27 +1465,37 @@ function conditionalExplorerHTML(r){
 }
 function addCondition(model,state){
   if(!PINNED_RESEARCH)return;
-  let a=researchConditions(PINNED_RESEARCH);
-  if(a.length>=MAX_CONDITIONS)return;
-  if(a.some(c=>c.model===model))return;
-  a.push({model,state,windowBars:0});
-  PINNED_RESEARCH.conditions=a;renderEvidenceDock()
+  let a=researchConditions(PINNED_RESEARCH).slice();
+  if(a.length>=MAX_CONDITIONS||a.some(c=>c.model===model))return;
+  let c={model,state,windowBars:0,relation:'time'};
+  c.relation=CE.suggestRelation(EVIDENCE_LOG,a,c,{knownThrough:D.length-1});
+  a.push(c);PINNED_RESEARCH.conditions=a;
+  renderResearchStack();if(RESEARCH_DETAIL_OPEN)renderEvidenceDock()
 }
 function removeCondition(i){
   if(!PINNED_RESEARCH||i<=0)return;
   let a=researchConditions(PINNED_RESEARCH).slice();a.splice(i,1);
-  PINNED_RESEARCH.conditions=a;renderEvidenceDock()
+  PINNED_RESEARCH.conditions=a;renderResearchStack();if(RESEARCH_DETAIL_OPEN)renderEvidenceDock()
 }
 function setConditionWindow(i,v){
   if(!PINNED_RESEARCH||i<=0)return;
   let a=researchConditions(PINNED_RESEARCH).slice();
   if(!a[i])return;a[i]={...a[i],windowBars:Math.max(0,Math.round(+v||0))};
-  PINNED_RESEARCH.conditions=a;renderEvidenceDock()
+  PINNED_RESEARCH.conditions=a;renderResearchStack();if(RESEARCH_DETAIL_OPEN)renderEvidenceDock()
+}
+function setConditionRelation(i,v){
+  if(!PINNED_RESEARCH||i<=0)return;
+  let a=researchConditions(PINNED_RESEARCH).slice();
+  if(!a[i])return;
+  let allowed=CE.availableRelations(EVIDENCE_LOG,a.slice(0,i),a[i],{knownThrough:D.length-1});
+  if(!allowed.includes(v))v='time';
+  a[i]={...a[i],relation:v};PINNED_RESEARCH.conditions=a;
+  renderResearchStack();if(RESEARCH_DETAIL_OPEN)renderEvidenceDock()
 }
 
 function renderEvidenceDock(){
   let dock=q('evidenceDock'),back=q('evidenceBackdrop');if(!dock)return;
-  if(!PINNED_RESEARCH){dock.classList.remove('on');if(back)back.classList.remove('on');return}
+  if(!PINNED_RESEARCH||!RESEARCH_DETAIL_OPEN){dock.classList.remove('on');if(back)back.classList.remove('on');return}
   let r=PINNED_RESEARCH,st=evalState(r.model,r.state),ev=nearestEvidence(r.model,r.state,r.index),
       stateLabel=STATE_LABELS[r.state]||String(r.state||'—'),n=st?st.count:0;
   q('evidenceDockTitle').textContent=(MODEL_TITLES[r.model]||r.label||r.model)+'｜看看以前發生過什麼';
@@ -1344,8 +1524,8 @@ function pinResearch(hit){
   let r=resolveResearchHit(hit);if(!r)return false;
   let same=PINNED_RESEARCH&&PINNED_RESEARCH.model===r.model&&PINNED_RESEARCH.state===r.state&&PINNED_RESEARCH.index===r.index;
   r.expanded=isMobileUI()?(same?!PINNED_RESEARCH.expanded:false):true;
-  r.conditions=same&&PINNED_RESEARCH.conditions?PINNED_RESEARCH.conditions.slice():[{model:r.model,state:r.state,windowBars:0}];
-  PINNED_RESEARCH=r;
+  r.conditions=same&&PINNED_RESEARCH.conditions?PINNED_RESEARCH.conditions.slice():[{model:r.model,state:r.state,windowBars:0,relation:'time'}];
+  PINNED_RESEARCH=r;RESEARCH_DETAIL_OPEN=true;
   switchLabTab('models');
   renderEvidenceDock();renderResearchStack();
   let tip=q('chartTip');if(tip)tip.style.display='none';
@@ -1353,7 +1533,7 @@ function pinResearch(hit){
 }
 function toggleResearchDepth(){if(!PINNED_RESEARCH)return;PINNED_RESEARCH.expanded=!PINNED_RESEARCH.expanded;renderEvidenceDock()}
 function closeEvidenceDock(redraw=true){
-  PINNED_RESEARCH=null;
+  RESEARCH_DETAIL_OPEN=false;
   let dock=q('evidenceDock'),back=q('evidenceBackdrop');
   if(dock)dock.classList.remove('on');if(back)back.classList.remove('on');
   renderResearchStack();if(redraw&&R.length)draw()
