@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v1.5 · M5 關係式漏斗（產品驗收中）**
+**v1.6 · G01 單一模型引導（產品驗收中）**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -145,6 +145,12 @@ M5 不把模型做成投票器。研究流程從一個 anchor Evidence 開始，
 UI-R01 將「研究條件組」作為側欄第一層；UI-R02 再把真正可操作的漏斗放到第一層。使用者可直接設基準、加入第二／第三條件，並逐層選擇「同時成立」、「價格區域重疊」或「掃單價格進入區域」，立即看到歷史案例如何縮減。價格關係由 Shared Condition Engine v1.2 計算，Runner 與 UI 共用同一語意。\n\nResearch Runner 可透過 `--conditions research/conditions.example.json` 使用相同的 Shared Condition Engine。
 
 M5 驗收時以 BTC / NASDAQ / TAIEX 1D 做 real-market prefix causality audit。這次 audit 實際抓到 future Evidence 被錯誤 clamp 到歷史 checkpoint 的問題，修正後再通過；也因此把 sampling 改成 anchor-centric，確保增加條件不會反而製造更多樣本。固定驗收紀錄保存在 `research/m5-condition-audit.json`。
+
+## G01 單一模型引導
+
+目前產品驗收先暫停擴張漏斗展示，回到更前置的單一模型理解問題。模型磚的第一動作是「看懂這個模型」；固定研究區依序回答「現在看到什麼／為什麼／接下來看什麼」，之後才顯示歷史後續與真實案例。
+
+3 / 5 / 10 / 20 根 K 的統計公式沒有改變；介面會依目前週期翻成約幾小時、幾天、交易日、幾週或幾個月，並明說比較的是「模型確認當下收盤 → 第 N 根未來 K 收盤」。桌面研究區改為大型固定面板，手機則使用全螢幕研究頁。
 
 ## Direction
 
