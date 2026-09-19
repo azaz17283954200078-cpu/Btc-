@@ -40,6 +40,8 @@ jobs:
         run: node tests/research-runner.test.js
       - name: M5 Runner conditional parity
         run: node tests/m5-runner.test.js
+      - name: M5 real-market causality audit
+        run: node scripts/m5-condition-audit.js
       - name: Market data sanity
         run: node tests/market-data.test.js
       - name: Pre-M4 regression baseline
@@ -48,6 +50,8 @@ jobs:
         run: node tests/index-contract.test.js
       - name: M4 desktop/mobile guided research contract
         run: node tests/m4-ui-contract.test.js
+      - name: M5 guided conditional UI contract
+        run: node tests/m5-ui-contract.test.js
       - name: Validated model preset contract
         run: node tests/model-presets.test.js
       - name: M4 validated preset semantic gate

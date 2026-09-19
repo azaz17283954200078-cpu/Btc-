@@ -1,0 +1,19 @@
+{
+  "queries": [
+    {
+      "name": "Support Candidate + Field Active",
+      "conditions": [
+        {"model": "support", "state": "candidate"},
+        {"model": "field", "state": "active"}
+      ],
+      "horizons": [3, 5, 10, 20]
+    },
+    {
+      "name": "Support Candidate + recent Sweep",
+      "conditions": [
+        {"model": "support", "state": "candidate"},
+        {"model": "sweep", "state": "event", "windowBars": 3}
+      ]
+    }
+  ]
+}

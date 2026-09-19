@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v1.2 · M4 Guided Research**
+**v1.3 · M5 Conditional Research**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -124,6 +124,19 @@ GitHub Actions 會自動檢查：
 不同資料來源的 Volume 定義可能不同，因此研究時應保留 source / timeframe / market metadata。
 
 進入 M4 前另建立固定 regression fixtures。它們不是最新行情，而是刻意凍結的 1200-bar 樣本，用來檢查未來重構是否讓模型 lifecycle、Evidence 或 Evaluation 在沒有說明的情況下悄悄改變。
+
+## M5 Conditional Research
+
+M5 不把模型做成投票器。研究流程從一個 anchor Evidence 開始，再加入第二／第三個當時已知的條件，比較單一條件與條件組合的歷史 episode 分布。
+
+- State Evidence 會維持到下一個 lifecycle transition。
+- Sweep / Astrology 等事件預設只算當根，也可以明確改成「最近 3 / 5 根內」；窗口只往事件之後延伸。
+- Echo 使用當根 observation。
+- 一整段連續重疊只算一個 episode，避免長狀態重複灌大樣本數。
+- N < 5 顯示樣本不足；5–19 顯示探索性；N ≥ 20 才標示可比較。這些標籤只描述樣本量。
+- 每組條件都和第一個 anchor 的單一條件 baseline 並排，不輸出 BUY / SELL、模型投票或最佳組合排名。
+
+Research Runner 可透過 `--conditions research/conditions.example.json` 使用相同的 Shared Condition Engine。
 
 ## Direction
 

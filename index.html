@@ -159,6 +159,24 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .metric-explain{margin:7px 0 9px;padding:8px 9px;border-radius:8px;background:#0e1a2b;color:#9fb2cc;font-size:10px;line-height:1.55}
 .metric-explain b{color:#dce7f6}.research-next{margin-top:12px;padding:9px 10px;border-radius:9px;background:#101e31;border:1px solid #304967;color:#b9c9dc;font-size:10.5px;line-height:1.55}
 .horizon-card .median-label{display:block;font-size:9.5px;color:#8fa5c1;margin-top:-1px}
+/* M5 Conditional Research */
+.condition-box{margin-top:12px;padding:11px;border:1px solid #365577;border-radius:11px;background:#0b1627}
+.condition-box h4{margin:0 0 4px;font-size:12px;color:#dfeaff}.condition-intro{font-size:10.5px;line-height:1.55;color:#9fb1c9}
+.condition-selected{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.condition-chip{display:flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid #365273;border-radius:9px;background:#101e31;font-size:10.5px;color:#d7e3f3}
+.condition-chip.anchor{border-color:#7195c1}.condition-chip button{padding:1px 5px;min-height:22px;font-size:10px}.condition-chip select{font-size:10px;min-height:26px;padding:2px 4px}
+.sample-gate{margin-top:9px;padding:8px 9px;border-radius:8px;font-size:10.5px;line-height:1.5}
+.sample-gate.insufficient{background:#2a191d;border:1px solid #693942;color:#e5b2b8}
+.sample-gate.exploratory{background:#2b2515;border:1px solid #6a5a31;color:#e6d29b}
+.sample-gate.comparable{background:#10271f;border:1px solid #356952;color:#b9decf}
+.condition-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}
+.condition-stat{padding:8px;border:1px solid #293f5d;border-radius:9px;background:#0f1b2c}
+.condition-stat .hz{font-size:9.8px;color:#8fa4bf}.condition-stat b{display:block;font-size:13px;margin:2px 0}.condition-stat small{display:block;color:#98abc4;font-size:9.5px;line-height:1.45}
+.companion-list{display:grid;gap:6px;margin-top:8px}.companion-btn{display:flex;justify-content:space-between;gap:8px;width:100%;padding:8px;text-align:left;border:1px solid #2d4666;border-radius:8px;background:#0f1b2c;color:#dce7f6}
+.companion-btn span{font-size:10.5px}.companion-btn small{color:#91a6c2;font-size:9.5px}.companion-btn:disabled{opacity:.45}
+.condition-empty{margin-top:8px;padding:9px;border-radius:8px;background:#101b2b;color:#9fb2ca;font-size:10.5px;line-height:1.55}
+.condition-add-models{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.condition-add-models button{font-size:10.5px}
+.condition-note{margin-top:8px;color:#839ab8;font-size:9.8px;line-height:1.5}
 /* Parameter reading surface */
 .param-modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(3,7,14,.74);backdrop-filter:blur(4px)}
 .param-modal.on{display:flex}
@@ -236,12 +254,13 @@ td:first-child,th:first-child{text-align:left}
   .param-close{min-width:44px;min-height:44px}
   .param-grid input,.param-grid select{min-height:44px;font-size:16px}
   .preset-grid{grid-template-columns:1fr}
+  .condition-grid{grid-template-columns:1fr}
   .preset-choice{min-height:0}
   .model-next button,.guide-btn{min-height:44px}
 }
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.2 · M4 Guided Research</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.3 · M5 Conditional Research</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -410,7 +429,7 @@ state.prevSlow = slow;</textarea>
     <div class="param-note"><b>怎麼用：</b>參考設定驗證的是它是否真的比較敏感／平衡／挑剔，以及是否有足夠歷史樣本；不是挑歷史報酬最高的組合。</div>
     <div class="param-actions"><span id="paramRunStatus" class="param-run-status">選一個研究方式，或自己微調</span><div class="right"><button onclick="restoreParams()">恢復模型原本設定</button><button onclick="applyParams()">用這些參數重新找</button></div></div>
   </div>
-</div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script>
+</div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script src="src/condition-engine.js"></script><script>
 window.addEventListener('error',function(e){var st=document.getElementById('status'),msg=document.getElementById('msg');if(st)st.textContent='程式錯誤';if(msg)msg.textContent='JS：'+e.message+' @ '+e.lineno;});
 const q=id=>document.getElementById(id);
 function setInfo(id,t){let e=q(id);if(e)e.textContent=t}
@@ -561,8 +580,8 @@ function moveParamDrag(e){
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}
 function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
 let PINNED_RESEARCH=null;
-const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null;
-if(!ME||!MP)throw new Error('Strategy Lab shared research modules failed to load');
+const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,CE=window.StrategyLabConditionEngine||null;
+if(!ME||!MP||!CE)throw new Error('Strategy Lab shared research modules failed to load');
 window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;
 window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVALUATION__=EVALUATION;
 
@@ -964,6 +983,102 @@ function failuresHTML(model,state){
   if(!rows.length)return'<div class="research-empty">目前沒有可列出的「還沒進到下一階段就先失效」案例；也可能這個狀態本來就不是 lifecycle 失敗節點。</div>';
   return'<div class="case-list">'+rows.map(x=>'<button class="case-link" onclick="jumpToEvidence('+x.failed.index+')"><span>'+esc(D[x.from.index]?date(D[x.from.index].t):('bar '+x.from.index))+' → '+esc(STATE_LABELS[x.failed.state]||x.failed.state)+'</span><small>'+(x.failed.index-x.from.index)+' bars ↗</small></button>').join('')+'</div>'
 }
+const MAX_CONDITIONS=3;
+function conditionLabel(c){
+  let title=(MODEL_TITLES[c.model]||c.model).split('｜')[0],
+      state=STATE_LABELS[c.state]||c.state;
+  return title+' · '+String(state).split('｜')[0]
+}
+function conditionGateText(g){
+  if(!g)return'';
+  if(g.level==='insufficient')return 'N '+g.n+'｜樣本不足：先把它當案例看，不做分布結論。';
+  if(g.level==='exploratory')return 'N '+g.n+'｜探索性樣本：可以看方向與案例，但樣本仍少。';
+  return 'N '+g.n+'｜可比較樣本：可以開始比較分布，但這不代表預測可靠度。'
+}
+function researchConditions(r){
+  if(!r.conditions||!r.conditions.length)r.conditions=[{model:r.model,state:r.state,windowBars:0}];
+  return r.conditions
+}
+function enabledModelKeys(){
+  return Object.entries(MODEL_UI).filter(([k,ui])=>q(ui.check)&&q(ui.check).checked).map(([k])=>k)
+}
+function conditionChipsHTML(r){
+  return researchConditions(r).map((c,i)=>{
+    let mode=CE.semantics(c),window='';
+    if(i>0&&(mode==='event'||mode==='transition_event')){
+      window='<select onchange="setConditionWindow('+i+',this.value)" aria-label="事件窗口">'+
+        [[0,'當根'],[3,'最近 3 根內'],[5,'最近 5 根內']].map(x=>'<option value="'+x[0]+'" '+(Number(c.windowBars||0)===x[0]?'selected':'')+'>'+x[1]+'</option>').join('')+
+        '</select>'
+    }
+    return '<div class="condition-chip '+(i===0?'anchor':'')+'"><span>'+(i===0?'基準 · ':'')+esc(conditionLabel(c))+'</span>'+window+
+      (i===0?'':'<button onclick="removeCondition('+i+')" aria-label="移除條件">×</button>')+'</div>'
+  }).join('')
+}
+function conditionalStatsHTML(x){
+  let cards=x.horizons.map(h=>{
+    let a=x.stats[h],b=x.baseline.stats[h],d=x.comparison[h];
+    return '<div class="condition-stat"><span class="hz">'+h+' 根 K · 組合 N '+a.n+' / 單一 N '+b.n+'</span>'+
+      '<b>'+pct(a.medianReturn)+'</b><small>組合中位結果 · 單一條件 '+pct(b.medianReturn)+
+      '<br>差值 '+pct(d.deltaMedianReturn)+' · IQR '+pct(a.returnP25)+' ～ '+pct(a.returnP75)+
+      '<br>MFE '+pct(a.medianMFE)+' · MAE '+pct(a.medianMAE)+'</small></div>'
+  }).join('');
+  return '<div class="condition-grid">'+cards+'</div>'
+}
+function disabledModelButtons(){
+  let rows=Object.entries(MODEL_UI).filter(([k,ui])=>q(ui.check)&&!q(ui.check).checked);
+  if(!rows.length)return'';
+  return '<div class="condition-add-models">'+rows.map(([k])=>'<button onclick="openParams(\''+k+'\')">先設定 '+esc((MODEL_TITLES[k]||k).split('｜')[0])+'</button>').join('')+'</div>'
+}
+function conditionalExplorerHTML(r){
+  let conditions=researchConditions(r),enabled=enabledModelKeys(),
+      x=CE.evaluateConditions(D,EVIDENCE_LOG,conditions,{knownThrough:D.length-1}),
+      html='<div class="condition-box"><h4>再加一個條件，歷史分布有沒有變？</h4>'+
+        '<div class="condition-intro">這裡不讓模型投票。每次只問：在基準條件之外，再加一個當時真的已知的 Evidence，歷史結果分布怎麼改變？連續重疊的一整段只算 1 個 episode。</div>'+
+        '<div class="condition-selected">'+conditionChipsHTML(r)+'</div>'+
+        '<div class="sample-gate '+x.gate.level+'">'+esc(conditionGateText(x.gate))+'</div>';
+  if(conditions.length>1){
+    html+='<div class="metric-explain"><b>比較方式：</b>「單一」永遠是第一個基準條件；「組合」是上面所有條件同時成立的 episode。差值只描述歷史分布差異，不代表多一個條件就比較好。</div>'+
+      conditionalStatsHTML(x)
+  }else{
+    html+='<div class="condition-empty">目前只有基準條件。加入另一個模型的 Evidence 後，才會出現「單一條件 vs 條件組合」的分布比較。</div>'
+  }
+  if(conditions.length<MAX_CONDITIONS){
+    let companions=CE.discoverCompanions(EVIDENCE_LOG,conditions,{knownThrough:D.length-1,maxResults:6,minEpisodes:1});
+    if(companions.length){
+      html+='<div class="research-section"><h4>歷史上還有哪些 Evidence 曾一起存在？</h4><div class="companion-list">'+
+        companions.map(c=>'<button class="companion-btn" onclick="addCondition(\''+c.condition.model+'\',\''+c.condition.state+'\')"><span>＋ '+esc(conditionLabel(c.condition))+'</span><small>'+c.episodeCount+' episodes · '+esc(c.gate.label)+'</small></button>').join('')+
+        '</div></div>'
+    }else if(enabled.length<2){
+      html+='<div class="condition-empty">目前只有 '+enabled.length+' 個模型在產生 Evidence，所以還沒有跨模型條件可以比較。先選另一個模型的研究方式：</div>'+disabledModelButtons()
+    }else{
+      html+='<div class="condition-empty">目前已開啟模型中，沒有找到和這組條件重疊的其他 Evidence。</div>'
+    }
+  }else{
+    html+='<div class="condition-note">目前最多同時研究 3 個條件，避免無限制堆疊條件把歷史切成極小樣本。</div>'
+  }
+  html+='<div class="condition-note">事件條件預設只算發生當根；你可以明確改成「最近 3 / 5 根內」。窗口只往事件發生後延伸，不會偷看未來事件。</div></div>';
+  return html
+}
+function addCondition(model,state){
+  if(!PINNED_RESEARCH)return;
+  let a=researchConditions(PINNED_RESEARCH);
+  if(a.length>=MAX_CONDITIONS)return;
+  if(a.some(c=>c.model===model))return;
+  a.push({model,state,windowBars:0});
+  PINNED_RESEARCH.conditions=a;renderEvidenceDock()
+}
+function removeCondition(i){
+  if(!PINNED_RESEARCH||i<=0)return;
+  let a=researchConditions(PINNED_RESEARCH).slice();a.splice(i,1);
+  PINNED_RESEARCH.conditions=a;renderEvidenceDock()
+}
+function setConditionWindow(i,v){
+  if(!PINNED_RESEARCH||i<=0)return;
+  let a=researchConditions(PINNED_RESEARCH).slice();
+  if(!a[i])return;a[i]={...a[i],windowBars:Math.max(0,Math.round(+v||0))};
+  PINNED_RESEARCH.conditions=a;renderEvidenceDock()
+}
+
 function renderEvidenceDock(){
   let dock=q('evidenceDock'),back=q('evidenceBackdrop');if(!dock)return;
   if(!PINNED_RESEARCH){dock.classList.remove('on');if(back)back.classList.remove('on');return}
@@ -980,6 +1095,7 @@ function renderEvidenceDock(){
   }else{
     html+='<div class="research-actions"><button onclick="toggleResearchDepth()">先收起研究 ↑</button><button onclick="openParams(\''+r.model+'\')">換一種研究方式</button></div>'+
       '<section class="research-section"><h4>之後市場通常怎麼走？</h4>'+horizonsHTML(st)+'</section>'+
+      conditionalExplorerHTML(r)+
       '<section class="research-section"><h4>這個狀態後來怎麼發展？</h4>'+lifecycleHTML(r.model,r.state)+'</section>'+
       '<section class="research-section"><h4>回到幾個真實歷史案例</h4>'+casesHTML(r.model,r.state)+'</section>'+
       '<section class="research-section"><h4>看看它失效時長什麼樣</h4>'+failuresHTML(r.model,r.state)+'</section>'+
@@ -994,6 +1110,7 @@ function pinResearch(hit){
   let r=resolveResearchHit(hit);if(!r)return false;
   let same=PINNED_RESEARCH&&PINNED_RESEARCH.model===r.model&&PINNED_RESEARCH.state===r.state&&PINNED_RESEARCH.index===r.index;
   r.expanded=isMobileUI()?(same?!PINNED_RESEARCH.expanded:false):true;
+  r.conditions=same&&PINNED_RESEARCH.conditions?PINNED_RESEARCH.conditions.slice():[{model:r.model,state:r.state,windowBars:0}];
   PINNED_RESEARCH=r;
   switchLabTab('models');
   renderEvidenceDock();

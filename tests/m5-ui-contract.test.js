@@ -1,0 +1,34 @@
+const fs=require('fs');
+const assert=require('assert');
+const s=fs.readFileSync('index.html','utf8');
+
+assert(s.includes('v1.3 · M5 Conditional Research'),'M5 version label missing');
+assert(s.includes('<script src="src/condition-engine.js"></script>'),'shared Condition Engine is not loaded');
+assert(s.includes('CE=window.StrategyLabConditionEngine'),'UI must use shared Condition Engine');
+
+for(const fn of [
+  'function conditionalExplorerHTML(','function conditionalStatsHTML(','function addCondition(',
+  'function removeCondition(','function setConditionWindow(','function conditionGateText('
+])assert(s.includes(fn),'missing M5 guided conditional function '+fn);
+
+for(const phrase of [
+  '再加一個條件，歷史分布有沒有變？',
+  '這裡不讓模型投票',
+  '連續重疊的一整段只算 1 個 episode',
+  '樣本不足：先把它當案例看',
+  '探索性樣本',
+  '可比較樣本',
+  '差值只描述歷史分布差異',
+  '目前最多同時研究 3 個條件',
+  '窗口只往事件發生後延伸'
+])assert(s.includes(phrase),'missing M5 guidance: '+phrase);
+
+assert(s.includes('CE.evaluateConditions(D,EVIDENCE_LOG,conditions'),'M5 UI must evaluate through shared Condition Engine');
+assert(s.includes('CE.discoverCompanions(EVIDENCE_LOG,conditions'),'M5 companions must come from shared Condition Engine');
+assert(!/BUY|SELL|勝率最高|最佳組合/.test(s),'M5 UI must not become a trading vote/ranking surface');
+assert(s.includes("[[0,'當根'],[3,'最近 3 根內'],[5,'最近 5 根內']]"),'event-window control missing');
+
+const a=s.lastIndexOf('<script>'),b=s.lastIndexOf('</script>');
+assert(a>=0&&b>a,'inline app script missing');
+new Function(s.slice(a+8,b));
+console.log('m5-ui-contract.test.js: OK');

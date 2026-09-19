@@ -162,7 +162,7 @@ M5 研究的是「多一個 causal Evidence 之後，歷史分布發生了什麼
 - M5 顯示條件分布、IQR、MFE / MAE 與失敗案例；不產生 BUY / SELL、模型投票或「最佳組合」排名。
 - Condition Engine 必須同時供 Lab UI 與 Research Runner 使用，並通過 prefix causality / no-lookahead tests。
 
-開發順序：Condition Semantics → Shared Condition Engine → Runner 驗證 → Guided Conditional UI → Regression Gate。
+目前已完成 Condition Semantics、Shared Condition Engine、Runner integration 與 Guided Conditional UI；最後以 real-market causality audit + regression gate 驗收。
 
 ## M6｜完成的小作品
 
