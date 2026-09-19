@@ -6,7 +6,7 @@ const s=fs.readFileSync('index.html','utf8');
 assert(/v(?:1\.\d+|2\.\d+) · (?:M[45]|G01|G02-R[1-7]) /.test(s),'Guided Research version label missing');
 assert(s.includes('<script src="src/model-presets.js"></script>'),'shared validated presets are not loaded');
 
-for(const id of ['singleModelSelect','singleOverlayToggle','singleResearchBody','singleHandoffStatus','presetChoices','presetValidation','modelLibrary']){
+for(const id of ['singleModelSelect','singleOverlayToggle','inlineParams','paramBody','singleResearchBody','singleHandoffStatus','presetChoices','presetValidation','modelLibrary']){
   assert(s.includes('id="'+id+'"'),'missing guided research surface '+id);
 }
 assert(!s.includes('id="evidenceDock"'),'retired Evidence Dock must not remain in primary DOM');
@@ -16,7 +16,7 @@ assert(!s.includes('id="researchFunnel"'),'conditional funnel must not occupy th
 for(const model of ['support','macro','sweep','basin','field','echo','astro']){
   assert(s.includes('data-model-card="'+model+'"'),'missing guided card for '+model);
 }
-for(const phrase of ['它在問：','開啟後：','別把它當成：','調整研究設定','研究目前證據']){
+for(const phrase of ['它在問：','開啟後：','別把它當成：','研究設定直接顯示在下方','研究目前證據']){
   assert(s.includes(phrase),'missing guided copy: '+phrase);
 }
 for(const fn of [
@@ -52,7 +52,7 @@ for(const phrase of [
   '途中最大上漲幅度的歷史中位數',
   '失敗率不是「價格會跌的機率」',
   '真實歷史案例',
-  '調整模型'
+  '研究設定已直接顯示在上方'
 ]){
   assert(s.includes(phrase),'missing result guidance: '+phrase);
 }
@@ -60,9 +60,10 @@ for(const phrase of [
 // Desktop/mobile interaction contract.
 assert(s.includes("window.matchMedia('(pointer: coarse)')"),'coarse-pointer contract missing');
 assert(s.includes("e.pointerType==='touch'"),'touch pointer contract missing');
-assert(s.includes("if(isMobileUI()||e.target.closest('button'))return"),'mobile parameter sheet must not use desktop dragging');
-assert(s.includes('.param-modal{align-items:flex-end;justify-content:stretch;padding:0}'),'mobile parameter bottom-sheet CSS missing');
 assert(s.includes('.single-model-picker{grid-template-columns:1fr}'),'mobile inline single-model inspector CSS missing');
+assert(s.includes('.inline-params .param-grid{grid-template-columns:1fr}'),'mobile inline parameter grid missing');
+assert(s.includes('.inline-params .param-grid input,.inline-params .param-grid select{min-height:44px'),'mobile inline parameter touch targets missing');
+assert(!s.includes('id="paramModal"'),'parameter modal must be retired after settings become directly visible');
 assert(s.includes('if(hit&&hit.model)focusSingleEvidenceFromHit(hit)'),'chart tap/click must sync model research');
 assert(s.includes("if(!tip||isCoarsePointer()||!mousePos||drag)"),'mobile must not depend on hover tooltip');
 
