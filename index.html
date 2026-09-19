@@ -2211,6 +2211,7 @@ function clearScriptCanvas(){let c=q('scriptCanvas');if(!c)return;let d=devicePi
 
 function drawModelsOverlay(){let c=q('modelCanvas'),base=q('c');if(!c||!base)return;let d=devicePixelRatio||1,r=base.getBoundingClientRect();c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);let g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,r.width,r.height);MODEL_HIT=[];if(!R.length){refreshHits();return}let m=chartGeom(r);if(!m){refreshHits();return}let{s,e,X,Y}=m;
 for(let z of BASIN_EPISODES){
+  if(!isModelVisible('basin'))continue;
   if(z.end<s||z.start>e)continue;
   let xPeak=X(Math.max(s,z.peakI)),xS=X(Math.max(s,z.start)),xE=X(Math.min(e,z.end)),
       yPeak=Y(z.cliffTop),yTop=Y(z.top),yBot=Y(z.bot),
@@ -2238,6 +2239,7 @@ for(let z of BASIN_EPISODES){
   MODEL_HIT.push({kind:'zone',model:'basin',state:normHitState('basin',z.state),zone:true,i:hi,rect:true,x1:hx1,x2:hx2,y1:hy1,y2:hy2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
 }
 for(let z of OSC_FIELDS){
+  if(!isModelVisible('field'))continue;
   if(z.end<s||z.start>e)continue;
   let visS=Math.max(s,z.start),visE=Math.min(e,z.end),
       bS=fieldBoundaryAt(z.lock,visS),bE=fieldBoundaryAt(z.lock,visE),
@@ -2279,14 +2281,14 @@ for(let z of OSC_FIELDS){
     top:Math.max(uS,uE),bot:Math.min(lS,lE),field
   });
 }
-for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',model:'macro',state:normHitState('macro',z.state),zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
-for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){
+if(isModelVisible('macro'))for(let i=s;i<=e;i++){for(let z of (R[i].macro||[])){g.fillStyle=z.state==='confirmed'?'rgba(255,184,77,.20)':'rgba(255,184,77,.08)';let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);MODEL_HIT.push({kind:'zone',model:'macro',state:normHitState('macro',z.state),zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Macro Bottom｜宏觀底部 · '+z.state,top:z.top,bot:z.bot})}}
+if(isModelVisible('support'))for(let i=s;i<=e;i++){for(let z of (R[i].zones||[])){
   g.fillStyle=z.state==='validated'?'rgba(55,120,255,.22)':z.state==='candidate'?'rgba(90,165,255,.15)':z.state==='broken'?'rgba(239,107,115,.13)':'rgba(150,160,180,.10)';
   let x1=X(i),x2=X(Math.min(e,i+1)),y1=Y(z.top),y2=Y(z.bot);
   g.fillRect(x1,y1,Math.max(1,x2-x1+1),y2-y1);
   MODEL_HIT.push({kind:'zone',model:'support',state:normHitState('support',z.state),zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:'Support Zone｜支撐區 · '+z.state,top:z.top,bot:z.bot})
 }}
-for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
+if(isModelVisible('basin'))for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
   if(z.shape==='basinScore'){
     let xPeak=X(Math.max(s,z.peakI)),xS=X(Math.max(s,z.start)),xE=X(Math.min(e,z.end)),
         yPeak=Y(z.cliffTop),yTop=Y(z.top),yBot=Y(z.bot),
@@ -2323,13 +2325,14 @@ for(let i=s;i<=e;i++){for(let z of (R[i].researchZones||[])){
     MODEL_HIT.push({kind:'zone',model:'basin',state:normHitState('basin',z.state||'active'),zone:true,i,rect:true,x1,x2:x2+1,y1,y2,label:z.label,detail:z.detail,top:z.top,bot:z.bot});
   }
 }}
-for(let i=s;i<=e;i++){let bs=R[i].bottomSigs||[];for(let j=0;j<bs.length;j++){let z=bs[j],xx=X(i),yy=Y(R[i].l)-12-j*16;g.fillStyle='#ffd166';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,7,0,Math.PI*2);g.fill();g.stroke();MODEL_HIT.push({kind:'model',model:'sweep',state:'event',i,x:xx,y:yy,r:12,label:'Liquidity Sweep｜流動性掃單',detail:z.detail})}}
+if(isModelVisible('sweep'))for(let i=s;i<=e;i++){let bs=R[i].bottomSigs||[];for(let j=0;j<bs.length;j++){let z=bs[j],xx=X(i),yy=Y(R[i].l)-12-j*16;g.fillStyle='#ffd166';g.strokeStyle='#08101d';g.lineWidth=2;g.beginPath();g.arc(xx,yy,7,0,Math.PI*2);g.fill();g.stroke();MODEL_HIT.push({kind:'model',model:'sweep',state:'event',i,x:xx,y:yy,r:12,label:'Liquidity Sweep｜流動性掃單',detail:z.detail})}}
 for(let i=s;i<=e;i++){
   let rs=R[i].researchSigs||[],baseN=(R[i].bottomSigs||[]).length;
   for(let j=0;j<rs.length;j++){
     let z=rs[j],xx=X(i),yy=Y(R[i].l)-12-(baseN+j)*16,
         col=z.k==='basin'?'#b084ff':z.k==='spring'?'#4dd7ff':z.k==='echo'?'#d8e8ff':'#ff79c6',
         model=signalModel(z),state=normHitState(model,signalState(z));
+    if(!model||!isModelVisible(model))continue;
 
     if(z.k==='echo'&&z.echo){
       let a=Math.max(s,z.echo.current.start),b=Math.min(e,z.echo.current.end);
