@@ -3,16 +3,59 @@
     {
       "name": "Support Candidate + Field Active",
       "conditions": [
-        {"model": "support", "state": "candidate"},
-        {"model": "field", "state": "active"}
+        {
+          "model": "support",
+          "state": "candidate"
+        },
+        {
+          "model": "field",
+          "state": "active"
+        }
       ],
-      "horizons": [3, 5, 10, 20]
+      "horizons": [
+        3,
+        5,
+        10,
+        20
+      ]
     },
     {
       "name": "Support Candidate + recent Sweep",
       "conditions": [
-        {"model": "support", "state": "candidate"},
-        {"model": "sweep", "state": "event", "windowBars": 3}
+        {
+          "model": "support",
+          "state": "candidate"
+        },
+        {
+          "model": "sweep",
+          "state": "event",
+          "windowBars": 3
+        }
+      ]
+    },
+    {
+      "name": "Support Candidate + Basin Forming price overlap + Sweep enters zone",
+      "conditions": [
+        {
+          "model": "support",
+          "state": "candidate"
+        },
+        {
+          "model": "basin",
+          "state": "forming",
+          "relation": "price_overlap"
+        },
+        {
+          "model": "sweep",
+          "state": "event",
+          "relation": "price_touch"
+        }
+      ],
+      "horizons": [
+        3,
+        5,
+        10,
+        20
       ]
     }
   ]
