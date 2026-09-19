@@ -55,7 +55,7 @@ assert(s.includes("if(state==='candidate')return '候選｜尚未完成確認'")
 for(const phrase of [
   '可被否證的外部時間假說，不是價格因果',
   '資料截止日',
-  '不等於今天',
+  '不是自動等於今天',
   '同一根 K 含多事件',
   '能否視為獨立證據',
   '不一定',
