@@ -254,6 +254,15 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .combo-result{padding:12px;border:1px solid #395a7d;border-radius:11px;background:#0e1d30}
 .combo-result b{color:#f0f6ff}.combo-result p{margin:5px 0 0;color:#aebfd3;font-size:9.8px;line-height:1.55}
 .combo-actions{display:flex;gap:6px;flex-wrap:wrap}.combo-actions button{min-height:34px;font-size:9.5px}
+/* G02-R7｜核心流程在桌面與手機都不依賴懸停 */
+.research-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:8px}
+.research-flow span{padding:6px 4px;border:1px solid #2c4562;border-radius:8px;background:#0a1625;color:#9db0c8;font-size:8.8px;text-align:center;white-space:nowrap}
+.research-flow b{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:2px;border-radius:999px;background:#183553;color:#eaf3ff;font-size:8px}
+#comboPane,#modelsPane{overflow:auto}
+@media(min-width:1051px){
+  .side{overflow:hidden}
+  #modelsPane,#comboPane,#scriptPane{overflow:auto}
+}
 /* Sidebar */
 .side{min-height:0;padding:10px;display:grid;grid-template-rows:auto 1fr}
 .tabs{display:flex;gap:7px;margin-bottom:10px}
@@ -522,9 +531,18 @@ td:first-child,th:first-child{text-align:left}
 @media(max-width:650px){.saved-research-actions button{min-height:44px;flex:1 1 40%}.saved-research-head{display:block}.saved-research-head small{display:block;margin-top:3px}}
 
 @media(max-width:650px){.combo-add select,.combo-add button,.combo-actions button{min-height:44px}.combo-actions button{flex:1 1 42%}}
+
+@media(max-width:650px){
+  .research-flow{grid-template-columns:repeat(5,minmax(56px,1fr));overflow-x:auto;padding-bottom:3px}
+  .research-flow span{min-height:36px;display:flex;align-items:center;justify-content:center}
+  .tabs{position:sticky;top:0;z-index:20;background:var(--panel);padding-top:4px}
+  .tabbtn{min-width:0;padding-left:5px;padding-right:5px}
+  select,button,summary,label{touch-action:manipulation}
+  .chart-tip{display:none!important}
+}
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.2 · G02-R6 組合研究入口</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.3 · G02-R7 裝置與流程硬化</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -545,7 +563,7 @@ td:first-child,th:first-child{text-align:left}
   <section class="box chartbox">
     <div id="ohlc" class="muted">移動游標或點選 K 棒查看：日期 · OHLC · 漲跌幅 · Volume</div>
     <div class="chart-stage"><canvas id="c"></canvas><canvas id="modelCanvas" class="model-overlay"></canvas><canvas id="scriptCanvas" class="script-overlay"></canvas></div><div id="chartTip" class="chart-tip"></div>
-    <div id="msg" class="muted">主圖看市場，右側只研究一個模型。點圖上模型標記會直接同步右側案例；滾輪／雙指縮放 · 拖曳移動。</div>
+    <div id="msg" class="muted">主圖看市場，右側研究證據。桌面可移到標記看預覽；手機不需要懸停，直接點模型標記即可同步右側案例。滾輪／雙指縮放 · 拖曳移動。</div>
   </section>
 
   <aside class="box side">
@@ -576,6 +594,9 @@ td:first-child,th:first-child{text-align:left}
             <button onclick="openFocusedModelParams()">調整模型</button>
           </div>
           <div class="single-caution">全站數量都用同一套讀法：同狀態總案例 → 完整觀察 → 尚未完成 → 可瀏覽案例。百分比永遠只描述完整觀察的那一部分。</div>
+          <div class="research-flow" aria-label="單模型研究流程">
+            <span><b>1</b> 選模型</span><span><b>2</b> 看證據</span><span><b>3</b> 查歷史</span><span><b>4</b> 保存</span><span><b>5</b> 延續</span>
+          </div>
         </div>
 
         <div id="singleResearchBody" class="single-research-body" aria-live="polite">
@@ -1838,6 +1859,7 @@ async function openSavedResearch(id){
   FOCUSED_MODEL=x.model||FOCUSED_MODEL;
   clearCombinationHandoff('');
   await load();
+  ACTIVE_SAVED_RESEARCH_ID=id;
   FOCUSED_MODEL=x.model||FOCUSED_MODEL;
   let sel=q('singleModelSelect');if(sel)sel.value=FOCUSED_MODEL;
   let f=x.focus||{};
@@ -1891,7 +1913,7 @@ function prepareCombinationHandoff(){
   let ctx=buildSingleResearchContext();if(!ctx)return;
   COMBINATION_HANDOFF_CONTEXT=cloneObj(ctx);
   CONDITION_STACK=[cloneObj(ctx.condition)];
-  HANDOFF_NOTICE='';
+  HANDOFF_NOTICE='單模型研究已封裝成組合研究第一個條件；下一步可直接前往「組合研究」。';
   window.__SL_COMBINATION_HANDOFF__=COMBINATION_HANDOFF_CONTEXT;
   window.__SL_CONDITION_STACK__=CONDITION_STACK;
   renderHandoffStatus();renderCombinationWorkspace()
@@ -1967,6 +1989,7 @@ function renderSingleResearch(){
   renderHandoffStatus();renderSavedResearch()
 }
 function resetSingleResearchForMarketChange(){
+  ACTIVE_SAVED_RESEARCH_ID=null;
   FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
   SINGLE_RESEARCH_HORIZON=10;
   SINGLE_RESEARCH_CONTEXT=null;
