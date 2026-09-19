@@ -597,11 +597,11 @@ function moveParamDrag(e){
   card.style.left=x+'px';card.style.top=y+'px'
 }
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}
-function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
+function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',MARKET_COVERAGE={provider:null,requestedBars:null,returnedBars:0,targetReached:true,historyExhausted:false,fetchInterrupted:false,reason:''},HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
 let PINNED_RESEARCH=null;
 const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,CE=window.StrategyLabConditionEngine||null;
 if(!ME||!MP||!CE)throw new Error('Strategy Lab shared research modules failed to load');
-window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;
+window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
 window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVALUATION__=EVALUATION;
 
 function resetEvidenceTimeline(){
@@ -676,12 +676,58 @@ const PARAM_SCHEMA={
 };
 const BTC_D='https://raw.githubusercontent.com/alessiostomeo/btc-cycle-data/main/bitstamp/1day/BTCUSD_bitstamp_daily_2012-2026.csv';
 const LOCAL={IXIC:'data/nasdaq_daily.csv',TWII:'data/taiex_daily.csv'};
+const BINANCE_TARGET_BARS={'1h':30000,'4h':20000};
+function coverageText(c){
+  if(!c)return'';
+  if(c.fetchInterrupted)return '資料抓取中斷 · 已取得 '+Number(c.returnedBars||0).toLocaleString()+' 根';
+  if(c.requestedBars&&c.targetReached)return '研究歷史 '+Number(c.returnedBars||0).toLocaleString()+' / 目標 '+Number(c.requestedBars).toLocaleString()+' 根';
+  if(c.historyExhausted)return '已到資料來源最早紀錄 · '+Number(c.returnedBars||0).toLocaleString()+' 根';
+  return Number(c.returnedBars||0).toLocaleString()+' 根 K'
+}
 function date(t){return new Date(t*1000).toISOString().slice(0,10)} function money(x){return isFinite(x)?Math.round(x).toLocaleString():'—'}
 function parseCSV(t){let l=t.trim().split(/\r?\n/),h=l.shift().split(',').map(x=>x.trim().toLowerCase()),f=n=>h.findIndex(x=>x===n||x.includes(n)),ti=f('timestamp'),di=f('date'),oi=f('open'),hi=f('high'),li=f('low'),ci=f('close'),vi=f('volume');return l.map(s=>{let a=s.split(','),r=ti>=0?a[ti]:a[di],tt=/^\d+$/.test(r)?+r:new Date(r).getTime()/1000;if(tt>1e12)tt/=1000;return{t:tt,o:+a[oi],h:+a[hi],l:+a[li],c:+a[ci],v:vi>=0?+a[vi]:0}}).filter(x=>x.t&&isFinite(x.c)).sort((a,b)=>a.t-b.t)}
 function setTFs(){let m=q('market').value,arr=m==='BTC'?['1h','4h','1d','1w']:['1d','1w','1m'];if(!arr.includes(tf))tf=m==='BTC'?'1w':'1d';q('tfs').innerHTML=arr.map(x=>'<button data-tf="'+x+'" class="'+(x===tf?'active':'')+'">'+x.toUpperCase()+'</button>').join('')}
 function aggregate(a,kind){let out=[],u,key;for(let x of a){let d=new Date(x.t*1000),k;if(kind==='4h')k=Math.floor(x.t/14400)*14400;else if(kind==='1d')k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())/1000;else if(kind==='1w'){k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-((d.getUTCDay()+6)%7))/1000}else{k=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1)/1000}if(!u||key!==k){u={...x,t:k};key=k;out.push(u)}else{u.h=Math.max(u.h,x.h);u.l=Math.min(u.l,x.l);u.c=x.c;u.v+=x.v}}return out}
-async function binance(interval){let all=[],end=Date.now(),loops=tf==='1h'||tf==='4h'?20:8;for(let n=0;n<loops;n++){let url='https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval='+interval+'&limit=1000&endTime='+end;let a=await fetch(url).then(r=>{if(!r.ok)throw Error('Binance '+r.status);return r.json()});if(!a.length)break;let b=a.map(x=>({t:x[0]/1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[7]}));all=b.concat(all);end=a[0][0]-1;if(a.length<1000)break}let m=new Map(all.map(x=>[x.t,x]));return [...m.values()].sort((a,b)=>a.t-b.t)}
-async function load(){closeEvidenceDock(false);q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];EVIDENCE.length=0;window.__SL_EVIDENCE__=EVIDENCE;resetEvidenceTimeline();draw();let m=q('market').value;try{if(m==='BTC'){if(tf==='1d'||tf==='1w'){let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()});let a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));D=tf==='1w'?aggregate(a,'1w'):a;sourceNote='Bitstamp 長期日線資料 · Volume USD'}else{let a=await binance(tf==='4h'?'4h':'1h');D=a;sourceNote='Binance 公開現貨 K 線'}}else{let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()});let a=parseCSV(raw);D=tf==='1d'?a:aggregate(a,tf);sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'}if(!D.length)throw Error('資料為空');R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('status').textContent='完成';q('msg').textContent=sourceNote+'。'+interactionHint()}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
+async function binance(interval){
+  let all=[],end=Date.now(),target=BINANCE_TARGET_BARS[interval]||20000,
+      loops=Math.ceil(target/1000),historyExhausted=false,fetchInterrupted=false,reason='',pages=0;
+  for(let n=0;n<loops;n++){
+    q('msg').textContent='正在取得 BTC '+interval.toUpperCase()+' 歷史… '+Math.min((n+1)*1000,target).toLocaleString()+' / '+target.toLocaleString()+' 根';
+    let url='https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval='+interval+'&limit=1000&endTime='+end,a;
+    try{a=await fetch(url).then(r=>{if(!r.ok)throw Error('Binance '+r.status);return r.json()})}
+    catch(e){if(!all.length)throw e;fetchInterrupted=true;reason=e&&e.message?e.message:'Binance pagination interrupted';break}
+    pages++;
+    if(!a.length){historyExhausted=true;break}
+    let b=a.map(x=>({t:x[0]/1000,o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[7]}));
+    all=b.concat(all);end=a[0][0]-1;
+    if(a.length<1000){historyExhausted=true;break}
+  }
+  let m=new Map(all.map(x=>[x.t,x])),data=[...m.values()].sort((a,b)=>a.t-b.t);
+  return{data,coverage:{provider:'Binance',requestedBars:target,returnedBars:data.length,pages,targetReached:data.length>=target,historyExhausted,fetchInterrupted,reason}}
+}
+async function load(){closeEvidenceDock(false);q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];MARKET_COVERAGE={provider:null,requestedBars:null,returnedBars:0,targetReached:true,historyExhausted:false,fetchInterrupted:false,reason:''};window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;EVIDENCE.length=0;window.__SL_EVIDENCE__=EVIDENCE;resetEvidenceTimeline();draw();let m=q('market').value;try{if(m==='BTC'){
+    if(tf==='1d'||tf==='1w'){
+      let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()}),a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));
+      D=tf==='1w'?aggregate(a,'1w'):a;
+      MARKET_COVERAGE={provider:'Bitstamp',requestedBars:null,returnedBars:D.length,targetReached:true,historyExhausted:true,fetchInterrupted:false,reason:''};
+      sourceNote='Bitstamp 長期日線資料 · Volume USD'
+    }else{
+      let result=await binance(tf==='4h'?'4h':'1h');D=result.data;MARKET_COVERAGE=result.coverage;
+      sourceNote='Binance 公開現貨 K 線 · '+coverageText(MARKET_COVERAGE)
+    }
+  }else{
+    let raw=await fetch(LOCAL[m]+'?v='+Date.now()).then(r=>{if(!r.ok)throw Error('本地市場資料尚未建立 '+r.status);return r.text()}),a=parseCSV(raw);
+    D=tf==='1d'?a:aggregate(a,tf);
+    MARKET_COVERAGE={provider:m==='IXIC'?'NASDAQ local history':'TAIEX local history',requestedBars:null,returnedBars:D.length,targetReached:true,historyExhausted:true,fetchInterrupted:false,reason:''};
+    sourceNote=(m==='IXIC'?'NASDAQ Composite':'TAIEX')+' 專案內長期日線資料 → '+tf.toUpperCase()+' 聚合'
+  }
+  window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
+  if(!D.length)throw Error('資料為空');
+  R=D.map(x=>({...x,top:NaN,bot:NaN}));resetView(false);zoneCalc();
+  q('range').textContent=date(D[0].t)+' → '+date(D[D.length-1].t);q('bars').textContent=D.length.toLocaleString();
+  q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();
+  q('status').textContent=MARKET_COVERAGE.fetchInterrupted?'部分完成':'完成';
+  q('msg').textContent=sourceNote+'。'+interactionHint()}catch(e){D=[];R=[];SIG=[];q('range').textContent='—';q('bars').textContent='—';q('status').textContent='失敗';q('msg').innerHTML='<span class=err>'+e.message+'</span>';let c=q('c'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height)}}
 function atrArr(a,n){return ME.atrArr(a,n)}
 function clamp(x,a,b){return ME.clamp(x,a,b)}
 function fieldBoundaryAt(lock,i){return ME.fieldBoundaryAt(lock,i)}
@@ -1076,7 +1122,9 @@ function sampleDiagnosisHTML(x){
   }
   let incomplete=x.horizons.map(h=>[h,x.stats[h]&&x.stats[h].incomplete||0]).filter(v=>v[1]>0);
   if(incomplete.length)notes.push('未完成未來觀察：'+incomplete.map(v=>v[0]+' 根 K 有 '+v[1]+' 個').join('、')+'。這些 episode 仍存在，只是尚未走完 horizon。');
-  if(x.coverage&&x.coverage.bars)notes.push('資料覆蓋：'+x.coverage.bars.toLocaleString()+' 根 K'+(D.length?(' · '+date(D[0].t)+' → '+date(D[D.length-1].t)):'')+'。');
+  if(MARKET_COVERAGE&&MARKET_COVERAGE.fetchInterrupted)notes.push('資料抓取中斷：目前只用已取得的 '+Number(MARKET_COVERAGE.returnedBars||0).toLocaleString()+' 根 K；這和「條件本身樣本少」是不同問題。');
+  else if(MARKET_COVERAGE&&MARKET_COVERAGE.requestedBars)notes.push('資料覆蓋：'+Number(MARKET_COVERAGE.returnedBars||0).toLocaleString()+' / 目標 '+Number(MARKET_COVERAGE.requestedBars).toLocaleString()+' 根 K'+(MARKET_COVERAGE.historyExhausted&&!MARKET_COVERAGE.targetReached?' · 已到來源最早紀錄':'')+'。');
+  else if(x.coverage&&x.coverage.bars)notes.push('資料覆蓋：'+x.coverage.bars.toLocaleString()+' 根 K'+(D.length?(' · '+date(D[0].t)+' → '+date(D[D.length-1].t)):'')+'。');
   return notes.length?'<div class="sample-diagnosis"><b>為什麼 N 會小？</b><br>'+notes.map(esc).join('<br>')+'</div>':''
 }
 function conditionalStatsHTML(x){

@@ -25,3 +25,9 @@ for(const [name,file] of [['NASDAQ','data/nasdaq_daily.csv'],['TAIEX','data/taie
   assert(ageDays<21,name+' data is more than 21 days stale');
 }
 console.log('market-data.test.js: OK');
+
+const html=fs.readFileSync('index.html','utf8');
+assert(html.includes("const BINANCE_TARGET_BARS={'1h':30000,'4h':20000}"),'BTC intraday research depth target missing');
+assert(html.includes('window.__SL_MARKET_COVERAGE__'),'market coverage must be inspectable');
+assert(html.includes('fetchInterrupted'),'partial Binance history must be explicit');
+assert(html.includes('資料抓取中斷'),'M5 must distinguish fetch interruption from sparse conditions');

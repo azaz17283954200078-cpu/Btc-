@@ -122,7 +122,7 @@ GitHub Actions 會自動檢查：
 ## Data
 
 - BTC 1D / 1W：Bitstamp 長期日線資料
-- BTC 1H / 4H：Binance 公開現貨 K 線
+- BTC 1H / 4H：Binance 公開現貨 K 線；1H 研究載入目標 30,000 根、4H 20,000 根，並公開資料完整性狀態，不把中途中斷的分頁默認成完整歷史
 - NASDAQ / TAIEX：專案內日線資料，由 GitHub Actions 定期更新
 
 不同資料來源的 Volume 定義可能不同，因此研究時應保留 source / timeframe / market metadata。

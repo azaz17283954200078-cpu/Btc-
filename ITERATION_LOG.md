@@ -9,3 +9,12 @@
 - **Tests added**: deterministic monotonic funnel fixture [2, 2, 1], per-stage removed counts, UI contract for bricks/funnel/mobile diagnostics.
 - **CI**: GitHub Actions `Research Kernel checks` run `35415923867` — success. All kernel/model/runner/M5 causality/market-data/regression/M4+M5 UI/preset gates passed.
 - **Completion layer**: code/product hardening only; user product acceptance remains pending.
+
+## M5-PH02 — Research data coverage hardening
+
+- **Goal**: distinguish true history-fetch shortage from sparse conditional overlap before expanding data blindly.
+- **Changes**: raise BTC 1H research target from 20,000 to 30,000 bars; keep 4H at 20,000; make paginated Binance fetch resilient after partial success; expose requested/returned bars, target reached, history exhausted and fetch interruption; surface coverage reason inside M5 diagnostics.
+- **Research semantics**: no change to Evidence, condition sampling, baseline, horizons or sample gates.
+- **Pre-commit validation**: modified inline JavaScript compiles; market-data contract extended.
+- **CI**: pending branch run.
+- **Completion layer**: data/technical hardening; product acceptance remains pending.

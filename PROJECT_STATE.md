@@ -19,3 +19,8 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - N < 5 = insufficient, 5–19 = exploratory, N >= 20 = comparable.
 - Research output does not become model voting, BUY/SELL, or best-combination ranking.
 - MFE, MAE, return distribution, incomplete future observations and failure cases remain research evidence.
+
+## M5-PH02 data coverage hardening
+- BTC 1H target: 30,000 bars; BTC 4H target: 20,000 bars.
+- Browser exposes `window.__SL_MARKET_COVERAGE__`.
+- Interrupted pagination is marked explicitly and is not conflated with low conditional N.
