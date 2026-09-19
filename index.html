@@ -189,6 +189,31 @@ canvas{width:100%;height:100%;min-height:0;display:block;touch-action:none}
 .single-handoff-ready b{color:#edf5ff}.single-handoff-ready button{margin-top:7px;min-height:32px;padding:4px 8px;font-size:9.5px}
 .single-research-workspace .model-library{margin-top:12px}
 .single-research-workspace .model-library>summary{color:#9fb3cb}
+/* G02-R2｜研究安全：先看樣本與限制，再看百分比 */
+.research-safety{padding:11px 12px;border:1px solid #456382;border-radius:11px;background:#0d1b2c}
+.research-safety.block{border-color:#80664c;background:#201910}
+.research-safety.explore{border-color:#626b83;background:#171923}
+.research-safety.compare{border-color:#426c61;background:#0d201b}
+.research-safety-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.research-safety-head b{color:#f0f6ff;font-size:12px}.research-safety-head span{color:#aabbd0;font-size:9.5px;text-align:right}
+.research-safety p{margin:5px 0 0;color:#bdcadb;font-size:10px;line-height:1.58}
+.research-safety strong{color:#edf5ff}
+.research-count-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
+.research-count-cell{padding:8px 9px;border:1px solid #2e4865;border-radius:9px;background:#0b1726}
+.research-count-cell span{display:block;color:#8fa4bf;font-size:9px;line-height:1.3}
+.research-count-cell b{display:block;margin-top:2px;color:#edf5ff;font-size:13px}
+.model-safety-note{padding:12px 13px;border:1px solid #4a617c;border-radius:12px;background:#0c1929}
+.model-safety-note.block{border-color:#856449;background:#21180f}
+.model-safety-note h4{margin:0;color:#f1f6ff;font-size:12.5px}
+.model-safety-note p{margin:5px 0 0;color:#bdcadb;font-size:10.3px;line-height:1.62}
+.model-safety-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:9px}
+.model-safety-step{padding:8px 6px;border:1px solid #304a68;border-radius:8px;background:#0b1726;text-align:center}
+.model-safety-step span{display:block;color:#849ab6;font-size:8.8px;line-height:1.3}
+.model-safety-step b{display:block;margin-top:2px;color:#edf5ff;font-size:12px}
+.astro-date-list{margin-top:7px;padding-top:7px;border-top:1px dashed #3b5069;color:#9fb2c9;font-size:9.6px;line-height:1.55}
+.single-horizon-result.low-sample .headline b{font-size:13px}
+.single-horizon-result .sample-first{display:block;margin-bottom:7px;color:#dce8f7;font-size:10.5px;font-weight:750}
+.single-history-limit{margin-top:5px;color:#8298b5;font-size:9.2px}
 /* Sidebar */
 .side{min-height:0;padding:10px;display:grid;grid-template-rows:auto 1fr}
 .tabs{display:flex;gap:7px;margin-bottom:10px}
@@ -447,9 +472,13 @@ td:first-child,th:first-child{text-align:left}
   .single-guide-row{grid-template-columns:1fr;gap:2px}
   .single-horizon-result .split{grid-template-columns:1fr}
 }
+
+@media(max-width:650px){
+  .research-count-grid,.model-safety-flow{grid-template-columns:1fr 1fr}
+}
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.7 · G02-R1 單模型研究架構</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v1.8 · G02-R2 研究安全</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -894,7 +923,7 @@ const PARAM_SCHEMA={
     {k:'history',n:'往回搜尋多久',min:200,max:5000,step:100,help:'最多往回找多少根歷史 K。',low:'近：只聽近代',high:'遠：找更多年代'},
     {k:'similarity',n:'多像才叫 Strong',min:.55,max:.98,step:.01,help:'超過這個相似度才列為 Strong；低於門檻仍可顯示最近似者。',low:'低：Strong 較多',high:'高：形狀要更接近'},
     {k:'followBars',n:'後續觀察幾根',min:3,max:60,step:1,help:'歷史相似片段結束後，再往後看幾根來算報酬、MFE、MAE。',low:'短：看立即反應',high:'長：看更完整路徑'}]},
-  astro:{title:'占星時間事件｜你想把哪些天體時間事件拿來檢驗？',intro:'這裡不把占星當價格答案，而是把一套外部時間事件定義清楚後，交給同一套歷史統計檢驗。',fields:[
+  astro:{title:'占星時間事件｜先選你想研究多少事件',intro:'一般研究先用上方三套參考設定選「事件較少／平衡／事件較多」即可，不需要先懂全部占星名詞。下面進階參數只是在定義外部時間事件；它們不是價格因果。',fields:[
     {k:'planetSet',n:'使用哪些星體',type:'select',options:[['classic','傳統七曜'],['modern','七曜＋天王／海王／冥王']],help:'增加星體會增加可形成事件的組合。'},
     {k:'aspectSet',n:'觀察哪些相位',type:'select',options:[['major','主要相位：合／六合／刑／拱／沖'],['hard','緊張相位：合／刑／沖'],['harmony','和諧相位：六合／拱']],help:'選擇要視為事件的相位角度集合。'},
     {k:'orb',n:'Orb 容許幾度',min:.5,max:10,step:.5,help:'距離精確相位角多少度內仍算同一事件。',low:'窄：事件較少',high:'寬：事件較多'},
@@ -1331,6 +1360,127 @@ function setSingleHorizon(h){
 function horizonShortLabel(h){
   return horizonHuman(h).replace(/^約\s*/,'')
 }
+
+function stateDisplayLabel(model,state){
+  if(model==='macro'){
+    if(state==='candidate')return '候選｜尚未完成確認';
+    if(state==='active')return '已完成收復確認';
+    if(state==='broken')return '候選失效／過期';
+  }
+  if(model==='astro'){
+    if(state==='upcoming')return '未來投影｜相對資料截止日';
+    if(state==='event')return '已發生時間事件';
+  }
+  return String(STATE_LABELS[state]||state||'—').split('｜')[0]
+}
+function sampleReliability(n){
+  n=Math.max(0,Math.round(Number(n)||0));
+  if(n<5)return{key:'block',label:'樣本不足｜只能當案例看',detail:'完整案例不到 5 次，不適合用百分比或中位數推論一般規律。'};
+  if(n<20)return{key:'explore',label:'探索性樣本｜先找現象，不下結論',detail:'完整案例有 5–19 次，可以比較案例，但仍不足以把結果當成穩定規律。'};
+  return{key:'compare',label:'較可比較｜仍只是歷史分布',detail:'完整案例至少 20 次，較適合比較分布；仍不代表未來成功率或保證報酬。'}
+}
+function historicalCaseInventory(model,state,limit=500){
+  let all=historyCases(model,state,Number.MAX_SAFE_INTEGER),cap=Math.max(1,Math.round(limit));
+  return{total:all.length,visible:all.slice(0,cap),limit:cap,capped:all.length>cap}
+}
+function macroLifecycleInventory(){
+  let rows=EVIDENCE_LOG.filter(e=>e.model==='macro'&&e.kind==='transition'),
+      entities=new Map();
+  for(const e of rows){
+    let key=e.entityId||e.id;
+    if(!entities.has(key))entities.set(key,[]);
+    entities.get(key).push(e)
+  }
+  let candidates=0,confirmed=0,failedBeforeConfirm=0,unresolved=0,expired=0,closeBreak=0;
+  for(const seq0 of entities.values()){
+    let seq=seq0.slice().sort((a,b)=>(a.index??0)-(b.index??0)),
+        cand=seq.find(e=>e.state==='candidate');
+    if(!cand)continue;
+    candidates++;
+    let active=seq.find(e=>e.state==='active'&&(e.index??0)>=(cand.index??0)),
+        broken=seq.find(e=>e.state==='broken'&&(e.index??0)>=(cand.index??0));
+    if(active){confirmed++;continue}
+    if(broken){
+      failedBeforeConfirm++;
+      let reason=broken.evidence&&broken.evidence.reason;
+      if(reason==='expired')expired++;
+      if(reason==='close_break')closeBreak++;
+    }else unresolved++
+  }
+  return{candidates,confirmed,failedBeforeConfirm,unresolved,expired,closeBreak}
+}
+function macroSafetyHTML(state){
+  let x=macroLifecycleInventory(),h=SINGLE_RESEARCH_HORIZON,
+      active=evalState('macro','active'),out=active&&active.horizons?active.horizons[h]:null,
+      complete=out?out.n:0,incomplete=out?out.incomplete:0;
+  return '<section class="model-safety-note block"><h4>先分清楚：候選 ≠ 宏觀底部已確認</h4>'+
+    '<p>這個模型先建立候選，之後只有在期限內收復觸發高點才算完成模型確認。候選若先跌破或超過期限，就不算確認成功。</p>'+
+    '<div class="model-safety-flow">'+
+      '<div class="model-safety-step"><span>歷史候選</span><b>'+x.candidates+' 次</b></div>'+
+      '<div class="model-safety-step"><span>完成模型確認</span><b>'+x.confirmed+' 次</b></div>'+
+      '<div class="model-safety-step"><span>確認前失效／過期</span><b>'+x.failedBeforeConfirm+' 次</b></div>'+
+      '<div class="model-safety-step"><span>資料尾端尚未結束</span><b>'+x.unresolved+' 次</b></div></div>'+
+    '<p>目前選的 '+esc(horizonHuman(h))+'：在「已完成確認」案例中，<strong>'+complete+' 次</strong>已走完整個觀察期'+
+      (incomplete?'，另有 <strong>'+incomplete+' 次</strong>還沒走完':'')+'。你現在研究的狀態是「'+esc(stateDisplayLabel('macro',state))+'」，不要把候選的後續統計冒充成已確認底部的結果。</p></section>'
+}
+function astroEventInventory(){
+  let rows=EVIDENCE_LOG.filter(e=>e.model==='astro'&&e.kind==='event'),
+      multi=0,underlying=0;
+  for(const e of rows){
+    let n=Math.max(1,Math.round(Number(e.evidence&&e.evidence.eventCount)||1));
+    underlying+=n;if(n>1)multi++
+  }
+  return{bars:rows.length,multi,underlying}
+}
+function todayISO(){
+  return new Date().toISOString().slice(0,10)
+}
+function astroSafetyHTML(ev,state){
+  let inv=astroEventInventory(),cutoff=D.length?date(D[D.length-1].t):'—',
+      today=todayISO(),projection=ev&&ev.projection&&Array.isArray(ev.projection.events)?ev.projection.events:[],
+      elapsed=projection.filter(x=>Number.isFinite(x.t)&&x.t*1000<=Date.now()).length,
+      dates=projection.slice(0,4).map(x=>Number.isFinite(x.t)?date(x.t):'—');
+  let timeMsg=state==='upcoming'
+    ?('畫面中的「未來」只表示 <strong>資料截止日 '+esc(cutoff)+'</strong> 之後，不是自動等於今天 '+esc(today)+' 之後。'+
+      (elapsed?(' 其中 <strong>'+elapsed+' 個</strong>投影日期以今天來看已經過去，所以它們不能被稱為現實中的未來事件。'):''))
+    :'歷史事件的日期都相對目前載入的市場資料；未來投影不會混進已發生事件的歷史統計。';
+  return '<section class="model-safety-note block"><h4>這是可被否證的外部時間假說，不是價格因果</h4>'+
+    '<p>占星事件只是把外部日期定義成可檢驗條件。這裡沒有證明天體事件造成價格變化，也不能把事件標記當成買點或賣點。</p>'+
+    '<p>'+timeMsg+'</p>'+
+    '<div class="research-count-grid">'+
+      '<div class="research-count-cell"><span>歷史事件案例</span><b>'+inv.bars+' 根 K</b></div>'+
+      '<div class="research-count-cell"><span>底層事件記錄</span><b>'+inv.underlying+' 個</b></div>'+
+      '<div class="research-count-cell"><span>同一根 K 含多事件</span><b>'+inv.multi+' 根</b></div>'+
+      '<div class="research-count-cell"><span>能否視為獨立證據</span><b>不一定</b></div></div>'+
+    '<p>歷史統計以「有事件的 K 棒」作為案例。不同案例的後續觀察區間可能彼此重疊，因此 '+inv.bars+' 個案例不等於 '+inv.bars+' 個互相獨立的證據。</p>'+
+    (dates.length?'<div class="astro-date-list">相對資料截止日產生的近期投影：'+dates.map(esc).join('、')+'</div>':'')+
+    '</section>'
+}
+function astroHistoricalBridgeHTML(){
+  let inv=astroEventInventory();
+  return '<section class="single-section"><div class="single-section-head"><b>這筆是時間投影，不是歷史結果樣本</b><span>已發生事件 '+inv.bars+' 根 K</span></div>'+
+    '<div class="single-history-meta">要研究「事件出現後市場怎麼走」，請切到已經發生的歷史事件。投影本身不會拿去計算 forward return。</div>'+
+    (inv.bars?'<button onclick="viewLatestAstroEvent()">查看最近一個已發生事件 →</button>':'')+'</section>'
+}
+function viewLatestAstroEvent(){
+  let rows=EVIDENCE_LOG.filter(e=>e.model==='astro'&&e.kind==='event').slice().sort((a,b)=>(b.index??0)-(a.index??0));
+  if(rows.length)focusHistoryEvidence(rows[0],true)
+}
+function singleModelSafetyHTML(model,state,ev){
+  if(model==='macro')return macroSafetyHTML(state);
+  if(model==='astro')return astroSafetyHTML(ev,state);
+  return''
+}
+function canPrepareCombination(ev){
+  return !!(ev&&ev.kind!=='projection'&&ev.state!=='upcoming')
+}
+function singleHandoffHTML(ev){
+  if(!canPrepareCombination(ev)){
+    return '<div class="single-handoff"><b>這筆不能直接帶進組合研究</b><p>未來投影不是已發生的市場 Evidence。請先切到一個已發生的歷史事件或其他可研究狀態，再準備組合研究。</p></div>'
+  }
+  return '<div class="single-handoff"><b>要把這個研究接到多模型嗎？</b><p>這裡只準備研究單位，不會在單模型介面展開漏斗。之後的組合研究會延續目前市場、週期、模型狀態、參數與 Evidence 來源。</p>'+
+    '<button onclick="prepareCombinationHandoff()">用這個研究準備組合研究 →</button></div>'
+}
 function singleGuidanceHTML(model,state){
   let g=guideFor(model,state);
   return '<div class="single-guide">'+
@@ -1345,18 +1495,30 @@ function singleHorizonHTML(model,state){
   let lead='<div class="single-section-head"><b>以前出現後，市場怎麼走？</b><span>一次只看一個時間距離</span></div>'+
     '<div class="single-horizon-tabs">'+tabs+'</div>';
   if(!x)return '<section class="single-section">'+lead+'<div class="research-empty">這個狀態目前沒有走完整段觀察期的歷史案例。</div></section>';
-  let up=x.upRate==null?'—':Math.round(x.upRate*100)+'%',down=x.downRate==null?'—':Math.round(x.downRate*100)+'%';
+  let rel=sampleReliability(x.n),total=st?st.count:0,
+      upCount=x.upRate==null?0:Math.round(x.upRate*x.n),
+      downCount=x.downRate==null?0:Math.round(x.downRate*x.n),
+      up=x.upRate==null?'—':Math.round(x.upRate*100)+'%',
+      down=x.downRate==null?'—':Math.round(x.downRate*100)+'%',
+      low=x.n<5;
   return '<section class="single-section">'+lead+
-    '<div class="single-horizon-result"><div class="headline"><b>'+pct(x.medianReturn)+'</b><span>'+esc(horizonHuman(h))+'</span></div>'+
-    '<p>從模型確認這個狀態那根 '+esc(timeframeKLabel())+' 的收盤開始，和第 '+h+' 根之後的收盤相比。'+
-    '歷史上有 '+x.n+' 個案例已經走完整段'+(x.incomplete?'，另有 '+x.incomplete+' 個還沒走完':'')+'。</p>'+
-    '<div class="split"><div><b>'+up+' 高於起點</b>到第 '+h+' 根 K 收盤時</div>'+
-    '<div><b>'+down+' 低於起點</b>到第 '+h+' 根 K 收盤時</div></div>'+
-    '<details class="single-path-details"><summary>途中曾往上／往下走多遠？</summary>'+
-    '途中典型最高曾到 '+pct(x.medianMFE)+'（MFE）；途中典型最低曾到 '+pct(x.medianMAE)+'（MAE）。這描述歷史路徑，不是目前行情預測。</details>'+
+    '<div class="research-safety '+rel.key+'"><div class="research-safety-head"><b>'+esc(rel.label)+'</b><span>'+esc(horizonHuman(h))+'</span></div>'+
+      '<div class="research-count-grid">'+
+        '<div class="research-count-cell"><span>符合這個狀態</span><b>'+total+' 次</b></div>'+
+        '<div class="research-count-cell"><span>已走完 '+h+' 根 K</span><b>'+x.n+' 次</b></div>'+
+        '<div class="research-count-cell"><span>尚未走完</span><b>'+x.incomplete+' 次</b></div>'+
+        '<div class="research-count-cell"><span>研究可靠度</span><b>'+esc(rel.key==='block'?'不足':rel.key==='explore'?'探索':'較可比較')+'</b></div></div>'+
+      '<p>'+esc(rel.detail)+'</p></div>'+
+    '<div class="single-horizon-result '+(low?'low-sample':'')+'">'+
+      (low?'<span class="sample-first">先看樣本：只有 '+x.n+' 個完整案例，下面的數字只能描述這些案例。</span>':'')+
+      '<div class="headline"><b>'+(low?'歷史中位 '+pct(x.medianReturn):pct(x.medianReturn))+'</b><span>起點收盤 → 第 '+h+' 根 K 收盤</span></div>'+
+      '<p>從模型確認這個狀態那根 '+esc(timeframeKLabel())+' 的收盤開始，和第 '+h+' 根之後的收盤相比。歷史上 '+x.n+' 個完整案例中，'+
+      '<strong>'+upCount+' 個（'+up+'）</strong>收盤高於起點，<strong>'+downCount+' 個（'+down+'）</strong>低於起點。這不是成功率。</p>'+
+      '<details class="single-path-details"><summary>途中曾往上／往下走多遠？</summary>'+
+      '途中最大上漲幅度的歷史中位數 '+pct(x.medianMFE)+'（MFE）；途中最大下跌幅度的歷史中位數 '+pct(x.medianMAE)+'（MAE）。這是歷史路徑，不是可保證取得的報酬。</details>'+
     '</div></section>'
 }
-function historicalRowsForFocus(model,state){return historyCases(model,state,500)}
+function historicalRowsForFocus(model,state){return historicalCaseInventory(model,state,500).visible}
 function historyPosition(rows,e){
   if(!e)return -1;
   let p=rows.findIndex(x=>e.id&&x.id===e.id);
@@ -1384,21 +1546,25 @@ function stepHistoricalCase(delta){
   focusHistoryEvidence(rows[next],true)
 }
 function singleHistoryHTML(model,state,ev,mode){
-  let rows=historicalRowsForFocus(model,state),p=mode==='history'?historyPosition(rows,ev):-1;
+  let inv=historicalCaseInventory(model,state,500),rows=inv.visible,
+      p=mode==='history'?historyPosition(rows,ev):-1,
+      countText='可瀏覽 '+rows.length+' / 總 '+inv.total+(inv.capped?'（先載入最近 '+inv.limit+'）':'');
   if(!rows.length)return '<section class="single-section"><div class="single-section-head"><b>真實歷史案例</b><span>目前沒有可回看的案例</span></div></section>';
   if(mode!=='history'){
-    return '<section class="single-section"><div class="single-section-head"><b>真實歷史案例</b><span>同狀態 '+rows.length+' 次</span></div>'+
-      '<div class="single-history-nav"><div class="single-history-meta">不要只看統計。直接回到一個真實案例，看當時的 K 線和模型證據。</div>'+
+    return '<section class="single-section"><div class="single-section-head"><b>真實歷史案例</b><span>'+esc(countText)+'</span></div>'+
+      '<div class="single-history-nav"><div class="single-history-meta">不要只看統計。直接回到一個真實案例，看當時的 K 線和模型證據。'+
+      '<div class="single-history-limit">'+esc(countText)+'。</div></div>'+
       '<button onclick="openHistoricalPosition(0)">查看最近一個案例 →</button></div></section>'
   }
   if(p<0)p=0;
-  return '<section class="single-section"><div class="single-section-head"><b>真實歷史案例</b><span>同狀態 '+rows.length+' 次</span></div>'+
+  return '<section class="single-section"><div class="single-section-head"><b>真實歷史案例</b><span>'+esc(countText)+'</span></div>'+
     '<div class="single-history-nav"><div class="single-history-controls">'+
       '<button onclick="stepHistoricalCase(-1)" '+(p<=0?'disabled':'')+'>← 較新</button>'+
       '<span>'+(p+1)+' / '+rows.length+'</span>'+
       '<button onclick="stepHistoricalCase(1)" '+(p>=rows.length-1?'disabled':'')+'>較舊 →</button></div>'+
       '<div class="single-history-meta"><b>'+esc(D[ev.index]?date(D[ev.index].t):('bar '+ev.index))+'</b> · '+
-      esc(String(STATE_LABELS[ev.state]||ev.state).split('｜')[0])+'<br>主圖與右側目前指向同一個歷史案例。</div>'+
+      esc(stateDisplayLabel(model,ev.state))+'<br>主圖與右側目前指向同一個歷史案例。'+
+      '<div class="single-history-limit">'+esc(countText)+'。</div></div>'+
       '<button onclick="viewSingleNow()">回到現在</button></div></section>'
 }
 function modelParameterSnapshot(model){
@@ -1434,6 +1600,7 @@ function buildSingleResearchContext(){
   }
 }
 function prepareCombinationHandoff(){
+  let ev=focusedEvidenceRecord();if(!canPrepareCombination(ev)){HANDOFF_NOTICE='這筆是未來投影，不能直接當成組合研究條件。';renderHandoffStatus();return}
   let ctx=buildSingleResearchContext();if(!ctx)return;
   COMBINATION_HANDOFF_CONTEXT=cloneObj(ctx);
   CONDITION_STACK=[cloneObj(ctx.condition)];
@@ -1460,11 +1627,13 @@ function renderHandoffStatus(){
   }else box.innerHTML=''
 }
 function singleEvidenceCardHTML(model,ev,mode){
-  let state=ev.state,stateLabel=String(STATE_LABELS[state]||state||'—').split('｜')[0],
+  let state=ev.state,stateLabel=stateDisplayLabel(model,state),
       displayDate=mode==='now'?(D.length?date(D[D.length-1].t):'—'):(D[ev.index]?date(D[ev.index].t):('bar '+ev.index)),
       firstKnown=Number.isInteger(ev.detectedAt)&&D[ev.detectedAt]?date(D[ev.detectedAt].t):(D[ev.index]?date(D[ev.index].t):'—'),
       st=evalState(model,state),n=st?st.count:0,g=guideFor(model,state),
-      raw=nearestEvidence(model,state,ev.index)||ev;
+      raw=nearestEvidence(model,state,ev.index)||ev,
+      projectionOnly=model==='astro'&&state==='upcoming',
+      safety=singleModelSafetyHTML(model,state,ev);
   return '<article class="single-now-card"><div class="single-now-head"><div><small>'+(mode==='now'?'現在':'歷史案例')+'</small>'+
     '<b>'+esc(stateLabel)+'</b></div><span class="single-now-date">'+esc(displayDate)+'</span></div>'+
     '<div class="single-now-summary">'+esc(plainResearch(model,state))+'</div>'+
@@ -1472,12 +1641,12 @@ function singleEvidenceCardHTML(model,ev,mode){
     '<div class="single-guide-row"><b>接下來看什麼？</b><span>'+esc(g.watch)+'</span></div></div>'+
     '<div class="single-caution"><b>不要直接解讀成：</b> '+esc(MODEL_CAUTION[model]||'這是市場證據，不是買賣答案。')+
     '<br>模型第一次能確認這個狀態：'+esc(firstKnown)+' · 歷史同狀態 '+n+' 次</div></article>'+
-    singleHorizonHTML(model,state)+
-    singleHistoryHTML(model,state,ev,mode)+
+    safety+
+    (projectionOnly?astroHistoricalBridgeHTML():singleHorizonHTML(model,state))+
+    (projectionOnly?'':singleHistoryHTML(model,state,ev,mode))+
     '<details class="single-advanced"><summary>進階｜這個狀態後來怎麼發展？</summary><div class="single-advanced-body">'+lifecycleHTML(model,state)+'</div></details>'+
     '<details class="single-advanced"><summary>進階｜模型當時真正記錄了什麼？</summary><div class="single-advanced-body">'+evidenceFieldsHTML(raw)+'</div></details>'+
-    '<div class="single-handoff"><b>要把這個研究接到多模型嗎？</b><p>這裡只準備研究單位，不會在單模型介面展開漏斗。之後的組合研究會延續目前市場、週期、模型狀態、參數與 Evidence 來源。</p>'+
-    '<button onclick="prepareCombinationHandoff()">用這個研究準備組合研究 →</button></div>'
+    singleHandoffHTML(ev)
 }
 function renderSingleResearch(){
   let body=q('singleResearchBody');if(!body)return;
