@@ -51,5 +51,5 @@ function semanticOrder(model,byPreset){const ids=ORDER[model],vals=ids.map(id=>b
   console.log('M4_PRESET_RESEARCH_JSON_START');
   console.log(JSON.stringify(report,null,2));
   console.log('M4_PRESET_RESEARCH_JSON_END');
-  if(!report.allRuntimeClean)process.exitCode=1;
+  if(!report.allSemanticFit)process.exitCode=1;
 })().catch(e=>{console.error(e.stack||e);process.exit(1)});
