@@ -556,7 +556,7 @@ td:first-child,th:first-child{text-align:left}
 @media(max-width:650px){.reliability-matrix button{min-height:44px;width:100%}}
 </style></head><body><main>
 <section class="box topbar">
-  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.4 · G03-R2 Runner／可信度基礎｜v2.3 · G02-R7 裝置與流程硬化</span></div>
+  <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.5 · G03-R5 Runner／可信度／Preset／盲測｜v2.3 · G02-R7 裝置與流程硬化</span></div>
   <div class="controls">
     <label>市場 <select id="market"><option value="BTC">BTC/USD</option><option value="IXIC">NASDAQ Composite</option><option value="TWII">台股加權指數</option></select></label>
     <span id="tfs"></span>
@@ -764,7 +764,7 @@ state.prevSlow = slow;</textarea>
       <summary>想自己微調？打開每個參數的效果</summary>
       <div id="paramBody" class="param-grid"></div>
     </details>
-    <div class="param-note"><b>怎麼用：</b>參考設定驗證的是它是否真的比較敏感／平衡／挑剔，以及是否有足夠歷史樣本；不是挑歷史報酬最高的組合。</div>
+    <div class="param-note"><b>怎麼用：</b>三種正式設定是「寬鬆／平衡／嚴格」。它們只代表條件寬嚴與 Evidence 密度；嚴格不代表比較準。Preset 不用歷史報酬排名挑選。</div>
     <div class="param-actions"><span id="paramRunStatus" class="param-run-status">選一個研究方式，或自己微調</span><div class="right"><button onclick="restoreParams()">恢復模型原本設定</button><button onclick="applyParams()">用這些參數重新找</button></div></div>
   </div>
 </div></main><script src="src/research-kernel.js"></script><script src="src/model-engine.js"></script><script src="src/model-presets.js"></script><script src="src/model-semantics.js"></script><script src="src/reliability-engine.js"></script><script src="src/research-run.js"></script><script src="src/condition-engine.js"></script><script>
@@ -867,9 +867,9 @@ function renderPresetChoices(){
     let v=MP.validation(k,p.id),selected=ACTIVE_PRESET_ID===p.id;
     return '<button class="preset-choice '+(selected?'on':'')+'" onclick="applyPreset(\''+k+'\',\''+p.id+'\')">'+
       '<b>'+esc(p.title)+'</b><span>'+esc(p.intent)+'</span><small>'+esc(presetParamSummary(k,p))+'</small>'+
-      '<em>'+(v?('已驗證 · 主要狀態 '+v.count+' 次 · 10 bars 完整 '+v.n10):'等待驗證')+'</em></button>'
+      '<em>'+(v?('已驗證 · 完整 '+v.n10+' · N_eff '+(v.nEff??'—')+' · OOS '+(v.oosComplete??'—')+' · '+(v.parameterStability?'參數穩定':'穩定性待確認')):'等待驗證')+'</em></button>'
   }).join('');
-  if(note)note.innerHTML='這些設定已用 <b>BTC / NASDAQ / TAIEX</b> 的多個 1D / 1W / 1M 歷史情境驗證（共 '+contextN+' 個）。驗證的是設定名稱與樣本密度真的一致，且 Evidence errors = 0；<b>不是用報酬高低選參數</b>。'
+  if(note)note.innerHTML='這些設定已用 <b>BTC / NASDAQ / TAIEX</b> 的多個 1D / 1W / 1M 歷史情境驗證（共 '+contextN+' 個）。驗證的是寬鬆／平衡／嚴格的 Evidence 密度、N_eff、參數穩定與 OOS 覆蓋；<b>不是用報酬高低選參數</b>。'
 }
 function renderParamBody(){
   let k=ACTIVE_PARAM_MODEL,sc=PARAM_SCHEMA[k];if(!sc||!PARAM_DRAFT)return;
@@ -2053,7 +2053,7 @@ function buildFocusedReliabilityMatrix(){
         rel=REL.evaluateModelState(D,res.evidenceLog,{
           model,state,horizon:SINGLE_RESEARCH_HORIZON,market:q('market').value,timeframe:tf,
           knownThrough:D.length-1,marketCoverage:MARKET_COVERAGE,
-          parameterStability:p.parameterStability===true?true:null
+          parameterStability:(MP.validation(model,p.id)||{}).parameterStability===true?true:null
         }),
         level=p.level||(p.id==='sensitive'?'loose':p.id==='selective'?'strict':'balanced');
     cells.push({model,state,presetId:p.id,presetLevel:level,title:p.title,parameterFingerprint:res.parameterFingerprint,reliability:rel})
@@ -2090,7 +2090,8 @@ function reliabilityMatrixHTML(model){
     '<small>矩陣結果是目前載入資料的研究診斷，不是模型排名。</small></details>'
 }
 function reliabilityHTML(model,state){
-  let r=currentReliability(model,state);CURRENT_RELIABILITY=r;window.__SL_CURRENT_RELIABILITY__=r;
+  let researchState=(model==='astro'&&state==='upcoming')?'event':state,
+      r=currentReliability(model,researchState);CURRENT_RELIABILITY=r;window.__SL_CURRENT_RELIABILITY__=r;
   if(!r)return'';
   let coverage=r.coverage||{},oos=r.oos&&r.oos.validation||{},integrity=r.integrity||{},
       reasons=(r.reasons||[]).map(x=>'<li>'+esc(x)+'</li>').join(''),
@@ -2110,7 +2111,8 @@ function reliabilityHTML(model,state){
       (weakness?'<b>目前薄弱原因</b><ul>'+weakness+'</ul>':'<div class="good">目前沒有額外薄弱原因被觸發。</div>')+
       '<p>'+esc(r.disclaimer)+'</p></details>'+
     reliabilityMatrixHTML(model)+
-    blindValidationHTML(model,state,r)+
+    (model==='astro'&&state==='upcoming'?'<div class="reliability-note">Astrology Upcoming 本身是投影；可信度與盲測只讀已發生的 event Evidence。</div>':'')+
+    blindValidationHTML(model,researchState,r)+
     '</section>'
 }
 function blindValidationHTML(model,state,reliability){
