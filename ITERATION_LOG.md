@@ -37,5 +37,5 @@
 - **因果保護**：所有價格幾何只讀當時已存在的 Evidence；State 使用該 transition 當時記錄的區域直到下一 transition；不使用未來完整形態回填。第一條件仍是 anchor，每個 anchor episode 最多一個組合樣本。
 - **介面**：主側欄新增可直接操作的漏斗；模型磚可直接設為基準／加入漏斗；每一層直接切換關係與事件窗口；價格關係顯示最近符合案例的價格尺；Evidence Dock 改成深入結果，不再是操作漏斗的必經入口。
 - **刻意限制**：R02 第一版只對 Support / Macro / Basin 提供結構價格區，Sweep 提供事件價格區；Field / Echo / Astrology 保持時間關係，不推測不存在的標準價格幾何。
-- **CI 紀錄**：Condition Engine 單獨修改後的中間 commit run `35418372528` 因測試仍鎖定 v1.1 而失敗；同步引擎與關係測試後 run `35418374690` 全綠。UI commit run `35418496346` 的 kernel/model/condition/runner/causality/data/regression/M4 均通過，只有 M5 UI 契約仍鎖定 v1.4 標籤而失敗；本次已把 R02 直接漏斗與價格關係寫入永久 UI 契約，等待完整重跑。
+- **CI 紀錄**：Condition Engine 單獨修改後的中間 commit run `35418372528` 因測試仍鎖定 v1.1 而失敗；同步引擎與關係測試後 run `35418374690` 全綠。UI commit run `35418496346` 的 kernel/model/condition/runner/causality/data/regression/M4 均通過，只有 M5 UI 契約仍鎖定 v1.4 標籤而失敗；把 R02 直接漏斗、價格關係、價格尺與 detail/funnel 分離寫入永久契約後，完整 run `35418589049` 全部通過。
 - **產品驗收**：pending；技術通過後仍需使用者實際測試桌面與手機流程。
