@@ -12,7 +12,7 @@ for(const phrase of [
   '模型第一次能確認這個狀態',
   '以前出現後，市場怎麼走？',
   '真實歷史案例',
-  '這描述歷史路徑，不是目前行情預測'
+  '這是歷史路徑，不是可保證取得的報酬'
 ]){
   assert(s.includes(phrase),'missing migrated G01 guidance: '+phrase);
 }
