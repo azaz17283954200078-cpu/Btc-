@@ -5,6 +5,7 @@ const fs=require('fs');
 const path=require('path');
 const ME=require('../src/model-engine.js');
 const RK=require('../src/research-kernel.js');
+const CE=require('../src/condition-engine.js');
 
 const SUPPORTED={
   BTC:['1h','4h','1d','1w'],
@@ -47,6 +48,7 @@ function usage(){
     '  --timeframe    comma-separated timeframes; omitted = all supported for each market',
     '  --models       comma-separated model keys; default = support,macro,sweep',
     '  --params       JSON file with one parameter set or an array of sets',
+    '  --conditions   JSON file: array or {"queries":[{"name":"...","conditions":[...]}]}',
     '  --input        local OHLCV CSV; only for a single market/timeframe run',
     '  --out          output JSON path',
     '  --compare      two prior dataset JSON files separated by comma'
@@ -187,6 +189,30 @@ function summarizeEvaluation(evaluation){
   }
   return out;
 }
+function normalizeConditionQueries(raw){
+  if(raw==null)return[];
+  const list=Array.isArray(raw)?raw:(Array.isArray(raw.queries)?raw.queries:[raw]);
+  return list.map((q,i)=>{
+    const conditions=Array.isArray(q)?q:(q&&q.conditions);
+    if(!Array.isArray(conditions)||!conditions.length)throw new Error('Condition query requires conditions[]');
+    return{
+      name:String(q&&q.name||('condition-'+(i+1))),
+      conditions,
+      baselineConditions:q&&q.baselineConditions||null,
+      horizons:q&&q.horizons||null
+    };
+  });
+}
+function evaluateConditionQueries(data,evidence,raw){
+  return normalizeConditionQueries(raw).map(q=>({
+    name:q.name,
+    result:CE.evaluateConditions(data,evidence,q.conditions,{
+      baselineConditions:q.baselineConditions||undefined,
+      horizons:q.horizons||undefined,
+      knownThrough:data.length-1
+    })
+  }));
+}
 function runResearch(data,spec={}){
   const enabled=spec.enabled||enabledFromModels(spec.models);
   const res=ME.run(data,{
@@ -218,7 +244,9 @@ function runResearch(data,spec={}){
     evidence:res.evidenceLog,
     evidenceErrors:res.evidenceErrors,
     evaluation:res.evaluation,
-    summary:summarizeEvaluation(res.evaluation)
+    summary:summarizeEvaluation(res.evaluation),
+    conditionEngineVersion:CE.VERSION,
+    conditional:evaluateConditionQueries(data,res.evidenceLog,spec.conditionQueries)
   };
 }
 async function runBatch(config={}){
@@ -249,7 +277,8 @@ async function runBatch(config={}){
         const enabled={...baseEnabled,...(set.enabled||{})};
         runs.push(runResearch(loaded.data,{
           market,timeframe,source:loaded.source,
-          enabled,zone:set.zone,macro:set.macro,sweep:set.sweep,exp:set.exp,parameterSet:set.name
+          enabled,zone:set.zone,macro:set.macro,sweep:set.sweep,exp:set.exp,parameterSet:set.name,
+          conditionQueries:config.conditionQueries||[]
         }));
       }
     }
@@ -344,14 +373,16 @@ async function main(argv=process.argv.slice(2)){
   if(args.input&&(markets.length!==1||timeframes.length!==1)){
     throw new Error('--input requires exactly one --market and one --timeframe');
   }
-  let paramSets=null;
+  let paramSets=null,conditionQueries=null;
   if(args.params)paramSets=JSON.parse(fs.readFileSync(args.params,'utf8'));
+  if(args.conditions)conditionQueries=JSON.parse(fs.readFileSync(args.conditions,'utf8'));
 
   const result=await runBatch({
     markets:markets.length?markets:['BTC'],
     timeframes,
     models:args.models,
     paramSets,
+    conditionQueries,
     inputPath:args.input||null
   });
   writeJSON(out,result);
@@ -368,6 +399,6 @@ if(require.main===module){
 
 module.exports={
   SUPPORTED,MODEL_KEYS,parseArgs,parseCSV,aggregate,loadMarketData,
-  enabledFromModels,normalizeParamSets,runResearch,runBatch,
+  enabledFromModels,normalizeParamSets,normalizeConditionQueries,evaluateConditionQueries,runResearch,runBatch,
   summarizeRuns,compareDatasets,main
 };

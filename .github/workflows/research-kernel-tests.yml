@@ -34,8 +34,12 @@ jobs:
         run: node tests/research-kernel.test.js
       - name: Shared Model Engine runtime
         run: node tests/model-engine.test.js
+      - name: M5 Condition Engine semantics
+        run: node tests/condition-engine.test.js
       - name: Research Runner parity and batch tests
         run: node tests/research-runner.test.js
+      - name: M5 Runner conditional parity
+        run: node tests/m5-runner.test.js
       - name: Market data sanity
         run: node tests/market-data.test.js
       - name: Pre-M4 regression baseline

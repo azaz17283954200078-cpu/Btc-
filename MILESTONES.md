@@ -146,9 +146,23 @@ M4 的完成標準：
 
 > 第一次打開 Strategy Lab 的人，不需要先讀說明頁，就能從介面本身知道「我現在看到什麼、我可以做什麼、按下去會得到什麼、接下來還能研究什麼」。
 
-## M5｜條件式市場推論 — Next
+## M5｜Conditional Research｜條件式市場推論 — 🚧 In Progress
 
-組合多個 Evidence，研究條件分布與情境，而不是輸出不可追溯的單一買賣答案。
+M5 研究的是「多一個 causal Evidence 之後，歷史分布發生了什麼變化」，不是把模型做成投票器。
+
+核心契約：
+
+- State Evidence（Support / Macro / Basin / Field）在下一個 lifecycle transition 前持續成立。
+- terminal transition（Broken / Exit）只視為當根事件，不永久留在市場狀態中。
+- Event Evidence（Sweep / Astrology）預設只在事件當根成立；可顯式設定「最近 N 根內發生」，窗口只向事件之後延伸，不使用未來資料。
+- Echo Observation 只使用當根實際觀察結果。
+- 多條件連續重疊的一整段只算 **1 個 episode**，避免一個長狀態被重複算成很多獨立樣本。
+- 每個組合都必須和 anchor 單一條件 baseline 並排比較。
+- 樣本閘門：N < 5 = 樣本不足；5–19 = 探索性；N ≥ 20 = 可比較。這只是樣本量提示，不代表預測可靠度。
+- M5 顯示條件分布、IQR、MFE / MAE 與失敗案例；不產生 BUY / SELL、模型投票或「最佳組合」排名。
+- Condition Engine 必須同時供 Lab UI 與 Research Runner 使用，並通過 prefix causality / no-lookahead tests。
+
+開發順序：Condition Semantics → Shared Condition Engine → Runner 驗證 → Guided Conditional UI → Regression Gate。
 
 ## M6｜完成的小作品
 
