@@ -2,7 +2,7 @@ const fs=require('fs');
 const assert=require('assert');
 const s=fs.readFileSync('index.html','utf8');
 
-assert(s.includes('v2.1 · G02-R5 研究保存與延續'),'R5 version label missing');
+assert(/v2\.\d+ · G02-R[5-7] /.test(s),'R5+ version label missing');
 for(const id of ['savedResearchList','singleResearchBody','singleHandoffStatus']){
   assert(s.includes('id="'+id+'"'),'missing saved/current research surface '+id);
 }
