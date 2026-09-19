@@ -164,6 +164,7 @@ function normalizeParamSets(raw){
     name:String(x&&x.name||('set-'+(i+1))),
     zone:x&&x.zone||{},
     macro:x&&x.macro||{},
+    sweep:x&&x.sweep||{},
     exp:x&&x.exp||{},
     enabled:x&&x.enabled||null,
     note:x&&x.note||null
@@ -195,6 +196,7 @@ function runResearch(data,spec={}){
     enabled,
     zone:spec.zone||{},
     macro:spec.macro||{},
+    sweep:spec.sweep||{},
     exp:spec.exp||{}
   });
   return{
@@ -207,7 +209,7 @@ function runResearch(data,spec={}){
     parameterSet:spec.parameterSet||'default',
     parameterFingerprint:res.parameterFingerprint,
     enabled:res.params.enabled,
-    params:{zone:res.params.zone,macro:res.params.macro,exp:res.params.exp},
+    params:{zone:res.params.zone,macro:res.params.macro,sweep:res.params.sweep,exp:res.params.exp},
     range:{
       bars:data.length,
       start:data.length?data[0].t:null,
@@ -247,7 +249,7 @@ async function runBatch(config={}){
         const enabled={...baseEnabled,...(set.enabled||{})};
         runs.push(runResearch(loaded.data,{
           market,timeframe,source:loaded.source,
-          enabled,zone:set.zone,macro:set.macro,exp:set.exp,parameterSet:set.name
+          enabled,zone:set.zone,macro:set.macro,sweep:set.sweep,exp:set.exp,parameterSet:set.name
         }));
       }
     }
