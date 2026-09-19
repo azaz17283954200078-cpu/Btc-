@@ -32,7 +32,7 @@ function synthetic(n=420){
     enabled,
     paramSets:[
       {name:'base'},
-      {name:'echo-tight',exp:{echo:{similarity:.90}}}
+      {name:'echo-tight',sweep:{minClosePosition:.60},exp:{echo:{similarity:.90}}}
     ],
     dataLoader:async(market,timeframe)=>({data,source:'fixture '+timeframe})
   });
@@ -43,6 +43,7 @@ function synthetic(n=420){
     batch.runs.find(x=>x.parameterSet==='echo-tight').parameterFingerprint,
     'parameter sets require distinct fingerprints'
   );
+  assert(batch.runs.find(x=>x.parameterSet==='echo-tight').params.sweep,'Runner must preserve Sweep parameters');
 
   const local=await Runner.loadMarketData('TWII','1d');
   assert(local.data.length>1000,'TAIEX project CSV should be usable by the headless runner');
