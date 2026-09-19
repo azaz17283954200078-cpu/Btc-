@@ -73,7 +73,7 @@
           const e=seq[i],state=RK.normalizeState(e.model,e.state);
           if(state!==c.state)continue;
           const start=clampIndex(e.detectedAt??e.index,known),
-                next=i+1?(seq[i+1].detectedAt??seq[i+1].index):known+1,
+                next=i+1<seq.length?(seq[i+1].detectedAt??seq[i+1].index):known+1,
                 end=Math.min(known,Math.max(start,Math.round(next)-1));
           for(let j=start;j<=end;j++)present[j]=true;
         }
