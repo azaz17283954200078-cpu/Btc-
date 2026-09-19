@@ -48,7 +48,7 @@ assert(s.includes('enabled,zone:ZONE,macro:MACRO,sweep:SWEEP,exp:EXP'),'Sweep se
 for(const phrase of [
   '為什麼？',
   '接下來看什麼？',
-  '這描述歷史路徑，不是目前行情預測',
+  '這是歷史路徑，不是可保證取得的報酬',
   '途中典型最高曾到',
   '失敗率不是「價格會跌的機率」',
   '真實歷史案例',
