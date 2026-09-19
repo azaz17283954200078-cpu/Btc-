@@ -132,7 +132,7 @@ M5 不把模型做成投票器。研究流程從一個 anchor Evidence 開始，
 - State Evidence 會維持到下一個 lifecycle transition。
 - Sweep / Astrology 等事件預設只算當根，也可以明確改成「最近 3 / 5 根內」；窗口只往事件之後延伸。
 - Echo 使用當根 observation。
-- 一整段連續重疊只算一個 episode，避免長狀態重複灌大樣本數。
+- 採 anchor-centric sampling：第一個條件定義 baseline episode；每個 anchor episode 最多只取一次「新增條件第一次同時成立」，因此加入條件不會反而製造更多樣本。
 - N < 5 顯示樣本不足；5–19 顯示探索性；N ≥ 20 才標示可比較。這些標籤只描述樣本量。
 - 每組條件都和第一個 anchor 的單一條件 baseline 並排，不輸出 BUY / SELL、模型投票或最佳組合排名。
 
