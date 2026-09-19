@@ -42,11 +42,16 @@
     const c=normalizeCondition(input);
     return c.model+'|'+c.state+'|w'+c.windowBars;
   }
-  function eligibleRows(evidence){
-    return (evidence||[]).filter(e=>e&&e.kind!=='projection'&&Number.isInteger(e.index)&&e.model&&e.state);
+  function eligibleRows(evidence,knownThrough){
+    const known=knownThrough==null?Infinity:Math.round(knownThrough);
+    return (evidence||[]).filter(e=>{
+      if(!e||e.kind==='projection'||!Number.isInteger(e.index)||!e.model||!e.state)return false;
+      const knownAt=Number.isInteger(e.detectedAt)?e.detectedAt:e.index;
+      return knownAt<=known;
+    });
   }
-  function matchingRows(evidence,c,kind){
-    return eligibleRows(evidence).filter(e=>{
+  function matchingRows(evidence,c,kind,knownThrough){
+    return eligibleRows(evidence,knownThrough).filter(e=>{
       if(e.model!==c.model||RK.normalizeState(e.model,e.state)!==c.state)return false;
       if(kind==='state')return e.kind==='transition';
       if(kind==='observation')return e.kind==='observation';
@@ -61,7 +66,7 @@
           present=Array(known+1).fill(false);
 
     if(mode==='state'){
-      const rows=eligibleRows(evidence).filter(e=>e.model===c.model&&e.kind==='transition'),
+      const rows=eligibleRows(evidence,known).filter(e=>e.model===c.model&&e.kind==='transition'),
             groups={};
       for(const e of rows){
         const id=e.entityId||e.id;
@@ -81,7 +86,7 @@
       return{condition:c,mode,knownThrough:known,present};
     }
 
-    const rows=matchingRows(evidence,c,mode);
+    const rows=matchingRows(evidence,c,mode,known);
     for(const e of rows){
       const at=clampIndex(e.detectedAt??e.index,known),
             end=Math.min(known,at+c.windowBars);
@@ -201,8 +206,9 @@
   }
   function candidateConditions(evidence,options){
     options=options||{};
-    const map=new Map();
-    for(const e of eligibleRows(evidence)){
+    const known=options.knownThrough==null?Infinity:Math.round(options.knownThrough),
+          map=new Map();
+    for(const e of eligibleRows(evidence,known)){
       if(e.kind==='snapshot'||e.kind==='projection')continue;
       const c=normalizeCondition({model:e.model,state:e.state,windowBars:0}),
             mode=semantics(c);
@@ -223,7 +229,7 @@
           maxResults=Math.max(1,Math.round(options.maxResults||8)),
           minEpisodes=Math.max(1,Math.round(options.minEpisodes||1)),
           out=[];
-    for(const c of candidateConditions(evidence,options)){
+    for(const c of candidateConditions(evidence,{...options,knownThrough:known})){
       if(existing.has(conditionKey(c))||existingModels.has(c.model))continue;
       const episodes=episodesForConditions(evidence,[...base,c],{knownThrough:known});
       if(episodes.length<minEpisodes)continue;
@@ -236,7 +242,7 @@
     options=options||{};
     const known=Math.max(index,Math.round(options.knownThrough==null?inferKnownThrough(evidence):options.knownThrough)),
           out=[];
-    for(const c of candidateConditions(evidence,options)){
+    for(const c of candidateConditions(evidence,{...options,knownThrough:known})){
       const p=buildPresence(evidence,c,{knownThrough:known}).present;
       if(p[index])out.push({condition:c,mode:semantics(c)});
     }
