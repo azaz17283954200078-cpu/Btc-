@@ -20,7 +20,8 @@ const evidence=[
   e('support','broken',12,'transition','support:a')
 ];
 
-assert.equal(CE.VERSION,'1.2.0');
+assert.equal(CE.VERSION,'1.3.0');
+assert.equal(CE.SEMANTICS_VERSION,'1.0.0');
 assert.equal(CE.semantics({model:'support',state:'candidate'}),'state');
 assert.equal(CE.semantics({model:'support',state:'broken'}),'transition_event');
 assert.equal(CE.semantics({model:'sweep',state:'event'}),'event');
