@@ -9,7 +9,7 @@
   'use strict';
   if(!RK)throw new Error('Condition Engine requires Research Kernel');
 
-  const VERSION='1.1.0';
+  const VERSION='1.2.0';
   const STATE_MODELS=new Set(['support','macro','basin','field']);
   const EVENT_MODELS=new Set(['sweep','astro']);
   const OBSERVATION_MODELS=new Set(['echo']);
@@ -25,8 +25,9 @@
     if(!input||!input.model)throw new Error('Condition requires model');
     const model=String(input.model).toLowerCase(),
           state=RK.normalizeState(model,input.state),
-          windowBars=Math.max(0,Math.round(Number(input.windowBars)||0));
-    return{model,state,windowBars};
+          windowBars=Math.max(0,Math.round(Number(input.windowBars)||0)),
+          relation=['time','price_overlap','price_touch'].includes(input.relation)?input.relation:'time';
+    return{model,state,windowBars,relation};
   }
   function semantics(input){
     const c=normalizeCondition(input);
@@ -40,7 +41,7 @@
   }
   function conditionKey(input){
     const c=normalizeCondition(input);
-    return c.model+'|'+c.state+'|w'+c.windowBars;
+    return c.model+'|'+c.state+'|w'+c.windowBars+'|r'+c.relation;
   }
   function eligibleRows(evidence,knownThrough){
     const known=knownThrough==null?Infinity:Math.round(knownThrough);
@@ -59,11 +60,29 @@
       return e.kind==='event';
     });
   }
-  function buildPresence(evidence,input,options){
+  function priceGeometry(row){
+    if(!row||!row.evidence)return null;
+    const x=row.evidence||{},model=String(row.model||'').toLowerCase();
+    if(['support','macro','basin'].includes(model)&&Number.isFinite(x.bot)&&Number.isFinite(x.top)){
+      return{kind:'zone',low:Math.min(x.bot,x.top),high:Math.max(x.bot,x.top),model,evidenceId:row.id||null};
+    }
+    if(model==='sweep'&&Number.isFinite(x.low)&&Number.isFinite(x.priorLow)){
+      // 掃單事件只把「跌破舊低的價格路徑」視為事件區間；收盤價不拿來放大事件價格範圍。
+      return{kind:'event_range',low:Math.min(x.low,x.priorLow),high:Math.max(x.low,x.priorLow),model,evidenceId:row.id||null};
+    }
+    return null;
+  }
+  function intervalOverlap(a,b){
+    if(!a||!b||!Number.isFinite(a.low)||!Number.isFinite(a.high)||!Number.isFinite(b.low)||!Number.isFinite(b.high))return null;
+    const low=Math.max(a.low,b.low),high=Math.min(a.high,b.high);
+    return high>=low?{kind:'overlap',low,high}:null;
+  }
+  function buildPresenceDetails(evidence,input,options){
     options=options||{};
     const known=Math.max(0,Math.round(options.knownThrough==null?inferKnownThrough(evidence):options.knownThrough)),
           c=normalizeCondition(input),mode=semantics(c),
-          present=Array(known+1).fill(false);
+          present=Array(known+1).fill(false),
+          rowsAt=Array.from({length:known+1},()=>[]);
 
     if(mode==='state'){
       const rows=eligibleRows(evidence,known).filter(e=>e.model===c.model&&e.kind==='transition'),
@@ -80,19 +99,22 @@
           const start=clampIndex(e.detectedAt??e.index,known),
                 next=i+1<seq.length?(seq[i+1].detectedAt??seq[i+1].index):known+1,
                 end=Math.min(known,Math.max(start,Math.round(next)-1));
-          for(let j=start;j<=end;j++)present[j]=true;
+          for(let j=start;j<=end;j++){present[j]=true;rowsAt[j].push(e)}
         }
       }
-      return{condition:c,mode,knownThrough:known,present};
+      return{condition:c,mode,knownThrough:known,present,rowsAt};
     }
 
     const rows=matchingRows(evidence,c,mode,known);
     for(const e of rows){
       const at=clampIndex(e.detectedAt??e.index,known),
             end=Math.min(known,at+c.windowBars);
-      for(let j=at;j<=end;j++)present[j]=true;
+      for(let j=at;j<=end;j++){present[j]=true;rowsAt[j].push(e)}
     }
-    return{condition:c,mode,knownThrough:known,present};
+    return{condition:c,mode,knownThrough:known,present,rowsAt};
+  }
+  function buildPresence(evidence,input,options){
+    return buildPresenceDetails(evidence,input,options);
   }
   function inferKnownThrough(evidence){
     let n=0;
@@ -112,6 +134,112 @@
     }
     return out;
   }
+  function matchDetailsAtIndex(details,list,index){
+    const anchorRows=details[0]&&details[0].rowsAt[index]||[];
+    if(!anchorRows.length)return{match:false,index,region:null,lastOverlap:null,components:[]};
+
+    let branches=anchorRows.map(row=>{
+      const geometry=priceGeometry(row);
+      return{
+        region:geometry&&geometry.kind==='zone'?geometry:null,
+        lastOverlap:null,
+        components:[{condition:list[0],row,geometry}]
+      };
+    });
+
+    for(let i=1;i<list.length;i++){
+      const c=list[i],candidates=details[i]&&details[i].rowsAt[index]||[];
+      if(!candidates.length)return{match:false,index,region:null,lastOverlap:null,components:[]};
+      const next=[];
+
+      for(const branch of branches){
+        if(c.relation==='time'){
+          if(branch.region){
+            const row=candidates[0],geometry=priceGeometry(row);
+            next.push({...branch,components:[...branch.components,{condition:c,row,geometry}]});
+          }else{
+            // 前面尚無價格區域時，時間條件可以提供第一個可用的結構區域，
+            // 但不會因為是「同時成立」就偷偷要求兩個價格區域相交。
+            let expanded=false;
+            for(const row of candidates){
+              const geometry=priceGeometry(row);
+              if(geometry&&geometry.kind==='zone'){
+                next.push({...branch,region:geometry,components:[...branch.components,{condition:c,row,geometry}]});
+                expanded=true;
+              }
+            }
+            if(!expanded){
+              const row=candidates[0],geometry=priceGeometry(row);
+              next.push({...branch,components:[...branch.components,{condition:c,row,geometry}]});
+            }
+          }
+          continue;
+        }
+
+        if(!branch.region)continue;
+        for(const row of candidates){
+          const geometry=priceGeometry(row);
+          if(!geometry)continue;
+          const overlap=intervalOverlap(branch.region,geometry);
+          if(!overlap)continue;
+
+          if(c.relation==='price_overlap'&&geometry.kind==='zone'){
+            next.push({
+              ...branch,region:overlap,lastOverlap:overlap,
+              components:[...branch.components,{condition:c,row,geometry}]
+            });
+          }else if(c.relation==='price_touch'&&geometry.kind==='event_range'){
+            next.push({
+              ...branch,lastOverlap:overlap,
+              components:[...branch.components,{condition:c,row,geometry}]
+            });
+          }
+        }
+      }
+
+      if(!next.length)return{match:false,index,region:null,lastOverlap:null,components:[]};
+      branches=next;
+    }
+
+    const b=branches[0];
+    return{match:true,index,region:b.region,lastOverlap:b.lastOverlap,components:b.components};
+  }
+  function relationSnapshotAtIndex(evidence,conditions,index,options){
+    options=options||{};
+    const list=(conditions||[]).map(normalizeCondition);
+    if(!list.length)return{match:false,index,region:null,lastOverlap:null,components:[]};
+    const known=Math.max(index,Math.round(options.knownThrough==null?inferKnownThrough(evidence):options.knownThrough)),
+          details=list.map(c=>buildPresenceDetails(evidence,c,{knownThrough:known}));
+    return matchDetailsAtIndex(details,list,index);
+  }
+  function conditionGeometryKind(evidence,input,options){
+    options=options||{};
+    const c=normalizeCondition(input),mode=semantics(c),
+          known=options.knownThrough==null?inferKnownThrough(evidence):Math.round(options.knownThrough),
+          rows=matchingRows(evidence,c,mode,known);
+    for(const row of rows){
+      const g=priceGeometry(row);
+      if(g)return g.kind;
+    }
+    return null;
+  }
+  function availableRelations(evidence,priorConditions,input,options){
+    options=options||{};
+    const prior=(priorConditions||[]).map(normalizeCondition),c=normalizeCondition(input),
+          known=options.knownThrough==null?inferKnownThrough(evidence):Math.round(options.knownThrough),
+          priorHasZone=prior.some(x=>conditionGeometryKind(evidence,x,{knownThrough:known})==='zone'),
+          kind=conditionGeometryKind(evidence,c,{knownThrough:known}),
+          out=['time'];
+    if(priorHasZone&&kind==='zone')out.push('price_overlap');
+    if(priorHasZone&&kind==='event_range')out.push('price_touch');
+    return out;
+  }
+  function suggestRelation(evidence,priorConditions,input,options){
+    const a=availableRelations(evidence,priorConditions,input,options);
+    if(a.includes('price_touch'))return'price_touch';
+    if(a.includes('price_overlap'))return'price_overlap';
+    return'time';
+  }
   function episodesForConditions(evidence,conditions,options){
     options=options||{};
     const list=(conditions||[]).map(normalizeCondition);
@@ -121,19 +249,34 @@
           anchorEpisodes=episodesFromPresence(layers[0]);
     if(list.length===1)return anchorEpisodes;
 
-    // Anchor-centric sampling: each episode of the first condition contributes at
-    // most one combined sample, at the first bar where every added condition is
-    // simultaneously known. This prevents a long anchor state with many transient
-    // events from being counted many times and guarantees combo N <= baseline N.
-    const out=[];
+    // 舊的純時間條件走原本路徑，確保既有 M5 統計與 Runner 結果不因新增價格關係而改變。
+    if(list.slice(1).every(c=>c.relation==='time')){
+      const out=[];
+      for(const anchor of anchorEpisodes){
+        let start=null;
+        for(let i=anchor.index;i<=anchor.end;i++){
+          if(layers.every(a=>!!a[i])){start=i;break}
+        }
+        if(start==null)continue;
+        let end=start;
+        while(end+1<=anchor.end&&layers.every(a=>!!a[end+1]))end++;
+        out.push({index:start,end,length:end-start+1});
+      }
+      return out;
+    }
+
+    const details=list.map(c=>buildPresenceDetails(evidence,c,{knownThrough:known})),
+          out=[];
+    // 仍以第一個條件的 episode 為基準。價格關係只決定某根 K 是否通過，
+    // 不允許一個基準 episode 因為多個價格交集而重複貢獻樣本。
     for(const anchor of anchorEpisodes){
       let start=null;
       for(let i=anchor.index;i<=anchor.end;i++){
-        if(layers.every(a=>!!a[i])){start=i;break}
+        if(matchDetailsAtIndex(details,list,i).match){start=i;break}
       }
       if(start==null)continue;
       let end=start;
-      while(end+1<=anchor.end&&layers.every(a=>!!a[end+1]))end++;
+      while(end+1<=anchor.end&&matchDetailsAtIndex(details,list,end+1).match)end++;
       out.push({index:start,end,length:end-start+1});
     }
     return out;
@@ -151,15 +294,20 @@
             count=episodes.length,
             prev=previous==null?count:previous,
             removed=Math.max(0,prev-count);
+      const example=(i>0&&list[i].relation!=='time'&&episodes.length)
+        ?relationSnapshotAtIndex(evidence,partial,episodes[episodes.length-1].index,{knownThrough:known})
+        :null;
       stages.push({
         index:i,
         addedCondition:list[i],
+        relation:list[i].relation,
         conditions:partial,
         episodeCount:count,
         previousEpisodeCount:prev,
         removed,
         retainedRate:i===0?1:(prev>0?count/prev:(count===0?1:0)),
-        gate:sampleGate(count)
+        gate:sampleGate(count),
+        example
       });
       previous=count;
     }
@@ -231,7 +379,7 @@
           stats=evaluateEpisodes(data,episodes,horizons,known),
           baselineStats=evaluateEpisodes(data,baselineEpisodes,horizons,known);
     return{
-      version:1,engineVersion:VERSION,knownThrough:known,horizons,
+      version:2,engineVersion:VERSION,knownThrough:known,horizons,
       conditions:list,
       semantics:list.map(c=>({condition:c,mode:semantics(c)})),
       episodeCount:episodes.length,
@@ -300,8 +448,10 @@
 
   return{
     VERSION,STATE_MODELS,EVENT_MODELS,OBSERVATION_MODELS,TERMINAL_STATES,
-    normalizeCondition,conditionKey,semantics,buildPresence,episodesFromPresence,
-    episodesForConditions,sampleFunnel,quantile,evaluateEpisodes,sampleGate,evaluateConditions,
+    normalizeCondition,conditionKey,semantics,priceGeometry,intervalOverlap,
+    buildPresenceDetails,buildPresence,episodesFromPresence,relationSnapshotAtIndex,
+    conditionGeometryKind,availableRelations,suggestRelation,episodesForConditions,
+    sampleFunnel,quantile,evaluateEpisodes,sampleGate,evaluateConditions,
     candidateConditions,discoverCompanions,conditionsAtIndex
   };
 });
