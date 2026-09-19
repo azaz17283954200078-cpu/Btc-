@@ -71,7 +71,7 @@ assert(s.includes("HANDOFF_NOTICE='這筆是未來投影，不能直接當成組
   'projection handoff must explain why it is blocked');
 
 // Case inventory must distinguish total historical cases from UI browse cap.
-assert(s.includes('可瀏覽 '+ "'+rows.length+'" + ' / 總 '), 'history browser total/visible distinction missing');
+assert(s.includes("countText='可瀏覽案例 '+rows.length+' / 同狀態總案例 '+inv.total"), 'history browser total/visible distinction missing');
 assert(s.includes('historyCases(model,state,Number.MAX_SAFE_INTEGER)'),'full case inventory missing');
 assert(s.includes('visible:all.slice(0,cap)'),'browser cap must be explicit data, not silently mistaken for total');
 
