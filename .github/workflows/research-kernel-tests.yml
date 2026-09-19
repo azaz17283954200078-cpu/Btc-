@@ -84,6 +84,12 @@ jobs:
         run: node scripts/g03-preset-calibration.js
       - name: G03-R5 frozen chronological OOS validation
         run: node scripts/g03-blind-oos-validation.js
+      - name: G03-R3 reliability matrix UI contract
+        run: node tests/g03-r3-reliability-matrix-contract.test.js
+      - name: G03-R4 preset calibration contract
+        run: node tests/g03-r4-preset-calibration-contract.test.js
+      - name: G03-R5 blind OOS UI contract
+        run: node tests/g03-r5-blind-oos-contract.test.js
       - name: Validated model preset contract
         run: node tests/model-presets.test.js
       - name: M4 validated preset semantic gate
