@@ -26,5 +26,5 @@
 - **改了什麼**：側欄第一層改為研究條件組；正在開啟的模型用動態模型磚呈現；模型庫預設收起；每顆磚可研究證據、調整設定、關閉模型；條件角色與歷史案例直接回到模型磚；主要術語改為中文優先，英文模型名與 MFE/MAE 僅作第二層識別。
 - **保護區**：Chart Core、三層 Canvas、Shared Model Engine、Condition Engine、Evidence schema、known-through、anchor-centric sampling、sample gate 均不改。
 - **預先驗證**：inline JavaScript 與 M4/M5 UI 契約可解析後才提交。
-- **CI**：pending.
+- **CI**：首次 run `35417038345` 未通過；失敗點是 M4 UI 契約仍要求舊文案「MFE 是途中曾向上走到多遠」，而本輪已依中文優先原則改為「途中最大上漲幅度（MFE）」。在該失敗前 Research Kernel、Model Engine、M5 Condition Engine、Runner parity、real-market causality、market-data、regression、architecture contract 均已通過。已同步更新這個刻意變更的 UI 文案契約，等待重跑。
 - **產品驗收**：pending；技術通過不等於使用者已接受新介面。
