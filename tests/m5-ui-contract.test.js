@@ -2,19 +2,20 @@ const fs=require('fs');
 const assert=require('assert');
 const s=fs.readFileSync('index.html','utf8');
 
-assert(s.includes('v1.4 · M5 研究條件組'),'M5 version label missing');
+assert(s.includes('v1.5 · M5 關係式漏斗'),'M5 version label missing');
 assert(s.includes('<script src="src/condition-engine.js"></script>'),'shared Condition Engine is not loaded');
 assert(s.includes('CE=window.StrategyLabConditionEngine'),'UI must use shared Condition Engine');
 
 for(const fn of [
   'function conditionalExplorerHTML(','function conditionalStatsHTML(','function conditionBricksHTML(','function sampleFunnelHTML(','function sampleDiagnosisHTML(','function addCondition(',
-  'function removeCondition(','function setConditionWindow(','function conditionGateText('
+  'function removeCondition(','function setConditionWindow(','function setConditionRelation(','function conditionGateText(',
+  'function renderDirectFunnel(','function priceRulerHTML(','function startResearchFunnel(','function addModelToFunnel(','function openFunnelEvidence('
 ])assert(s.includes(fn),'missing M5 guided conditional function '+fn);
 
 for(const phrase of [
   '再加一個條件，歷史分布有沒有變？',
   '這裡不讓模型投票',
-  '連續重疊的一整段只算 1 個歷史案例',
+  '連續成立的一整段仍只算 1 個基準案例',
   '樣本不足：先把它當案例看',
   '探索性樣本',
   '可比較樣本',
@@ -46,5 +47,19 @@ assert(s.includes("@media(max-width:650px)"),'M5 mobile breakpoint missing');
 
 assert(s.includes('id="activeModelStack"'),'M5 primary sidebar must use research stack architecture');
 assert(s.includes('＋ 加入模型'),'M5 must expose model library from the research stack');
-assert(s.includes('同時符合'),'condition relationship must be explained in Chinese');
+for(const phrase of ['漏斗式篩選','同時成立','價格區域重疊','掃單價格進入區域','價格尺｜最近一個符合案例']){
+  assert(s.includes(phrase),'missing R02 relationship-funnel surface: '+phrase);
+}
+assert(s.includes('CE.availableRelations(EVIDENCE_LOG'),'R02 relationship controls must come from shared Condition Engine');
+assert(s.includes('CE.suggestRelation(EVIDENCE_LOG'),'R02 default relationship must come from shared Condition Engine');
+assert(s.includes('CE.episodesForConditions(EVIDENCE_LOG'),'prospective relationship counts must use shared Condition Engine');
 assert(!s.includes('Sample Funnel｜'),'English-first Sample Funnel label must not remain visible');
+
+const funnelPos=s.indexOf('id="researchFunnel"'),dockPos=s.indexOf('id="evidenceBackdrop"');
+assert(funnelPos>=0&&dockPos>funnelPos,'direct research funnel must live in the primary sidebar before the evidence detail drawer');
+assert(s.includes('RESEARCH_DETAIL_OPEN=false'),'detail drawer state must be separate from funnel state');
+const closeStart=s.indexOf('function closeEvidenceDock(redraw=true){');
+const closeEnd=s.indexOf('function jumpToEvidence(',closeStart);
+assert(closeStart>=0&&closeEnd>closeStart,'closeEvidenceDock block missing');
+assert(!s.slice(closeStart,closeEnd).includes('PINNED_RESEARCH=null'),'closing details must not erase the direct funnel');
+assert(s.includes('.funnel-relation select{min-height:44px;width:100%}'),'mobile relationship selector touch target missing');

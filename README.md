@@ -8,7 +8,7 @@ Strategy Lab 的產品與自主開發原則記錄在 [CONSTITUTION.md](CONSTITUT
 
 ## Current milestone
 
-**v1.4 · M5 研究條件組重構（產品驗收中）**
+**v1.5 · M5 關係式漏斗（產品驗收中）**
 
 目前支援：
 - BTC/USD：1H / 4H / 1D / 1W
@@ -136,19 +136,21 @@ M5 不把模型做成投票器。研究流程從一個 anchor Evidence 開始，
 - State Evidence 會維持到下一個 lifecycle transition。
 - Sweep / Astrology 等事件預設只算當根，也可以明確改成「最近 3 / 5 根內」；窗口只往事件之後延伸。
 - Echo 使用當根 observation。
-- 採 anchor-centric sampling：第一個條件定義 baseline episode；每個 anchor episode 最多只取一次「新增條件第一次同時成立」，因此加入條件不會反而製造更多樣本。
+- 採 anchor-centric sampling：第一個條件定義 baseline episode；每個 anchor episode 最多只取一次通過關係篩選的時點，因此加入條件不會反而製造更多樣本。
+- R02 支援「同時成立」、「價格區域重疊」與「掃單價格進入區域」；價格重疊必須有實際區間交集，不把接近當成重疊。
+- 價格尺以最近一個符合的歷史案例顯示各 Evidence 價格區與實際交集，讓篩選原因可以直接閱讀。
 - N < 5 顯示樣本不足；5–19 顯示探索性；N ≥ 20 才標示可比較。這些標籤只描述樣本量。
 - 每組條件都和第一個 anchor 的單一條件 baseline 並排，不輸出 BUY / SELL、模型投票或最佳組合排名。
 
-目前 UI-R01 將「研究條件組」作為側欄第一層：正在開啟的模型以模型磚呈現，完整模型庫預設收起；中文描述優先，必要英文模型名與 MFE / MAE 僅作第二層識別。這次只重構介面，不改 Shared Condition Engine 的條件語意。\n\nResearch Runner 可透過 `--conditions research/conditions.example.json` 使用相同的 Shared Condition Engine。
+UI-R01 將「研究條件組」作為側欄第一層；UI-R02 再把真正可操作的漏斗放到第一層。使用者可直接設基準、加入第二／第三條件，並逐層選擇「同時成立」、「價格區域重疊」或「掃單價格進入區域」，立即看到歷史案例如何縮減。價格關係由 Shared Condition Engine v1.2 計算，Runner 與 UI 共用同一語意。\n\nResearch Runner 可透過 `--conditions research/conditions.example.json` 使用相同的 Shared Condition Engine。
 
 M5 驗收時以 BTC / NASDAQ / TAIEX 1D 做 real-market prefix causality audit。這次 audit 實際抓到 future Evidence 被錯誤 clamp 到歷史 checkpoint 的問題，修正後再通過；也因此把 sampling 改成 anchor-centric，確保增加條件不會反而製造更多樣本。固定驗收紀錄保存在 `research/m5-condition-audit.json`。
 
 ## Direction
 
-M1「可信任的地基」、M2「市場記憶」、M3「自我驗證」、M3.5「Research Runner」、M4「Guided Research」與 M5「Conditional Research」已完成。
+M1「可信任的地基」、M2「市場記憶」、M3「自我驗證」、M3.5「Research Runner」與 M4「Guided Research」已完成。M5 的 Shared Condition Engine 已通過技術驗證，但產品驗收仍在進行，不能提前視為完成。
 
-下一階段是 **M6「完成的小作品」**。M6 不再以新增大型能力為目標，而是做產品完成度驗收：第一次使用者是否能在約 5 分鐘內發現一個值得研究的市場現象；有經驗的研究者是否能在約 30 分鐘內走完「模型 → Evidence → 歷史分布 → 條件比較 → 真實案例」而得到可追溯的研究結果。
+M5 完成桌面／手機實際操作驗收後，才進入 **M6「完成的小作品」**。M6 不再以新增大型能力為目標，而是做產品完成度驗收：第一次使用者是否能在約 5 分鐘內發現一個值得研究的市場現象；有經驗的研究者是否能在約 30 分鐘內走完「模型 → Evidence → 歷史分布 → 條件比較 → 真實案例」而得到可追溯的研究結果。
 
 如果答案已經是肯定的，M6 的正確動作是停止擴張、修正阻礙與打磨體驗，而不是再堆功能。
 

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "validatedAt": "2026-09-19",
-  "conditionEngineVersion": "1.1.0",
+  "conditionEngineVersion": "1.2.0",
   "methodology": {
     "sampling": "anchor-centric",
-    "note": "Each anchor episode contributes at most one combined sample at the first bar where all added conditions are simultaneously known.",
+    "note": "Each anchor episode contributes at most one combined sample. Existing audit contexts use relation=time; v1.2 adds separately tested causal price relations without changing these time-only results.",
     "causality": "Prefix evidence and full evidence restricted to the same knownThrough checkpoint must produce identical condition episodes.",
     "purpose": "Mechanism and causality validation only; these results are not model rankings or return forecasts."
   },
@@ -14,12 +14,14 @@
       "timeframe": "1d",
       "anchor": {
         "model": "support",
-        "state": "candidate"
+        "state": "candidate",
+        "relation": "time"
       },
       "companion": {
         "model": "basin",
         "state": "forming",
-        "windowBars": 0
+        "windowBars": 0,
+        "relation": "time"
       },
       "baselineEpisodes": 22,
       "episodes": 20,
@@ -30,12 +32,14 @@
       "timeframe": "1d",
       "anchor": {
         "model": "support",
-        "state": "candidate"
+        "state": "candidate",
+        "relation": "time"
       },
       "companion": {
         "model": "basin",
         "state": "landing",
-        "windowBars": 0
+        "windowBars": 0,
+        "relation": "time"
       },
       "baselineEpisodes": 13,
       "episodes": 12,
@@ -46,12 +50,14 @@
       "timeframe": "1d",
       "anchor": {
         "model": "support",
-        "state": "candidate"
+        "state": "candidate",
+        "relation": "time"
       },
       "companion": {
         "model": "field",
         "state": "forming",
-        "windowBars": 0
+        "windowBars": 0,
+        "relation": "time"
       },
       "baselineEpisodes": 15,
       "episodes": 15,
@@ -61,6 +67,7 @@
   "regressionNotes": [
     "Initial audit exposed future Evidence being clamped to knownThrough; fixed by filtering on detectedAt/index <= knownThrough.",
     "Initial overlap sampling allowed multiple transient-event episodes inside one anchor state; replaced with anchor-centric sampling so combo N cannot exceed baseline anchor episodes.",
-    "v1.1 adds cumulative Sample Funnel/coverage diagnostics without changing anchor-centric sampling semantics."
+    "v1.1 adds cumulative Sample Funnel/coverage diagnostics without changing anchor-centric sampling semantics.",
+    "v1.2 adds explicit time / price_overlap / price_touch relations. Existing time-only audit contexts remain unchanged; synthetic geometry tests and Runner parity protect the new price-relation path."
   ]
 }

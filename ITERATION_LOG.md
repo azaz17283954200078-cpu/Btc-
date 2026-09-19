@@ -28,3 +28,14 @@
 - **預先驗證**：inline JavaScript 與 M4/M5 UI 契約可解析後才提交。
 - **CI**：首次 run `35417038345` 未通過；失敗點是 M4 UI 契約仍要求舊文案「MFE 是途中曾向上走到多遠」，而本輪已依中文優先原則改為「途中最大上漲幅度（MFE）」。在該失敗前 Research Kernel、Model Engine、M5 Condition Engine、Runner parity、real-market causality、market-data、regression、architecture contract 均已通過。同步更新這個刻意變更的 UI 文案契約後，第二次 run `35417075349` 全部通過。
 - **產品驗收**：pending；技術通過不等於使用者已接受新介面。
+
+## M5-UI-R02 — 關係式漏斗與價格尺
+
+- **發現什麼**：R01 只把模型變成積木；真正的條件篩選仍藏在 Evidence 詳細抽屜，使用者無法從第一層直接讀懂「這一步用什麼關係、篩掉多少案例」。同時，既有 M5 只有時間重疊，無法回答多個結構是否落在同一價格區。
+- **為什麼選它**：使用者明確指出需要「直觀的漏斗式篩選」，並進一步確認價格區域比單純同時發訊號更接近研究需求。本輪因此只處理「關係式篩選」這一個大型問題。
+- **研究語意**：新增三種明確關係：同時成立、價格區域重疊、掃單價格進入區域。價格重疊必須是實際區間交集；不把「接近」偷偷算成重疊。Sweep 的事件價格區間固定為最低價到被掃舊低。
+- **因果保護**：所有價格幾何只讀當時已存在的 Evidence；State 使用該 transition 當時記錄的區域直到下一 transition；不使用未來完整形態回填。第一條件仍是 anchor，每個 anchor episode 最多一個組合樣本。
+- **介面**：主側欄新增可直接操作的漏斗；模型磚可直接設為基準／加入漏斗；每一層直接切換關係與事件窗口；價格關係顯示最近符合案例的價格尺；Evidence Dock 改成深入結果，不再是操作漏斗的必經入口。
+- **刻意限制**：R02 第一版只對 Support / Macro / Basin 提供結構價格區，Sweep 提供事件價格區；Field / Echo / Astrology 保持時間關係，不推測不存在的標準價格幾何。
+- **CI 紀錄**：Condition Engine 單獨修改後的中間 commit run `35418372528` 因測試仍鎖定 v1.1 而失敗；同步引擎與關係測試後 run `35418374690` 全綠。UI commit run `35418496346` 的 kernel/model/condition/runner/causality/data/regression/M4 均通過，只有 M5 UI 契約仍鎖定 v1.4 標籤而失敗；本次已把 R02 直接漏斗與價格關係寫入永久 UI 契約，等待完整重跑。
+- **產品驗收**：pending；技術通過後仍需使用者實際測試桌面與手機流程。

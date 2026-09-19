@@ -4,7 +4,7 @@
 
 - Repository: `azaz17283954200078-cpu/Btc-`
 - Default branch: `main`
-- Current milestone: M5 Conditional Research product acceptance hardening
+- Current milestone: M5 Conditional Research product acceptance hardening — UI-R02 relationship funnel
 - M4 Guided Research: completed
 - M5 Shared Condition Engine: technical/research validation passed
 - M5 product acceptance: not complete until desktop/mobile use is tested by the user
@@ -16,6 +16,8 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - Evidence must remain causal / known-through.
 - First condition remains the baseline anchor.
 - Added conditions use anchor-centric sampling; cumulative N cannot increase.
+- Price relations may only filter an anchor episode; they cannot duplicate it or increase N.
+- "價格重疊" means actual interval intersection; proximity/tolerance is not silently treated as overlap.
 - N < 5 = insufficient, 5–19 = exploratory, N >= 20 = comparable.
 - Research output does not become model voting, BUY/SELL, or best-combination ranking.
 - MFE, MAE, return distribution, incomplete future observations and failure cases remain research evidence.
@@ -32,3 +34,12 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - Chinese-first labels; English model names and research abbreviations are secondary.
 - Chart Core, Model Engine, Condition Engine, causality and anchor-centric sampling are protected and unchanged.
 - Product acceptance is still pending real desktop/mobile use.
+
+## M5-UI-R02 relationship funnel
+- Condition Engine v1.2 adds explicit relationship semantics: 同時成立、價格區域重疊、掃單價格進入區域.
+- Price geometry is read only from causal Evidence already present at that historical time.
+- R02 price-aware structures: Support, Macro Bottom, Basin; Sweep contributes its swept interval [low, priorLow].
+- Field, Echo and Astrology remain time-only until they have a justified standard price geometry.
+- The primary sidebar now owns the operable funnel; Evidence Dock is deeper analysis, not a prerequisite for filtering.
+- Closing Evidence details must not clear the active funnel.
+- M5 product acceptance remains pending user desktop/mobile testing.
