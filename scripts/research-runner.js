@@ -70,7 +70,7 @@ function parseCSV(text){
     }
     return -1;
   };
-  const ti=idx('date','datetime','timestamp','time'),
+  const ti=idx('date','datetime','datetime_utc','timestamp','time'),
         oi=idx('open'),hi=idx('high'),li=idx('low'),ci=idx('close'),vi=idx('volume','vol');
   if(ti<0||oi<0||hi<0||li<0||ci<0)throw new Error('CSV requires Date/Time, Open, High, Low, Close columns');
   const out=[];
