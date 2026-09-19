@@ -2036,7 +2036,7 @@ function comboRelationControl(i){
 }
 function comboResultHTML(result){
   if(!result)return'';
-  let h=SINGLE_RESEARCH_HORIZON,x=result.stats&&result.stats[h],gate=result.gate||sampleGate(result.episodeCount);
+  let h=SINGLE_RESEARCH_HORIZON,x=result.stats&&result.stats[h],gate=result.gate;
   let rel=sampleReliability(result.episodeCount),txt=conditionGateText(gate);
   return '<section class="combo-result"><b>組合後剩 '+result.episodeCount+' 個基準案例</b><p>'+esc(txt)+'</p>'+
     (x?'<p>'+esc(horizonHuman(h))+'：完整觀察 '+x.n+' 次 · 尚未完成 '+x.incomplete+' 次 · 歷史中位變化 '+pct(x.medianReturn)+'。這不是成功率或預測。</p>':'')+
