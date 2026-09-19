@@ -4,7 +4,7 @@
 
 - Repository: `azaz17283954200078-cpu/Btc-`
 - Default branch: `main`
-- Current milestone: G02-R2 research safety — user acceptance pending
+- Current milestone: G02 guide technical implementation complete — independent user acceptance pending
 - M4 Guided Research: completed
 - M5 Shared Condition Engine: technical/research validation passed
 - M5 product acceptance: not complete until desktop/mobile use is tested by the user
@@ -79,3 +79,13 @@ This repository is the source of truth for Strategy Lab. Do not use `strategy-fl
 - Fixed-fixture safety audit: IXIC has Macro candidate=1, confirmed=1, confirmed 10-bar N=1 with upRate=100%; TWII candidate=7, confirmed=3, failed-before-confirm=4, confirmed 10-bar N=3 with upRate=66.7%. These are intentionally treated as insufficient-sample demonstrations, not model performance claims.
 - Fixed-fixture Astrology audit found 945 IXIC and 944 TWII event bars plus one upcoming projection record in each run; projection Evidence remains excluded from historical Evaluation.
 - Automated safety gates are green, but the Work acceptance guide requires an uninvolved human to complete the blocker tasks without verbal help. Therefore stage-1 product acceptance remains pending.
+
+## G02-R3 through R7 technical completion
+- R3: all seven single-model surfaces use the same quantity vocabulary: same-state total, completed observation, incomplete observation, browseable cases/display cap. Model-specific notes define what one case means.
+- R4: every model exposes checkable, model-specific Evidence before aggregate outcome statistics. Model Engine 1.2.0 enriches Echo observations with a causal best-match historical range and OHLC similarity components without changing the similarity ranking formula.
+- R5: single-model research snapshots persist in browser localStorage (maximum 30). Saved research retains market, timeframe, model/state, Evidence reference/time, horizon, setting source, parameter snapshot/fingerprint, engine/kernel versions, knownThrough and source. Current research is explicitly distinct from saved snapshots.
+- R6: a dedicated combination-research tab consumes `COMBINATION_HANDOFF_CONTEXT` and its seeded first `CONDITION_STACK` entry. The first condition is not re-entered. Additional conditions and relationship semantics use Shared Condition Engine v1.2 and knownThrough.
+- R7: mobile/tablet stacks chart and research; mobile core controls have touch targets and model research does not depend on hover. Desktop keeps research inline beside the chart rather than covering Chart Core.
+- Final guide audit on fixed IXIC/TWII fixtures exercised all seven models and confirmed failure states, incomplete observations, small-N cases, causal Echo trace, and an explicit no-Macro/no-Sweep flat-market scenario.
+- Latest branch technical run before documentation: `35431231619` success. All existing M4/M5/G01/G02 contracts, regression, causality, data, model presets and G02 final audit passed.
+- Independent human acceptance remains pending because the guide explicitly requires an evaluator who did not participate in development and receives no verbal hints.
