@@ -51,3 +51,17 @@
 - **保護區**：Chart Core、三層 Canvas、Shared Model Engine、Condition Engine v1.2、Evidence schema、known-through、anchor-centric sampling、sample gates、資料來源均不改。
 - **CI 紀錄**：UI 前兩個中間 commits 的 runs `35425623322`、`35425663646` 都只因 M4 契約仍要求舊的 `M4/M5` 版本標籤而失敗；核心引擎與前置回歸均未顯示新增失敗。更新 M4 契約後 run `35425727233` 再因 M5 UI 契約仍鎖定 v1.5 標籤而失敗。同步 M5 契約並新增 G01 永久契約後，runs `35425741161` 與 `35425743357` 全部通過；最終 run 包含 Research Kernel、Model Engine、Condition Engine、Runner、real-market causality、data、regression、M4、M5、G01、preset 全部成功。
 - **產品驗收**：pending；CI 只證明程式與契約沒有破壞，不等於桌面／手機實際閱讀已被使用者接受。
+
+## G02-R1 — 單模型研究架構重建
+
+- **發現什麼**：G01 的文字說明已能讓使用者稍微理解模型，但實際操作仍繁瑣。根因不是文案，而是架構把「模型是否顯示、目前研究哪個模型、正在看哪一筆 Evidence、是否進入組合研究」混在同一套 `PINNED_RESEARCH`／模型磚／漏斗／Evidence Dock 流程。
+- **為什麼選它**：使用者明確要求先把單模型研究架構最佳化，並要求研究成果之後能直接延續到獨立的多模型研究系統。這屬憲法第 23 條重大介面變更，方案已先討論並獲同意。
+- **介面重構**：右側第一層只保留一個單模型研究器。移除 primary DOM 中的 active model stack、research funnel、Evidence Dock/backdrop；模型庫降為折疊的次要「模型庫與圖層」。
+- **狀態解耦**：新增 `FOCUSED_MODEL`、`FOCUSED_EVIDENCE`、`SINGLE_RESEARCH_CONTEXT`、`COMBINATION_HANDOFF_CONTEXT`、`CONDITION_STACK`。單模型研究不再偷偷建立條件漏斗；舊 `PINNED_RESEARCH` 僅留給尚未重建的 legacy M5 組合 UI helper。
+- **顯示 vs 研究**：`isModelVisible()` 只控制圖層；`shouldRunModel()` 讓目前研究的模型即使圖層隱藏仍會由 Shared Model Engine 計算 Evidence。沒有把 Experimental models 預設顯示狀態改成 ON。
+- **現在 vs 歷史**：`openLatestResearch()` 改成只聚焦模型與現在；如果最新市場沒有 Evidence，直接說沒有，再由使用者明確按「查看最近一次歷史案例」。不再 `current || lastHistorical` 靜默 fallback。
+- **歷史研究**：3/5/10/20 K 只顯示一個 selected horizon；真實案例改為較新／較舊導航。切換案例會同時更新右側 Evidence 與主圖 viewport；點主圖模型標記也會反向同步右側。
+- **組合研究接續**：單模型可建立 handoff context，包含 market / timeframe / model / state / condition / Evidence id/index/detectedAt/evidenceStart/kind / selected horizon / setting source / parameter snapshot / parameter fingerprint / engine+kernel version / knownThrough / data source。hand-off 直接 seed 第一個 `CONDITION_STACK`；若模型參數改變，舊 handoff 會失效而不是偷偷沿用。
+- **保護區**：Chart Core、三層 Canvas、Shared Model Engine 世界觀、Research Kernel、Condition Engine v1.2、Evidence schema、causality、Runner parity、sample gates、data sources 均未改。
+- **CI 過程**：前段 UI commits 的 runs `35427293629`、`35427360412`、`35427370801` 先因舊 M4/G01 契約仍要求舊版 primary surface 而失敗；更新 M4/M5/G01 契約後，新增 G02-R1 architecture gate，完整 branch run `35427426794` 全綠。該 run 包含 Research Kernel、Model Engine、Condition Engine、Runner、real-market causality、market data、regression、architecture、M4、M5、G01、G02-R1、preset 全部成功。
+- **產品驗收**：pending。CI 證明架構契約與既有研究基礎未被破壞，但沒有完成真實桌面／手機視覺與觸控人工驗收；下一步應先由使用者測單模型流程，再決定獨立組合研究工作區。
