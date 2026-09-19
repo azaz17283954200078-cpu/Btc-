@@ -4,7 +4,7 @@
   root.StrategyLabModelPresets=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  const VERSION='0.6.0-candidate';
+  const VERSION='1.0.0-validated';
   const PRESETS={
     support:[
       {id:'sensitive',title:'較早看見',intent:'縮短低點比較範圍，讓較小的支撐結構也能進入研究。',config:{zone:{pivot:3,atr:14,width:.72,breakAtr:.42}}},
@@ -48,7 +48,308 @@
       {id:'sensitive',title:'較廣事件集',intent:'加入三王星、較寬 Orb、逆行與入座事件，事件會更多。',config:{exp:{astro:{planetSet:'modern',aspectSet:'major',orb:6,retro:'on',ingress:'on'}}}}
     ]
   };
+  const VALIDATION={
+  "validatedAt": "2026-09-19",
+  "basis": "Research Runner semantic-fit validation; counts are primary-state occurrences, n10 is completed 10-bar outcomes. Presets were not selected by return ranking.",
+  "contexts": [
+    {
+      "market": "BTC",
+      "timeframe": "1d",
+      "bars": 1800
+    },
+    {
+      "market": "BTC",
+      "timeframe": "1w",
+      "bars": 700
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1d",
+      "bars": 1800
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1d",
+      "bars": 1800
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1w",
+      "bars": 700
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1w",
+      "bars": 700
+    },
+    {
+      "market": "IXIC",
+      "timeframe": "1m",
+      "bars": 300
+    },
+    {
+      "market": "TWII",
+      "timeframe": "1m",
+      "bars": 300
+    }
+  ],
+  "models": {
+    "support": {
+      "primaryState": "potential",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          415,
+          332,
+          222
+        ],
+        "pass": true
+      },
+      "presets": {
+        "sensitive": {
+          "count": 415,
+          "n10": 412,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "balanced": {
+          "count": 332,
+          "n10": 326,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "selective": {
+          "count": 222,
+          "n10": 220,
+          "contextsWithSamples": 8,
+          "errors": 0
+        }
+      }
+    },
+    "macro": {
+      "primaryState": "candidate",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          85,
+          52,
+          39
+        ],
+        "pass": true
+      },
+      "presets": {
+        "sensitive": {
+          "count": 85,
+          "n10": 85,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "balanced": {
+          "count": 52,
+          "n10": 52,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "selective": {
+          "count": 39,
+          "n10": 39,
+          "contextsWithSamples": 7,
+          "errors": 0
+        }
+      }
+    },
+    "sweep": {
+      "primaryState": "event",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          212,
+          133,
+          82
+        ],
+        "pass": true
+      },
+      "presets": {
+        "sensitive": {
+          "count": 212,
+          "n10": 211,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "balanced": {
+          "count": 133,
+          "n10": 133,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "selective": {
+          "count": 82,
+          "n10": 82,
+          "contextsWithSamples": 8,
+          "errors": 0
+        }
+      }
+    },
+    "basin": {
+      "primaryState": "active",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          109,
+          57,
+          43
+        ],
+        "pass": true
+      },
+      "presets": {
+        "sensitive": {
+          "count": 109,
+          "n10": 109,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "balanced": {
+          "count": 57,
+          "n10": 57,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "selective": {
+          "count": 43,
+          "n10": 43,
+          "contextsWithSamples": 5,
+          "errors": 0
+        }
+      }
+    },
+    "field": {
+      "primaryState": "active",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          246,
+          140,
+          25
+        ],
+        "pass": true
+      },
+      "presets": {
+        "sensitive": {
+          "count": 246,
+          "n10": 243,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "balanced": {
+          "count": 140,
+          "n10": 137,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "selective": {
+          "count": 25,
+          "n10": 24,
+          "contextsWithSamples": 5,
+          "errors": 0
+        }
+      }
+    },
+    "echo": {
+      "primaryState": "strong",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          519,
+          20,
+          14
+        ],
+        "pass": true
+      },
+      "presets": {
+        "sensitive": {
+          "count": 519,
+          "n10": 510,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "balanced": {
+          "count": 20,
+          "n10": 20,
+          "contextsWithSamples": 7,
+          "errors": 0
+        },
+        "selective": {
+          "count": 14,
+          "n10": 14,
+          "contextsWithSamples": 5,
+          "errors": 0
+        }
+      }
+    },
+    "astro": {
+      "primaryState": "event",
+      "ordering": {
+        "ids": [
+          "sensitive",
+          "balanced",
+          "selective"
+        ],
+        "values": [
+          7977,
+          6836,
+          3436
+        ],
+        "pass": true
+      },
+      "presets": {
+        "selective": {
+          "count": 3436,
+          "n10": 3403,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "balanced": {
+          "count": 6836,
+          "n10": 6766,
+          "contextsWithSamples": 8,
+          "errors": 0
+        },
+        "sensitive": {
+          "count": 7977,
+          "n10": 7898,
+          "contextsWithSamples": 8,
+          "errors": 0
+        }
+      }
+    }
+  }
+};
   function list(model){return (PRESETS[model]||[]).map(x=>JSON.parse(JSON.stringify(x)))}
   function get(model,id){return list(model).find(x=>x.id===id)||null}
-  return{VERSION,PRESETS,list,get};
+  function validation(model,id){return VALIDATION.models[model]&&VALIDATION.models[model].presets[id]?JSON.parse(JSON.stringify(VALIDATION.models[model].presets[id])):null}
+  return{VERSION,PRESETS,VALIDATION,list,get,validation};
 });
