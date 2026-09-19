@@ -4,6 +4,7 @@ const Runner=require('./research-runner.js');
 const Presets=require('../src/model-presets.js');
 
 const CONTEXTS=[
+  {market:'BTC',timeframe:'1d',bars:1800},{market:'BTC',timeframe:'1w',bars:700},
   {market:'IXIC',timeframe:'1d',bars:1800},{market:'TWII',timeframe:'1d',bars:1800},
   {market:'IXIC',timeframe:'1w',bars:700},{market:'TWII',timeframe:'1w',bars:700},
   {market:'IXIC',timeframe:'1m',bars:300},{market:'TWII',timeframe:'1m',bars:300}
