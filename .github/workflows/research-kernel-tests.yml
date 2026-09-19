@@ -66,6 +66,8 @@ jobs:
         run: node tests/g02-r4-model-proof-contract.test.js
       - name: G02-R5 saved research continuity contract
         run: node tests/g02-r5-saved-research-contract.test.js
+      - name: G02-R6 combination entry contract
+        run: node tests/g02-r6-combination-entry-contract.test.js
       - name: Validated model preset contract
         run: node tests/model-presets.test.js
       - name: M4 validated preset semantic gate
