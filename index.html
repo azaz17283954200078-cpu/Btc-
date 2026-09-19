@@ -551,6 +551,9 @@ td:first-child,th:first-child{text-align:left}
 .reliability-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:9px}.reliability-grid>div{padding:7px;background:#0e2134;border-radius:8px}.reliability-grid span,.reliability-grid b{display:block}.reliability-grid span{font-size:8.3px;color:#8ea6bf}.reliability-grid b{font-size:11px;color:#e9f1fb;margin-top:2px}.reliability-note{margin-top:8px;color:#9fb3c9;font-size:9px;line-height:1.45}.reliability-card details{margin-top:8px;border-top:1px solid #243b54;padding-top:7px}.reliability-card summary{font-size:9.4px;color:#b7c9dc;cursor:pointer}.reliability-card ul{padding-left:17px;color:#9fb2c8;font-size:9px;line-height:1.5}.reliability-card code{font-size:8px}.reliability-card p{font-size:9px;color:#8fa4bc;line-height:1.45}
 .blind-validation{margin-top:9px;padding:9px;border:1px dashed #496785;border-radius:9px;background:#0c1c2d;color:#a9bdd3;font-size:9px;line-height:1.5}.blind-validation b{display:block;color:#e0eaf5}.blind-validation p{margin:3px 0 6px}.blind-validation button{margin-top:7px;min-height:32px}.blind-validation.revealed{border-style:solid}
 @media(max-width:650px){.reliability-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.blind-validation button{min-height:44px;width:100%}}
+
+.reliability-matrix{margin-top:9px;padding-top:7px;border-top:1px solid #29435e}.reliability-matrix>summary{font-size:9.5px;color:#bfd0e1}.reliability-matrix p{margin:7px 0;color:#99aec5}.reliability-matrix button{min-height:32px}.matrix-scroll{overflow:auto;margin-top:7px}.reliability-matrix table{width:100%;border-collapse:collapse;font-size:8.8px}.reliability-matrix th,.reliability-matrix td{padding:6px;border-bottom:1px solid #243a52;text-align:left;white-space:nowrap}.reliability-matrix th{color:#8299b3;font-weight:600}.reliability-matrix td{color:#b4c6d9}.reliability-matrix td small{display:block;color:#728aa4;font-size:7.8px}
+@media(max-width:650px){.reliability-matrix button{min-height:44px;width:100%}}
 </style></head><body><main>
 <section class="box topbar">
   <div class="brand"><h1>Strategy Lab</h1><span class="muted">v2.4 · G03-R2 Runner／可信度基礎｜v2.3 · G02-R7 裝置與流程硬化</span></div>
@@ -957,7 +960,10 @@ let FOCUSED_MODEL='support',
     HANDOFF_NOTICE='',
     CURRENT_RUN_MANIFEST=null,
     CURRENT_RELIABILITY=null,
-    REVEALED_VALIDATION_RUN_ID=null;
+    REVEALED_VALIDATION_RUN_ID=null,
+    CURRENT_RELIABILITY_MATRIX=null;
+const RELIABILITY_MATRIX_CACHE={};
+const RELIABILITY_PRIMARY_STATE={support:'potential',macro:'candidate',sweep:'event',basin:'active',field:'active',echo:'strong',astro:'event'};
 let PINNED_RESEARCH=null,RESEARCH_DETAIL_OPEN=false,LAST_TOOLTIP_HIT=null;
 const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,MS=window.StrategyLabModelSemantics||null,REL=window.StrategyLabReliability||null,RR=window.StrategyLabResearchRun||null,CE=window.StrategyLabConditionEngine||null;
 if(!ME||!MP||!MS||!REL||!RR||!CE)throw new Error('Strategy Lab shared research modules failed to load');
@@ -968,6 +974,7 @@ window.__SL_COMBINATION_HANDOFF__=COMBINATION_HANDOFF_CONTEXT;
 window.__SL_CONDITION_STACK__=CONDITION_STACK;
 window.__SL_RUN_MANIFEST__=CURRENT_RUN_MANIFEST;
 window.__SL_CURRENT_RELIABILITY__=CURRENT_RELIABILITY;
+window.__SL_RELIABILITY_MATRIX__=CURRENT_RELIABILITY_MATRIX;
 
 function resetEvidenceTimeline(){
   EVIDENCE=[];EVIDENCE_LOG=[];EVIDENCE_ERRORS=[];EVALUATION=null;
@@ -2017,6 +2024,71 @@ function reliabilityLevelClass(level){
   if(!level)return'';
   return level.id==='robust'?'good':level.id==='researchable'?'good':level.id==='exploratory'?'warn':'err'
 }
+function presetRunOptions(model,preset){
+  let zone=cloneObj(ME.DEFAULT_ZONE),macro=cloneObj(ME.DEFAULT_MACRO),sweep=cloneObj(ME.DEFAULT_SWEEP),exp=cloneObj(ME.DEFAULT_EXP),
+      c=cloneObj(preset&&preset.config||{}),enabled={support:false,macro:false,sweep:false,basin:false,field:false,echo:false,astro:false};
+  enabled[model]=true;
+  if(c.zone)deepAssign(zone,c.zone);
+  if(c.macro)deepAssign(macro,c.macro);
+  if(c.sweep)deepAssign(sweep,c.sweep);
+  if(c.exp)deepAssign(exp,c.exp);
+  return{enabled,zone,macro,sweep,exp}
+}
+function reliabilityMatrixKey(model){
+  let end=D.length?D[D.length-1].t:0;
+  return [q('market')?q('market').value:'CUSTOM',tf,model,end,D.length,MP.VERSION,REL.VERSION].join('|')
+}
+function buildFocusedReliabilityMatrix(){
+  if(!D.length||!FOCUSED_MODEL)return;
+  let model=FOCUSED_MODEL,key=reliabilityMatrixKey(model);
+  if(RELIABILITY_MATRIX_CACHE[key]){
+    CURRENT_RELIABILITY_MATRIX=cloneObj(RELIABILITY_MATRIX_CACHE[key]);
+    window.__SL_RELIABILITY_MATRIX__=CURRENT_RELIABILITY_MATRIX;
+    renderSingleResearch();return
+  }
+  let state=RELIABILITY_PRIMARY_STATE[model],cells=[];
+  for(const p of MP.list(model)){
+    let opt=presetRunOptions(model,p),
+        res=ME.run(D,{market:q('market').value,timeframe:tf,source:sourceNote,...opt}),
+        rel=REL.evaluateModelState(D,res.evidenceLog,{
+          model,state,horizon:SINGLE_RESEARCH_HORIZON,market:q('market').value,timeframe:tf,
+          knownThrough:D.length-1,marketCoverage:MARKET_COVERAGE,
+          parameterStability:p.parameterStability===true?true:null
+        }),
+        level=p.level||(p.id==='sensitive'?'loose':p.id==='selective'?'strict':'balanced');
+    cells.push({model,state,presetId:p.id,presetLevel:level,title:p.title,parameterFingerprint:res.parameterFingerprint,reliability:rel})
+  }
+  let order={loose:0,balanced:1,strict:2};
+  cells.sort((a,b)=>(order[a.presetLevel]??9)-(order[b.presetLevel]??9));
+  for(const cell of cells)cell.weaknesses=REL.diagnosePresetCell(cell,cells);
+  CURRENT_RELIABILITY_MATRIX={
+    version:1,market:q('market').value,timeframe:tf,model,state,
+    dataCutoff:D[D.length-1].t,horizon:SINGLE_RESEARCH_HORIZON,
+    comparison:REL.comparePresetCells(cells),cells,
+    rule:'只比較 Evidence 數量、N_eff、時間覆蓋、生命周期與 OOS；不使用報酬高低挑 preset。'
+  };
+  RELIABILITY_MATRIX_CACHE[key]=cloneObj(CURRENT_RELIABILITY_MATRIX);
+  window.__SL_RELIABILITY_MATRIX__=CURRENT_RELIABILITY_MATRIX;
+  renderSingleResearch()
+}
+function reliabilityMatrixHTML(model){
+  let key=reliabilityMatrixKey(model),m=RELIABILITY_MATRIX_CACHE[key]||CURRENT_RELIABILITY_MATRIX;
+  if(!m||m.model!==model){
+    return '<details class="reliability-matrix"><summary>資料矩陣怎麼評估？</summary>'+
+      '<p>矩陣固定比較「模型 × preset × 市場 × 週期 × 校準狀態」。它先看完整案例、N_eff、時間跨度、生命周期與 OOS，再診斷薄弱原因；<b>不拿報酬高低挑參數</b>。</p>'+
+      '<button onclick="buildFocusedReliabilityMatrix()">建立目前市場／週期的三套 preset 矩陣</button></details>'
+  }
+  let rows=(m.cells||[]).map(c=>{
+    let r=c.reliability||{},v=r.oos&&r.oos.validation||{},weak=(c.weaknesses||[]).join('、')||'—';
+    return '<tr><td><b>'+esc(c.title)+'</b><small>'+esc(c.presetLevel)+'</small></td>'+
+      '<td>'+esc(r.level&&r.level.label||'—')+'</td><td>'+Number(r.counts&&r.counts.complete||0)+'</td>'+
+      '<td>'+Number(r.counts&&r.counts.nEff||0)+'</td><td>'+Number(v.complete||0)+'</td><td>'+esc(weak)+'</td></tr>'
+  }).join('');
+  return '<details class="reliability-matrix" open><summary>資料矩陣｜'+esc(m.market)+' '+esc(String(m.timeframe).toUpperCase())+' · 校準狀態 '+esc(stateDisplayLabel(model,m.state))+'</summary>'+
+    '<p>'+esc(m.rule)+' 寬鬆 → 平衡 → 嚴格的案例量'+(m.comparison&&m.comparison.monotonic?'符合':'目前不符合')+'單調性。</p>'+
+    '<div class="matrix-scroll"><table><thead><tr><th>Preset</th><th>可信度</th><th>完整 N</th><th>N_eff</th><th>OOS N</th><th>薄弱原因</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<small>矩陣結果是目前載入資料的研究診斷，不是模型排名。</small></details>'
+}
 function reliabilityHTML(model,state){
   let r=currentReliability(model,state);CURRENT_RELIABILITY=r;window.__SL_CURRENT_RELIABILITY__=r;
   if(!r)return'';
@@ -2037,6 +2109,7 @@ function reliabilityHTML(model,state){
       '<div class="reliability-integrity">'+(integrity.pass?'✓ 原始資料完整性 gate 通過':'⚠ 原始資料完整性 gate 未通過')+'</div>'+
       (weakness?'<b>目前薄弱原因</b><ul>'+weakness+'</ul>':'<div class="good">目前沒有額外薄弱原因被觸發。</div>')+
       '<p>'+esc(r.disclaimer)+'</p></details>'+
+    reliabilityMatrixHTML(model)+
     blindValidationHTML(model,state,r)+
     '</section>'
 }
