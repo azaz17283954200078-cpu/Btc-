@@ -418,7 +418,7 @@ td:first-child,th:first-child{text-align:left}
         <div class="guided-start"><b>先挑一個模型，看懂它現在為什麼出現</b><span>先不用理解 Evidence、MFE 或條件重疊。點一個模型的案例後，研究區會依序告訴你「現在看到什麼、為什麼、接下來看什麼」，最後才看歷史結果。</span></div>
 
         <div class="research-stack-head">
-          <div><b>目前開啟的模型</b><span>先從其中一個開始理解</span></div>
+          <div><b>目前開啟的模型</b><span>第一步只要選一個看懂</span></div>
           <button onclick="openModelLibrary()">＋ 加入模型</button>
         </div>
         <div id="researchStackSummary" class="research-stack-summary" aria-live="polite">正在整理目前研究條件…</div>
@@ -1304,11 +1304,14 @@ function renderResearchStack(){
   if(PINNED_RESEARCH&&D.length&&conditions.length){
     try{result=CE.evaluateConditions(D,EVIDENCE_LOG,conditions,{knownThrough:D.length-1})}catch(_){result=null}
   }
-  if(PINNED_RESEARCH&&result){
-    summary.innerHTML='<strong>目前漏斗：</strong>'+conditions.map(c=>esc(conditionLabel(c))).join(' → ')+
+  if(PINNED_RESEARCH&&result&&conditions.length>1){
+    summary.innerHTML='<strong>目前已有 '+conditions.length+' 個組合條件：</strong>'+conditions.map(c=>esc(conditionLabel(c))).join(' → ')+
       ' · 最後剩 '+result.episodeCount+' 次 · '+esc(result.gate.label)
+  }else if(PINNED_RESEARCH&&conditions.length===1){
+    summary.innerHTML='<strong>先研究單一模型：</strong>'+esc(conditionLabel(conditions[0]))+
+      '。先把「為什麼出現、下一步看什麼、歷史案例怎麼讀」弄懂，再決定要不要組合第二個模型。'
   }else{
-    summary.innerHTML='<strong>從一個模型開始：</strong>先設成基準，再直接加入下一個模型；每一步都會顯示篩掉多少歷史案例。'
+    summary.innerHTML='<strong>從一個模型開始：</strong>按「看懂這個模型」，先完成單一模型研究；組合條件放到下一步。'
   }
   if(!enabled.length){
     box.innerHTML='<div class="active-model-empty">目前沒有開啟任何模型。按「＋ 加入模型」從一個你看得懂的市場問題開始。</div>';
@@ -1319,18 +1322,20 @@ function renderResearchStack(){
         idx=conditionIndex.has(model)?conditionIndex.get(model):-1,
         stage=result&&idx>=0&&result.funnel?result.funnel[idx]:null,
         st=e?evalState(model,e.state):null,title=(MODEL_TITLES[model]||model).split('｜'),
-        role=idx===0?'基準條件':idx>0?('漏斗第 '+(idx+1)+' 層'):'已開啟',
-        conditionMeta=stage?(idx===0?('基準 '+stage.episodeCount+' 次'):('篩到 '+stage.episodeCount+' 次')):'',
+        role=idx===0?'正在研究':idx>0?('組合條件 '+(idx+1)):'已開啟',
+        conditionMeta=stage?(idx===0?('單一模型案例 '+stage.episodeCount+' 次'):('組合後 '+stage.episodeCount+' 次')):'',
         sample=st?('同狀態歷史 '+st.count+' 次'):(e?'目前沒有完整統計':'尚無可研究案例'),
-        action=!PINNED_RESEARCH?'設為基準':idx>=0?'查看證據':conditions.length<MAX_CONDITIONS?'加入漏斗':'漏斗已滿',
-        fn=!PINNED_RESEARCH?'startResearchFunnel(\''+model+'\')':idx>=0?'openFunnelEvidence()':conditions.length<MAX_CONDITIONS?'addModelToFunnel(\''+model+'\')':'';
+        comboButton=PINNED_RESEARCH&&idx<0&&conditions.length<MAX_CONDITIONS&&e
+          ?'<button class="quiet" onclick="addModelToFunnel(\''+model+'\')">加入組合研究</button>':'';
     return '<article class="active-model-brick '+(idx>=0?'in-condition':'')+'" data-active-model="'+model+'">'+
       '<div class="active-model-brick-head"><div class="active-model-title"><b>'+esc(title[0])+'</b><small>'+esc(title[1]||'')+'</small></div>'+
       '<span class="active-model-role">'+esc(role)+'</span></div>'+
       '<div class="active-model-state">'+(e?(current?'目前：':'最近一次：'):'')+esc(e?plainResearch(model,e.state):'目前還沒有找到符合條件的市場證據。')+'</div>'+
       '<div class="active-model-meta"><span>'+esc(modelSettingLabel(model))+'</span><span>'+esc(sample)+'</span>'+
       (conditionMeta?'<span>'+esc(conditionMeta)+'</span>':'')+'</div>'+
-      '<div class="active-model-actions"><button '+(e&&fn?'onclick="'+fn+'"':'disabled')+'>'+esc(e?action:'目前沒有案例')+'</button>'+
+      '<div class="active-model-actions"><button '+(e?'onclick="openLatestResearch(\''+model+'\')"':'disabled')+'>'+
+      esc(e?(idx>=0?'回到固定研究':'看懂這個模型'):'目前沒有案例')+'</button>'+
+      comboButton+
       '<button onclick="openParams(\''+model+'\')">調整設定</button>'+
       '<button class="quiet" onclick="disableModel(\''+model+'\')">關閉模型</button></div></article>'
   }).join('');
