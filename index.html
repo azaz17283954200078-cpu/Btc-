@@ -753,6 +753,8 @@ function renderParamBody(){
 }
 function openParams(k){
   let sc=PARAM_SCHEMA[k];if(!sc)return;
+  FOCUSED_MODEL=k;FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
+  let sel=q('singleModelSelect');if(sel)sel.value=k;
   ACTIVE_PARAM_MODEL=k;ACTIVE_PRESET_ID=null;PARAM_DRAFT=modelDraft(k);
   q('paramTitle').textContent=sc.title;renderPresetChoices();renderParamBody();
   q('paramRunStatus').textContent='先選一個研究方式，或展開下面自己微調';
@@ -767,7 +769,7 @@ function restoreParams(){
 }
 function applyParams(){
   if(!ACTIVE_PARAM_MODEL||!PARAM_DRAFT)return;
-  applyDraftToModel(ACTIVE_PARAM_MODEL,PARAM_DRAFT);MODEL_SETTING_STATE[ACTIVE_PARAM_MODEL]={kind:'custom'};enableModel(ACTIVE_PARAM_MODEL);zoneCalc();
+  applyDraftToModel(ACTIVE_PARAM_MODEL,PARAM_DRAFT);MODEL_SETTING_STATE[ACTIVE_PARAM_MODEL]={kind:'custom'};clearCombinationHandoff('模型設定已變更；若要進組合研究，請重新確認並準備一次。');zoneCalc();
   q('paramRunStatus').textContent='已用你目前看到的參數重新掃過歷史與現在'
 }
 function resetModelSettings(k){
@@ -794,7 +796,7 @@ function applyPreset(k,id){
   if(c.macro)deepAssign(MACRO,c.macro);
   if(c.sweep)deepAssign(SWEEP,c.sweep);
   if(c.exp)deepAssign(EXP,c.exp);
-  MODEL_SETTING_STATE[k]={kind:'preset',id};enableModel(k);ACTIVE_PRESET_ID=id;PARAM_DRAFT=modelDraft(k);zoneCalc();
+  MODEL_SETTING_STATE[k]={kind:'preset',id};FOCUSED_MODEL=k;clearCombinationHandoff('模型設定已變更；若要進組合研究，請重新確認並準備一次。');ACTIVE_PRESET_ID=id;PARAM_DRAFT=modelDraft(k);zoneCalc();
   renderPresetChoices();renderParamBody();
   q('paramRunStatus').textContent='已套用「'+p.title+'」並重新掃過；現在可回圖上比較結果'
 }
@@ -811,11 +813,21 @@ function moveParamDrag(e){
 }
 function endParamDrag(e){if(!paramDrag)return;paramDrag=null;try{e.currentTarget.releasePointerCapture(e.pointerId)}catch(_){}}
 function switchLabTab(x){q('modelsPane').classList.toggle('on',x==='models');q('scriptPane').classList.toggle('on',x==='script');q('tabModels').classList.toggle('on',x==='models');q('tabScript').classList.toggle('on',x==='script');setTimeout(draw,0)}let tf='1w',D=[],R=[],SIG=[],V=[0,0],drag,hover=-1,sourceNote='',MARKET_COVERAGE={provider:null,requestedBars:null,returnedBars:0,targetReached:true,historyExhausted:false,fetchInterrupted:false,reason:''},HIT=[],MODEL_HIT=[],SCRIPT_HIT=[],mousePos=null,scriptVisible=true,BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVALUATION=null;
+let FOCUSED_MODEL='support',
+    FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null},
+    SINGLE_RESEARCH_HORIZON=10,
+    SINGLE_RESEARCH_CONTEXT=null,
+    COMBINATION_HANDOFF_CONTEXT=null,
+    CONDITION_STACK=[],
+    HANDOFF_NOTICE='';
 let PINNED_RESEARCH=null,RESEARCH_DETAIL_OPEN=false,LAST_TOOLTIP_HIT=null;
 const RK=window.StrategyLabKernel||null,ME=window.StrategyLabModelEngine||null,MP=window.StrategyLabModelPresets||null,CE=window.StrategyLabConditionEngine||null;
 if(!ME||!MP||!CE)throw new Error('Strategy Lab shared research modules failed to load');
 window.__SL_KERNEL__=RK;window.__SL_MODEL_ENGINE__=ME;window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;
 window.__SL_EVIDENCE__=EVIDENCE;window.__SL_EVIDENCE_LOG__=EVIDENCE_LOG;window.__SL_EVIDENCE_ERRORS__=EVIDENCE_ERRORS;window.__SL_EVALUATION__=EVALUATION;
+window.__SL_SINGLE_RESEARCH_CONTEXT__=SINGLE_RESEARCH_CONTEXT;
+window.__SL_COMBINATION_HANDOFF__=COMBINATION_HANDOFF_CONTEXT;
+window.__SL_CONDITION_STACK__=CONDITION_STACK;
 
 function resetEvidenceTimeline(){
   EVIDENCE=[];EVIDENCE_LOG=[];EVIDENCE_ERRORS=[];EVALUATION=null;
@@ -918,7 +930,7 @@ async function binance(interval){
   let m=new Map(all.map(x=>[x.t,x])),data=[...m.values()].sort((a,b)=>a.t-b.t);
   return{data,coverage:{provider:'Binance',requestedBars:target,returnedBars:data.length,pages,targetReached:data.length>=target,historyExhausted,fetchInterrupted,reason}}
 }
-async function load(){closeEvidenceDock(false);q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];MARKET_COVERAGE={provider:null,requestedBars:null,returnedBars:0,targetReached:true,historyExhausted:false,fetchInterrupted:false,reason:''};window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;EVIDENCE.length=0;window.__SL_EVIDENCE__=EVIDENCE;resetEvidenceTimeline();draw();let m=q('market').value;try{if(m==='BTC'){
+async function load(){closeEvidenceDock(false);resetSingleResearchForMarketChange();q('status').textContent='載入中';q('msg').textContent='正在取得行情…';q('mkt').textContent=q('market').selectedOptions[0].text;q('tfv').textContent=tf.toUpperCase();q('range').textContent='—';q('bars').textContent='—';D=[];R=[];SIG=[];MARKET_COVERAGE={provider:null,requestedBars:null,returnedBars:0,targetReached:true,historyExhausted:false,fetchInterrupted:false,reason:''};window.__SL_MARKET_COVERAGE__=MARKET_COVERAGE;EVIDENCE.length=0;window.__SL_EVIDENCE__=EVIDENCE;resetEvidenceTimeline();draw();let m=q('market').value;try{if(m==='BTC'){
     if(tf==='1d'||tf==='1w'){
       let raw=await fetch(BTC_D).then(r=>{if(!r.ok)throw Error('BTC daily '+r.status);return r.text()}),a=parseCSV(raw).map(x=>({...x,v:x.v*x.c}));
       D=tf==='1w'?aggregate(a,'1w'):a;
@@ -948,15 +960,15 @@ function fieldDriftText(x){return ME.fieldDriftText(x)}
 function fieldCompressionText(x){return ME.fieldCompressionText(x)}
 function fieldBiasText(x){return ME.fieldBiasText(x)}
 function zoneCalc(){
-  if(!D.length)return;
+  if(!D.length){renderSingleResearch();return}
   const enabled={
-    support:!!q('modSupport').checked,
-    macro:!!q('modMacro').checked,
-    sweep:!!q('modSweep').checked,
-    basin:!!q('modBasin').checked,
-    field:!!q('modSpring').checked,
-    echo:!!q('modEcho').checked,
-    astro:!!q('modAstro').checked
+    support:shouldRunModel('support'),
+    macro:shouldRunModel('macro'),
+    sweep:shouldRunModel('sweep'),
+    basin:shouldRunModel('basin'),
+    field:shouldRunModel('field'),
+    echo:shouldRunModel('echo'),
+    astro:shouldRunModel('astro')
   };
   const res=ME.run(D,{
     market:q('market').value,timeframe:tf,source:sourceNote,
@@ -964,7 +976,6 @@ function zoneCalc(){
   });
   applyModelEngineResult(res);
   safeDrawModels();
-  if(PINNED_RESEARCH)renderEvidenceDock();
 }
 function macroCalc(){zoneCalc()}
 function bottomLabCalc(){zoneCalc()}
@@ -1177,7 +1188,7 @@ function guidanceHTML(model,state){
 
 function isMobileUI(){return window.matchMedia&&window.matchMedia('(max-width:650px)').matches}
 function isCoarsePointer(){return window.matchMedia&&window.matchMedia('(pointer: coarse)').matches}
-function interactionHint(){return isMobileUI()?'先看研究條件組；點圖上證據可固定研究，單指拖曳、雙指縮放。':'先看右側研究條件組；移到圖上看摘要，點擊固定研究，拖曳平移、滾輪縮放。'}
+function interactionHint(){return isMobileUI()?'右側一次研究一個模型；點圖上模型標記可同步案例，單指拖曳、雙指縮放。':'右側一次研究一個模型；移到圖上看摘要，點模型標記會同步右側案例，拖曳平移、滾輪縮放。'}
 function pct(v,d=1){return v==null||!Number.isFinite(v)?'—':(v*100).toFixed(d)+'%'}
 function conf(v){return v==null||!Number.isFinite(v)?'—':Math.round(v)+'%'}
 function normHitState(model,state){
@@ -1242,6 +1253,266 @@ const MODEL_UI={
   echo:{check:'modEcho',status:'modelStatusEcho',button:'researchBtnEcho'},
   astro:{check:'modAstro',status:'modelStatusAstro',button:'researchBtnAstro'}
 };
+function isModelVisible(model){
+  let ui=MODEL_UI[model],el=ui&&q(ui.check);
+  return !!(el&&el.checked)
+}
+function shouldRunModel(model){
+  return isModelVisible(model)||model===FOCUSED_MODEL||
+    CONDITION_STACK.some(c=>c&&c.model===model)||
+    !!(COMBINATION_HANDOFF_CONTEXT&&COMBINATION_HANDOFF_CONTEXT.model===model)
+}
+function focusedEvidenceRecord(){
+  if(!FOCUSED_MODEL)return null;
+  if(FOCUSED_EVIDENCE&&FOCUSED_EVIDENCE.mode==='history'){
+    let id=FOCUSED_EVIDENCE.id,idx=FOCUSED_EVIDENCE.index,state=FOCUSED_EVIDENCE.state;
+    return EVIDENCE_LOG.find(e=>e.model===FOCUSED_MODEL&&id&&e.id===id)||
+      EVIDENCE_LOG.find(e=>e.model===FOCUSED_MODEL&&e.index===idx&&(!state||e.state===state))||null
+  }
+  return currentEvidenceForModel(FOCUSED_MODEL)
+}
+function syncFocusedEvidenceAfterRun(){
+  if(!FOCUSED_EVIDENCE||FOCUSED_EVIDENCE.mode!=='history')return;
+  let e=focusedEvidenceRecord();
+  if(e)return;
+  FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
+  HANDOFF_NOTICE='模型或資料更新後，原本選到的歷史案例已不存在；已回到「現在」。'
+}
+function focusSingleModel(model){
+  if(!MODEL_UI[model])return;
+  FOCUSED_MODEL=model;
+  FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
+  SINGLE_RESEARCH_HORIZON=10;
+  let sel=q('singleModelSelect');if(sel)sel.value=model;
+  if(D.length)zoneCalc();else renderSingleResearch()
+}
+function viewSingleNow(){
+  FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
+  renderSingleResearch()
+}
+function focusHistoryEvidence(e,moveChart=true){
+  if(!e||!e.model)return;
+  FOCUSED_MODEL=e.model;
+  FOCUSED_EVIDENCE={mode:'history',id:e.id||null,index:e.index,state:e.state||null};
+  let sel=q('singleModelSelect');if(sel)sel.value=e.model;
+  renderSingleResearch();
+  if(moveChart&&Number.isInteger(e.index))jumpToEvidence(e.index)
+}
+function viewLatestHistoricalCase(model=FOCUSED_MODEL){
+  if(model!==FOCUSED_MODEL){FOCUSED_MODEL=model;if(D.length)zoneCalc()}
+  let e=lastHistoricalEvidence(model);
+  if(e)focusHistoryEvidence(e,true)
+}
+function focusSingleEvidenceFromHit(hit){
+  let r=resolveResearchHit(hit);if(!r)return false;
+  FOCUSED_MODEL=r.model;
+  let e=nearestEvidence(r.model,r.state,r.index);
+  if(e)focusHistoryEvidence(e,false);
+  else{
+    FOCUSED_EVIDENCE={mode:'history',id:null,index:r.index,state:r.state};
+    renderSingleResearch()
+  }
+  let sel=q('singleModelSelect');if(sel)sel.value=r.model;
+  return true
+}
+function toggleFocusedOverlay(on){
+  let ui=MODEL_UI[FOCUSED_MODEL],el=ui&&q(ui.check);
+  if(el)el.checked=!!on;
+  if(D.length)zoneCalc();else renderSingleResearch()
+}
+function openFocusedModelParams(){if(FOCUSED_MODEL)openParams(FOCUSED_MODEL)}
+function setSingleHorizon(h){
+  h=Math.round(Number(h));
+  if(![3,5,10,20].includes(h))return;
+  SINGLE_RESEARCH_HORIZON=h;renderSingleResearch()
+}
+function horizonShortLabel(h){
+  return horizonHuman(h).replace(/^約\s*/,'')
+}
+function singleGuidanceHTML(model,state){
+  let g=guideFor(model,state);
+  return '<div class="single-guide">'+
+    '<div class="single-guide-row"><b>為什麼？</b><span>'+esc(g.why)+'</span></div>'+
+    '<div class="single-guide-row"><b>接下來看什麼？</b><span>'+esc(g.watch)+'</span></div>'+
+    '</div><div class="single-caution"><b>不要直接解讀成：</b> '+esc(MODEL_CAUTION[model]||'這是市場證據，不是買賣答案。')+'</div>'
+}
+function singleHorizonHTML(model,state){
+  let st=evalState(model,state),h=SINGLE_RESEARCH_HORIZON,
+      x=st&&st.horizons?st.horizons[h]:null,
+      tabs=[3,5,10,20].map(v=>'<button class="'+(v===h?'on':'')+'" onclick="setSingleHorizon('+v+')">'+esc(horizonShortLabel(v))+'</button>').join('');
+  let lead='<div class="single-section-head"><b>以前出現後，市場怎麼走？</b><span>一次只看一個時間距離</span></div>'+
+    '<div class="single-horizon-tabs">'+tabs+'</div>';
+  if(!x)return '<section class="single-section">'+lead+'<div class="research-empty">這個狀態目前沒有走完整段觀察期的歷史案例。</div></section>';
+  let up=x.upRate==null?'—':Math.round(x.upRate*100)+'%',down=x.downRate==null?'—':Math.round(x.downRate*100)+'%';
+  return '<section class="single-section">'+lead+
+    '<div class="single-horizon-result"><div class="headline"><b>'+pct(x.medianReturn)+'</b><span>'+esc(horizonHuman(h))+'</span></div>'+
+    '<p>從模型確認這個狀態那根 '+esc(timeframeKLabel())+' 的收盤開始，和第 '+h+' 根之後的收盤相比。'+
+    '歷史上有 '+x.n+' 個案例已經走完整段'+(x.incomplete?'，另有 '+x.incomplete+' 個還沒走完':'')+'。</p>'+
+    '<div class="split"><div><b>'+up+' 高於起點</b>到第 '+h+' 根 K 收盤時</div>'+
+    '<div><b>'+down+' 低於起點</b>到第 '+h+' 根 K 收盤時</div></div>'+
+    '<details class="single-path-details"><summary>途中曾往上／往下走多遠？</summary>'+
+    '途中典型最高曾到 '+pct(x.medianMFE)+'（MFE）；途中典型最低曾到 '+pct(x.medianMAE)+'（MAE）。這描述歷史路徑，不是目前行情預測。</details>'+
+    '</div></section>'
+}
+function historicalRowsForFocus(model,state){return historyCases(model,state,500)}
+function historyPosition(rows,e){
+  if(!e)return -1;
+  let p=rows.findIndex(x=>e.id&&x.id===e.id);
+  if(p<0)p=rows.findIndex(x=>x.index===e.index&&x.state===e.state);
+  return p
+}
+function openHistoricalPosition(pos){
+  let ev=focusedEvidenceRecord(),state=ev&&ev.state;
+  if(!state){
+    let cur=currentEvidenceForModel(FOCUSED_MODEL);state=cur&&cur.state
+  }
+  if(!state){
+    let latest=lastHistoricalEvidence(FOCUSED_MODEL);state=latest&&latest.state
+  }
+  let rows=state?historicalRowsForFocus(FOCUSED_MODEL,state):[];
+  if(!rows.length)return;
+  pos=Math.max(0,Math.min(rows.length-1,Math.round(pos)));
+  focusHistoryEvidence(rows[pos],true)
+}
+function stepHistoricalCase(delta){
+  let ev=focusedEvidenceRecord();if(!ev)return;
+  let rows=historicalRowsForFocus(FOCUSED_MODEL,ev.state),p=historyPosition(rows,ev);
+  if(p<0)p=0;
+  let next=Math.max(0,Math.min(rows.length-1,p+Math.round(delta)));
+  focusHistoryEvidence(rows[next],true)
+}
+function singleHistoryHTML(model,state,ev,mode){
+  let rows=historicalRowsForFocus(model,state),p=mode==='history'?historyPosition(rows,ev):-1;
+  if(!rows.length)return '<section class="single-section"><div class="single-section-head"><b>真實歷史案例</b><span>目前沒有可回看的案例</span></div></section>';
+  if(mode!=='history'){
+    return '<section class="single-section"><div class="single-section-head"><b>真實歷史案例</b><span>同狀態 '+rows.length+' 次</span></div>'+
+      '<div class="single-history-nav"><div class="single-history-meta">不要只看統計。直接回到一個真實案例，看當時的 K 線和模型證據。</div>'+
+      '<button onclick="openHistoricalPosition(0)">查看最近一個案例 →</button></div></section>'
+  }
+  if(p<0)p=0;
+  return '<section class="single-section"><div class="single-section-head"><b>真實歷史案例</b><span>同狀態 '+rows.length+' 次</span></div>'+
+    '<div class="single-history-nav"><div class="single-history-controls">'+
+      '<button onclick="stepHistoricalCase(-1)" '+(p<=0?'disabled':'')+'>← 較新</button>'+
+      '<span>'+(p+1)+' / '+rows.length+'</span>'+
+      '<button onclick="stepHistoricalCase(1)" '+(p>=rows.length-1?'disabled':'')+'>較舊 →</button></div>'+
+      '<div class="single-history-meta"><b>'+esc(D[ev.index]?date(D[ev.index].t):('bar '+ev.index))+'</b> · '+
+      esc(String(STATE_LABELS[ev.state]||ev.state).split('｜')[0])+'<br>主圖與右側目前指向同一個歷史案例。</div>'+
+      '<button onclick="viewSingleNow()">回到現在</button></div></section>'
+}
+function modelParameterSnapshot(model){
+  try{return cloneObj(modelDraft(model))}catch(_){return null}
+}
+function buildSingleResearchContext(){
+  let ev=focusedEvidenceRecord();
+  if(!FOCUSED_MODEL||!ev)return null;
+  let run=window.__SL_MODEL_RUN__||{},setting=MODEL_SETTING_STATE[FOCUSED_MODEL]||{kind:'default'};
+  return{
+    version:1,
+    source:'single-model-research',
+    market:q('market')?q('market').value:null,
+    timeframe:tf,
+    model:FOCUSED_MODEL,
+    state:ev.state,
+    condition:{model:FOCUSED_MODEL,state:ev.state,windowBars:0,relation:'time'},
+    focus:{
+      mode:FOCUSED_EVIDENCE&&FOCUSED_EVIDENCE.mode||'now',
+      evidenceId:ev.id||null,index:Number.isInteger(ev.index)?ev.index:null,
+      detectedAt:Number.isInteger(ev.detectedAt)?ev.detectedAt:null,
+      evidenceStart:Number.isInteger(ev.evidenceStart)?ev.evidenceStart:null,
+      kind:ev.kind||null
+    },
+    selectedHorizon:SINGLE_RESEARCH_HORIZON,
+    settingSource:cloneObj(setting),
+    parameterSnapshot:modelParameterSnapshot(FOCUSED_MODEL),
+    parameterFingerprint:run.parameterFingerprint||null,
+    engineVersion:run.engineVersion||null,
+    kernelVersion:run.kernelVersion||null,
+    knownThrough:D.length?D.length-1:null,
+    dataSource:sourceNote||null
+  }
+}
+function prepareCombinationHandoff(){
+  let ctx=buildSingleResearchContext();if(!ctx)return;
+  COMBINATION_HANDOFF_CONTEXT=cloneObj(ctx);
+  CONDITION_STACK=[cloneObj(ctx.condition)];
+  HANDOFF_NOTICE='';
+  window.__SL_COMBINATION_HANDOFF__=COMBINATION_HANDOFF_CONTEXT;
+  window.__SL_CONDITION_STACK__=CONDITION_STACK;
+  renderHandoffStatus()
+}
+function clearCombinationHandoff(reason=''){
+  COMBINATION_HANDOFF_CONTEXT=null;CONDITION_STACK=[];HANDOFF_NOTICE=reason||'';
+  window.__SL_COMBINATION_HANDOFF__=null;window.__SL_CONDITION_STACK__=CONDITION_STACK;
+  renderHandoffStatus()
+}
+function renderHandoffStatus(){
+  let box=q('singleHandoffStatus');if(!box)return;
+  if(COMBINATION_HANDOFF_CONTEXT){
+    let x=COMBINATION_HANDOFF_CONTEXT;
+    box.innerHTML='<div class="single-handoff-ready"><b>已準備給組合研究：</b> '+esc(conditionLabel(x.condition))+
+      '<br>'+esc((q('market')?q('market').selectedOptions[0].text:x.market)+' · '+String(x.timeframe||'').toUpperCase()+' · '+modelSettingLabel(x.model))+
+      '<br>G02 組合研究會直接從這個研究單位開始，不需要重新選模型、狀態或參數。'+
+      '<br><button onclick="clearCombinationHandoff()">清除這個準備</button></div>'
+  }else if(HANDOFF_NOTICE){
+    box.innerHTML='<div class="single-handoff-ready">'+esc(HANDOFF_NOTICE)+'</div>'
+  }else box.innerHTML=''
+}
+function singleEvidenceCardHTML(model,ev,mode){
+  let state=ev.state,stateLabel=String(STATE_LABELS[state]||state||'—').split('｜')[0],
+      displayDate=mode==='now'?(D.length?date(D[D.length-1].t):'—'):(D[ev.index]?date(D[ev.index].t):('bar '+ev.index)),
+      firstKnown=Number.isInteger(ev.detectedAt)&&D[ev.detectedAt]?date(D[ev.detectedAt].t):(D[ev.index]?date(D[ev.index].t):'—'),
+      st=evalState(model,state),n=st?st.count:0,g=guideFor(model,state),
+      raw=nearestEvidence(model,state,ev.index)||ev;
+  return '<article class="single-now-card"><div class="single-now-head"><div><small>'+(mode==='now'?'現在':'歷史案例')+'</small>'+
+    '<b>'+esc(stateLabel)+'</b></div><span class="single-now-date">'+esc(displayDate)+'</span></div>'+
+    '<div class="single-now-summary">'+esc(plainResearch(model,state))+'</div>'+
+    '<div class="single-guide"><div class="single-guide-row"><b>為什麼？</b><span>'+esc(g.why)+'</span></div>'+
+    '<div class="single-guide-row"><b>接下來看什麼？</b><span>'+esc(g.watch)+'</span></div></div>'+
+    '<div class="single-caution"><b>不要直接解讀成：</b> '+esc(MODEL_CAUTION[model]||'這是市場證據，不是買賣答案。')+
+    '<br>模型第一次能確認這個狀態：'+esc(firstKnown)+' · 歷史同狀態 '+n+' 次</div></article>'+
+    singleHorizonHTML(model,state)+
+    singleHistoryHTML(model,state,ev,mode)+
+    '<details class="single-advanced"><summary>進階｜這個狀態後來怎麼發展？</summary><div class="single-advanced-body">'+lifecycleHTML(model,state)+'</div></details>'+
+    '<details class="single-advanced"><summary>進階｜模型當時真正記錄了什麼？</summary><div class="single-advanced-body">'+evidenceFieldsHTML(raw)+'</div></details>'+
+    '<div class="single-handoff"><b>要把這個研究接到多模型嗎？</b><p>這裡只準備研究單位，不會在單模型介面展開漏斗。之後的組合研究會延續目前市場、週期、模型狀態、參數與 Evidence 來源。</p>'+
+    '<button onclick="prepareCombinationHandoff()">用這個研究準備組合研究 →</button></div>'
+}
+function renderSingleResearch(){
+  let body=q('singleResearchBody');if(!body)return;
+  let sel=q('singleModelSelect'),toggle=q('singleOverlayToggle');
+  if(sel&&sel.value!==FOCUSED_MODEL)sel.value=FOCUSED_MODEL;
+  if(toggle)toggle.checked=isModelVisible(FOCUSED_MODEL);
+  syncFocusedEvidenceAfterRun();
+  let mode=FOCUSED_EVIDENCE&&FOCUSED_EVIDENCE.mode==='history'?'history':'now',
+      cur=currentEvidenceForModel(FOCUSED_MODEL),
+      hist=lastHistoricalEvidence(FOCUSED_MODEL),
+      ev=mode==='history'?focusedEvidenceRecord():cur;
+  let tabs='<div class="single-context-tabs"><button class="'+(mode==='now'?'on':'')+'" onclick="viewSingleNow()">現在</button>'+
+    '<button class="'+(mode==='history'?'on':'')+'" onclick="'+(hist?'viewLatestHistoricalCase()':'')+'" '+(hist?'':'disabled')+'>歷史案例</button></div>';
+  if(mode==='now'&&!cur){
+    body.innerHTML=tabs+'<article class="single-now-card empty"><div class="single-now-head"><div><small>現在</small><b>目前沒有形成可用 Evidence</b></div>'+
+      '<span class="single-now-date">'+(D.length?esc(date(D[D.length-1].t)):'—')+'</span></div>'+
+      '<div class="single-now-summary">模型已經掃過目前資料，但最新市場沒有符合這個模型的狀態／事件。這不是看多或看空，只代表目前沒有這類證據。</div>'+
+      '<div class="single-empty-actions">'+(hist?'<button onclick="viewLatestHistoricalCase()">查看最近一次歷史案例 →</button>':'')+
+      '<button onclick="openFocusedModelParams()">調整模型設定</button></div></article>';
+    SINGLE_RESEARCH_CONTEXT=null;window.__SL_SINGLE_RESEARCH_CONTEXT__=null;
+    renderHandoffStatus();return
+  }
+  if(mode==='history'&&!ev){
+    FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};renderSingleResearch();return
+  }
+  SINGLE_RESEARCH_CONTEXT=buildSingleResearchContext();
+  window.__SL_SINGLE_RESEARCH_CONTEXT__=SINGLE_RESEARCH_CONTEXT;
+  body.innerHTML=tabs+singleEvidenceCardHTML(FOCUSED_MODEL,ev,mode);
+  renderHandoffStatus()
+}
+function resetSingleResearchForMarketChange(){
+  FOCUSED_EVIDENCE={mode:'now',id:null,index:null,state:null};
+  SINGLE_RESEARCH_HORIZON=10;
+  SINGLE_RESEARCH_CONTEXT=null;
+  clearCombinationHandoff('');
+}
+
 function openModelLibrary(){
   let lib=q('modelLibrary');if(!lib)return;
   lib.open=true;
@@ -1426,36 +1697,34 @@ function modelSampleText(model,state){
   let st=evalState(model,state);return st?('歷史同狀態 '+st.count+' 次'):'目前沒有足夠的同狀態統計'
 }
 function renderModelGuides(){
-  renderResearchStack();
+  renderSingleResearch();
   if(!D.length)return;
   for(const [model,ui] of Object.entries(MODEL_UI)){
     let check=q(ui.check),box=q(ui.status),btn=q(ui.button);if(!check||!box||!btn)continue;
-    if(!check.checked){
-      box.classList.remove('has-now');box.textContent='還沒開啟。先按「選研究方式」看三組參考設定，或直接勾選用目前設定開始。';
-      btn.disabled=true;btn.textContent='看看它現在找到什麼';continue
+    btn.disabled=false;btn.textContent=model===FOCUSED_MODEL?'正在研究':'研究這個模型';
+    if(!shouldRunModel(model)){
+      box.classList.remove('has-now');
+      box.textContent='圖層目前隱藏，研究也尚未載入。按「研究這個模型」後，右側會載入它，但不會強迫把圖層打開。';
+      continue
     }
-    let cur=currentEvidenceForModel(model),hist=lastHistoricalEvidence(model),e=cur||hist;
-    if(!e){
-      box.classList.remove('has-now');box.textContent='已經掃過目前資料，但還沒有找到符合條件的結構／事件。可以換一組較敏感的研究方式再比較。';
-      btn.disabled=true;btn.textContent='目前沒有可研究案例';continue
-    }
-    let isNow=!!cur,when=D[e.index]?date(D[e.index].t):('bar '+e.index),sample=modelSampleText(model,e.state);
-    box.classList.toggle('has-now',isNow);
-    box.innerHTML=(isNow?'<b>目前：</b>':'<b>最近一次：</b>')+esc(plainResearch(model,e.state))+'<br><span>'+esc(sample)+' · '+esc(when)+'</span>';
-    btn.disabled=false;btn.textContent=isNow?'看看這個狀態以前發生什麼':'回到最近一次案例'
+    let cur=currentEvidenceForModel(model),hist=lastHistoricalEvidence(model);
+    box.classList.toggle('has-now',!!cur);
+    if(cur){
+      let when=D[cur.index]?date(D[cur.index].t):('bar '+cur.index);
+      box.innerHTML='<b>現在：</b>'+esc(plainResearch(model,cur.state))+'<br><span>'+esc(modelSampleText(model,cur.state))+' · '+esc(when)+'</span>'
+    }else if(hist){
+      let when=D[hist.index]?date(D[hist.index].t):('bar '+hist.index);
+      box.innerHTML='<b>現在沒有這類 Evidence。</b><br><span>最近一次歷史案例：'+esc(when)+' · '+esc(String(STATE_LABELS[hist.state]||hist.state).split('｜')[0])+'</span>'
+    }else box.textContent='已掃過目前資料，現在與歷史都沒有找到符合條件的案例。'
   }
 }
-function openLatestResearch(model){
-  let e=currentEvidenceForModel(model)||lastHistoricalEvidence(model);if(!e)return;
-  pinResearch({model,state:e.state,i:e.index,label:MODEL_TITLES[model]||model,detail:''})
-}
-
+function openLatestResearch(model){focusSingleModel(model)}
 function quickResearchHTML(hit){
   let r=resolveResearchHit(hit);if(!r)return'';
   let st=evalState(r.model,r.state),n=st?st.count:0,
       sample=st?('歷史上找到 '+n+' 次同狀態案例'):(r.state==='upcoming'?'未來投影，不算已發生案例':'目前沒有可用的歷史結果統計');
   return '<div class="research-quick"><b>'+esc(plainResearch(r.model,r.state))+'</b><div class="rq-meta">'+esc(sample)+'</div>'+
-    '<button class="tip-pin" onclick="pinTooltipResearch()">固定到研究區，慢慢看</button></div>'
+    '<button class="tip-pin" onclick="pinTooltipResearch()">在右側研究這個案例 →</button></div>'
 }
 function nearestEvidence(model,state,index){
   let best=null,dist=Infinity;
@@ -1808,9 +2077,8 @@ function jumpToEcho(start,end,futureEnd){
 function showBar(i){if(i<0||i>=D.length)return;let x=D[i],p=i?D[i-1].c:x.o,pct=p?(x.c/p-1)*100:0;q('ohlc').innerHTML='<b>'+date(x.t)+'</b>　O '+fmt(x.o)+'　H '+fmt(x.h)+'　L '+fmt(x.l)+'　C '+fmt(x.c)+'　<span class="'+(pct>=0?'good':'err')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</span>　Volume USD '+fmt(x.v)}
 function pinTooltipResearch(){
   if(!LAST_TOOLTIP_HIT)return false;
-  let hit=LAST_TOOLTIP_HIT;
-  LAST_TOOLTIP_HIT=null;
-  return pinResearch(hit)
+  let hit=LAST_TOOLTIP_HIT;LAST_TOOLTIP_HIT=null;
+  return focusSingleEvidenceFromHit(hit)
 }
 function updateChartTip(){
   let tip=q('chartTip');
@@ -2143,7 +2411,7 @@ c.onpointerup=e=>{
         ss=Math.max(0,Math.floor(V[0])),ee=Math.min(R.length-1,Math.ceil(V[1]));
     hover=hit&&Number.isInteger(hit.i)?hit.i:Math.max(ss,Math.min(ee,Math.round(ss+(e.clientX-r.left-52)/Math.max(1,r.width-68)*(ee-ss))));
     showBar(hover);
-    if(hit&&hit.model)pinResearch(hit)
+    if(hit&&hit.model)focusSingleEvidenceFromHit(hit)
   }
   drag=null;draw()
 };
