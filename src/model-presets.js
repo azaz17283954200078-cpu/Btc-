@@ -4,7 +4,7 @@
   root.StrategyLabModelPresets=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  const VERSION='0.4.0-candidate';
+  const VERSION='0.5.0-candidate';
   const PRESETS={
     support:[
       {id:'sensitive',title:'較早看見',intent:'縮短低點比較範圍，讓較小的支撐結構也能進入研究。',config:{zone:{pivot:3,atr:14,width:.72,breakAtr:.42}}},
@@ -30,7 +30,7 @@
     basin:[
       {id:'sensitive',title:'短期整理',intent:'較短的平盤也能被研究，門檻較寬鬆，候選通常較多。',config:{exp:{basin:{floorMin:6,floorMax:50,cliffMax:40,threshold:56}}}},
       {id:'balanced',title:'平衡盆地',intent:'兼顧短期與較完整的下山後走平結構。',config:{exp:{basin:{floorMin:10,floorMax:80,cliffMax:60,threshold:60}}}},
-      {id:'selective',title:'大型盆地',intent:'忽略較短整理，要求更長平盤與較高盆地分數，但仍保留可研究樣本。',config:{exp:{basin:{floorMin:13,floorMax:120,cliffMax:90,threshold:61}}}}
+      {id:'selective',title:'大型盆地',intent:'忽略較短整理，要求更長平盤與較高盆地分數，但仍保留可研究樣本。',config:{exp:{basin:{floorMin:12,floorMax:120,cliffMax:90,threshold:61}}}}
     ],
     field:[
       {id:'sensitive',title:'容易成形',intent:'允許較少震盪回合與較寬幾何變化，較早產生場域。',config:{exp:{spring:{minCycles:1.5,maxCoreShiftPct:90,maxShapeChangePct:85,minFitPct:72,breakConfirmBars:2}}}},
