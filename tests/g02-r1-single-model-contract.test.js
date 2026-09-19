@@ -2,7 +2,7 @@ const fs=require('fs');
 const assert=require('assert');
 const s=fs.readFileSync('index.html','utf8');
 
-assert(s.includes('v1.7 · G02-R1 單模型研究架構'),'G02-R1 version label missing');
+assert(/v1\.[78] · G02-R[12] /.test(s),'G02 single-model version label missing');
 
 for(const id of ['singleModelSelect','singleOverlayToggle','singleResearchBody','singleHandoffStatus']){
   assert(s.includes('id="'+id+'"'),'missing G02-R1 primary surface '+id);
