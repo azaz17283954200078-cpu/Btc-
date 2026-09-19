@@ -10,7 +10,7 @@
 
   if(!RK)throw new Error('Strategy Lab Model Engine requires Research Kernel');
 
-  const VERSION='1.0.0';
+  const VERSION='1.1.0';
   const DEFAULT_ZONE={
   "pivot": 5,
   "atr": 14,
@@ -65,6 +65,10 @@
     }
   }
 };
+  const DEFAULT_SWEEP={
+    lookback:{'1h':48,'4h':42,'1d':30,'1w':20,'1m':12},
+    minClosePosition:.55
+  };
   const DEFAULT_EXP={
   "basin": {
     "floorMin": 10,
@@ -126,7 +130,7 @@
   function date(t){return new Date(Number(t)*1000).toISOString().slice(0,10)}
 
   let D=[],R=[],BASIN_EPISODES=[],OSC_FIELDS=[],EVIDENCE=[],EVIDENCE_LOG=[],EVIDENCE_ERRORS=[],EVIDENCE_IDS=new Set(),EVALUATION=null;
-  let tf='1d',sourceNote='',market='BTC',ZONE=clone(DEFAULT_ZONE),MACRO=clone(DEFAULT_MACRO),EXP=clone(DEFAULT_EXP),ENABLED=clone(DEFAULT_ENABLED),INFO={};
+  let tf='1d',sourceNote='',market='BTC',ZONE=clone(DEFAULT_ZONE),MACRO=clone(DEFAULT_MACRO),SWEEP=clone(DEFAULT_SWEEP),EXP=clone(DEFAULT_EXP),ENABLED=clone(DEFAULT_ENABLED),INFO={};
   const window={};
 
   function q(id){
@@ -381,14 +385,15 @@ function bottomLabCalc(){
   if(!D.length)return;
   for(let i=0;i<R.length;i++)R[i].bottomSigs=[];
   let on=q('modSweep').checked,cnt=0,A=atrArr(D,14),
-      look=tf==='1h'?48:tf==='4h'?42:tf==='1d'?30:tf==='1w'?20:12;
+      look=Math.max(4,Math.round((SWEEP.lookback&&SWEEP.lookback[tf])||(SWEEP.lookback&&SWEEP.lookback['1d'])||30)),
+      minClosePosition=Math.max(0,Math.min(1,Number(SWEEP.minClosePosition??.55)));
 
   if(on){
     for(let i=Math.max(20,look);i<D.length;i++){
       let x=D[i],range=Math.max(x.h-x.l,1e-9),pos=(x.c-x.l)/range,
           priorLow=Math.min(...D.slice(i-look,i).map(z=>z.l));
 
-      if(x.l<priorLow&&x.c>priorLow&&pos>=.55){
+      if(x.l<priorLow&&x.c>priorLow&&pos>=minClosePosition){
         R[i].bottomSigs.push({k:'sweep',label:'Liquidity Sweep',slot:0});
         rememberEvidence({
           id:'sweep:'+i,entityId:'sweep:'+i,kind:'event',
@@ -401,7 +406,7 @@ function bottomLabCalc(){
     }
   }
 
-  setInfo('bottomInfo',on?'Liquidity Sweep｜'+cnt+' 個訊號｜原始跌破收回邏輯':'Liquidity Sweep 已關閉');
+  setInfo('bottomInfo',on?'Liquidity Sweep｜'+cnt+' 個訊號｜回看 '+look+' bars · 收盤位置 ≥ '+Math.round(minClosePosition*100)+'%':'Liquidity Sweep 已關閉');
   researchCalc()
 }
 function mean(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:NaN}
@@ -1319,13 +1324,14 @@ function researchCalc(){
     market=String(options.market||'CUSTOM');
     ZONE=merge(DEFAULT_ZONE,options.zone||{});
     MACRO=merge(DEFAULT_MACRO,options.macro||{});
+    SWEEP=merge(DEFAULT_SWEEP,options.sweep||{});
     EXP=merge(DEFAULT_EXP,options.exp||{});
     ENABLED=merge(DEFAULT_ENABLED,options.enabled||{});
 
     if(D.length)zoneCalc();
     else resetEvidenceTimeline();
 
-    const params={zone:ZONE,macro:MACRO,exp:EXP,enabled:ENABLED};
+    const params={zone:ZONE,macro:MACRO,sweep:SWEEP,exp:EXP,enabled:ENABLED};
     return{
       engineVersion:VERSION,
       kernelVersion:RK.VERSION,
@@ -1346,7 +1352,7 @@ function researchCalc(){
   }
 
   return{
-    VERSION,DEFAULT_ZONE,DEFAULT_MACRO,DEFAULT_EXP,DEFAULT_ENABLED,EVAL_HORIZONS,
+    VERSION,DEFAULT_ZONE,DEFAULT_MACRO,DEFAULT_SWEEP,DEFAULT_EXP,DEFAULT_ENABLED,EVAL_HORIZONS,
     run,parameterFingerprint,atrArr,clamp,fieldBoundaryAt,
     fieldDriftText,fieldCompressionText,fieldBiasText
   };
